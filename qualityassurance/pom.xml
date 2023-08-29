@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.digitalecmt</groupId>
+  <artifactId>qualityassurance</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>qualityassurance</name>
+  <url>http://www.example.com</url>
+
+  <properties>
+	<maven.version>3.9.4</maven.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<java.version>17</java.version>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    
+    <!-- =========== DEPENDENCIES VERSIONS ============ -->
+	<jakarta.version>3.1.0</jakarta.version>
+	<junit.jupiter.version>5.10.0</junit.jupiter.version>
+	<mockito.version>5.4.0</mockito.version>
+	<postgresql.version>42.6.0</postgresql.version>
+	<spring.boot.version>3.1.2</spring.boot.version>
+	<spring.data.train.version>Neumann-SR9</spring.data.train.version>
+	<spring.version>6.0.11</spring.version>
+	
+	<!-- ============== PLUGINS VERSIONS ============== -->
+	<plugin.spring.boot.version>${spring.boot.version}</plugin.spring.boot.version>
+  </properties>
+  
+
+<!-- *************** DEPENDENCIES ***************** -->
+
+<dependencies>
+	<!-- ================== SPRING ==================== -->
+	<dependency>
+		<!-- Spring Data JPA -->
+		<groupId>org.springframework.data</groupId>
+		<artifactId>spring-data-jpa</artifactId>
+		<version>${spring.boot.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>jakarta.annotation</groupId>
+		<artifactId>jakarta.annotation-api</artifactId>
+		<version>2.1.1</version>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework.data</groupId>
+		<artifactId>spring-data-commons</artifactId>
+		<version>3.1.2</version>
+	</dependency>
+
+	<!-- =============== SPRING BOOT ================== -->
+
+	<dependency>
+		<!-- Spring Boot Starter: Web -->
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-web</artifactId>
+		<version>${spring.boot.version}</version>
+	</dependency>
+	<dependency>
+		<!-- Spring Boot Starter: JPA -->
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-data-jpa</artifactId>
+		<version>${spring.boot.version}</version>
+	</dependency>
+	<dependency>
+		<!-- Spring Boot Starter: AOP -->
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-aop</artifactId>
+		<version>${spring.boot.version}</version>
+	</dependency>
+	<dependency>
+		<!-- Spring Boot Starter: Cache -->
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-cache</artifactId>
+		<version>${spring.boot.version}</version>
+	</dependency>
+	<dependency>
+		<!-- Spring Boot Starter: log4j -->
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-log4j2</artifactId>
+		<version>${spring.boot.version}</version>
+	</dependency>
+
+	<!-- ============== JPA DEPENDENCIES ============== -->
+	<dependency>
+		<groupId>jakarta.persistence</groupId>
+		<artifactId>jakarta.persistence-api</artifactId>
+		<version>${jakarta.version}</version>
+	</dependency>
+	<!-- ============ OTHER DEPENDENCIES ============== -->
+	
+	 <!-- PostgreSQL JDBC Driver -->
+    <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${postgresql.version}</version>
+        <scope>runtime</scope>
+    </dependency>
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-csv</artifactId>
+		<version>1.10.0</version>
+	</dependency>
+	<!-- Apache POI -->
+	<dependency>
+		<groupId>org.apache.poi</groupId>
+		<artifactId>poi</artifactId>
+		<version>5.2.3</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.poi</groupId>
+		<artifactId>poi-ooxml</artifactId>
+		<version>5.2.3</version>
+	</dependency>
+	<dependency>
+		<!-- Mockito -->
+		<groupId>org.mockito</groupId>
+		<artifactId>mockito-core</artifactId>
+		<version>${mockito.version}</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<!-- Spring Boot Starter: Test -->
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-test</artifactId>
+		<version>${spring.boot.version}</version>
+		<scope>test</scope>
+		<exclusions>
+			<exclusion>
+				<groupId>org.junit.vintage</groupId>
+				<artifactId>junit-vintage-engine</artifactId>
+			</exclusion>
+		</exclusions>
+	</dependency>
+</dependencies>
+
+	  
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.1.2</version>
+      </plugin>
+    </plugins>
+  </build>
+</project>
