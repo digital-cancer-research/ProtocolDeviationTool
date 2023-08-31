@@ -22,7 +22,7 @@ public class DataEntry {
     @Column(name = "site_id", nullable = false)
     private int siteId;
 
-    @Column(name = "dvspondes_id")
+    @Column(name = "dvspondes_id", nullable = false)
     private int dvspondesId;
 
     @Column(name = "usubjid")

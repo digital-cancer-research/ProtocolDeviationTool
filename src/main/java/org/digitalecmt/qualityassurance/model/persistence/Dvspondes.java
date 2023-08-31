@@ -2,6 +2,8 @@ package org.digitalecmt.qualityassurance.model.persistence;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -9,7 +11,8 @@ import jakarta.persistence.Table;
 @Table(name = "dvspondes")
 public class Dvspondes {
     @Id
-    @Column(name = "dvspondes_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "dvspondes_id", columnDefinition = "serial")
     private int dvspondesId;
 
     @Column(name = "dvspondes_value", nullable = false)

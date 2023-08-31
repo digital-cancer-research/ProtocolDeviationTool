@@ -27,7 +27,7 @@ package org.digitalecmt.qualityassurance.controller.entity;
 import java.util.List;
 
 import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
-import org.digitalecmt.qualityassurance.service.DataUploadService;
+import org.digitalecmt.qualityassurance.service.DataEntryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,11 +40,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/dataUpload")
-public class DataUploadController {
-    private final DataUploadService dataUploadService;
+public class DataEntryController {
+    private final DataEntryService dataUploadService;
 
     @Autowired
-    public DataUploadController(DataUploadService dataUploadService) {
+    public DataEntryController(DataEntryService dataUploadService) {
         this.dataUploadService = dataUploadService;
     }
 

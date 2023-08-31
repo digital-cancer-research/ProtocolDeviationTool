@@ -28,17 +28,17 @@ package org.digitalecmt.qualityassurance.service;
 import java.util.List;
 
 import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
-import org.digitalecmt.qualityassurance.repository.DataUploadRepository;
+import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 @Service
-public class DataUploadService {
-    private final DataUploadRepository dataUploadRepository;
+public class DataEntryService {
+    private final DataEntryRepository dataUploadRepository;
 
     @Autowired
-    public DataUploadService(DataUploadRepository dataUploadRepository) {
+    public DataEntryService(DataEntryRepository dataUploadRepository) {
         this.dataUploadRepository = dataUploadRepository;
     }
 

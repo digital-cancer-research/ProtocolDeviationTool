@@ -1,0 +1,40 @@
+# Git folder #
+/.git/
+
+# Compilation folders #
+/bin/
+/target/
+/build/
+/node_modules/
+
+
+# Java compile files #
+*.class
+
+# Package files #
+*.jar
+*.war
+*.ear
+*.db
+
+# Eclipse files #
+.buildpath
+.classpath
+.cproject
+.externalToolBuilders/
+.launch
+.loadpath
+.metadata
+.project
+.settings/
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.nak
+*.swp
+*~.nib
+*.pydevproject
+local.properties
+/src/main/resources/rebel.xml
+.springBeans

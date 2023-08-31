@@ -1,15 +1,15 @@
 CREATE TABLE "role" (
-  "role_id" INT PRIMARY KEY,
+  "role_id" SERIAL PRIMARY KEY,
   "role_name" VARCHAR NOT NULL
 );
 
 CREATE TABLE "team" (
-  "team_id" INT PRIMARY KEY,
+  "team_id" SERIAL PRIMARY KEY,
   "team_name" VARCHAR NOT NULL
 );
 
 CREATE TABLE "user" (
-  "user_id" INT PRIMARY KEY,
+  "user_id" SERIAL PRIMARY KEY,
   "username" VARCHAR UNIQUE NOT NULL,
   "role_id" INT,
   "is_site" BOOL,
@@ -17,30 +17,30 @@ CREATE TABLE "user" (
 );
 
 CREATE TABLE "user_team" (
-  "user_team_id" INT PRIMARY KEY,
+  "user_team_id" SERIAL PRIMARY KEY,
   "user_id" INT,
   "team_id" INT
 );
 
 CREATE TABLE "study" (
-  "study_id" INT PRIMARY KEY,
+  "study_id" SERIAL PRIMARY KEY,
   "study_name" VARCHAR NOT NULL
 );
 
 CREATE TABLE "team_study_access" (
-  "team_study_access_id" INT PRIMARY KEY,
+  "team_study_access_id" SERIAL PRIMARY KEY,
   "team_id" INT,
   "study_id" INT
 );
 
 CREATE TABLE "user_study_access" (
-  "user_study_access_id" INT PRIMARY KEY,
+  "user_study_access_id" SERIAL PRIMARY KEY,
   "user_id" INT,
   "study_id" INT
 );
 
 CREATE TABLE "data_entry" (
-  "entry_id" INT PRIMARY KEY,
+  "entry_id" SERIAL PRIMARY KEY,
   "study_id" INT NOT NULL,
   "site_id" INT NOT NULL,
   "dvspondes_id" INT,
@@ -65,7 +65,7 @@ CREATE TABLE "data_entry" (
 );
 
 CREATE TABLE "dvspondes" (
-  "dvspondes_id" INT PRIMARY KEY,
+  "dvspondes_id" SERIAL PRIMARY KEY,
   "dvspondes_value" VARCHAR NOT NULL
 );
 
@@ -84,5 +84,3 @@ ALTER TABLE "user_study_access" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("
 ALTER TABLE "user_study_access" ADD FOREIGN KEY ("study_id") REFERENCES "study" ("study_id");
 
 ALTER TABLE "data_entry" ADD FOREIGN KEY ("dvspondes_id") REFERENCES "dvspondes" ("dvspondes_id");
-
-ALTER TABLE "data_entry" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("user_id");
