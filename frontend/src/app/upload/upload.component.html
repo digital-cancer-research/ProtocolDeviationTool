@@ -1,3 +1,5 @@
 <div>
-  <input type="file" (change)="onFileSelected($event)">
+  <input type="file" (change)="onFileSelected($event)" id="fileInput">
+  <button (click)="uploadFile()">Upload</button>
+  <p *ngIf="message">{{ message }}</p>
 </div>

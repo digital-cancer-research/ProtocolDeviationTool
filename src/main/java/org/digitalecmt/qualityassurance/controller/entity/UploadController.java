@@ -52,13 +52,31 @@ public class UploadController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) throws ParseException {
+    public ResponseEntity<UploadResponse> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-        	uploadService.checkFileFormat(file);
-            return ResponseEntity.ok("File uploaded and processed successfully.");
-        } catch (IOException e) {
+            uploadService.checkFileFormat(file);
+            return ResponseEntity.ok(new UploadResponse("Data has been loaded"));
+        } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process the file.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new UploadResponse("Data has not been loaded"));
         }
     }
+
+    
+    public class UploadResponse {
+        private String message;
+
+        public UploadResponse(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
+
 }

@@ -1,23 +1,50 @@
 import { Component } from '@angular/core';
-import { UploadService } from './upload.service';
+import { HttpClient } from '@angular/common/http';
+import { UploadResponse } from './upload-response.model';
+
 
 @Component({
   selector: 'app-upload',
   templateUrl: './upload.component.html',
-  styleUrls: ['./upload.component.sass']
 })
 export class UploadComponent {
-  constructor(private uploadService: UploadService) {}
+  message: string | null = null;
 
-  onFileSelected(event: any) {
-    const file: File = event.target.files[0];
-    this.uploadService.uploadFile(file).subscribe(
-      response => {
-        console.log('Upload successful', response);
-      },
-      error => {
-        console.error('Upload error', error);
-      }
-    );
+  constructor(private http: HttpClient) {}
+
+onFileSelected(event: any) {
+  const fileInput = event.target as HTMLInputElement;
+  if (fileInput.files && fileInput.files.length > 0) {
+    console.log('Selected file:', fileInput.files[0].name);
+  }
+}
+
+
+  uploadFile() {
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    const file: File | null = fileInput?.files ? fileInput.files[0] : null;
+
+    if (file) {
+      const formData = new FormData();
+      formData.append('file', file);
+
+	this.http
+	  .post<UploadResponse>('http://localhost:8080/api/upload', formData)
+	  .subscribe(
+	    (response) => {
+	      // Handle successful upload
+	      this.message = response.message; // Display the message from the JSON response
+	    },
+	    (error) => {
+	      // Handle upload error
+	      this.message = 'Data has not been loaded';
+	      console.error('Upload error', error);
+	    }
+	  );
+
+
+    } else {
+      this.message = 'Please select a file to upload';
+    }
   }
 }
