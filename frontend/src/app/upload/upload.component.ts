@@ -20,31 +20,33 @@ onFileSelected(event: any) {
 }
 
 
-  uploadFile() {
-    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-    const file: File | null = fileInput?.files ? fileInput.files[0] : null;
+uploadFile() {
+  const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+  const file: File | null = fileInput?.files ? fileInput.files[0] : null;
 
-    if (file) {
-      const formData = new FormData();
-      formData.append('file', file);
+  if (file) {
+    const formData = new FormData();
+    formData.append('file', file);
 
-	this.http
-	  .post<UploadResponse>('http://localhost:8080/api/upload', formData)
-	  .subscribe(
-	    (response) => {
-	      // Handle successful upload
-	      this.message = response.message; // Display the message from the JSON response
-	    },
-	    (error) => {
-	      // Handle upload error
-	      this.message = 'Data has not been loaded';
-	      console.error('Upload error', error);
-	    }
-	  );
-
-
-    } else {
-      this.message = 'Please select a file to upload';
-    }
+    this.http
+      .post<UploadResponse>('http://localhost:8080/api/upload', formData)
+      .subscribe(
+        (response) => {
+          // Handle the message from the server
+          this.message = response.message;
+        },
+        (error) => {
+          // Handle upload error
+          if (error.error && error.error.message) {
+            this.message = error.error.message;
+          } else {
+            this.message = 'An unknown error occurred.';
+          }
+          console.error('Upload error', error);
+        }
+      );
+  } else {
+    this.message = 'Please select a file to upload';
   }
+}
 }

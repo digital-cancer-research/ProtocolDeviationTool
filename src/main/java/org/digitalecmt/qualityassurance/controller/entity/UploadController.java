@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.text.ParseException;
 
 import org.digitalecmt.qualityassurance.service.UploadService;
+import org.digitalecmt.qualityassurance.service.UploadService.UploadResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,8 +55,8 @@ public class UploadController {
     @PostMapping("/upload")
     public ResponseEntity<UploadResponse> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            uploadService.checkFileFormat(file);
-            return ResponseEntity.ok(new UploadResponse("Data has been loaded"));
+            return uploadService.checkFileFormat(file);
+//            return ResponseEntity.ok(new UploadResponse("Data has been loaded"));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new UploadResponse("Data has not been loaded"));
@@ -63,20 +64,20 @@ public class UploadController {
     }
 
     
-    public class UploadResponse {
-        private String message;
-
-        public UploadResponse(String message) {
-            this.message = message;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
-        }
-    }
+//    public static class UploadResponse {
+//        private String message;
+//
+//        public UploadResponse(String message) {
+//            this.message = message;
+//        }
+//
+//        public String getMessage() {
+//            return message;
+//        }
+//
+//        public void setMessage(String message) {
+//            this.message = message;
+//        }
+//    }
 
 }

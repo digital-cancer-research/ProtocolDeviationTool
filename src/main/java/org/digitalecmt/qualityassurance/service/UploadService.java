@@ -45,6 +45,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+//import org.digitalecmt.qualityassurance.controller.entity.UploadController.UploadResponse;
 import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
 import org.digitalecmt.qualityassurance.model.persistence.Dvspondes;
 import org.digitalecmt.qualityassurance.model.persistence.Study;
@@ -52,6 +53,7 @@ import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.repository.DvspondesRepository;
 import org.digitalecmt.qualityassurance.repository.StudyRepository;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -78,22 +80,22 @@ public class UploadService {
         return filename.substring(dotIndex + 1);
     }
     
-    public ResponseEntity<String> checkFileFormat(MultipartFile file) throws IOException {
+    public ResponseEntity<UploadResponse> checkFileFormat(MultipartFile file) throws IOException {
     String fileExtension = getFileExtension(file.getOriginalFilename());
     
 	    try {
 	        if (fileExtension.equalsIgnoreCase("csv")) {
-	        	processDataEntryCSV(file);
-	            return ResponseEntity.ok("CSV file uploaded.");
+	        	return processDataEntryCSV(file);
+//	            return ResponseEntity.ok("CSV file uploaded.");
 	        } else if (fileExtension.equalsIgnoreCase("xlsx")) {
-	        	processDataEntryExcel(file);
-	            return ResponseEntity.ok("Excel file uploaded.");
+	        	return processDataEntryExcel(file);
+//	            return ResponseEntity.ok("Excel file uploaded.");
 	        } else {
-	            return ResponseEntity.badRequest().body("Unsupported file format. Please upload a CSV or Excel file.");
+	            return ResponseEntity.badRequest().body(new UploadResponse("Unsupported file format. Please upload a CSV or Excel file."));
 	        }
 	    } catch (IOException e) {
 	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process the file.");
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new UploadResponse("Failed to process the file."));
 	    }
     }
     
@@ -124,11 +126,14 @@ public class UploadService {
 	
     }
     
-    public void processDataEntryCSV(MultipartFile file) throws IOException {
+    public ResponseEntity<UploadResponse> processDataEntryCSV(MultipartFile file) throws IOException {
     	List<DataEntry> dataEntrys = new ArrayList<>();
+    	
+    	// Track missing fields
+    	List<String> missingCells = new ArrayList<>();
         
         // Dataset
-        String dataEntryStudyName = file.getOriginalFilename(); // Get the file name
+        String dataEntryStudyName = file.getOriginalFilename();
         Study study = new Study();
         study.setStudyName(dataEntryStudyName);
         
@@ -141,19 +146,38 @@ public class UploadService {
         	String studyId = record.get("STUDYID");
         	String dvsponsdesValue = record.get("DVSPONSDES");
         	
-
-           parseAndAddData(siteId, studyId, dvsponsdesValue, dataEntryStudyName, dataEntrys);
-                
-
+        	if (StringUtils.isBlank(siteId)) {
+                missingCells.add("Row " + record.getRecordNumber() + ", Column SITEID");
+            }
+            if (StringUtils.isBlank(studyId)) {
+                missingCells.add("Row " + record.getRecordNumber() + ", Column STUDYID");
+            }
+            if (StringUtils.isBlank(dvsponsdesValue)) {
+                missingCells.add("Row " + record.getRecordNumber() + ", Column DVSPONSDES");
+            }
+        	
+           if (missingCells.isEmpty()) {
+        	   parseAndAddData(siteId, studyId, dvsponsdesValue, dataEntryStudyName, dataEntrys);
+           }
         }
-
-        // Save the dataEntrys to the "dataEntrys" table
-        dataEntryRepository.saveAll(dataEntrys);
         
+        if (!missingCells.isEmpty()) {
+            // Handle missing cells and return a response with an error message
+            String errorMessage = "Missing cells:\n" + String.join("\n", missingCells);
+            UploadResponse response = new UploadResponse(errorMessage);
+            return ResponseEntity.badRequest().body(response);
+        } else {
+            // Save the dataEntries to the "dataEntries" table
+            dataEntryRepository.saveAll(dataEntrys);
+            return ResponseEntity.ok(new UploadResponse("CSV file uploaded."));
+        }
     }
 
-    public void processDataEntryExcel(MultipartFile file) throws IOException {
+    public ResponseEntity<UploadResponse> processDataEntryExcel(MultipartFile file) throws IOException {
         List<DataEntry> dataEntrys = new ArrayList<>();
+        
+    	// Track missing fields
+    	List<String> missingCells = new ArrayList<>();
 
         String dataEntryStudyName = file.getOriginalFilename(); // Get the file name
 
@@ -178,13 +202,57 @@ public class UploadService {
         	String studyId = dataFormatter.formatCellValue(row.getCell(1));
         	String dvsponsdesValue = dataFormatter.formatCellValue(row.getCell(2));
 
-            parseAndAddData(siteId, studyId, dvsponsdesValue, dataEntryStudyName, dataEntrys);
-            
+        	if (StringUtils.isBlank(siteId)) {
+                missingCells.add("Row " + (row.getRowNum() + 1) + ", Column SITEID");
+            }
+            if (StringUtils.isBlank(studyId)) {
+                missingCells.add("Row " + (row.getRowNum() + 1) + ", Column STUDYID");
+            }
+            if (StringUtils.isBlank(dvsponsdesValue)) {
+                missingCells.add("Row " + (row.getRowNum() + 1) + ", Column DVSPONSDES");
+            }
+        	
+           if (missingCells.isEmpty()) {
+        	   parseAndAddData(siteId, studyId, dvsponsdesValue, dataEntryStudyName, dataEntrys);
+           }
         }
-        
+    
+	    if (!missingCells.isEmpty()) {
+	        // Handle missing cells and return a response
+	    	String errorMessage = "Missing cells:\n" + String.join("\n", missingCells);
+	        return ResponseEntity.badRequest().body(new UploadResponse(errorMessage));
+	    } else {
         // Save the dataEntrys to the "dataEntrys" table
         dataEntryRepository.saveAll(dataEntrys);
+        return ResponseEntity.ok(new UploadResponse("Excel file uploaded."));
+	    }
         
     }
+    
+    public static class UploadResponse {
+        private String message;
+        private List<String> missingCells;
+
+        public UploadResponse(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public List<String> getMissingCells() {
+            return missingCells;
+        }
+
+        public void setMissingCells(List<String> missingCells) {
+            this.missingCells = missingCells;
+        }
+    }
+
 
 }
