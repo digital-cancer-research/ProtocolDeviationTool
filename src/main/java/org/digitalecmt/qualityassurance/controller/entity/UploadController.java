@@ -24,11 +24,6 @@
 
 package org.digitalecmt.qualityassurance.controller.entity;
 
-
-
-import java.io.IOException;
-import java.text.ParseException;
-
 import org.digitalecmt.qualityassurance.service.UploadService;
 import org.digitalecmt.qualityassurance.service.UploadService.UploadResponse;
 import org.springframework.beans.factory.annotation.Autowired;

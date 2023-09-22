@@ -27,11 +27,8 @@ package org.digitalecmt.qualityassurance.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,10 +51,6 @@ import org.digitalecmt.qualityassurance.repository.DvspondesRepository;
 import org.digitalecmt.qualityassurance.repository.StudyRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 
 @Service
 public class UploadService {

@@ -26,6 +26,7 @@ import org.digitalecmt.qualityassurance.model.persistence.Study;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.repository.DvspondesRepository;
 import org.digitalecmt.qualityassurance.repository.StudyRepository;
+import org.digitalecmt.qualityassurance.service.UploadService.UploadResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -80,7 +81,7 @@ public class UploadServiceTest {
     @Test
     public void testCheckFileFormat_CSV() throws IOException {
     	doNothing().when(uploadService).processDataEntryCSV(any(MultipartFile.class));
-        ResponseEntity<String> response = uploadService.checkFileFormat(csvFile);
+        ResponseEntity<UploadResponse> response = uploadService.checkFileFormat(csvFile);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("CSV file uploaded.", response.getBody());
     }
@@ -90,7 +91,7 @@ public class UploadServiceTest {
     @Test
     public void testCheckFileFormat_Excel() throws IOException {
     	doNothing().when(uploadService).processDataEntryExcel(any(MultipartFile.class));
-        ResponseEntity<String> response = uploadService.checkFileFormat(excelFile);
+        ResponseEntity<UploadResponse> response = uploadService.checkFileFormat(excelFile);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Excel file uploaded.", response.getBody());
     }
@@ -100,7 +101,7 @@ public class UploadServiceTest {
         MultipartFile unsupportedFile = mock(MultipartFile.class);
         when(unsupportedFile.getOriginalFilename()).thenReturn("sample.txt");
 
-        ResponseEntity<String> response = uploadService.checkFileFormat(unsupportedFile);
+        ResponseEntity<UploadResponse> response = uploadService.checkFileFormat(unsupportedFile);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Unsupported file format. Please upload a CSV or Excel file.", response.getBody());
     }
@@ -111,7 +112,7 @@ public class UploadServiceTest {
         when(fileWithError.getOriginalFilename()).thenReturn("sample.csv");
         when(fileWithError.getInputStream()).thenThrow(new IOException());
 
-        ResponseEntity<String> response = uploadService.checkFileFormat(fileWithError);
+        ResponseEntity<UploadResponse> response = uploadService.checkFileFormat(fileWithError);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals("Failed to process the file.", response.getBody());
     }

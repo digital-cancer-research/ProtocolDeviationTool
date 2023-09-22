@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 
 public class UserTest {
 
-    private User user;
+    private UserAccount user;
 
     @BeforeEach
     public void setUp() {
-        user = new User();
+        user = new UserAccount();
     }
 
     @Test

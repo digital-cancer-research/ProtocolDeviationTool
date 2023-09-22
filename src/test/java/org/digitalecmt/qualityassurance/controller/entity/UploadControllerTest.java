@@ -35,12 +35,12 @@ public class UploadControllerTest {
 
         mockMvc.perform(multipart("/api/upload").file(file))
                 .andExpect(status().isOk())
-                .andExpect(content().string("File uploaded and processed successfully."));
+                .andExpect(content().string("Data has been loaded"));
 
         verify(uploadService, times(1)).checkFileFormat(file);
     }
 
-    @Test
+    @Test 
     public void testUploadFile_Failure() throws Exception {
         InputStream inputStream = getClass().getResourceAsStream("/test.csv");
         MockMultipartFile file = new MockMultipartFile("file", "test.csv", MediaType.TEXT_PLAIN_VALUE, inputStream);
@@ -49,7 +49,7 @@ public class UploadControllerTest {
 
         mockMvc.perform(multipart("/api/upload").file(file))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().string("Failed to process the file."));
+                .andExpect(content().string("Data has not been loaded"));
 
         verify(uploadService, times(1)).checkFileFormat(file);
     }

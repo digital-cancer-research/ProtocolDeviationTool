@@ -24,11 +24,11 @@
 
 package org.digitalecmt.qualityassurance.repository;
 
-import org.digitalecmt.qualityassurance.model.persistence.User;
+import org.digitalecmt.qualityassurance.model.persistence.UserAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository
-        extends JpaRepository<User, Integer> {
+public interface UserAccountRepository
+        extends JpaRepository<UserAccount, Integer> {
 }
