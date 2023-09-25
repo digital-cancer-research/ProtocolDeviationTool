@@ -1,6 +1,6 @@
 <div class="user-selection">
   <h2>Select User</h2>
-  <select [(ngModel)]="selectedUser" (change)="onUserSelected()">
+  <select [(ngModel)]="selectedUser" (change)="selectedUser && onSelectUser(selectedUser)">
     <option value="" disabled>Select a user</option>
     <option *ngFor="let user of users" [value]="user.username">{{ user.username }}</option>
   </select>

@@ -1,0 +1,27 @@
+<div class="user-management">
+  <h2>User Management</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th>Username</th>
+        <th>Role</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.id }}</td>
+        <td>{{ user.username }}</td>
+        <td>
+          <select [(ngModel)]="user.role">
+            <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+          </select>
+        </td>
+        <td>
+          <button (click)="changeUserRole(user.id, user.role)">Change Role</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

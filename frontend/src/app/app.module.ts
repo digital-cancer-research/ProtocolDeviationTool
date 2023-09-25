@@ -6,11 +6,16 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { UploadComponent } from './upload/upload.component';
 import { UserSelectionComponent } from './user/user-selection.component'
+import { AdminButtonComponent  } from './admin-button/admin-button.component';
+import { UserManagementComponent } from './user-management/user-management.component'
 
 import { UploadService } from './upload/upload.service';
 import { UserService } from './user/user.service';
+import { AuthService  } from './admin-button/auth.service';
+import { UserManagementService } from './user-management/user-management.service'
 
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 
 @NgModule({
@@ -18,16 +23,21 @@ import { FormsModule } from '@angular/forms';
     AppComponent,
     UploadComponent,
     UserSelectionComponent,
+    AdminButtonComponent,
+    UserManagementComponent,
   ],
   imports: [
 	BrowserModule,
 	HttpClientModule,
 	AppRoutingModule,
 	FormsModule,
+	CommonModule,
 ],
   providers: [
     UploadService,
     UserService,
+    AuthService,
+    UserManagementService,
   ],
   bootstrap: [AppComponent]
 })
