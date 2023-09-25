@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from './user.service';
 import { User } from './user.model';
-import { AuthService } from '../admin-button/auth.service';
+import { AuthService } from './auth.service';
 
 @Component({
   selector: 'app-user-selection',

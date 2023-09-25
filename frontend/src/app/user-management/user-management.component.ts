@@ -9,7 +9,7 @@ import { UserManagementService } from './user-management.service';
 export class UserManagementComponent implements OnInit {
   users: any[] = []; // Replace 'any[]' with your user data structure
   roles: string[] = ['Admin', 'User']; // List of available roles
-
+5
   constructor(private userManagementService: UserManagementService) {}
 
   ngOnInit(): void {

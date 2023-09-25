@@ -24,6 +24,8 @@
 
 package org.digitalecmt.qualityassurance.controller.entity;
 
+import org.digitalecmt.qualityassurance.dto.RoleChangeDTO;
+import org.digitalecmt.qualityassurance.dto.UserWithRoleDTO;
 import org.digitalecmt.qualityassurance.model.persistence.UserAccount;
 import org.digitalecmt.qualityassurance.repository.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -98,5 +101,51 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    @GetMapping("/check-admin-role")
+    public ResponseEntity<Boolean> checkAdminRole(@RequestParam String username) {
+        // Use the username to fetch the user's role from the database
+        Optional<UserAccount> optionalUser = userRepository.findByUsername(username);
+
+        if (optionalUser.isPresent()) {
+            UserAccount user = optionalUser.get();
+            // Check if the user has an admin role (role_id = 1)
+            boolean isAdmin = user.getRoleId() == 1;
+            return ResponseEntity.ok(isAdmin);
+        } else {
+            // User not found or other error handling
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+        }
+    }
+    
+    @GetMapping("/get-users-with-roles")
+    public ResponseEntity<List<UserWithRoleDTO>> getUsersWithRoles() {
+        List<UserWithRoleDTO> usersWithRoles = userRepository.findUsersWithRoles();
+        
+        System.out.println("Users with roles: " + usersWithRoles);
+        
+        return new ResponseEntity<>(usersWithRoles, HttpStatus.OK);
+    }
+    
+    @PostMapping("/change-user-role/{userId}")
+    public ResponseEntity<HttpStatus> changeUserRole(@PathVariable int userId, @RequestBody RoleChangeDTO roleChangeDTO) {
+        try {
+            Optional<UserAccount> userData = userRepository.findById(userId);
+
+            if (userData.isPresent()) {
+                UserAccount user = userData.get();
+                user.setRoleId(roleChangeDTO.getNewRoleId());
+                userRepository.save(user);
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
 }
 

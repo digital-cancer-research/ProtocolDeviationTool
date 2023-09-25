@@ -24,11 +24,23 @@
 
 package org.digitalecmt.qualityassurance.repository;
 
+import java.util.Optional;
+
+import org.digitalecmt.qualityassurance.dto.UserWithRoleDTO;
 import org.digitalecmt.qualityassurance.model.persistence.UserAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import org.springframework.data.jpa.repository.Query;
+
 @Repository
 public interface UserAccountRepository
         extends JpaRepository<UserAccount, Integer> {
+	Optional<UserAccount> findByUsername(String username);
+	
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.UserWithRoleDTO(u.username, r.roleName) " +
+	           "FROM UserAccount u " +
+	           "JOIN Role r ON u.roleId = r.roleId")
+	    List<UserWithRoleDTO> findUsersWithRoles();
 }
