@@ -8,7 +8,7 @@ CREATE TABLE "team" (
   "team_name" VARCHAR NOT NULL
 );
 
-CREATE TABLE "user" (
+CREATE TABLE "user_account" (
   "user_id" SERIAL PRIMARY KEY,
   "username" VARCHAR UNIQUE NOT NULL,
   "role_id" INT,
@@ -61,7 +61,8 @@ CREATE TABLE "data_entry" (
   "nonadv" VARCHAR,
   "dvs_cat" VARCHAR,
   "dvstdtc" TIMESTAMP,
-  "user_id" INT
+  "user_id" INT,
+  "category_id" INT
 );
 
 CREATE TABLE "dvspondes" (
@@ -69,9 +70,16 @@ CREATE TABLE "dvspondes" (
   "dvspondes_value" VARCHAR NOT NULL
 );
 
-ALTER TABLE "user" ADD FOREIGN KEY ("role_id") REFERENCES "role" ("role_id");
+CREATE TABLE "pd_category" (
+  "category_id" SERIAL PRIMARY KEY,
+  "dvcat" VARCHAR NOT NULL,
+  "dvdecod" VARCHAR NOT NULL,
+  "dvterm" VARCHAR NOT NULL
+);
 
-ALTER TABLE "user_team" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("user_id");
+ALTER TABLE "user_account" ADD FOREIGN KEY ("role_id") REFERENCES "role" ("role_id");
+
+ALTER TABLE "user_team" ADD FOREIGN KEY ("user_id") REFERENCES "user_account" ("user_id");
 
 ALTER TABLE "user_team" ADD FOREIGN KEY ("team_id") REFERENCES "team" ("team_id");
 
@@ -79,8 +87,29 @@ ALTER TABLE "team_study_access" ADD FOREIGN KEY ("team_id") REFERENCES "team" ("
 
 ALTER TABLE "team_study_access" ADD FOREIGN KEY ("study_id") REFERENCES "study" ("study_id");
 
-ALTER TABLE "user_study_access" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("user_id");
+ALTER TABLE "user_study_access" ADD FOREIGN KEY ("user_id") REFERENCES "user_account" ("user_id");
 
 ALTER TABLE "user_study_access" ADD FOREIGN KEY ("study_id") REFERENCES "study" ("study_id");
 
 ALTER TABLE "data_entry" ADD FOREIGN KEY ("dvspondes_id") REFERENCES "dvspondes" ("dvspondes_id");
+
+ALTER TABLE "data_entry" ADD FOREIGN KEY ("category_id") REFERENCES "pd_category" ("category_id");
+
+
+
+
+-- Insert roles
+INSERT INTO "role" ("role_name") VALUES
+  ('Admin'),
+  ('User');
+
+-- Insert users with roles
+INSERT INTO "user_account" ("username", "role_id", "is_site", "is_sponsor") VALUES
+  ('AdminWithAllRoles', 1, true, true),
+  ('AdminWithSiteRole', 1, true, false),
+  ('AdminWithSponsorRole', 1, false, true),
+  ('AdminWithNoSpecialRoles', 1, false, false);
+  ('UserWithAllRoles', 2, true, true),
+  ('UserWithSiteRole', 2, true, false),
+  ('UserWithSponsorRole', 2, false, true),
+  ('UserWithNoSpecialRoles', 2, false, false);
