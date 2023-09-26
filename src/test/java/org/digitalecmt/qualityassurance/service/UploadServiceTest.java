@@ -31,6 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.springframework.http.HttpStatus;
@@ -45,6 +46,7 @@ public class UploadServiceTest {
     private UploadService uploadService;
     private MultipartFile csvFile;
     private MultipartFile excelFile;
+    private MultipartFile fileWithError;
 
     @Mock
     private DataEntryRepository dataEntryRepository;
@@ -80,20 +82,14 @@ public class UploadServiceTest {
     
     @Test
     public void testCheckFileFormat_CSV() throws IOException {
-    	doNothing().when(uploadService).processDataEntryCSV(any(MultipartFile.class));
-        ResponseEntity<UploadResponse> response = uploadService.checkFileFormat(csvFile);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("CSV file uploaded.", response.getBody());
+    	uploadService.checkFileFormat(csvFile);
+        verify(uploadService).processDataEntryCSV(csvFile);
     }
     
-
-
     @Test
     public void testCheckFileFormat_Excel() throws IOException {
-    	doNothing().when(uploadService).processDataEntryExcel(any(MultipartFile.class));
-        ResponseEntity<UploadResponse> response = uploadService.checkFileFormat(excelFile);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Excel file uploaded.", response.getBody());
+        uploadService.checkFileFormat(excelFile);
+        verify(uploadService).processDataEntryExcel(excelFile);
     }
 
     @Test
@@ -103,23 +99,22 @@ public class UploadServiceTest {
 
         ResponseEntity<UploadResponse> response = uploadService.checkFileFormat(unsupportedFile);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Unsupported file format. Please upload a CSV or Excel file.", response.getBody());
+        assertEquals("Unsupported file format. Please upload a CSV or Excel file.", response.getBody().getMessage());
     }
 
     @Test
     public void testCheckFileFormat_InternalServerError() throws IOException {
-        MultipartFile fileWithError = mock(MultipartFile.class);
+        fileWithError = mock(MultipartFile.class);
         when(fileWithError.getOriginalFilename()).thenReturn("sample.csv");
         when(fileWithError.getInputStream()).thenThrow(new IOException());
 
         ResponseEntity<UploadResponse> response = uploadService.checkFileFormat(fileWithError);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("Failed to process the file.", response.getBody());
+        assertEquals("Failed to process the file.", response.getBody().getMessage());
     }
     
     @Test
     public void testProcessDataEntryCSV() throws IOException {
-        // Arrange
         String csvData = "SITEID,STUDYID,DVSPONSDES\n" +
                 "123,1,Value1\n" +
                 "456,2,Value2\n" +
@@ -128,16 +123,14 @@ public class UploadServiceTest {
                 "654,5,Value5\n";
         MockMultipartFile csvFile = new MockMultipartFile("dataEntry.csv", csvData.getBytes());
 
-        // Act
         uploadService.processDataEntryCSV(csvFile);
 
-        // Assert
         verify(dataEntryRepository, times(1)).saveAll(anyList());
     }
     
     @Test
     public void testProcessDataEntryExcel() throws IOException {
-        // Arrange
+    	
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("DataEntry");
         Row headerRow = sheet.createRow(0);
@@ -176,11 +169,75 @@ public class UploadServiceTest {
 
         MockMultipartFile excelFile = new MockMultipartFile("dataEntry.xlsx", inputStream);
 
-        // Act
         uploadService.processDataEntryExcel(excelFile);
 
-        // Assert
         verify(dataEntryRepository, times(1)).saveAll(anyList());
+    }
+    
+    @Test
+    public void testMissingCellsCSV() throws IOException {
+        // Arrange
+        String csvData = "SITEID,STUDYID,DVSPONSDES\n" +
+                "123,1,Value1\n" +
+                "456,,Value2\n" +
+                "789,3,Value3\n" +
+                "987,4,Value4\n" +
+                ",5,Value5\n";
+        MockMultipartFile csvFile = new MockMultipartFile("dataEntry.csv", csvData.getBytes());
+        
+        ResponseEntity<UploadResponse> response = uploadService.processDataEntryCSV(csvFile);
+
+        assertEquals("Missing cells:\n"
+        		+ "Row 2, Column STUDYID\n"
+        		+ "Row 5, Column SITEID", response.getBody().getMessage());
+    }
+    
+    @Test
+    public void testMissingCellsExcel() throws IOException {
+    	
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("DataEntry");
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("SITEID");
+        headerRow.createCell(1).setCellValue("STUDYID");
+        headerRow.createCell(2).setCellValue("DVSPONSDES");
+
+        Row dataRow1 = sheet.createRow(1);
+        dataRow1.createCell(0).setCellValue("123");
+        dataRow1.createCell(1).setCellValue("");
+        dataRow1.createCell(2).setCellValue("Value1");
+
+        Row dataRow2 = sheet.createRow(2);
+        dataRow2.createCell(0).setCellValue("456");
+        dataRow2.createCell(1).setCellValue("2");
+        dataRow2.createCell(2).setCellValue("Value2");
+
+        Row dataRow3 = sheet.createRow(3);
+        dataRow3.createCell(0).setCellValue("789");
+        dataRow3.createCell(1).setCellValue("3");
+        dataRow3.createCell(2).setCellValue("Value3");
+
+        Row dataRow4 = sheet.createRow(4);
+        dataRow4.createCell(0).setCellValue("987");
+        dataRow4.createCell(1).setCellValue("4");
+        dataRow4.createCell(2).setCellValue("Value4");
+
+        Row dataRow5 = sheet.createRow(5);
+        dataRow5.createCell(0).setCellValue("");
+        dataRow5.createCell(1).setCellValue("5");
+        dataRow5.createCell(2).setCellValue("Value5");
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        workbook.write(outputStream);
+        InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+
+        MockMultipartFile excelFile = new MockMultipartFile("dataEntry.xlsx", inputStream);
+
+        ResponseEntity<UploadResponse> response = uploadService.processDataEntryExcel(excelFile);
+
+        assertEquals("Missing cells:\n"
+        		+ "Row 2, Column STUDYID\n"
+        		+ "Row 6, Column SITEID", response.getBody().getMessage());
     }
 
 }

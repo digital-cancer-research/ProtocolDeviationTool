@@ -53,7 +53,7 @@ public class UploadController {
             return uploadService.checkFileFormat(file);
 //            return ResponseEntity.ok(new UploadResponse("Data has been loaded"));
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new UploadResponse("Data has not been loaded"));
         }
     }

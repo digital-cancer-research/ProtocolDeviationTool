@@ -75,19 +75,17 @@ public class UploadService {
     
     public ResponseEntity<UploadResponse> checkFileFormat(MultipartFile file) throws IOException {
     String fileExtension = getFileExtension(file.getOriginalFilename());
-    
+   
 	    try {
 	        if (fileExtension.equalsIgnoreCase("csv")) {
 	        	return processDataEntryCSV(file);
-//	            return ResponseEntity.ok("CSV file uploaded.");
 	        } else if (fileExtension.equalsIgnoreCase("xlsx")) {
 	        	return processDataEntryExcel(file);
-//	            return ResponseEntity.ok("Excel file uploaded.");
 	        } else {
 	            return ResponseEntity.badRequest().body(new UploadResponse("Unsupported file format. Please upload a CSV or Excel file."));
 	        }
 	    } catch (IOException e) {
-	        e.printStackTrace();
+//	        e.printStackTrace();
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new UploadResponse("Failed to process the file."));
 	    }
     }
