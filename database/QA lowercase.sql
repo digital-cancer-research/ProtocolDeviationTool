@@ -108,7 +108,7 @@ INSERT INTO "user_account" ("username", "role_id", "is_site", "is_sponsor") VALU
   ('AdminWithAllRoles', 1, true, true),
   ('AdminWithSiteRole', 1, true, false),
   ('AdminWithSponsorRole', 1, false, true),
-  ('AdminWithNoSpecialRoles', 1, false, false);
+  ('AdminWithNoSpecialRoles', 1, false, false),
   ('UserWithAllRoles', 2, true, true),
   ('UserWithSiteRole', 2, true, false),
   ('UserWithSponsorRole', 2, false, true),
