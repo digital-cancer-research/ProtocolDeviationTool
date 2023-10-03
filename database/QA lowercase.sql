@@ -23,26 +23,26 @@ CREATE TABLE "user_team" (
 );
 
 CREATE TABLE "study" (
-  "study_id" SERIAL PRIMARY KEY,
+  "study_id" VARCHAR PRIMARY KEY,
   "study_name" VARCHAR NOT NULL
 );
 
 CREATE TABLE "team_study_access" (
   "team_study_access_id" SERIAL PRIMARY KEY,
   "team_id" INT,
-  "study_id" INT
+  "study_id" VARCHAR
 );
 
 CREATE TABLE "user_study_access" (
   "user_study_access_id" SERIAL PRIMARY KEY,
   "user_id" INT,
-  "study_id" INT
+  "study_id" VARCHAR
 );
 
 CREATE TABLE "data_entry" (
   "entry_id" SERIAL PRIMARY KEY,
-  "study_id" INT NOT NULL,
-  "site_id" INT NOT NULL,
+  "study_id" VARCHAR NOT NULL,
+  "site_id" VARCHAR NOT NULL,
   "dvspondes_id" INT,
   "usubjid" VARCHAR,
   "dventc" VARCHAR,
@@ -108,7 +108,7 @@ INSERT INTO "user_account" ("username", "role_id", "is_site", "is_sponsor") VALU
   ('AdminWithAllRoles', 1, true, true),
   ('AdminWithSiteRole', 1, true, false),
   ('AdminWithSponsorRole', 1, false, true),
-  ('AdminWithNoSpecialRoles', 1, false, false);
+  ('AdminWithNoSpecialRoles', 1, false, false),
   ('UserWithAllRoles', 2, true, true),
   ('UserWithSiteRole', 2, true, false),
   ('UserWithSponsorRole', 2, false, true),
