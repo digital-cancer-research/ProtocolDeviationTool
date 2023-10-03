@@ -48,7 +48,7 @@ public class UserStudyAccessTest {
 
     @Test
     public void testGetStudyId() {
-        int studyId = 102;
+    	String studyId = "102";
         userStudyAccess.setStudyId(studyId);
 
         assertEquals(studyId, userStudyAccess.getStudyId());
@@ -56,7 +56,7 @@ public class UserStudyAccessTest {
 
     @Test
     public void testSetStudyId() {
-        int studyId = 103;
+    	String studyId = "103";
         userStudyAccess.setStudyId(studyId);
 
         assertEquals(studyId, userStudyAccess.getStudyId());

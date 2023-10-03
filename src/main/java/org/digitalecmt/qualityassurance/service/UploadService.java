@@ -92,12 +92,9 @@ public class UploadService {
     
     public void parseAndAddData(String siteId, String studyId, String dvsponsdesValue, String dataEntryStudyName, List<DataEntry> dataEntrys) {
 
-        int siteIdInt = Integer.parseInt(siteId);
-        int studyIdInt = Integer.parseInt(studyId);
-
         // Save it to the "study" table
         Study study = new Study();
-        study.setStudyId(studyIdInt);
+        study.setStudyId(studyId);
         study.setStudyName(dataEntryStudyName);
         studyRepository.save(study);
 
@@ -108,8 +105,8 @@ public class UploadService {
 
         // Create a new DataEntry instance and set its properties
         DataEntry dataEntry = new DataEntry();
-        dataEntry.setSiteId(siteIdInt);
-        dataEntry.setStudyId(studyIdInt);
+        dataEntry.setSiteId(siteId);
+        dataEntry.setStudyId(studyId);
         dataEntry.setDvspondesId(dvspondes.getDvspondesId());
         
         // Add the DataEntry instance to the list

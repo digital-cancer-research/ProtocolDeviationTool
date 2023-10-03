@@ -19,7 +19,7 @@ public class TeamStudyAccess {
     private int teamId;
 
     @Column(name = "study_id")
-    private int studyId;
+    private String studyId;
 
     // Getters and Setters
 
@@ -39,11 +39,11 @@ public class TeamStudyAccess {
         this.teamId = teamId;
     }
 
-    public int getStudyId() {
+    public String getStudyId() {
         return studyId;
     }
 
-    public void setStudyId(int studyId) {
+    public void setStudyId(String studyId) {
         this.studyId = studyId;
     }
 }
