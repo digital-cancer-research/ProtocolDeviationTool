@@ -15,7 +15,7 @@ public class StudyTest {
 
     @Test
     public void testGetStudyId() {
-        int id = 123;
+    	String id = "123";
         study.setStudyId(id);
 
         assertEquals(id, study.getStudyId());
@@ -23,7 +23,7 @@ public class StudyTest {
 
     @Test
     public void testSetStudyId() {
-        int id = 456;
+    	String id = "456";
         study.setStudyId(id);
 
         assertEquals(id, study.getStudyId());

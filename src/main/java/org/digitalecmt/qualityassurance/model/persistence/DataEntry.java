@@ -17,10 +17,10 @@ public class DataEntry {
     private int entryId;
 
     @Column(name = "study_id", nullable = false)
-    private int studyId;
+    private String studyId;
 
     @Column(name = "site_id", nullable = false)
-    private int siteId;
+    private String siteId;
 
     @Column(name = "dvspondes_id", nullable = false)
     private int dvspondesId;
@@ -89,19 +89,19 @@ public class DataEntry {
         this.entryId = entryId;
     }
 
-    public int getStudyId() {
+    public String getStudyId() {
         return studyId;
     }
 
-    public void setStudyId(int studyId) {
+    public void setStudyId(String studyId) {
         this.studyId = studyId;
     }
 
-    public int getSiteId() {
+    public String getSiteId() {
         return siteId;
     }
 
-    public void setSiteId(int siteId) {
+    public void setSiteId(String siteId) {
         this.siteId = siteId;
     }
 

@@ -32,7 +32,7 @@ public class DataEntryTest {
 
     @Test
     public void testGetStudyId() {
-        int studyId = 789;
+        String studyId = "789";
         dataEntry.setStudyId(studyId);
 
         assertEquals(studyId, dataEntry.getStudyId());
@@ -40,7 +40,7 @@ public class DataEntryTest {
 
     @Test
     public void testSetStudyId() {
-        int studyId = 101;
+    	String studyId = "101";
         dataEntry.setStudyId(studyId);
 
         assertEquals(studyId, dataEntry.getStudyId());
@@ -48,7 +48,7 @@ public class DataEntryTest {
 
     @Test
     public void testGetSiteId() {
-        int siteId = 111;
+    	String siteId = "111";
         dataEntry.setSiteId(siteId);
 
         assertEquals(siteId, dataEntry.getSiteId());
@@ -56,7 +56,7 @@ public class DataEntryTest {
 
     @Test
     public void testSetSiteId() {
-        int siteId = 222;
+    	String siteId = "222";
         dataEntry.setSiteId(siteId);
 
         assertEquals(siteId, dataEntry.getSiteId());

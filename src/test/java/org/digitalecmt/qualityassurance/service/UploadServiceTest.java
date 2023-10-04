@@ -7,22 +7,10 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.ParseException;
-
-
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
-
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
-import org.digitalecmt.qualityassurance.model.persistence.Dvspondes;
-import org.digitalecmt.qualityassurance.model.persistence.Study;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.repository.DvspondesRepository;
 import org.digitalecmt.qualityassurance.repository.StudyRepository;
@@ -31,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.springframework.http.HttpStatus;
@@ -131,46 +118,46 @@ public class UploadServiceTest {
     @Test
     public void testProcessDataEntryExcel() throws IOException {
     	
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("DataEntry");
-        Row headerRow = sheet.createRow(0);
-        headerRow.createCell(0).setCellValue("SITEID");
-        headerRow.createCell(1).setCellValue("STUDYID");
-        headerRow.createCell(2).setCellValue("DVSPONSDES");
+        try (Workbook workbook = new XSSFWorkbook()) {
+			Sheet sheet = workbook.createSheet("DataEntry");
+			Row headerRow = sheet.createRow(0);
+			headerRow.createCell(0).setCellValue("SITEID");
+			headerRow.createCell(1).setCellValue("STUDYID");
+			headerRow.createCell(2).setCellValue("DVSPONSDES");
 
-        Row dataRow1 = sheet.createRow(1);
-        dataRow1.createCell(0).setCellValue("123");
-        dataRow1.createCell(1).setCellValue("1");
-        dataRow1.createCell(2).setCellValue("Value1");
+			Row dataRow1 = sheet.createRow(1);
+			dataRow1.createCell(0).setCellValue("123");
+			dataRow1.createCell(1).setCellValue("1");
+			dataRow1.createCell(2).setCellValue("Value1");
 
-        Row dataRow2 = sheet.createRow(2);
-        dataRow2.createCell(0).setCellValue("456");
-        dataRow2.createCell(1).setCellValue("2");
-        dataRow2.createCell(2).setCellValue("Value2");
+			Row dataRow2 = sheet.createRow(2);
+			dataRow2.createCell(0).setCellValue("456");
+			dataRow2.createCell(1).setCellValue("2");
+			dataRow2.createCell(2).setCellValue("Value2");
 
-        Row dataRow3 = sheet.createRow(3);
-        dataRow3.createCell(0).setCellValue("789");
-        dataRow3.createCell(1).setCellValue("3");
-        dataRow3.createCell(2).setCellValue("Value3");
+			Row dataRow3 = sheet.createRow(3);
+			dataRow3.createCell(0).setCellValue("789");
+			dataRow3.createCell(1).setCellValue("3");
+			dataRow3.createCell(2).setCellValue("Value3");
 
-        Row dataRow4 = sheet.createRow(4);
-        dataRow4.createCell(0).setCellValue("987");
-        dataRow4.createCell(1).setCellValue("4");
-        dataRow4.createCell(2).setCellValue("Value4");
+			Row dataRow4 = sheet.createRow(4);
+			dataRow4.createCell(0).setCellValue("987");
+			dataRow4.createCell(1).setCellValue("4");
+			dataRow4.createCell(2).setCellValue("Value4");
 
-        Row dataRow5 = sheet.createRow(5);
-        dataRow5.createCell(0).setCellValue("654");
-        dataRow5.createCell(1).setCellValue("5");
-        dataRow5.createCell(2).setCellValue("Value5");
+			Row dataRow5 = sheet.createRow(5);
+			dataRow5.createCell(0).setCellValue("654");
+			dataRow5.createCell(1).setCellValue("5");
+			dataRow5.createCell(2).setCellValue("Value5");
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        workbook.write(outputStream);
-        InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			workbook.write(outputStream);
+			InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
 
-        MockMultipartFile excelFile = new MockMultipartFile("dataEntry.xlsx", inputStream);
+			MockMultipartFile excelFile = new MockMultipartFile("dataEntry.xlsx", inputStream);
 
-        uploadService.processDataEntryExcel(excelFile);
-
+			uploadService.processDataEntryExcel(excelFile);
+		}
         verify(dataEntryRepository, times(1)).saveAll(anyList());
     }
     
@@ -195,49 +182,50 @@ public class UploadServiceTest {
     @Test
     public void testMissingCellsExcel() throws IOException {
     	
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("DataEntry");
-        Row headerRow = sheet.createRow(0);
-        headerRow.createCell(0).setCellValue("SITEID");
-        headerRow.createCell(1).setCellValue("STUDYID");
-        headerRow.createCell(2).setCellValue("DVSPONSDES");
+        try (Workbook workbook = new XSSFWorkbook()) {
+			Sheet sheet = workbook.createSheet("DataEntry");
+			Row headerRow = sheet.createRow(0);
+			headerRow.createCell(0).setCellValue("SITEID");
+			headerRow.createCell(1).setCellValue("STUDYID");
+			headerRow.createCell(2).setCellValue("DVSPONSDES");
 
-        Row dataRow1 = sheet.createRow(1);
-        dataRow1.createCell(0).setCellValue("123");
-        dataRow1.createCell(1).setCellValue("");
-        dataRow1.createCell(2).setCellValue("Value1");
+			Row dataRow1 = sheet.createRow(1);
+			dataRow1.createCell(0).setCellValue("123");
+			dataRow1.createCell(1).setCellValue("");
+			dataRow1.createCell(2).setCellValue("Value1");
 
-        Row dataRow2 = sheet.createRow(2);
-        dataRow2.createCell(0).setCellValue("456");
-        dataRow2.createCell(1).setCellValue("2");
-        dataRow2.createCell(2).setCellValue("Value2");
+			Row dataRow2 = sheet.createRow(2);
+			dataRow2.createCell(0).setCellValue("456");
+			dataRow2.createCell(1).setCellValue("2");
+			dataRow2.createCell(2).setCellValue("Value2");
 
-        Row dataRow3 = sheet.createRow(3);
-        dataRow3.createCell(0).setCellValue("789");
-        dataRow3.createCell(1).setCellValue("3");
-        dataRow3.createCell(2).setCellValue("Value3");
+			Row dataRow3 = sheet.createRow(3);
+			dataRow3.createCell(0).setCellValue("789");
+			dataRow3.createCell(1).setCellValue("3");
+			dataRow3.createCell(2).setCellValue("Value3");
 
-        Row dataRow4 = sheet.createRow(4);
-        dataRow4.createCell(0).setCellValue("987");
-        dataRow4.createCell(1).setCellValue("4");
-        dataRow4.createCell(2).setCellValue("Value4");
+			Row dataRow4 = sheet.createRow(4);
+			dataRow4.createCell(0).setCellValue("987");
+			dataRow4.createCell(1).setCellValue("4");
+			dataRow4.createCell(2).setCellValue("Value4");
 
-        Row dataRow5 = sheet.createRow(5);
-        dataRow5.createCell(0).setCellValue("");
-        dataRow5.createCell(1).setCellValue("5");
-        dataRow5.createCell(2).setCellValue("Value5");
+			Row dataRow5 = sheet.createRow(5);
+			dataRow5.createCell(0).setCellValue("");
+			dataRow5.createCell(1).setCellValue("5");
+			dataRow5.createCell(2).setCellValue("Value5");
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        workbook.write(outputStream);
-        InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			workbook.write(outputStream);
+			InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
 
-        MockMultipartFile excelFile = new MockMultipartFile("dataEntry.xlsx", inputStream);
+			MockMultipartFile excelFile = new MockMultipartFile("dataEntry.xlsx", inputStream);
 
-        ResponseEntity<UploadResponse> response = uploadService.processDataEntryExcel(excelFile);
+			ResponseEntity<UploadResponse> response = uploadService.processDataEntryExcel(excelFile);
 
-        assertEquals("Missing cells:\n"
-        		+ "Row 2, Column STUDYID\n"
-        		+ "Row 6, Column SITEID", response.getBody().getMessage());
+			assertEquals("Missing cells:\n"
+					+ "Row 2, Column STUDYID\n"
+					+ "Row 6, Column SITEID", response.getBody().getMessage());
+		}
     }
 
 }
