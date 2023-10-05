@@ -11,6 +11,13 @@ public class UserWithRoleDTO {
     // No-argument constructor
     public UserWithRoleDTO() {
     }
+    
+	// Constructor with parameters
+    public UserWithRoleDTO(int userId, String username, String roleName) {
+    	this.userId = userId;
+        this.username = username;
+        this.roleName = roleName;
+    }
 
     // Getters and setters
     public int getUserId() {

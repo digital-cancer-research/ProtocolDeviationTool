@@ -15,8 +15,8 @@ export class UserManagementService {
     return this.http.get<any[]>(`${this.baseUrl}/get-users-with-roles`);
   }
 
-  changeUserRole(userId: number, newRole: string): Observable<void> {
+  changeUserRole(userId: number, newRoleId: number): Observable<void> {
     // Make an HTTP POST request to change a user's role
-    return this.http.post<void>(`${this.baseUrl}/change-user-role/${userId}`, { newRole });
+    return this.http.post<void>(`${this.baseUrl}/change-user-role/${userId}`, { newRoleId });
   }
 }

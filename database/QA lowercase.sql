@@ -77,23 +77,23 @@ CREATE TABLE "pd_category" (
   "dvterm" VARCHAR NOT NULL
 );
 
-ALTER TABLE "user_account" ADD FOREIGN KEY ("role_id") REFERENCES "role" ("role_id");
+ALTER TABLE "user_account" ADD FOREIGN KEY ("role_id") REFERENCES "role" ("role_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "user_team" ADD FOREIGN KEY ("user_id") REFERENCES "user_account" ("user_id");
+ALTER TABLE "user_team" ADD FOREIGN KEY ("user_id") REFERENCES "user_account" ("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "user_team" ADD FOREIGN KEY ("team_id") REFERENCES "team" ("team_id");
+ALTER TABLE "user_team" ADD FOREIGN KEY ("team_id") REFERENCES "team" ("team_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "team_study_access" ADD FOREIGN KEY ("team_id") REFERENCES "team" ("team_id");
+ALTER TABLE "team_study_access" ADD FOREIGN KEY ("team_id") REFERENCES "team" ("team_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "team_study_access" ADD FOREIGN KEY ("study_id") REFERENCES "study" ("study_id");
+ALTER TABLE "team_study_access" ADD FOREIGN KEY ("study_id") REFERENCES "study" ("study_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "user_study_access" ADD FOREIGN KEY ("user_id") REFERENCES "user_account" ("user_id");
+ALTER TABLE "user_study_access" ADD FOREIGN KEY ("user_id") REFERENCES "user_account" ("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "user_study_access" ADD FOREIGN KEY ("study_id") REFERENCES "study" ("study_id");
+ALTER TABLE "user_study_access" ADD FOREIGN KEY ("study_id") REFERENCES "study" ("study_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "data_entry" ADD FOREIGN KEY ("dvspondes_id") REFERENCES "dvspondes" ("dvspondes_id");
+ALTER TABLE "data_entry" ADD FOREIGN KEY ("dvspondes_id") REFERENCES "dvspondes" ("dvspondes_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "data_entry" ADD FOREIGN KEY ("category_id") REFERENCES "pd_category" ("category_id");
+ALTER TABLE "data_entry" ADD FOREIGN KEY ("category_id") REFERENCES "pd_category" ("category_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 
 
