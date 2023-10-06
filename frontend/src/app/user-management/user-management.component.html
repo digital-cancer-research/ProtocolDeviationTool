@@ -25,3 +25,34 @@
     </tbody>
   </table>
 </div>
+
+
+<div class="add-user-form">
+  <h2>Add User</h2>
+  <form (ngSubmit)="onAddUserSubmit()">
+    <div class="form-group">
+      <label for="email">Email Address (Username):</label>
+      <input type="email" id="email" name="email" [(ngModel)]="newUser.username" required email #email="ngModel">
+      <div *ngIf="email.invalid && (email.dirty || email.touched)" class="error-message">
+        <div *ngIf="email.errors?.['required']">Username is required.</div>
+        <div *ngIf="email.errors?.['email']">Invalid email address.</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="role">Role:</label>
+      <select id="role" name="role" [(ngModel)]="newUser.roleId" required>
+        <option *ngFor="let role of roles" [ngValue]="role === 'Admin' ? 1 : 2">{{ role }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="isSite">Is Site:</label>
+      <input type="checkbox" id="isSite" name="isSite" [(ngModel)]="newUser.isSite">
+    </div>
+    <div class="form-group">
+      <label for="isSponsor">Is Sponsor:</label>
+      <input type="checkbox" id="isSponsor" name="isSponsor" [(ngModel)]="newUser.isSponsor">
+    </div>
+    <button type="submit">Add User</button>
+  </form>
+</div>
+

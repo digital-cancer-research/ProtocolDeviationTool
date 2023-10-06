@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { UserManagementService } from './user-management.service';
-
+import { UserAccount } from './user-account.model';
 
 @Component({
   selector: 'app-user-management',
   templateUrl: './user-management.component.html',
 })
 export class UserManagementComponent implements OnInit {
-  users: any[] = []; // Replace 'any[]' with your user data structure
-  roles: string[] = ['Admin', 'User']; // List of available roles
+  users: any[] = [];
+  roles: string[] = ['Admin', 'User'];
+  newUser: UserAccount = { username: '', roleId: 2, isSite: false, isSponsor: false };
   constructor(private userManagementService: UserManagementService) {}
 
   ngOnInit(): void {
@@ -24,10 +25,8 @@ export class UserManagementComponent implements OnInit {
   }
 
   changeUserRole(userId: number, newRole: string): void {
-	console.log('Change role for userId:', userId);
-	console.log('New role:', newRole);
 	  
-	  // Map the selected role to the corresponding role ID
+	  // Map the selected role to the corresponding role id
 	const newRoleId = newRole === 'Admin' ? 1 : 2;
 	console.log('New role id:', newRoleId);
   
@@ -38,6 +37,18 @@ export class UserManagementComponent implements OnInit {
       if (userToUpdate) {
         userToUpdate.roleId = newRoleId;
       }
+    });
+  }
+  
+  onAddUserSubmit(): void {
+  
+    // Call the service to add a new user
+    this.userManagementService.addUserWithRole(this.newUser).subscribe(() => {
+      // Refresh the user list after adding a new user
+      this.loadUsers();
+
+      // Clear the form
+      this.newUser = { username: '', roleId: 2, isSite: false, isSponsor: false };
     });
   }
 }

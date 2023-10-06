@@ -33,7 +33,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -144,8 +143,17 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    @PostMapping("/add-user-with-role")
+    public ResponseEntity<UserAccount> addUserWithRole(@RequestBody UserAccount newUser) {
+      try {
+        // Save the new user to the database
+        UserAccount newUserAccount = userRepository.save(newUser);
 
-
-
+        return new ResponseEntity<>(newUserAccount, HttpStatus.CREATED);
+      } catch (Exception e) {
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
 }
 
