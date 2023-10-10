@@ -164,6 +164,16 @@
 		<scope>test</scope>
 	</dependency>
 	<dependency>
+	    <groupId>org.codehaus.mojo</groupId>
+	    <artifactId>exec-maven-plugin</artifactId>
+	    <version>3.1.0</version>
+    </dependency>
+    <dependency>
+	    <groupId>com.github.eirslett</groupId>
+	    <artifactId>frontend-maven-plugin</artifactId>
+	    <version>1.14.0</version>
+    </dependency>
+	<dependency>
 		<!-- Spring Boot Starter: Test -->
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-test</artifactId>
@@ -189,11 +199,38 @@
         </resource>
     </resources>
     <plugins>
-		        <!-- Spring Boot Maven Plugin -->
+	<!-- Spring Boot Maven Plugin -->
         <plugin>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
             <version>${spring.boot.version}</version>
+        </plugin>
+              <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.1.0</version>
+      </plugin>
+      <!-- ... Other plugins ... -->
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+                <execution>
+                    <id>angular-build</id>
+                    <phase>generate-resources</phase>
+                    <goals>
+                        <goal>exec</goal>
+                    </goals>
+                    <configuration>
+                        <executable>ng</executable>
+                        <workingDirectory>${project.basedir}/frontend</workingDirectory>
+                        <arguments>
+                            <argument>build</argument>
+                        </arguments>
+                    </configuration>
+                </execution>
+            </executions>
         </plugin>
       <!-- Maven Compiler Plugin -->
         <plugin>
@@ -205,11 +242,7 @@
                 <target>17</target>
             </configuration>
         </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.1.2</version>
-      </plugin>
+
     </plugins>
   </build>
 </project>
