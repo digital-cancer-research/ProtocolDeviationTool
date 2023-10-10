@@ -11,6 +11,10 @@ export class UserManagementComponent implements OnInit {
   roles: string[] = ['Admin', 'User'];
   newUser: UserAccount = { username: '', roleId: 2, isSite: false, isSponsor: false };
   constructor(private userManagementService: UserManagementService) {}
+  roleMappings: { [key: number]: string } = {
+    1: 'Admin',
+    2: 'User',
+  };
 
   ngOnInit(): void {
     // Load users and their roles

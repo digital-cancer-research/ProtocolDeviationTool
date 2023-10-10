@@ -39,8 +39,8 @@ public interface UserAccountRepository
         extends JpaRepository<UserAccount, Integer> {
 	Optional<UserAccount> findByUsername(String username);
 	
-	@Query("SELECT new org.digitalecmt.qualityassurance.dto.UserWithRoleDTO(u.userId, u.username, r.roleName) " +
-	           "FROM UserAccount u " +
-	           "JOIN Role r ON u.roleId = r.roleId")
-	    List<UserWithRoleDTO> findUsersWithRoles();
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.UserWithRoleDTO(u.userId, u.username, u.roleId, r.roleName) " +
+		       "FROM UserAccount u " +
+		       "JOIN Role r ON u.roleId = r.roleId")
+		List<UserWithRoleDTO> findUsersWithRoles();
 }

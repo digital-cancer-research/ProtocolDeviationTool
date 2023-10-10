@@ -5,7 +5,8 @@
       <tr>
         <th>User ID</th>
         <th>Username</th>
-        <th>Role</th>
+        <th>Current Role</th>
+        <th>Change Role</th>
         <th>Action</th>
       </tr>
     </thead>
@@ -13,6 +14,7 @@
       <tr *ngFor="let user of users">
         <td>{{ user.userId }}</td>
         <td>{{ user.username }}</td>
+        <td>{{ user.roleId }}</td>
         <td>
           <select [(ngModel)]="user.role">
             <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
@@ -52,7 +54,7 @@
       <label for="isSponsor">Is Sponsor:</label>
       <input type="checkbox" id="isSponsor" name="isSponsor" [(ngModel)]="newUser.isSponsor">
     </div>
-    <button type="submit">Add User</button>
+    <button type="submit" [disabled]="email.invalid">Add User</button>
   </form>
 </div>
 

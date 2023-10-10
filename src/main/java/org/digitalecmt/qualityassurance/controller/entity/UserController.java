@@ -120,9 +120,6 @@ public class UserController {
     @GetMapping("/get-users-with-roles")
     public ResponseEntity<List<UserWithRoleDTO>> getUsersWithRoles() {
         List<UserWithRoleDTO> usersWithRoles = userRepository.findUsersWithRoles();
-        
-        System.out.println("Users with roles: " + usersWithRoles);
-        
         return new ResponseEntity<>(usersWithRoles, HttpStatus.OK);
     }
     

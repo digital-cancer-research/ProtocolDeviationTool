@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { UploadComponent } from './upload/upload.component';
 import { UserSelectionComponent } from './user/user-selection.component'
 import { UserManagementComponent } from './user-management/user-management.component'
+import { HomeComponent } from './home/home.component'
 
 import { UploadService } from './upload/upload.service';
 import { UserService } from './user/user.service';
@@ -23,6 +24,7 @@ import { CommonModule } from '@angular/common';
     UploadComponent,
     UserSelectionComponent,
     UserManagementComponent,
+    HomeComponent,
   ],
   imports: [
 	BrowserModule,

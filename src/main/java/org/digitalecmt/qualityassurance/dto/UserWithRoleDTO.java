@@ -13,9 +13,10 @@ public class UserWithRoleDTO {
     }
     
 	// Constructor with parameters
-    public UserWithRoleDTO(int userId, String username, String roleName) {
-    	this.userId = userId;
+    public UserWithRoleDTO(int userId, String username, int roleId, String roleName) {
+        this.userId = userId;
         this.username = username;
+        this.roleId = roleId;
         this.roleName = roleName;
     }
 
