@@ -32,6 +32,26 @@
 	<plugin.spring.boot.version>${spring.boot.version}</plugin.spring.boot.version>
   </properties>
   
+  <profiles>
+    <profile>
+        <id>postgres</id>
+        <activation>
+            <activeByDefault>true</activeByDefault>
+        </activation>
+        <properties>
+            <spring.profiles.active>postgres</spring.profiles.active>
+        </properties>
+    </profile>
+    <profile>
+        <id>sqlite</id>
+        <activation>
+            <activeByDefault>false</activeByDefault>
+        </activation>
+        <properties>
+            <spring.profiles.active>sqlite</spring.profiles.active>
+        </properties>
+    </profile>
+</profiles>
 
 <!-- *************** DEPENDENCIES ***************** -->
 
@@ -97,6 +117,23 @@
         <version>${postgresql.version}</version>
         <scope>runtime</scope>
     </dependency>
+    <dependency>
+	    <groupId>org.xerial</groupId>
+	    <artifactId>sqlite-jdbc</artifactId>
+	    <version>3.43.0.0</version>
+	    <scope>runtime</scope>
+	</dependency>
+	<dependency>
+	    <groupId>org.hibernate</groupId>
+	    <artifactId>hibernate-core</artifactId>
+	    <version>6.3.1.Final</version>
+	    <type>pom</type>
+    </dependency>
+    <dependency>
+	    <groupId>org.hibernate.orm</groupId>
+	    <artifactId>hibernate-community-dialects</artifactId>
+	    <version>6.3.1.Final</version>
+    </dependency>
 	<dependency>
 		<groupId>org.apache.commons</groupId>
 		<artifactId>commons-csv</artifactId>
@@ -142,6 +179,15 @@
 </dependencies>
 
   <build>
+	  <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+            <excludes>
+                <exclude>qualityassurance.db</exclude>
+            </excludes>
+            <filtering>true</filtering>
+        </resource>
+    </resources>
     <plugins>
 		        <!-- Spring Boot Maven Plugin -->
         <plugin>
