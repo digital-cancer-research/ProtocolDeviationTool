@@ -19,24 +19,45 @@ export class StudyListComponent implements OnInit {
   loadStudies(): void {
     this.studyListService.getStudies().subscribe((data: StudyList[]) => {
       this.studies = data;
+      // Sort the studies alphabetically by studyId
+      this.sortStudiesAlphabetically();
     });
+  }
+  
+  sortStudiesAlphabetically(): void {
+  this.studies.sort((a, b) => {
+    // Use localeCompare to perform alphabetical comparison
+    return a.studyId.localeCompare(b.studyId);
+  });
   }
 
   updateStudyName(studyId: string, newName: string): void {
+  // Check if the new name is empty or contains only whitespace
+  if (!newName || newName.trim() === '') {
+    console.error('Study name cannot be empty.');
+    return; // Do not proceed with the update
+  }
 
-  this.studyListService.updateStudyName(studyId, newName).subscribe(
+  // Trim whitespace from the new name
+  const trimmedName = newName.trim();
+
+  this.studyListService.updateStudyName(studyId, trimmedName).subscribe(
     () => {
-
       // Update the study name in the local list
       const studyToUpdate = this.studies.find((study) => study.studyId === studyId);
       if (studyToUpdate) {
-        studyToUpdate.studyName = newName;
+        studyToUpdate.studyName = trimmedName;
       }
+
+      // Sort the studies alphabetically after updating the study name
+      this.sortStudiesAlphabetically();
     },
     (error) => {
       console.error(`Error updating study ID ${studyId}:`, error);
     }
   );
 }
+
+
 
 }
