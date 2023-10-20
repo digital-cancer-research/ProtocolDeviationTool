@@ -77,6 +77,19 @@ CREATE TABLE "pd_category" (
   "dvterm" VARCHAR NOT NULL
 );
 
+CREATE TABLE "files" (
+  "file_id" SERIAL PRIMARY KEY,
+  "file_name" VARCHAR,
+  "username" VARCHAR,
+  "date_time_uploaded" TIMESTAMP
+);
+
+CREATE TABLE "file_data" (
+  "file_data_id" SERIAL PRIMARY KEY,
+  "file_id" INT,
+  "entry_id" INT
+);
+
 ALTER TABLE "user_account" ADD FOREIGN KEY ("role_id") REFERENCES "role" ("role_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE "user_team" ADD FOREIGN KEY ("user_id") REFERENCES "user_account" ("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -94,6 +107,10 @@ ALTER TABLE "user_study_access" ADD FOREIGN KEY ("study_id") REFERENCES "study" 
 ALTER TABLE "data_entry" ADD FOREIGN KEY ("dvspondes_id") REFERENCES "dvspondes" ("dvspondes_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE "data_entry" ADD FOREIGN KEY ("category_id") REFERENCES "pd_category" ("category_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "file_data" ADD FOREIGN KEY ("file_id") REFERENCES "files" ("file_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "file_data" ADD FOREIGN KEY ("entry_id") REFERENCES "data_entry" ("entry_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 
 

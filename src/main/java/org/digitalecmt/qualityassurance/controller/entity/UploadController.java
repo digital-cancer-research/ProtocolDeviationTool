@@ -48,9 +48,9 @@ public class UploadController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<UploadResponse> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<UploadResponse> uploadFile(@RequestParam("file") MultipartFile file, String username) {
         try {
-            return uploadService.checkFileFormat(file);
+            return uploadService.checkFileFormat(file, username);
 //            return ResponseEntity.ok(new UploadResponse("Data has been loaded"));
         } catch (Exception e) {
 //            e.printStackTrace();

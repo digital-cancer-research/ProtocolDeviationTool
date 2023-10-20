@@ -27,6 +27,7 @@ package org.digitalecmt.qualityassurance.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.multipart.MultipartFile;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -45,9 +48,13 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 //import org.digitalecmt.qualityassurance.controller.entity.UploadController.UploadResponse;
 import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
 import org.digitalecmt.qualityassurance.model.persistence.Dvspondes;
+import org.digitalecmt.qualityassurance.model.persistence.FileData;
 import org.digitalecmt.qualityassurance.model.persistence.Study;
+import org.digitalecmt.qualityassurance.model.persistence.Files;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.repository.DvspondesRepository;
+import org.digitalecmt.qualityassurance.repository.FileDataRepository;
+import org.digitalecmt.qualityassurance.repository.FilesRepository;
 import org.digitalecmt.qualityassurance.repository.StudyRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.commons.lang3.StringUtils;
@@ -64,6 +71,12 @@ public class UploadService {
     @Autowired
     private DvspondesRepository dvspondesRepository;
     
+    @Autowired
+    private FilesRepository filesRepository;
+    
+    @Autowired
+    private FileDataRepository fileDataRepository;
+    
     
     public String getFileExtension(String filename) {
         int dotIndex = filename.lastIndexOf('.');
@@ -73,29 +86,29 @@ public class UploadService {
         return filename.substring(dotIndex + 1);
     }
     
-    public ResponseEntity<UploadResponse> checkFileFormat(MultipartFile file) throws IOException {
+    public ResponseEntity<UploadResponse> checkFileFormat(MultipartFile file, String username) throws IOException {
     String fileExtension = getFileExtension(file.getOriginalFilename());
    
 	    try {
 	        if (fileExtension.equalsIgnoreCase("csv")) {
-	        	return processDataEntryCSV(file);
+	        	return processDataEntryCSV(file, username);
 	        } else if (fileExtension.equalsIgnoreCase("xlsx")) {
-	        	return processDataEntryExcel(file);
+	        	return processDataEntryExcel(file, username);
 	        } else {
 	            return ResponseEntity.badRequest().body(new UploadResponse("Unsupported file format. Please upload a CSV or Excel file."));
 	        }
 	    } catch (IOException e) {
-//	        e.printStackTrace();
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new UploadResponse("Failed to process the file."));
 	    }
     }
     
-    public void parseAndAddData(String siteId, String studyId, String dvsponsdesValue, String dataEntryStudyName, List<DataEntry> dataEntrys) {
-
-        // Save it to the "study" table
+    public void parseAndAddData(String siteId, String studyId, String dvsponsdesValue, List<DataEntry> dataEntrys, Files files) {
+    	
+    	
+    	// Save it to the "study" table
         Study study = new Study();
         study.setStudyId(studyId);
-        study.setStudyName(dataEntryStudyName);
+        study.setStudyName(studyId);
         studyRepository.save(study);
 
         // Save it to the "dvspondes" table
@@ -111,19 +124,30 @@ public class UploadService {
         
         // Add the DataEntry instance to the list
         dataEntrys.add(dataEntry);
-	
+        
+        dataEntryRepository.save(dataEntry);
+        
+        // Link the file with the data
+        FileData fileData = new FileData();
+        fileData.setFileId(files.getFileId());
+        fileData.setEntryId(dataEntry.getEntryId());
+        fileDataRepository.save(fileData);
     }
-    
-    public ResponseEntity<UploadResponse> processDataEntryCSV(MultipartFile file) throws IOException {
+
+    public ResponseEntity<UploadResponse> processDataEntryCSV(MultipartFile file, String username) throws IOException {
     	List<DataEntry> dataEntrys = new ArrayList<>();
     	
     	// Track missing fields
     	List<String> missingCells = new ArrayList<>();
         
-        // Dataset
-        String dataEntryStudyName = file.getOriginalFilename();
-        Study study = new Study();
-        study.setStudyName(dataEntryStudyName);
+        // Store the filename and date
+        String fileName = file.getOriginalFilename();
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        Files files = new Files();
+        files.setDateTimeUploaded(currentDateTime);
+        files.setFileName(fileName);
+        files.setUsername(username);
+        filesRepository.save(files);
         
         // Read the CSV file and parse its contents
         CSVParser csvParser = CSVParser.parse(file.getInputStream(), StandardCharsets.UTF_8, CSVFormat.DEFAULT.withHeader());
@@ -145,9 +169,9 @@ public class UploadService {
             }
         	
            if (missingCells.isEmpty()) {
-        	   parseAndAddData(siteId, studyId, dvsponsdesValue, dataEntryStudyName, dataEntrys);
+        	   parseAndAddData(siteId, studyId, dvsponsdesValue, dataEntrys, files);
            }
-        }
+        }        
         
         if (!missingCells.isEmpty()) {
             // Handle missing cells and return a response with an error message
@@ -156,18 +180,26 @@ public class UploadService {
             return ResponseEntity.badRequest().body(response);
         } else {
             // Save the dataEntries to the "dataEntries" table
-            dataEntryRepository.saveAll(dataEntrys);
+//            dataEntryRepository.saveAll(dataEntrys);
             return ResponseEntity.ok(new UploadResponse("CSV file uploaded."));
         }
     }
 
-    public ResponseEntity<UploadResponse> processDataEntryExcel(MultipartFile file) throws IOException {
+    public ResponseEntity<UploadResponse> processDataEntryExcel(MultipartFile file, String username) throws IOException {
         List<DataEntry> dataEntrys = new ArrayList<>();
+    	List<Study> studys = new ArrayList<>();
+    	List<Dvspondes> dvspondess = new ArrayList<>();
         
     	// Track missing fields
     	List<String> missingCells = new ArrayList<>();
-
-        String dataEntryStudyName = file.getOriginalFilename(); // Get the file name
+        
+     // Store the filename and date
+        String fileName = file.getOriginalFilename();
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        Files files = new Files();
+        files.setDateTimeUploaded(currentDateTime);
+        files.setFileName(fileName);
+        files.setUsername(username);
 
         Workbook workbook;
         try (InputStream inputStream = file.getInputStream()) {
@@ -201,7 +233,7 @@ public class UploadService {
             }
         	
            if (missingCells.isEmpty()) {
-        	   parseAndAddData(siteId, studyId, dvsponsdesValue, dataEntryStudyName, dataEntrys);
+        	   parseAndAddData(siteId, studyId, dvsponsdesValue, dataEntrys, files);
            }
         }
     
@@ -210,8 +242,11 @@ public class UploadService {
 	    	String errorMessage = "Missing cells:\n" + String.join("\n", missingCells);
 	        return ResponseEntity.badRequest().body(new UploadResponse(errorMessage));
 	    } else {
-        // Save the dataEntrys to the "dataEntrys" table
-        dataEntryRepository.saveAll(dataEntrys);
+	    	// Save the dataEntrys to the "dataEntrys" table
+	    	filesRepository.save(files);
+	    	studyRepository.saveAll(studys);
+        	dvspondesRepository.saveAll(dvspondess);
+            dataEntryRepository.saveAll(dataEntrys);
         return ResponseEntity.ok(new UploadResponse("Excel file uploaded."));
 	    }
         

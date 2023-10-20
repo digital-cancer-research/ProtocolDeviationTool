@@ -1,0 +1,23 @@
+<div class="file-list">
+  <h2>Uploaded Files</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>File Name</th>
+        <th>Username</th>
+        <th>Date Uploaded</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let file of files">
+        <td>{{ file.fileName }}</td>
+        <td>{{ file.username }}</td>
+        <td>{{ file.dateTimeUploaded | date: 'medium' }}</td>
+        <td>
+          <button (click)="deleteFile(file.fileId)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
