@@ -56,7 +56,7 @@ public class FileController {
         // Retrieve the list of uploaded files from the repository
         List<Files> uploadedFiles = filesRepository.findAll();
 
-        // Map the retrieved files to DTOs (Data Transfer Objects)
+        // Map the retrieved files to DTOs
         List<FileDTO> fileDTOs = uploadedFiles.stream()
             .map(file -> new FileDTO(file.getFileId(), file.getFileName(), file.getUsername(), file.getDateTimeUploaded()))
             .collect(Collectors.toList());
@@ -66,6 +66,7 @@ public class FileController {
 
     @DeleteMapping("/delete/{fileId}")
     public ResponseEntity<String> deleteFile(@PathVariable int fileId) {
+    	
         // Check if the file exists
         if (!filesRepository.existsById(fileId)) {
             return new ResponseEntity<>("File not found", HttpStatus.NOT_FOUND);

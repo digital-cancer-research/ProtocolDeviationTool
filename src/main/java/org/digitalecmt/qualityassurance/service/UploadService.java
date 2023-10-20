@@ -193,13 +193,14 @@ public class UploadService {
     	// Track missing fields
     	List<String> missingCells = new ArrayList<>();
         
-     // Store the filename and date
+    	// Store the filename and date
         String fileName = file.getOriginalFilename();
         LocalDateTime currentDateTime = LocalDateTime.now();
         Files files = new Files();
         files.setDateTimeUploaded(currentDateTime);
         files.setFileName(fileName);
         files.setUsername(username);
+        filesRepository.save(files);
 
         Workbook workbook;
         try (InputStream inputStream = file.getInputStream()) {
@@ -242,11 +243,6 @@ public class UploadService {
 	    	String errorMessage = "Missing cells:\n" + String.join("\n", missingCells);
 	        return ResponseEntity.badRequest().body(new UploadResponse(errorMessage));
 	    } else {
-	    	// Save the dataEntrys to the "dataEntrys" table
-	    	filesRepository.save(files);
-	    	studyRepository.saveAll(studys);
-        	dvspondesRepository.saveAll(dvspondess);
-            dataEntryRepository.saveAll(dataEntrys);
         return ResponseEntity.ok(new UploadResponse("Excel file uploaded."));
 	    }
         
