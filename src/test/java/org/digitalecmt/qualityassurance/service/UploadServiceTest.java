@@ -102,7 +102,7 @@ public class UploadServiceTest {
     
     @Test
     public void testProcessDataEntryCSV() throws IOException {
-        String csvData = "SITEID,STUDYID,DVSPONSDES\n" +
+        String csvData = "SITEID,STUDYID,DVSPONDES\n" +
                 "123,1,Value1\n" +
                 "456,2,Value2\n" +
                 "789,3,Value3\n" +
@@ -123,7 +123,7 @@ public class UploadServiceTest {
 			Row headerRow = sheet.createRow(0);
 			headerRow.createCell(0).setCellValue("SITEID");
 			headerRow.createCell(1).setCellValue("STUDYID");
-			headerRow.createCell(2).setCellValue("DVSPONSDES");
+			headerRow.createCell(2).setCellValue("DVSPONDES");
 
 			Row dataRow1 = sheet.createRow(1);
 			dataRow1.createCell(0).setCellValue("123");
@@ -164,7 +164,7 @@ public class UploadServiceTest {
     @Test
     public void testMissingCellsCSV() throws IOException {
         // Arrange
-        String csvData = "SITEID,STUDYID,DVSPONSDES\n" +
+        String csvData = "SITEID,STUDYID,DVSPONDES\n" +
                 "123,1,Value1\n" +
                 "456,,Value2\n" +
                 "789,3,Value3\n" +
@@ -187,7 +187,7 @@ public class UploadServiceTest {
 			Row headerRow = sheet.createRow(0);
 			headerRow.createCell(0).setCellValue("SITEID");
 			headerRow.createCell(1).setCellValue("STUDYID");
-			headerRow.createCell(2).setCellValue("DVSPONSDES");
+			headerRow.createCell(2).setCellValue("DVSPONDES");
 
 			Row dataRow1 = sheet.createRow(1);
 			dataRow1.createCell(0).setCellValue("123");

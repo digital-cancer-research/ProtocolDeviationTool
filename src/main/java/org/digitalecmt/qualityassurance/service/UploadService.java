@@ -102,7 +102,7 @@ public class UploadService {
 	    }
     }
     
-    public void parseAndAddData(String siteId, String studyId, String dvsponsdesValue, List<DataEntry> dataEntrys, Files files) {
+    public void parseAndAddData(String siteId, String studyId, String dvspondesValue, List<DataEntry> dataEntrys, Files files) {
     	
     	
     	// Check if the study has a name, if not, set the name to studyId
@@ -117,7 +117,7 @@ public class UploadService {
 
         // Save it to the "dvspondes" table
         Dvspondes dvspondes = new Dvspondes();
-        dvspondes.setDvspondesValue(dvsponsdesValue);
+        dvspondes.setDvspondesValue(dvspondesValue);
         dvspondesRepository.save(dvspondes);
 
         // Create a new DataEntry instance and set its properties
@@ -160,7 +160,7 @@ public class UploadService {
             // Extract the data from each row of the CSV file
         	String siteId = record.get("SITEID");
         	String studyId = record.get("STUDYID");
-        	String dvsponsdesValue = record.get("DVSPONSDES");
+        	String dvspondesValue = record.get("DVSPONDES");
         	
         	if (StringUtils.isBlank(siteId)) {
                 missingCells.add("Row " + record.getRecordNumber() + ", Column SITEID");
@@ -168,12 +168,12 @@ public class UploadService {
             if (StringUtils.isBlank(studyId)) {
                 missingCells.add("Row " + record.getRecordNumber() + ", Column STUDYID");
             }
-            if (StringUtils.isBlank(dvsponsdesValue)) {
-                missingCells.add("Row " + record.getRecordNumber() + ", Column DVSPONSDES");
+            if (StringUtils.isBlank(dvspondesValue)) {
+                missingCells.add("Row " + record.getRecordNumber() + ", Column DVSPONDES");
             }
         	
            if (missingCells.isEmpty()) {
-        	   parseAndAddData(siteId, studyId, dvsponsdesValue, dataEntrys, files);
+        	   parseAndAddData(siteId, studyId, dvspondesValue, dataEntrys, files);
            }
         }        
         
@@ -225,7 +225,7 @@ public class UploadService {
             
         	String siteId = dataFormatter.formatCellValue(row.getCell(0));
         	String studyId = dataFormatter.formatCellValue(row.getCell(1));
-        	String dvsponsdesValue = dataFormatter.formatCellValue(row.getCell(2));
+        	String dvspondesValue = dataFormatter.formatCellValue(row.getCell(2));
 
         	if (StringUtils.isBlank(siteId)) {
                 missingCells.add("Row " + (row.getRowNum() + 1) + ", Column SITEID");
@@ -233,12 +233,12 @@ public class UploadService {
             if (StringUtils.isBlank(studyId)) {
                 missingCells.add("Row " + (row.getRowNum() + 1) + ", Column STUDYID");
             }
-            if (StringUtils.isBlank(dvsponsdesValue)) {
-                missingCells.add("Row " + (row.getRowNum() + 1) + ", Column DVSPONSDES");
+            if (StringUtils.isBlank(dvspondesValue)) {
+                missingCells.add("Row " + (row.getRowNum() + 1) + ", Column DVSPONDES");
             }
         	
            if (missingCells.isEmpty()) {
-        	   parseAndAddData(siteId, studyId, dvsponsdesValue, dataEntrys, files);
+        	   parseAndAddData(siteId, studyId, dvspondesValue, dataEntrys, files);
            }
         }
     
