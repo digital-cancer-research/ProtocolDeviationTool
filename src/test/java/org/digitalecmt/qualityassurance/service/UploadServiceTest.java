@@ -69,14 +69,14 @@ public class UploadServiceTest {
     
     @Test
     public void testCheckFileFormat_CSV() throws IOException {
-    	uploadService.checkFileFormat(csvFile);
-        verify(uploadService).processDataEntryCSV(csvFile);
+    	uploadService.checkFileFormat(csvFile, null);
+        verify(uploadService).processDataEntryCSV(csvFile, null);
     }
     
     @Test
     public void testCheckFileFormat_Excel() throws IOException {
-        uploadService.checkFileFormat(excelFile);
-        verify(uploadService).processDataEntryExcel(excelFile);
+        uploadService.checkFileFormat(excelFile, null);
+        verify(uploadService).processDataEntryExcel(excelFile, null);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class UploadServiceTest {
         MultipartFile unsupportedFile = mock(MultipartFile.class);
         when(unsupportedFile.getOriginalFilename()).thenReturn("sample.txt");
 
-        ResponseEntity<UploadResponse> response = uploadService.checkFileFormat(unsupportedFile);
+        ResponseEntity<UploadResponse> response = uploadService.checkFileFormat(unsupportedFile, null);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Unsupported file format. Please upload a CSV or Excel file.", response.getBody().getMessage());
     }
@@ -95,7 +95,7 @@ public class UploadServiceTest {
         when(fileWithError.getOriginalFilename()).thenReturn("sample.csv");
         when(fileWithError.getInputStream()).thenThrow(new IOException());
 
-        ResponseEntity<UploadResponse> response = uploadService.checkFileFormat(fileWithError);
+        ResponseEntity<UploadResponse> response = uploadService.checkFileFormat(fileWithError, null);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals("Failed to process the file.", response.getBody().getMessage());
     }
@@ -110,7 +110,7 @@ public class UploadServiceTest {
                 "654,5,Value5\n";
         MockMultipartFile csvFile = new MockMultipartFile("dataEntry.csv", csvData.getBytes());
 
-        uploadService.processDataEntryCSV(csvFile);
+        uploadService.processDataEntryCSV(csvFile, csvData);
 
         verify(dataEntryRepository, times(1)).saveAll(anyList());
     }
@@ -156,7 +156,7 @@ public class UploadServiceTest {
 
 			MockMultipartFile excelFile = new MockMultipartFile("dataEntry.xlsx", inputStream);
 
-			uploadService.processDataEntryExcel(excelFile);
+			uploadService.processDataEntryExcel(excelFile, null);
 		}
         verify(dataEntryRepository, times(1)).saveAll(anyList());
     }
@@ -172,7 +172,7 @@ public class UploadServiceTest {
                 ",5,Value5\n";
         MockMultipartFile csvFile = new MockMultipartFile("dataEntry.csv", csvData.getBytes());
         
-        ResponseEntity<UploadResponse> response = uploadService.processDataEntryCSV(csvFile);
+        ResponseEntity<UploadResponse> response = uploadService.processDataEntryCSV(csvFile, null);
 
         assertEquals("Missing cells:\n"
         		+ "Row 2, Column STUDYID\n"
@@ -220,7 +220,7 @@ public class UploadServiceTest {
 
 			MockMultipartFile excelFile = new MockMultipartFile("dataEntry.xlsx", inputStream);
 
-			ResponseEntity<UploadResponse> response = uploadService.processDataEntryExcel(excelFile);
+			ResponseEntity<UploadResponse> response = uploadService.processDataEntryExcel(excelFile, null);
 
 			assertEquals("Missing cells:\n"
 					+ "Row 2, Column STUDYID\n"

@@ -37,7 +37,7 @@ public class UploadControllerTest {
                 .andExpect(status().isOk());
 //                .andExpect(content().string("Data has been loaded"));
 
-        verify(uploadService, times(1)).checkFileFormat(file);
+        verify(uploadService, times(1)).checkFileFormat(file, null);
     }
 
     @Test 
@@ -45,12 +45,12 @@ public class UploadControllerTest {
         InputStream inputStream = getClass().getResourceAsStream("/test.csv");
         MockMultipartFile file = new MockMultipartFile("file", "test.csv", MediaType.TEXT_PLAIN_VALUE, inputStream);
 
-        when(uploadService.checkFileFormat(file)).thenThrow(new IOException());
+        when(uploadService.checkFileFormat(file, null)).thenThrow(new IOException());
 
         mockMvc.perform(multipart("/api/upload").file(file))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("{\"message\":\"Data has not been loaded\",\"missingCells\":null}"));
 
-        verify(uploadService, times(1)).checkFileFormat(file);
+        verify(uploadService, times(1)).checkFileFormat(file, null);
     }
 }
