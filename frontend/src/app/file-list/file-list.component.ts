@@ -10,14 +10,14 @@ import { FileListService } from './file-list.service';
 export class FileListComponent implements OnInit {
   files: any[] = [];
 
-  constructor(private fileService: FileListService) {}
+  constructor(private fileListService: FileListService) {}
 
   ngOnInit(): void {
     this.loadFiles();
   }
 
   loadFiles(): void {
-    this.fileService.getUploadedFiles().subscribe(
+    this.fileListService.getUploadedFiles().subscribe(
       (data: any[]) => {
         this.files = data;
       },
@@ -28,11 +28,9 @@ export class FileListComponent implements OnInit {
   }
 
   deleteFile(fileId: number): void {
-    this.fileService.deleteFile(fileId).subscribe(
+    this.fileListService.deleteFile(fileId).subscribe(
       () => {
         this.files = this.files.filter((file) => file.fileId !== fileId);
-        // Refresh the file list after deleting a file
-	      this.loadFiles();
       },
       (error) => {
         console.error('Error deleting file:', error);

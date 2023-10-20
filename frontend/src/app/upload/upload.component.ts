@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UploadResponse } from './upload-response.model';
 import { UserService } from '../user/user.service';
-
+import { FileListService } from '../file-list/file-list.service';
+import { StudyListService } from '../study-list/study-list.service';
+import { StudyList } from '../study-list/study-list.model';
 
 
 @Component({
@@ -11,8 +13,10 @@ import { UserService } from '../user/user.service';
 })
 export class UploadComponent {
   message: string | null = null;
+  files: any[] = [];
+  studies: StudyList[] = [];
 
-  constructor(private http: HttpClient, private userService: UserService) {}
+  constructor(private http: HttpClient, private userService: UserService, private fileListService: FileListService, private studyListService: StudyListService) {}
 
 onFileSelected(event: any) {
   const fileInput = event.target as HTMLInputElement;
@@ -20,6 +24,23 @@ onFileSelected(event: any) {
     console.log('Selected file:', fileInput.files[0].name);
   }
 }
+
+loadFiles(): void {
+    this.fileListService.getUploadedFiles().subscribe(
+      (data: any[]) => {
+        this.files = data;
+      },
+      (error) => {
+        console.error('Error loading files:', error);
+      }
+    );
+  }
+  
+  loadStudies(): void {
+    this.studyListService.getStudies().subscribe((data: StudyList[]) => {
+      this.studies = data;
+    });
+  }
 
 
 uploadFile() {
@@ -47,6 +68,10 @@ uploadFile() {
         (response) => {
           // Handle the message from the server
           this.message = response.message;
+          
+          // Refresh the uploaded file list and the study list
+          this.loadFiles();
+          this.loadStudies();
         },
         (error) => {
           // Handle upload error

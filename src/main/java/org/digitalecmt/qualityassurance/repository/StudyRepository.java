@@ -23,12 +23,11 @@
  */
 
 package org.digitalecmt.qualityassurance.repository;
-
 import org.digitalecmt.qualityassurance.model.persistence.Study;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StudyRepository
-        extends JpaRepository<Study, Integer> {
+        extends JpaRepository<Study, String> {
 }

@@ -24,7 +24,9 @@
 
 package org.digitalecmt.qualityassurance.controller.entity;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.digitalecmt.qualityassurance.dto.FileDTO;
@@ -65,11 +67,10 @@ public class FileController {
     }
 
     @DeleteMapping("/delete/{fileId}")
-    public ResponseEntity<String> deleteFile(@PathVariable int fileId) {
-    	
+    public ResponseEntity<Map<String, String>> deleteFile(@PathVariable int fileId) {
         // Check if the file exists
         if (!filesRepository.existsById(fileId)) {
-            return new ResponseEntity<>("File not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(Collections.singletonMap("message", "File not found"), HttpStatus.NOT_FOUND);
         }
 
         // Retrieve all associated data entries with the given fileId
@@ -83,8 +84,9 @@ public class FileController {
         // Delete the file and its associated data
         filesRepository.deleteById(fileId);
 
-        return new ResponseEntity<>("File and associated data deleted successfully", HttpStatus.OK);
+        return new ResponseEntity<>(Collections.singletonMap("message", "File and associated data deleted successfully"), HttpStatus.OK);
     }
+
 
 
 }
