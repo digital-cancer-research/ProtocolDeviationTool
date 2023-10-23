@@ -33,13 +33,14 @@
   <h2>Add User</h2>
   <form (ngSubmit)="onAddUserSubmit()">
     <div class="form-group">
-      <label for="email">Email Address (Username):</label>
-      <input type="email" id="email" name="email" [(ngModel)]="newUser.username" required email #email="ngModel">
-      <div *ngIf="email.invalid && (email.dirty || email.touched)" class="error-message">
-        <div *ngIf="email.errors?.['required']">Username is required.</div>
-        <div *ngIf="email.errors?.['email']">Invalid email address.</div>
-      </div>
-    </div>
+	  <label for="email">Email Address (Username):</label>
+	  <input type="text" id="email" name="email" [(ngModel)]="newUser.username" required
+	    pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$" #email="ngModel">
+	  <div *ngIf="email.invalid && (email.dirty || email.touched)" class="error-message">
+	    <div *ngIf="email.hasError('required')">Username is required.</div>
+	    <div *ngIf="email.hasError('pattern')">Invalid email address.</div>
+	  </div>
+	</div>
     <div class="form-group">
       <label for="role">Role:</label>
       <select id="role" name="role" [(ngModel)]="newUser.roleId" required>
@@ -57,4 +58,3 @@
     <button type="submit" [disabled]="email.invalid">Add User</button>
   </form>
 </div>
-
