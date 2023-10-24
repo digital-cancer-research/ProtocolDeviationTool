@@ -14,7 +14,7 @@
       <tr *ngFor="let user of users">
         <td>{{ user.userId }}</td>
         <td>{{ user.username }}</td>
-        <td>{{ user.roleId }}</td>
+        <td>{{ roleMappings[user.roleId] }}</td>
         <td>
           <select [(ngModel)]="user.role">
             <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
