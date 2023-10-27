@@ -76,6 +76,7 @@ public class UploadService {
     
     @Autowired
     private FileDataRepository fileDataRepository;
+
     
     
     public String getFileExtension(String filename) {
@@ -86,6 +87,7 @@ public class UploadService {
         return filename.substring(dotIndex + 1);
     }
     
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<UploadResponse> checkFileFormat(MultipartFile file, String username) throws IOException {
     String fileExtension = getFileExtension(file.getOriginalFilename());
    
@@ -137,118 +139,142 @@ public class UploadService {
         fileData.setEntryId(dataEntry.getEntryId());
         fileDataRepository.save(fileData);
     }
-
+    
+    
     public ResponseEntity<UploadResponse> processDataEntryCSV(MultipartFile file, String username) throws IOException {
     	List<DataEntry> dataEntrys = new ArrayList<>();
-    	
-    	// Track missing fields
-    	List<String> missingCells = new ArrayList<>();
-        
-        // Store the filename and date
-        String fileName = file.getOriginalFilename();
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        Files files = new Files();
-        files.setDateTimeUploaded(currentDateTime);
-        files.setFileName(fileName);
-        files.setUsername(username);
-        filesRepository.save(files);
-        
-        // Read the CSV file and parse its contents
-        CSVParser csvParser = CSVParser.parse(file.getInputStream(), StandardCharsets.UTF_8, CSVFormat.DEFAULT.withHeader());
-        for (CSVRecord record : csvParser) {
-        
-            // Extract the data from each row of the CSV file
-        	String siteId = record.get("SITEID");
-        	String studyId = record.get("STUDYID");
-        	String dvspondesValue = record.get("DVSPONDES");
-        	
-        	if (StringUtils.isBlank(siteId)) {
-                missingCells.add("Row " + record.getRecordNumber() + ", Column SITEID");
-            }
-            if (StringUtils.isBlank(studyId)) {
-                missingCells.add("Row " + record.getRecordNumber() + ", Column STUDYID");
-            }
-            if (StringUtils.isBlank(dvspondesValue)) {
-                missingCells.add("Row " + record.getRecordNumber() + ", Column DVSPONDES");
-            }
-        	
-           if (missingCells.isEmpty()) {
-        	   parseAndAddData(siteId, studyId, dvspondesValue, dataEntrys, files);
-           }
-        }        
-        
-        if (!missingCells.isEmpty()) {
-            // Handle missing cells and return a response with an error message
-            String errorMessage = "Missing cells:\n" + String.join("\n", missingCells);
-            UploadResponse response = new UploadResponse(errorMessage);
-            return ResponseEntity.badRequest().body(response);
-        } else {
-            // Save the dataEntries to the "dataEntries" table
-//            dataEntryRepository.saveAll(dataEntrys);
-            return ResponseEntity.ok(new UploadResponse("CSV file uploaded."));
+    	try {
+	    	// Track missing fields
+	    	List<String> missingCells = new ArrayList<>();
+	        
+	        // Store the filename and date
+	        String fileName = file.getOriginalFilename();
+	        LocalDateTime currentDateTime = LocalDateTime.now();
+	        Files files = new Files();
+	        files.setDateTimeUploaded(currentDateTime);
+	        files.setFileName(fileName);
+	        files.setUsername(username);
+	        filesRepository.save(files);
+	        
+	        // Read the CSV file and parse its contents
+	        CSVParser csvParser = CSVParser.parse(file.getInputStream(), StandardCharsets.UTF_8, CSVFormat.DEFAULT.withHeader());
+	        for (CSVRecord record : csvParser) {
+	        
+	            // Extract the data from each row of the CSV file
+	        	String siteId = record.get("SITEID");
+	        	String studyId = record.get("STUDYID");
+	        	String dvspondesValue = record.get("DVSPONDES");
+	        	
+	        	if (StringUtils.isBlank(siteId)) {
+	                missingCells.add("Row " + record.getRecordNumber() + ", Column SITEID");
+	            }
+	            if (StringUtils.isBlank(studyId)) {
+	                missingCells.add("Row " + record.getRecordNumber() + ", Column STUDYID");
+	            }
+	            if (StringUtils.isBlank(dvspondesValue)) {
+	                missingCells.add("Row " + record.getRecordNumber() + ", Column DVSPONDES");
+	            }
+	        	
+	           if (missingCells.isEmpty()) {
+	        	   parseAndAddData(siteId, studyId, dvspondesValue, dataEntrys, files);
+	           }
+	        }        
+	        
+	        if (!missingCells.isEmpty()) {
+	        	
+	        	throw new MissingCellsException("Missing cells:\n" + String.join("\n", missingCells));
+	        	
+	            // Handle missing cells and return a response with an error message
+//	            String errorMessage = "Missing cells:\n" + String.join("\n", missingCells);
+//	            UploadResponse response = new UploadResponse(errorMessage);
+//	            return ResponseEntity.badRequest().body(response);
+	        } else {
+	            // Save the dataEntries to the "dataEntries" table
+	//            dataEntryRepository.saveAll(dataEntrys);
+	            return ResponseEntity.ok(new UploadResponse("CSV file uploaded."));
+	        }
+    	} catch (Exception e) {
+            // If an exception occurs, perform a rollback
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return ResponseEntity.badRequest().body(new UploadResponse("Error processing the CSV file: " + e.getMessage()));
         }
     }
 
     public ResponseEntity<UploadResponse> processDataEntryExcel(MultipartFile file, String username) throws IOException {
         List<DataEntry> dataEntrys = new ArrayList<>();
-    	List<Study> studys = new ArrayList<>();
-    	List<Dvspondes> dvspondess = new ArrayList<>();
+//    	List<Study> studys = new ArrayList<>();
+//    	List<Dvspondes> dvspondess = new ArrayList<>();
         
-    	// Track missing fields
-    	List<String> missingCells = new ArrayList<>();
+        try {
         
-    	// Store the filename and date
-        String fileName = file.getOriginalFilename();
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        Files files = new Files();
-        files.setDateTimeUploaded(currentDateTime);
-        files.setFileName(fileName);
-        files.setUsername(username);
-        filesRepository.save(files);
-
-        Workbook workbook;
-        try (InputStream inputStream = file.getInputStream()) {
-            workbook = WorkbookFactory.create(inputStream);
+	    	// Track missing fields
+	    	List<String> missingCells = new ArrayList<>();
+	        
+	    	// Store the filename and date
+	        String fileName = file.getOriginalFilename();
+	        LocalDateTime currentDateTime = LocalDateTime.now();
+	        Files files = new Files();
+	        files.setDateTimeUploaded(currentDateTime);
+	        files.setFileName(fileName);
+	        files.setUsername(username);
+	        filesRepository.save(files);
+	
+	        Workbook workbook;
+	        try (InputStream inputStream = file.getInputStream()) {
+	            workbook = WorkbookFactory.create(inputStream);
+	        }
+	       
+	        Sheet sheet = workbook.getSheetAt(0);
+	        boolean isFirstRow = true; // Flag to check if it's the first row
+	        DataFormatter dataFormatter = new DataFormatter();
+	
+	        for (Row row : sheet) {
+	        	
+	        	// Skip the first row
+	        	if (isFirstRow) {
+	                isFirstRow = false;
+	                continue;
+	            }
+	            
+	        	String siteId = dataFormatter.formatCellValue(row.getCell(0));
+	        	String studyId = dataFormatter.formatCellValue(row.getCell(1));
+	        	String dvspondesValue = dataFormatter.formatCellValue(row.getCell(2));
+	        	
+	        	// Stop processing when the first empty row is encountered
+	            if (StringUtils.isBlank(siteId) && StringUtils.isBlank(studyId) && StringUtils.isBlank(dvspondesValue)) {
+	                break; 
+	            }
+	
+	        	if (StringUtils.isBlank(siteId)) {
+	                missingCells.add("Row " + (row.getRowNum() + 1) + ", Column SITEID");
+	            }
+	            if (StringUtils.isBlank(studyId)) {
+	                missingCells.add("Row " + (row.getRowNum() + 1) + ", Column STUDYID");
+	            }
+	            if (StringUtils.isBlank(dvspondesValue)) {
+	                missingCells.add("Row " + (row.getRowNum() + 1) + ", Column DVSPONDES");
+	            }
+	        	
+	           if (missingCells.isEmpty()) {
+	        	   parseAndAddData(siteId, studyId, dvspondesValue, dataEntrys, files);
+	           }
+	        }
+	    
+		    if (!missingCells.isEmpty()) {
+		    	
+		    	throw new MissingCellsException("Missing cells:\n" + String.join("\n", missingCells));
+		    	
+	//	        // Handle missing cells and return a response
+	//	    	String errorMessage = "Missing cells:\n" + String.join("\n", missingCells);
+	//	        return ResponseEntity.badRequest().body(new UploadResponse(errorMessage));
+		    } else {
+		    	return ResponseEntity.ok(new UploadResponse("Excel file uploaded."));
+		    }
+        } catch (Exception e) {
+            // If an exception occurs, perform a rollback
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return ResponseEntity.badRequest().body(new UploadResponse("Error processing the CSV file: " + e.getMessage()));
         }
-       
-        Sheet sheet = workbook.getSheetAt(0);
-        boolean isFirstRow = true; // Flag to check if it's the first row
-        DataFormatter dataFormatter = new DataFormatter();
-
-        for (Row row : sheet) {
-        	
-        	// Skip the first row
-        	if (isFirstRow) {
-                isFirstRow = false;
-                continue;
-            }
-            
-        	String siteId = dataFormatter.formatCellValue(row.getCell(0));
-        	String studyId = dataFormatter.formatCellValue(row.getCell(1));
-        	String dvspondesValue = dataFormatter.formatCellValue(row.getCell(2));
-
-        	if (StringUtils.isBlank(siteId)) {
-                missingCells.add("Row " + (row.getRowNum() + 1) + ", Column SITEID");
-            }
-            if (StringUtils.isBlank(studyId)) {
-                missingCells.add("Row " + (row.getRowNum() + 1) + ", Column STUDYID");
-            }
-            if (StringUtils.isBlank(dvspondesValue)) {
-                missingCells.add("Row " + (row.getRowNum() + 1) + ", Column DVSPONDES");
-            }
-        	
-           if (missingCells.isEmpty()) {
-        	   parseAndAddData(siteId, studyId, dvspondesValue, dataEntrys, files);
-           }
-        }
-    
-	    if (!missingCells.isEmpty()) {
-	        // Handle missing cells and return a response
-	    	String errorMessage = "Missing cells:\n" + String.join("\n", missingCells);
-	        return ResponseEntity.badRequest().body(new UploadResponse(errorMessage));
-	    } else {
-        return ResponseEntity.ok(new UploadResponse("Excel file uploaded."));
-	    }
         
     }
     
