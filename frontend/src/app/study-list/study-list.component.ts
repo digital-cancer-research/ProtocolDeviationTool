@@ -9,6 +9,7 @@ import { StudyList } from './study-list.model';
 })
 export class StudyListComponent implements OnInit {
   studies: StudyList[] = [];
+  uniqueStudies: StudyList[] = [];
 
   constructor(private studyListService: StudyListService) {}
 
@@ -21,6 +22,8 @@ export class StudyListComponent implements OnInit {
       this.studies = data;
       // Sort the studies alphabetically by studyId
       this.sortStudiesAlphabetically();
+      // Filter out duplicates
+      this.uniqueStudies = this.getUniqueStudies(this.studies);
     });
   }
   
@@ -30,6 +33,13 @@ export class StudyListComponent implements OnInit {
     return a.studyId.localeCompare(b.studyId);
   });
   }
+  
+  getUniqueStudies(studies: StudyList[]): StudyList[] {
+    return studies.filter((study, index, self) => 
+      index === self.findIndex((s) => s.studyId === study.studyId)
+    );
+  }
+  
 
   updateStudyName(studyId: string, newName: string): void {
   // Check if the new name is empty or contains only whitespace
@@ -51,13 +61,11 @@ export class StudyListComponent implements OnInit {
 
       // Sort the studies alphabetically after updating the study name
       this.sortStudiesAlphabetically();
+      this.uniqueStudies = this.getUniqueStudies(this.studies);
     },
     (error) => {
       console.error(`Error updating study ID ${studyId}:`, error);
     }
   );
 }
-
-
-
 }
