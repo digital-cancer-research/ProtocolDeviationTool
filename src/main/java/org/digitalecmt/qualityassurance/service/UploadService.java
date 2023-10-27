@@ -65,8 +65,8 @@ public class UploadService {
     @Autowired
     private DataEntryRepository dataEntryRepository;
     
-    @Autowired
-    private StudyRepository studyRepository;
+//    @Autowired
+//    private StudyRepository studyRepository;
     
     @Autowired
     private DvspondesRepository dvspondesRepository;
@@ -107,15 +107,15 @@ public class UploadService {
     public void parseAndAddData(String siteId, String studyId, String dvspondesValue, List<DataEntry> dataEntrys, Files files) {
     	
     	
-    	// Check if the study has a name, if not, set the name to studyId
-    	Study study = studyRepository.findById(studyId).orElse(null);
-    	if (study == null) {
-    	    study = new Study();
-    	    study.setStudyId(studyId);
-    	    study.setStudyName(studyId);
-    	}
-    	// Save the study to the "study" table
-    	studyRepository.save(study);
+//    	// Check if the study has a name, if not, set the name to studyId
+//    	Study study = studyRepository.findById(studyId).orElse(null);
+//    	if (study == null) {
+//    	    study = new Study();
+//    	    study.setStudyId(studyId);
+//    	    study.setStudyName(studyId);
+//    	}
+//    	// Save the study to the "study" table
+//    	studyRepository.save(study);
 
         // Save it to the "dvspondes" table
         Dvspondes dvspondes = new Dvspondes();

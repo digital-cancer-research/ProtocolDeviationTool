@@ -24,11 +24,16 @@
 
 package org.digitalecmt.qualityassurance.repository;
 
+import java.util.Optional;
+
 import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
+import org.digitalecmt.qualityassurance.model.persistence.Study;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DataEntryRepository
         extends JpaRepository<DataEntry, Integer> {
+
+	Optional<DataEntry> findByStudyId(String studyId);
 }

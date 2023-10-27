@@ -27,7 +27,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
 import org.digitalecmt.qualityassurance.model.persistence.Study;
+import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.repository.StudyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,11 +40,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/studies")
 public class StudyController {
     @Autowired
-    private StudyRepository studyRepository;
+    private DataEntryRepository dataEntryRepository;
 
     @GetMapping
-    public ResponseEntity<List<Study>> getAllStudies() {
-        List<Study> studies = studyRepository.findAll();
+    public ResponseEntity<List<DataEntry>> getAllStudies() {
+        List<DataEntry> studies = dataEntryRepository.findAll();
         return new ResponseEntity<>(studies, HttpStatus.OK);
     }
 
@@ -50,11 +52,11 @@ public class StudyController {
     public ResponseEntity<Map<String, String>> updateStudyName(@PathVariable String studyId, @RequestBody Map<String, String> request) {
         String newStudyName = request.get("studyName");
 
-        Study existingStudy = studyRepository.findById(studyId).orElse(null);
+        DataEntry existingStudy = dataEntryRepository.findByStudyId(studyId).orElse(null);
 
         if (existingStudy != null) {
-            existingStudy.setStudyName(newStudyName);
-            studyRepository.save(existingStudy);
+            existingStudy.setStudyId(newStudyName);
+            dataEntryRepository.save(existingStudy);
             return new ResponseEntity<>(Collections.singletonMap("message", "Study name updated successfully"), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(Collections.singletonMap("message", "Study not found"), HttpStatus.NOT_FOUND);

@@ -4,19 +4,11 @@
     <thead>
       <tr>
         <th>Study ID</th>
-        <th>Study Name</th>
-        <th>Action</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let study of studies">
         <td>{{ study.studyId }}</td>
-        <td>
-          <input type="text" [(ngModel)]="study.studyName">
-        </td>
-        <td>
-          <button (click)="updateStudyName(study.studyId, study.studyName)">Update Name</button>
-        </td>
       </tr>
     </tbody>
   </table>

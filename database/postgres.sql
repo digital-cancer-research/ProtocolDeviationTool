@@ -22,11 +22,6 @@ CREATE TABLE "user_team" (
   "team_id" INT
 );
 
-CREATE TABLE "study" (
-  "study_id" VARCHAR PRIMARY KEY,
-  "study_name" VARCHAR NOT NULL
-);
-
 CREATE TABLE "team_study_access" (
   "team_study_access_id" SERIAL PRIMARY KEY,
   "team_id" INT,
@@ -98,11 +93,7 @@ ALTER TABLE "user_team" ADD FOREIGN KEY ("team_id") REFERENCES "team" ("team_id"
 
 ALTER TABLE "team_study_access" ADD FOREIGN KEY ("team_id") REFERENCES "team" ("team_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "team_study_access" ADD FOREIGN KEY ("study_id") REFERENCES "study" ("study_id") ON DELETE CASCADE ON UPDATE CASCADE;
-
 ALTER TABLE "user_study_access" ADD FOREIGN KEY ("user_id") REFERENCES "user_account" ("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE "user_study_access" ADD FOREIGN KEY ("study_id") REFERENCES "study" ("study_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE "data_entry" ADD FOREIGN KEY ("dvspondes_id") REFERENCES "dvspondes" ("dvspondes_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
