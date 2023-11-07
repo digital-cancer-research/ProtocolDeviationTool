@@ -1,0 +1,29 @@
+<div class="category-table">
+  <h2>Category List</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>STUDYID</th>
+        <th>DVSPONDES</th>
+        <th>DVTERM</th>
+        <th>DVDECOD</th>
+        <th>DVCAT</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let category of categories; let i = index">
+        <td>{{ category.studyId }}</td>
+        <td>{{ category.dvspondesValue }}</td>
+        <td>
+          <select [(ngModel)]="selectedDvTerm[i]" (change)="onDvTermSelect(i)">
+            <option *ngFor="let dvTerm of dvTerms" [value]="dvTerm.dvterm" [selected]="dvTerm.dvterm === selectedDvTerm[i]">
+              {{ dvTerm.dvterm }}
+            </option>
+          </select>
+        </td>
+        <td>{{ category.dvdecod }}</td>
+        <td>{{ category.dvcat }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

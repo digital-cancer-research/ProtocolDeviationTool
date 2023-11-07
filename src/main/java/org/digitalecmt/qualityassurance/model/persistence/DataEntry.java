@@ -22,8 +22,8 @@ public class DataEntry {
     @Column(name = "site_id", nullable = false)
     private String siteId;
 
-    @Column(name = "dvspondes_id", nullable = false)
-    private int dvspondesId;
+    @Column(name = "dvspondes_id")
+    private Integer dvspondesId;
 
     @Column(name = "usubjid")
     private String usubjid;
@@ -78,6 +78,9 @@ public class DataEntry {
 
     @Column(name = "user_id")
     private int userId;
+    
+    @Column(name = "category_id")
+    private Integer categoryId;
 
     // Getters and Setters
 
@@ -105,11 +108,11 @@ public class DataEntry {
         this.siteId = siteId;
     }
 
-    public int getDvspondesId() {
+    public Integer getDvspondesId() {
         return dvspondesId;
     }
 
-    public void setDvspondesId(int dvspondesId) {
+    public void setDvspondesId(Integer dvspondesId) {
         this.dvspondesId = dvspondesId;
     }
 
@@ -255,6 +258,14 @@ public class DataEntry {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+    
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 }
 

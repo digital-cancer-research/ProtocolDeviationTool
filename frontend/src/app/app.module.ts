@@ -10,6 +10,7 @@ import { UserManagementComponent } from './user-management/user-management.compo
 import { HomeComponent } from './home/home.component'
 import { FileListComponent } from './file-list/file-list.component'
 import { StudyListComponent } from './study-list/study-list.component'
+import { CategoryTableComponent } from './category-table/category-table.component'
 
 import { UploadService } from './upload/upload.service';
 import { UserService } from './user/user.service';
@@ -31,6 +32,7 @@ import { CommonModule } from '@angular/common';
     HomeComponent,
     FileListComponent,
     StudyListComponent,
+    CategoryTableComponent,
   ],
   imports: [
 	BrowserModule,

@@ -24,29 +24,16 @@
 
 package org.digitalecmt.qualityassurance.repository;
 
-import java.util.List;
 import java.util.Optional;
 
-import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
-import org.digitalecmt.qualityassurance.model.persistence.Study;
+import org.digitalecmt.qualityassurance.model.persistence.Dvspondes;
+import org.digitalecmt.qualityassurance.model.persistence.PdCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DataEntryRepository
-        extends JpaRepository<DataEntry, Integer> {
-	
-	Optional<DataEntry> findByStudyId(String studyId);
-	
-	List<DataEntry> findAllByStudyId(String studyId);
+public interface PdCategoryRepository
+        extends JpaRepository<PdCategory, Integer> {
 
-	List<DataEntry> findBySiteId(String siteId);
-	
-	@Query("SELECT new org.digitalecmt.qualityassurance.dto.DataEntryDTO(d.entryId, d.studyId, ds.dvspondesValue, c.categoryId, c.dvterm, c.dvdecod, c.dvcat) " +
-	           "FROM DataEntry d " +
-	           "JOIN Dvspondes ds ON d.dvspondesId = ds.dvspondesId " +
-	           "JOIN PdCategory c ON d.categoryId = c.categoryId")
-	List<Object[]> getJoinedData();
-
+	Optional<PdCategory> findByDvterm(String dvterm);
 }

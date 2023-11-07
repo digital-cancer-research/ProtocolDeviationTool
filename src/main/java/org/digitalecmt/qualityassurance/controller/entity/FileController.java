@@ -86,7 +86,4 @@ public class FileController {
 
         return new ResponseEntity<>(Collections.singletonMap("message", "File and associated data deleted successfully"), HttpStatus.OK);
     }
-
-
-
 }
