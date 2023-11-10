@@ -1,19 +1,18 @@
 package org.digitalecmt.qualityassurance.dto;
 
-import java.time.LocalDateTime;
 
 public class FileDTO {
     private int fileId;
     private String fileName;
     private String username;
-    private LocalDateTime dateTimeUploaded;
+    private String dateTimeUploaded;
 
     // No-argument constructor
     public FileDTO() {
     }
 
     // Constructor with parameters
-    public FileDTO(int fileId, String fileName, String username, LocalDateTime dateTimeUploaded) {
+    public FileDTO(int fileId, String fileName, String username, String dateTimeUploaded) {
         this.fileId = fileId;
         this.fileName = fileName;
         this.username = username;
@@ -46,11 +45,11 @@ public class FileDTO {
         this.username = username;
     }
 
-    public LocalDateTime getDateTimeUploaded() {
+    public String getDateTimeUploaded() {
         return dateTimeUploaded;
     }
 
-    public void setDateTimeUploaded(LocalDateTime dateTimeUploaded) {
+    public void setDateTimeUploaded(String dateTimeUploaded) {
         this.dateTimeUploaded = dateTimeUploaded;
     }
 }

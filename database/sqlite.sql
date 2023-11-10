@@ -176,3 +176,35 @@ VALUES
   ('SITE LEVEL ERROR', 'ERRORS IN SITE FILE COMPLETION', 'Protocol deviation due to error in site file completion'),
   ('SITE LEVEL ERROR', 'ERRORS IN DOCUMENTATION FOR TRAINING', 'Protocol deviation due to other errors with documentation for training'),
   ('SITE LEVEL ERROR', 'OTHER SITE LEVEL DOCUMENTATION ERRORS', 'Protocol deviation due to other site level documentation errors');
+  
+CREATE TABLE "files" (
+  file_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  file_name TEXT,
+  username TEXT,
+  date_time_uploaded TEXT
+);
+  
+  
+CREATE TABLE file_data (
+  file_data_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  file_id INTEGER,
+  entry_id INTEGER,
+  FOREIGN KEY(file_id) REFERENCES files(file_id) ON DELETE CASCADE,
+  FOREIGN KEY(entry_id) REFERENCES data_entry(entry_id) ON DELETE CASCADE
+);
+
+CREATE TABLE files_seq (next_val INTEGER);
+insert INTO files_seq (next_val) VALUES (1);
+
+CREATE TABLE file_data_seq (next_val INTEGER);
+insert INTO file_data_seq (next_val) VALUES (1);
+
+CREATE TABLE data_entry_seq (next_val INTEGER);
+insert INTO data_entry_seq (next_val) VALUES (1);
+
+CREATE TABLE dvspondes_seq (next_val INTEGER);
+insert INTO dvspondes_seq (next_val) VALUES (1);
+
+CREATE TABLE user_account_seq (next_val INTEGER);
+insert INTO user_account_seq (next_val) VALUES (9);
+

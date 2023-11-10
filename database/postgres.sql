@@ -76,7 +76,7 @@ CREATE TABLE "files" (
   "file_id" SERIAL PRIMARY KEY,
   "file_name" VARCHAR,
   "username" VARCHAR,
-  "date_time_uploaded" TIMESTAMP
+  "date_time_uploaded" VARCHAR
 );
 
 CREATE TABLE "file_data" (
@@ -194,3 +194,9 @@ VALUES
   ('SITE LEVEL ERROR', 'ERRORS IN SITE FILE COMPLETION', 'Protocol deviation due to error in site file completion'),
   ('SITE LEVEL ERROR', 'ERRORS IN DOCUMENTATION FOR TRAINING', 'Protocol deviation due to other errors with documentation for training'),
   ('SITE LEVEL ERROR', 'OTHER SITE LEVEL DOCUMENTATION ERRORS', 'Protocol deviation due to other site level documentation errors');
+  
+CREATE Sequence files_seq increment by 1 start with 17;
+CREATE sequence file_data_seq increment by 1 start with 21015;
+CREATE sequence data_entry_seq increment by 1 start with 21015;
+CREATE sequence dvspondes_seq increment by 1 start with 21015;
+CREATE sequence user_account_seq increment by 1 start with 12;

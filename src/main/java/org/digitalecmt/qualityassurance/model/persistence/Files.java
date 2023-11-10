@@ -1,20 +1,21 @@
 package org.digitalecmt.qualityassurance.model.persistence;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "files")
 public class Files {
+	
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "file_id", columnDefinition = "serial")
+    @Column(name = "file_id")
+    @SequenceGenerator(initialValue=1, name="files_seq", sequenceName="files_seq", allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="files_seq")
     private int fileId;
 
     @Column(name = "file_name")
@@ -24,7 +25,7 @@ public class Files {
     private String username;
 
     @Column(name = "date_time_uploaded")
-    private LocalDateTime dateTimeUploaded;
+    private String dateTimeUploaded;
 
     // Getters and Setters
 
@@ -52,11 +53,12 @@ public class Files {
         this.username = username;
     }
 
-    public LocalDateTime getDateTimeUploaded() {
+    public String getDateTimeUploaded() {
         return dateTimeUploaded;
     }
 
-    public void setDateTimeUploaded(LocalDateTime currentDateTime) {
+    public void setDateTimeUploaded(String currentDateTime) {
         this.dateTimeUploaded = currentDateTime;
     }
+    
 }

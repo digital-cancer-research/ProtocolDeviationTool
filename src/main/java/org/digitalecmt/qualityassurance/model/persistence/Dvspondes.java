@@ -5,14 +5,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "dvspondes")
 public class Dvspondes {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "dvspondes_id", columnDefinition = "serial")
+    @Column(name = "dvspondes_id")
+    @SequenceGenerator(initialValue=1, name="dvspondes_seq", sequenceName="dvspondes_seq", allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="dvspondes_seq")
     private int dvspondesId;
 
     @Column(name = "dvspondes_value", nullable = false)

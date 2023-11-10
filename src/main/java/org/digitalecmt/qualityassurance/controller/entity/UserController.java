@@ -35,19 +35,22 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
+	private Logger log = Logger.getLogger(UserController.class.getName());
+	
     @Autowired
     private UserAccountRepository userRepository;
-
+    
     // Create a new user
     @PostMapping
     public ResponseEntity<UserAccount> createUser(@RequestBody UserAccount user) {
         try {
-            UserAccount newUser = userRepository.save(user);
+        	UserAccount newUser = userRepository.save(user);
             return new ResponseEntity<>(newUser, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

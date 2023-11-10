@@ -35,6 +35,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.transaction.Transactional;
+
 
 @RestController
 @RequestMapping("/api")
@@ -48,6 +50,7 @@ public class UploadController {
     }
 
     @PostMapping("/upload")
+    @Transactional
     public ResponseEntity<UploadResponse> uploadFile(@RequestParam("file") MultipartFile file, String username) {
         try {
             return uploadService.checkFileFormat(file, username);
