@@ -26,6 +26,7 @@ package org.digitalecmt.qualityassurance.controller.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryDTO;
 import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
@@ -54,6 +55,8 @@ public class VisualisationController {
     
     @Autowired
     private PdCategoryRepository pdCategoryRepository;
+    
+    private Logger log = Logger.getLogger(VisualisationController.class.getName());
 
     @GetMapping("/total-rows")
     public ResponseEntity<Long> getTotalRows() {
@@ -71,15 +74,15 @@ public class VisualisationController {
             List<EntryCountPerCategoryDTO> entryCounts = new ArrayList<>();
 
             // Fetch all categories
-            List<PdCategory> categories = pdCategoryRepository.findAll();
-
-            for (PdCategory category : categories) {
+            List<String> categories = pdCategoryRepository.findDistictDVCat();
+            for (String category : categories) {
+            	log.info("Category " + category);
                 // Fetch entry count for each category
-                Long entryCount = dataEntryRepository.countByCategoryId(category.getCategoryId());
-
+                Long entryCount = dataEntryRepository.countByCategory(category);
+                log.info("Count:" + entryCount);
                 // Create DTO and add to the list
                 EntryCountPerCategoryDTO entryCountDTO = new EntryCountPerCategoryDTO();
-                entryCountDTO.setDvcat(category.getDvcat());
+                entryCountDTO.setDvcat(category);
                 entryCountDTO.setEntryCount(entryCount);
 
                 entryCounts.add(entryCountDTO);

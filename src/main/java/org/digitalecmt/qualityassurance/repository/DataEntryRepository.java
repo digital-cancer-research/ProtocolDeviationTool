@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
-import org.digitalecmt.qualityassurance.model.persistence.Study;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -50,5 +49,8 @@ public interface DataEntryRepository
 	List<Object[]> getJoinedData();
 
 	Long countByCategoryId(Integer categoryId);
+	
+	@Query("select count(*) from DataEntry d left join PdCategory c on d.categoryId=c.categoryId where c.dvcat like ?1")
+	Long countByCategory(String category);
 
 }

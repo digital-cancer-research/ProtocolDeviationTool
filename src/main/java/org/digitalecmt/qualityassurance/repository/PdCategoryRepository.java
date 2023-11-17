@@ -24,11 +24,13 @@
 
 package org.digitalecmt.qualityassurance.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.digitalecmt.qualityassurance.model.persistence.Dvspondes;
 import org.digitalecmt.qualityassurance.model.persistence.PdCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -36,4 +38,7 @@ public interface PdCategoryRepository
         extends JpaRepository<PdCategory, Integer> {
 
 	Optional<PdCategory> findByDvterm(String dvterm);
+	
+	@Query("SELECT DISTINCT dvcat FROM PdCategory")
+	List<String> findDistictDVCat();
 }
