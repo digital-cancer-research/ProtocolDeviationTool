@@ -5,14 +5,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "file_data")
 public class FileData {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "file_data_id", columnDefinition = "serial")
+    @Column(name = "file_data_id")
+    @SequenceGenerator(initialValue=1, name="file_data_seq", sequenceName="file_data_seq", allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="file_data_seq")
     private int fileDataId;
 
     @Column(name = "file_id")

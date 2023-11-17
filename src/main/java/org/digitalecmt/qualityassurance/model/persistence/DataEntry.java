@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.util.Date;
 
@@ -12,8 +13,9 @@ import java.util.Date;
 @Table(name = "data_entry")
 public class DataEntry {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "entry_id", columnDefinition = "serial")
+    @Column(name = "entry_id")
+    @SequenceGenerator(initialValue=1, name="data_entry_seq", sequenceName="data_entry_seq", allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="data_entry_seq")
     private int entryId;
 
     @Column(name = "study_id", nullable = false)
