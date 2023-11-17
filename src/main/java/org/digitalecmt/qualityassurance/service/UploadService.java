@@ -38,7 +38,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -102,7 +101,7 @@ public class UploadService {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(new UploadResponse("Failed to process the file."));
 		} catch (MissingCellsException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new UploadResponse(e.getMessage()));
+			return ResponseEntity.ok(new UploadResponse("OK with error: " + e.getMessage()));
 		}
 	}
 
