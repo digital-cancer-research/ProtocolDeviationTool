@@ -33,6 +33,7 @@ import org.digitalecmt.qualityassurance.dto.FileDTO;
 import org.digitalecmt.qualityassurance.model.persistence.FileData;
 import org.digitalecmt.qualityassurance.model.persistence.Files;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
+import org.digitalecmt.qualityassurance.repository.DvspondesRepository;
 import org.digitalecmt.qualityassurance.repository.FileDataRepository;
 import org.digitalecmt.qualityassurance.repository.FilesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,9 @@ public class FileController {
     
     @Autowired
     private DataEntryRepository dataEntryRepository;
+    
+    @Autowired
+    private DvspondesRepository dvspondesRepository;
 
     @GetMapping("/list")
     public ResponseEntity<List<FileDTO>> getUploadedFiles() {
@@ -79,6 +83,7 @@ public class FileController {
         // Iterate through the list of file data entries and delete associated data entries
         for (FileData fileData : fileDataEntries) {
             dataEntryRepository.deleteById(fileData.getEntryId());
+            dvspondesRepository.deleteById(fileData.getEntryId());
         }
 
         // Delete the file and its associated data

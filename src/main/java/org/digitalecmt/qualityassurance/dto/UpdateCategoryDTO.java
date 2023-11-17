@@ -1,30 +1,34 @@
 package org.digitalecmt.qualityassurance.dto;
 
-public class DataEntryDTO {
+public class UpdateCategoryDTO {
 	private int entryId;
 	private String siteId;
     private String studyId;
     private String dvspondesValue;
     private Integer categoryId;
     private String dvterm;
+    private String oldDvterm;
     private String dvdecod;
     private String dvcat;
+    private String username;
     private Boolean isEdited;
 
  // No-argument constructor
-    public DataEntryDTO() {
+    public UpdateCategoryDTO() {
     }
 
     // Constructor with parameters
-    public DataEntryDTO(int entryId, String siteId, String studyId, String dvspondesValue, Integer categoryId, String dvterm, String dvdecod, String dvcat, Boolean isEdited) {
+    public UpdateCategoryDTO(int entryId, String siteId, String studyId, String dvspondesValue, Integer categoryId, String dvterm, String oldDvterm, String dvdecod, String dvcat, String username, Boolean isEdited) {
     	this.entryId = entryId;
     	this.siteId = siteId;
         this.studyId = studyId;
         this.dvspondesValue = dvspondesValue;
         this.categoryId = categoryId;
         this.dvterm = dvterm;
+        this.oldDvterm = oldDvterm;
         this.dvdecod = dvdecod;
         this.dvcat = dvcat;
+        this.username = username;
         this.isEdited = isEdited;
     }
 
@@ -77,6 +81,14 @@ public class DataEntryDTO {
     public void setDvterm(String dvterm) {
         this.dvterm = dvterm;
     }
+    
+    public String getOldDvterm() {
+        return oldDvterm;
+    }
+
+    public void setOldDvterm(String oldDvterm) {
+        this.oldDvterm = oldDvterm;
+    }
 
     public String getDvdecod() {
         return dvdecod;
@@ -92,6 +104,14 @@ public class DataEntryDTO {
 
     public void setDvcat(String dvcat) {
         this.dvcat = dvcat;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
     
     public Boolean getIsEdited() {

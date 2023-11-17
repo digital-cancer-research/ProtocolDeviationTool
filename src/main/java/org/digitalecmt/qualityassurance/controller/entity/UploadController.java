@@ -24,6 +24,7 @@
 
 package org.digitalecmt.qualityassurance.controller.entity;
 
+import org.digitalecmt.qualityassurance.service.MissingCellsException;
 import org.digitalecmt.qualityassurance.service.UploadService;
 import org.digitalecmt.qualityassurance.service.UploadService.UploadResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,8 @@ public class UploadController {
         try {
             return uploadService.checkFileFormat(file, username);
 //            return ResponseEntity.ok(new UploadResponse("Data has been loaded"));
+        } catch (MissingCellsException e) {
+        	return ResponseEntity.ok(new UploadResponse("OK with error: Missing cells:\n" + e.getMessage()));
         } catch (Exception e) {
 //            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new UploadResponse("Data has not been loaded"));

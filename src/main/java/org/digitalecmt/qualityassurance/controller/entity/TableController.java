@@ -24,14 +24,19 @@
 
 package org.digitalecmt.qualityassurance.controller.entity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.digitalecmt.qualityassurance.dto.CategoryEditAuditDTO;
 import org.digitalecmt.qualityassurance.dto.DataEntryDTO;
 import org.digitalecmt.qualityassurance.dto.PdCategoryDTO;
+import org.digitalecmt.qualityassurance.dto.UpdateCategoryDTO;
+import org.digitalecmt.qualityassurance.model.persistence.CategoryEditAudit;
 import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
 import org.digitalecmt.qualityassurance.model.persistence.Dvspondes;
 import org.digitalecmt.qualityassurance.model.persistence.PdCategory;
+import org.digitalecmt.qualityassurance.repository.CategoryEditAuditRepository;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.repository.DvspondesRepository;
 import org.digitalecmt.qualityassurance.repository.PdCategoryRepository;
@@ -54,6 +59,9 @@ public class TableController {
 
     @Autowired
     private DataEntryRepository dataEntryRepository;
+    
+    @Autowired
+    private CategoryEditAuditRepository categoryEditAuditRepository;
 
 	// API endpoint to retrieve all data or filter by site ID and study ID
     @GetMapping("/data")
@@ -105,7 +113,8 @@ public class TableController {
                 categoryId,
                 (pdCategory != null) ? pdCategory.getDvterm() : null,
                 (pdCategory != null) ? pdCategory.getDvdecod() : null,
-                (pdCategory != null) ? pdCategory.getDvcat() : null
+                (pdCategory != null) ? pdCategory.getDvcat() : null,
+                entry.getIsEdited()
             );
             dtos.add(dto);
         }
@@ -132,27 +141,60 @@ public class TableController {
     }
     
     @PostMapping("/update-category")
-    public ResponseEntity<String> updateCategory(@RequestBody DataEntryDTO request) {
+    public ResponseEntity<String> updateCategory(@RequestBody UpdateCategoryDTO request) {
         try {
             // Find the DataEntry record to update by its ID (entryId)
             DataEntry dataEntry = dataEntryRepository.findById(request.getEntryId())
                     .orElseThrow(() -> new EntityNotFoundException("DataEntry not found"));
-            
-         // Fetch the new category using the provided dvterm
+
+            // Fetch the new category using the provided dvterm
             PdCategory pdCategory = pdCategoryRepository.findByDvterm(request.getDvterm())
                     .orElseThrow(() -> new EntityNotFoundException("PdCategory not found for dvterm: " + request.getDvterm()));
 
             // Update the DataEntry record with the new category
             dataEntry.setCategoryId(pdCategory.getCategoryId());
+
+            // Set the isEdited flag to true
+            dataEntry.setIsEdited(true);
+
             dataEntryRepository.save(dataEntry);
+
+            // Log the edit information
+            String changeFromTo = "Changed " + request.getOldDvterm() + " to " + request.getDvterm();
+            String username = request.getUsername();
+            LocalDateTime dateTimeEdited = LocalDateTime.now();
+            int entryId = request.getEntryId();
+
+            CategoryEditAudit categoryEditAudit = new CategoryEditAudit();
+            categoryEditAudit.setEntryId(entryId);
+            categoryEditAudit.setChangeFromTo(changeFromTo);
+            categoryEditAudit.setUsername(username);
+            categoryEditAudit.setDateTimeEdited(dateTimeEdited);
+
+            categoryEditAuditRepository.save(categoryEditAudit);
 
             return new ResponseEntity<>("Category updated successfully", HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
+    
+    @GetMapping("/audit-entries/{entryId}")
+    public ResponseEntity<List<CategoryEditAuditDTO>> getAuditEntries(@PathVariable int entryId) {
+        try {
+            System.out.println("Fetching audit entries for entryId: " + entryId);
 
+            // Fetch all audit entries for the given entryId
+            List<CategoryEditAuditDTO> auditEntries = categoryEditAuditRepository.findAllByEntryId(entryId);
 
+            System.out.println("Fetched audit entries: " + auditEntries);
+            
+            return new ResponseEntity<>(auditEntries, HttpStatus.OK);
+        } catch (Exception ex) {
+            System.out.println("Error fetching audit entries: " + ex.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 
 

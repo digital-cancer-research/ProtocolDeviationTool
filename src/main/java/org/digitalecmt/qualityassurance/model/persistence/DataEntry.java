@@ -81,6 +81,9 @@ public class DataEntry {
     
     @Column(name = "category_id")
     private Integer categoryId;
+    
+    @Column(name = "is_edited")
+    private Boolean isEdited;
 
     // Getters and Setters
 
@@ -266,6 +269,14 @@ public class DataEntry {
 
     public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
+    }
+    
+    public Boolean getIsEdited() {
+        return isEdited;
+    }
+
+    public void setIsEdited(Boolean isEdited) {
+        this.isEdited = isEdited;
     }
 }
 

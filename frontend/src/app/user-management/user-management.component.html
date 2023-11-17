@@ -35,7 +35,7 @@
     <div class="form-group">
 	  <label for="email">Email Address (Username):</label>
 	  <input type="text" id="email" name="email" [(ngModel)]="newUser.username" required
-	    pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$" #email="ngModel">
+	    pattern="^(?!.*\.{2})[A-Za-z0-9._%+-]+(?:[.'][A-Za-z0-9._%+-]+)*@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$" #email="ngModel">
 	  <div *ngIf="email.invalid && (email.dirty || email.touched)" class="error-message">
 	    <div *ngIf="email.hasError('required')">Username is required.</div>
 	    <div *ngIf="email.hasError('pattern')">Invalid email address.</div>

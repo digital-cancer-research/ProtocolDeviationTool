@@ -25,30 +25,18 @@
 package org.digitalecmt.qualityassurance.repository;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
-import org.digitalecmt.qualityassurance.model.persistence.Study;
+import org.digitalecmt.qualityassurance.dto.CategoryEditAuditDTO;
+import org.digitalecmt.qualityassurance.model.persistence.CategoryEditAudit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DataEntryRepository
-        extends JpaRepository<DataEntry, Integer> {
-	
-	Optional<DataEntry> findByStudyId(String studyId);
-	
-	List<DataEntry> findAllByStudyId(String studyId);
+public interface CategoryEditAuditRepository
+        extends JpaRepository<CategoryEditAudit, Integer> {
 
-	List<DataEntry> findBySiteId(String siteId);
-	
-	@Query("SELECT new org.digitalecmt.qualityassurance.dto.DataEntryDTO(d.entryId, d.studyId, ds.dvspondesValue, c.categoryId, c.dvterm, c.dvdecod, c.dvcat) " +
-	           "FROM DataEntry d " +
-	           "JOIN Dvspondes ds ON d.dvspondesId = ds.dvspondesId " +
-	           "JOIN PdCategory c ON d.categoryId = c.categoryId")
-	List<Object[]> getJoinedData();
-
-	Long countByCategoryId(Integer categoryId);
-
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.CategoryEditAuditDTO(a.categoryEditAuditId, a.changeFromTo, a.username, a.dateTimeEdited) FROM CategoryEditAudit a WHERE a.entryId = :entryId")
+    List<CategoryEditAuditDTO> findAllByEntryId(@Param("entryId") int entryId);
 }

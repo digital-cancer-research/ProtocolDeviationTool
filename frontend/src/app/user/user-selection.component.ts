@@ -19,6 +19,8 @@ export class UserSelectionComponent implements OnInit {
     // Fetch the list of users when the component initializes
     this.userService.getUsers().subscribe((users) => {
       this.users = users;
+      console.log(users);
+      
     });
   }
   

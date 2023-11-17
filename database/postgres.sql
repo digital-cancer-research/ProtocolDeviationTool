@@ -57,7 +57,8 @@ CREATE TABLE "data_entry" (
   "dvs_cat" VARCHAR,
   "dvstdtc" TIMESTAMP,
   "user_id" INT,
-  "category_id" INT
+  "category_id" INT,
+  "is_edited" BOOL
 );
 
 CREATE TABLE "dvspondes" (
@@ -85,6 +86,14 @@ CREATE TABLE "file_data" (
   "entry_id" INT
 );
 
+CREATE TABLE "category_edit_audit" (
+  "category_edit_audit_id" SERIAL PRIMARY KEY,
+  "entry_id" INT,
+  "change_from_to" VARCHAR,
+  "username" VARCHAR,
+  "date_time_edited" TIMESTAMP
+);
+
 ALTER TABLE "user_account" ADD FOREIGN KEY ("role_id") REFERENCES "role" ("role_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE "user_team" ADD FOREIGN KEY ("user_id") REFERENCES "user_account" ("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -103,7 +112,9 @@ ALTER TABLE "file_data" ADD FOREIGN KEY ("file_id") REFERENCES "files" ("file_id
 
 ALTER TABLE "file_data" ADD FOREIGN KEY ("entry_id") REFERENCES "data_entry" ("entry_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
+ALTER TABLE "category_edit_audit" ADD FOREIGN KEY ("username") REFERENCES "user_account" ("username") ON DELETE CASCADE ON UPDATE CASCADE;
 
+ALTER TABLE "category_edit_audit" ADD FOREIGN KEY ("entry_id") REFERENCES "data_entry" ("entry_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 
 -- Insert roles

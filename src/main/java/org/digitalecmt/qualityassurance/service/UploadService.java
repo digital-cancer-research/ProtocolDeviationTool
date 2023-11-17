@@ -193,10 +193,12 @@ public class UploadService {
 	//            dataEntryRepository.saveAll(dataEntrys);
 	            return ResponseEntity.ok(new UploadResponse("CSV file uploaded."));
 	        }
-    	} catch (Exception e) {
-            // If an exception occurs, perform a rollback
+    	} catch (MissingCellsException e) {
+    		TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return ResponseEntity.ok(new UploadResponse("OK with error: " + e.getMessage()));
+        } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ResponseEntity.badRequest().body(new UploadResponse("Error processing the CSV file: " + e.getMessage()));
+            return ResponseEntity.badRequest().body(new UploadResponse("Error processing the CSV file"));
         }
     }
 
@@ -270,10 +272,12 @@ public class UploadService {
 		    } else {
 		    	return ResponseEntity.ok(new UploadResponse("Excel file uploaded."));
 		    }
+        } catch (MissingCellsException e) {
+        	TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return ResponseEntity.ok(new UploadResponse("OK with error: " + e.getMessage()));
         } catch (Exception e) {
-            // If an exception occurs, perform a rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ResponseEntity.badRequest().body(new UploadResponse("Error processing the CSV file: " + e.getMessage()));
+            return ResponseEntity.badRequest().body(new UploadResponse("Error processing the Excel file"));
         }
         
     }

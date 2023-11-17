@@ -14,6 +14,7 @@ export class FileListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadFiles();
+    console.log(this.files);
   }
 
   loadFiles(): void {
