@@ -72,6 +72,7 @@ CREATE TABLE data_entry (
   dvstdtc TIMESTAMP,
   user_id INTEGER,
   category_id INTEGER,
+  is_edited BOOL,
   FOREIGN KEY (dvspondes_id) REFERENCES dvspondes (dvspondes_id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (category_id) REFERENCES pd_category (category_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -87,6 +88,51 @@ CREATE TABLE pd_category (
   dvdecod TEXT NOT NULL,
   dvterm TEXT NOT NULL
 );
+
+CREATE TABLE "files" (
+  file_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  file_name TEXT,
+  username TEXT,
+  date_time_uploaded TEXT
+);
+  
+  
+CREATE TABLE file_data (
+  file_data_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  file_id INTEGER,
+  entry_id INTEGER,
+  FOREIGN KEY(file_id) REFERENCES files(file_id) ON DELETE CASCADE,
+  FOREIGN KEY(entry_id) REFERENCES data_entry(entry_id) ON DELETE CASCADE
+);
+
+CREATE TABLE category_edit_audit (
+  category_edit_audit_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  entry_id INTEGER,
+  change_from TEXT,
+  change_to TEXT,
+  username TEXT,
+  date_time_edited TEXT
+);
+
+CREATE TABLE files_seq (next_val INTEGER);
+INSERT INTO files_seq (next_val) VALUES (1);
+
+CREATE TABLE file_data_seq (next_val INTEGER);
+INSERT INTO file_data_seq (next_val) VALUES (1);
+
+CREATE TABLE data_entry_seq (next_val INTEGER);
+INSERT INTO data_entry_seq (next_val) VALUES (1);
+
+CREATE TABLE dvspondes_seq (next_val INTEGER);
+INSERT INTO dvspondes_seq (next_val) VALUES (1);
+
+CREATE TABLE user_account_seq (next_val INTEGER);
+INSERT INTO user_account_seq (next_val) VALUES (9);
+
+CREATE TABLE category_edit_audit_seq (next_val INTEGER);
+INSERT INTO category_edit_audit_seq (next_val) VALUES (1);
+
+
 
 -- Insert roles
 INSERT INTO role (role_name) VALUES
@@ -177,34 +223,3 @@ VALUES
   ('SITE LEVEL ERROR', 'ERRORS IN DOCUMENTATION FOR TRAINING', 'Protocol deviation due to other errors with documentation for training'),
   ('SITE LEVEL ERROR', 'OTHER SITE LEVEL DOCUMENTATION ERRORS', 'Protocol deviation due to other site level documentation errors');
   
-CREATE TABLE "files" (
-  file_id INTEGER PRIMARY KEY AUTOINCREMENT,
-  file_name TEXT,
-  username TEXT,
-  date_time_uploaded TEXT
-);
-  
-  
-CREATE TABLE file_data (
-  file_data_id INTEGER PRIMARY KEY AUTOINCREMENT,
-  file_id INTEGER,
-  entry_id INTEGER,
-  FOREIGN KEY(file_id) REFERENCES files(file_id) ON DELETE CASCADE,
-  FOREIGN KEY(entry_id) REFERENCES data_entry(entry_id) ON DELETE CASCADE
-);
-
-CREATE TABLE files_seq (next_val INTEGER);
-insert INTO files_seq (next_val) VALUES (1);
-
-CREATE TABLE file_data_seq (next_val INTEGER);
-insert INTO file_data_seq (next_val) VALUES (1);
-
-CREATE TABLE data_entry_seq (next_val INTEGER);
-insert INTO data_entry_seq (next_val) VALUES (1);
-
-CREATE TABLE dvspondes_seq (next_val INTEGER);
-insert INTO dvspondes_seq (next_val) VALUES (1);
-
-CREATE TABLE user_account_seq (next_val INTEGER);
-insert INTO user_account_seq (next_val) VALUES (9);
-

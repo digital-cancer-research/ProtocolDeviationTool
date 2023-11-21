@@ -45,17 +45,17 @@ CREATE TABLE "data_entry" (
   "dvsponsev" VARCHAR,
   "impor" INT,
   "at" VARCHAR,
-  "at_date" TIMESTAMP,
+  "at_date" VARCHAR,
   "domain" VARCHAR,
   "dvseq" INT,
   "dvrefid" INT,
-  "dvendtc" TIMESTAMP,
+  "dvendtc" VARCHAR,
   "dvcatid" INT,
   "dvdecodid" INT,
   "adv" VARCHAR,
   "nonadv" VARCHAR,
   "dvs_cat" VARCHAR,
-  "dvstdtc" TIMESTAMP,
+  "dvstdtc" VARCHAR,
   "user_id" INT,
   "category_id" INT,
   "is_edited" BOOL
@@ -89,10 +89,18 @@ CREATE TABLE "file_data" (
 CREATE TABLE "category_edit_audit" (
   "category_edit_audit_id" SERIAL PRIMARY KEY,
   "entry_id" INT,
-  "change_from_to" VARCHAR,
+  "change_from" VARCHAR,
+  "change_to" VARCHAR,
   "username" VARCHAR,
-  "date_time_edited" TIMESTAMP
+  "date_time_edited" VARCHAR
 );
+
+CREATE sequence files_seq increment by 1 start with 1;
+CREATE sequence file_data_seq increment by 1 start with 1;
+CREATE sequence data_entry_seq increment by 1 start with 1;
+CREATE sequence dvspondes_seq increment by 1 start with 1;
+CREATE sequence user_account_seq increment by 1 start with 9;
+CREATE sequence category_edit_audit_seq increment by 1 start with 1;
 
 ALTER TABLE "user_account" ADD FOREIGN KEY ("role_id") REFERENCES "role" ("role_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -205,9 +213,4 @@ VALUES
   ('SITE LEVEL ERROR', 'ERRORS IN SITE FILE COMPLETION', 'Protocol deviation due to error in site file completion'),
   ('SITE LEVEL ERROR', 'ERRORS IN DOCUMENTATION FOR TRAINING', 'Protocol deviation due to other errors with documentation for training'),
   ('SITE LEVEL ERROR', 'OTHER SITE LEVEL DOCUMENTATION ERRORS', 'Protocol deviation due to other site level documentation errors');
-  
-CREATE Sequence files_seq increment by 1 start with 17;
-CREATE sequence file_data_seq increment by 1 start with 21015;
-CREATE sequence data_entry_seq increment by 1 start with 21015;
-CREATE sequence dvspondes_seq increment by 1 start with 21015;
-CREATE sequence user_account_seq increment by 1 start with 12;
+ 
