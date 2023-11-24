@@ -8,7 +8,8 @@ import { CategoryEditAuditDTO } from './category-audit.model';
 
 @Component({
   selector: 'app-category-table',
-  templateUrl: './category-table.component.html'
+  templateUrl: './category-table.component.html',
+  styleUrls: ['./category-table.sass']
 })
 export class CategoryTableComponent implements OnInit {
   categories: UpdateCategoryDTO[] = [];
@@ -22,7 +23,6 @@ export class CategoryTableComponent implements OnInit {
   ngOnInit(): void {
     this.fetchData();
     this.fetchDvTermData();
-    console.log(this.categories);
   }
 
   fetchData(): void {

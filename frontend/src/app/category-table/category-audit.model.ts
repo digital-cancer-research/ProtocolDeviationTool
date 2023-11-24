@@ -1,6 +1,7 @@
 export interface CategoryEditAuditDTO {
   categoryEditAuditId: number;
-  changeFromTo: string;
+  changeFrom: string;
+  changeTo: string;
   username: string;
   dateTimeEdited: string;
 }

@@ -1,33 +1,37 @@
 package org.digitalecmt.qualityassurance.model.persistence;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "category_edit_audit")
 public class CategoryEditAudit {
+	
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "category_edit_audit_id", columnDefinition = "serial")
+    @Column(name = "category_edit_audit_id")
+    @SequenceGenerator(initialValue=1, name="category_edit_audit_seq", sequenceName="category_edit_audit_seq", allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="category_edit_audit_seq")
     private int categoryEditAuditId;
 
 	@Column(name = "entry_id")
     private int entryId;
 	
-    @Column(name = "change_from_to")
-    private String changeFromTo;
+    @Column(name = "change_from")
+    private String changeFrom;
+    
+    @Column(name = "change_to")
+    private String changeTo;
 
     @Column(name = "username")
     private String username;
 
     @Column(name = "date_time_edited")
-    private LocalDateTime dateTimeEdited;
+    private String dateTimeEdited;
 
     // Getters and Setters
 
@@ -47,12 +51,20 @@ public class CategoryEditAudit {
         this.entryId = entryId;
     }
 
-    public String getchangeFromTo() {
-        return changeFromTo;
+    public String getchangeFrom() {
+        return changeFrom;
     }
 
-    public void setChangeFromTo(String changeFromTo) {
-        this.changeFromTo = changeFromTo;
+    public void setChangeFrom(String changeFrom) {
+        this.changeFrom = changeFrom;
+    }
+    
+    public String getchangeTo() {
+        return changeTo;
+    }
+
+    public void setChangeTo(String changeTo) {
+        this.changeTo = changeTo;
     }
 
     public String getUsername() {
@@ -63,11 +75,11 @@ public class CategoryEditAudit {
         this.username = username;
     }
 
-    public LocalDateTime getDateTimeEdited() {
+    public String getDateTimeEdited() {
         return dateTimeEdited;
     }
 
-    public void setDateTimeEdited(LocalDateTime dateTimeEdited) {
+    public void setDateTimeEdited(String dateTimeEdited) {
         this.dateTimeEdited = dateTimeEdited;
     }
 }

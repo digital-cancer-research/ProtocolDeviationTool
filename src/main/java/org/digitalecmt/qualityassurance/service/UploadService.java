@@ -97,11 +97,11 @@ public class UploadService {
 				return ResponseEntity.badRequest()
 						.body(new UploadResponse("Unsupported file format. Please upload a CSV or Excel file."));
 			}
-		} catch (IOException e) {
+		} catch (MissingCellsException e) {
+			return ResponseEntity.ok(new UploadResponse("Failed to upload the file. \n Mandatory data fields are missing. \n" + e.getMessage()));
+		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(new UploadResponse("Failed to process the file."));
-		} catch (MissingCellsException e) {
-			return ResponseEntity.ok(new UploadResponse("OK with error: " + e.getMessage()));
 		}
 	}
 
@@ -184,7 +184,7 @@ public class UploadService {
 
 		if (!missingCells.isEmpty()) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-			throw new MissingCellsException("Missing cells:\n" + String.join("\n", missingCells));
+			throw new MissingCellsException("Missing fields : \n " + String.join("\n", missingCells));
 
 			// Handle missing cells and return a response with an error message
 //	            String errorMessage = "Missing cells:\n" + String.join("\n", missingCells);
@@ -254,7 +254,7 @@ public class UploadService {
 		}
 		if (!missingCells.isEmpty()) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-			throw new MissingCellsException("Missing cells:\n" + String.join("\n", missingCells));
+			throw new MissingCellsException("Missing fields: \n " + String.join("\n", missingCells));
 		} else {
 			return ResponseEntity.ok(new UploadResponse("Excel file uploaded."));
 		}

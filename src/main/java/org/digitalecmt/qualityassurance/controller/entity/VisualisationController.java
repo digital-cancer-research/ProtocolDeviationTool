@@ -76,10 +76,10 @@ public class VisualisationController {
             // Fetch all categories
             List<String> categories = pdCategoryRepository.findDistictDVCat();
             for (String category : categories) {
-            	log.info("Category " + category);
+//            	log.info("Category " + category);
                 // Fetch entry count for each category
                 Long entryCount = dataEntryRepository.countByCategory(category);
-                log.info("Count:" + entryCount);
+//                log.info("Count:" + entryCount);
                 // Create DTO and add to the list
                 EntryCountPerCategoryDTO entryCountDTO = new EntryCountPerCategoryDTO();
                 entryCountDTO.setDvcat(category);

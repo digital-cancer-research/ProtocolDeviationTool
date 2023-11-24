@@ -25,6 +25,7 @@
 package org.digitalecmt.qualityassurance.controller.entity;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -160,14 +161,18 @@ public class TableController {
             dataEntryRepository.save(dataEntry);
 
             // Log the edit information
-            String changeFromTo = "Changed " + request.getOldDvterm() + " to " + request.getDvterm();
+            String changeFrom = request.getOldDvterm();
+            String changeTo = request.getDvterm();
             String username = request.getUsername();
-            LocalDateTime dateTimeEdited = LocalDateTime.now();
+            LocalDateTime currentLocalDateTime = LocalDateTime.now();
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            String dateTimeEdited = currentLocalDateTime.format(dateTimeFormatter);
             int entryId = request.getEntryId();
 
             CategoryEditAudit categoryEditAudit = new CategoryEditAudit();
             categoryEditAudit.setEntryId(entryId);
-            categoryEditAudit.setChangeFromTo(changeFromTo);
+            categoryEditAudit.setChangeFrom(changeFrom);
+            categoryEditAudit.setChangeTo(changeTo);
             categoryEditAudit.setUsername(username);
             categoryEditAudit.setDateTimeEdited(dateTimeEdited);
 
@@ -182,12 +187,12 @@ public class TableController {
     @GetMapping("/audit-entries/{entryId}")
     public ResponseEntity<List<CategoryEditAuditDTO>> getAuditEntries(@PathVariable int entryId) {
         try {
-            System.out.println("Fetching audit entries for entryId: " + entryId);
+//            System.out.println("Fetching audit entries for entryId: " + entryId);
 
             // Fetch all audit entries for the given entryId
             List<CategoryEditAuditDTO> auditEntries = categoryEditAuditRepository.findAllByEntryId(entryId);
 
-            System.out.println("Fetched audit entries: " + auditEntries);
+//            System.out.println("Fetched audit entries: " + auditEntries);
             
             return new ResponseEntity<>(auditEntries, HttpStatus.OK);
         } catch (Exception ex) {

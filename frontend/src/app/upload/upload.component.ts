@@ -61,6 +61,7 @@ uploadFile() {
     
     // Append the current user's username to the FormData
     formData.append('username', currentUsername);
+    
 
     this.http
       .post<UploadResponse>('http://localhost:8080/api/upload', formData)

@@ -37,6 +37,6 @@ import org.springframework.stereotype.Repository;
 public interface CategoryEditAuditRepository
         extends JpaRepository<CategoryEditAudit, Integer> {
 
-	@Query("SELECT new org.digitalecmt.qualityassurance.dto.CategoryEditAuditDTO(a.categoryEditAuditId, a.changeFromTo, a.username, a.dateTimeEdited) FROM CategoryEditAudit a WHERE a.entryId = :entryId")
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.CategoryEditAuditDTO(a.categoryEditAuditId, a.changeFrom, a.changeTo, a.username, a.dateTimeEdited) FROM CategoryEditAudit a WHERE a.entryId = :entryId")
     List<CategoryEditAuditDTO> findAllByEntryId(@Param("entryId") int entryId);
 }

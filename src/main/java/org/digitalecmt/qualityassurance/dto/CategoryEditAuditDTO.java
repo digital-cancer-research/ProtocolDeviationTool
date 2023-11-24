@@ -1,21 +1,21 @@
 package org.digitalecmt.qualityassurance.dto;
 
-import java.time.LocalDateTime;
-
 public class CategoryEditAuditDTO {
     private int categoryEditAuditId;
-    private String changeFromTo;
+    private String changeFrom;
+    private String changeTo;
     private String username;
-    private LocalDateTime dateTimeEdited;
+    private String dateTimeEdited;
 
     // No-argument constructor
     public CategoryEditAuditDTO() {
     }
 
     // Constructor with parameters
-    public CategoryEditAuditDTO(int categoryEditAuditId, String changeFromTo, String username, LocalDateTime dateTimeEdited) {
+    public CategoryEditAuditDTO(int categoryEditAuditId, String changeFrom, String changeTo, String username, String dateTimeEdited) {
         this.categoryEditAuditId = categoryEditAuditId;
-        this.changeFromTo = changeFromTo;
+        this.changeFrom = changeFrom;
+        this.changeTo = changeTo;
         this.username = username;
         this.dateTimeEdited = dateTimeEdited;
     }
@@ -29,12 +29,20 @@ public class CategoryEditAuditDTO {
         this.categoryEditAuditId = categoryEditAuditId;
     }
 
-    public String getChangeFromTo() {
-        return changeFromTo;
+    public String getchangeFrom() {
+        return changeFrom;
     }
 
-    public void setChangeFromTo(String changeFromTo) {
-        this.changeFromTo = changeFromTo;
+    public void setChangeFrom(String changeFrom) {
+        this.changeFrom = changeFrom;
+    }
+    
+    public String getchangeTo() {
+        return changeTo;
+    }
+
+    public void setChangeTo(String changeTo) {
+        this.changeTo = changeTo;
     }
 
     public String getUsername() {
@@ -45,11 +53,11 @@ public class CategoryEditAuditDTO {
         this.username = username;
     }
 
-    public LocalDateTime getDateTimeEdited() {
+    public String getDateTimeEdited() {
         return dateTimeEdited;
     }
 
-    public void setDateTimeEdited(LocalDateTime dateTimeEdited) {
+    public void setDateTimeEdited(String dateTimeEdited) {
         this.dateTimeEdited = dateTimeEdited;
     }
 }
