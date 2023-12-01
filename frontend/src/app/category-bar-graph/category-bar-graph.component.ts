@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef } from '@angular/core';
 import { CategoryBarGraphService } from './category-bar-graph.service';
 import { EntryCountPerCategoryDTO } from './category-bar-graph.model';
 import * as d3 from 'd3';
 import { scaleLinear, scaleBand, max, ValueFn } from 'd3';
+import { ShareSiteDataService } from '../site-select/share-site-data.service';
 
 @Component({
   selector: 'app-category-bar-graph',
@@ -11,18 +12,23 @@ import { scaleLinear, scaleBand, max, ValueFn } from 'd3';
 })
 export class CategoryBarGraphComponent implements OnInit {
   entryCountPerCategory: EntryCountPerCategoryDTO[] = [];
+  selectedSiteId?: string;
 
-  constructor(private categoryBarGraphService: CategoryBarGraphService) {}
+  constructor(private elementRef: ElementRef,
+		  private categoryBarGraphService: CategoryBarGraphService, 
+		  private shareSiteDataService: ShareSiteDataService) {}
 
   ngOnInit() {
-    this.loadEntryCountPerCategory();
+	  this.shareSiteDataService.selectedSiteId$.subscribe((siteId: string | undefined) => {
+	  	this.selectedSiteId = siteId;
+	  	this.loadEntryCountPerCategory();
+	});
   }
 
   loadEntryCountPerCategory() {
-    this.categoryBarGraphService.getEntryCountPerCategory().subscribe(
+    this.categoryBarGraphService.getEntryCountPerCategory(this.selectedSiteId).subscribe(
       data => {
         this.entryCountPerCategory = data;
-        console.log(this.entryCountPerCategory);
         this.createD3BarGraph();
         
       },
@@ -33,8 +39,10 @@ export class CategoryBarGraphComponent implements OnInit {
   }
 
   createD3BarGraph() {
-	  const margin = { top: 20, right: 20, bottom: 60, left: 60 };
-	  const width = 600 - margin.left - margin.right;
+	  d3.select('#categoryBarGraph').selectAll('*').remove();
+	  const nativeElement = this.elementRef.nativeElement;
+	  const margin = { top: 50, right: 20, bottom: 60, left: 400 };
+	  const width = 1000 - margin.left - margin.right;
 	  const height = 400 - margin.top - margin.bottom;
 
 	  const svg = d3
@@ -64,7 +72,7 @@ export class CategoryBarGraphComponent implements OnInit {
 	    .attr('x', width / 2)
 	    .attr('y', -margin.top / 2)
 	    .attr('text-anchor', 'middle')
-	    .style('font-size', '16px')
+	    .style('font-size', '20px')
 	    .text('Total number of PDs per category (DVCAT) at site');
 
 	  // Add X axis label
@@ -79,7 +87,7 @@ export class CategoryBarGraphComponent implements OnInit {
 	  svg.append('text')
 	    .attr('transform', 'rotate(-90)')
 	    .attr('x', -height / 2)
-	    .attr('y', -margin.left / 1.5)
+	    .attr('y', -margin.left / 1.1)
 	    .attr('text-anchor', 'middle')
 	    .style('font-size', '14px')
 	    .text('Category for Protocol Deviation');
@@ -87,11 +95,30 @@ export class CategoryBarGraphComponent implements OnInit {
 	  // Add X axis
 	  svg.append('g')
 	    .attr('transform', `translate(0, ${height})`)
-	    .call(d3.axisBottom(x));
+	    .call(d3.axisBottom(x)
+	    .ticks(d3.max(this.entryCountPerCategory, (d) => d.entryCount) || 0)
+	    .tickFormat(d3.format('d')));
+	  
+	  // Add Y axis
+	  svg.append('g')
+	    .call(d3.axisLeft(y));
 
-	  // Add bars
-	  svg
-	    .selectAll('.bar')
+	  
+	  const tooltip = d3.select(nativeElement).append('div')
+			    .attr('class', 'tooltip')
+			    .style('opacity', 0)
+			    .style("position", "absolute")
+			    .style("background-color", "white")
+			    .style("border", "solid")
+			    .style("border-width", "1px")
+			    .style("border-radius", "5px")
+			    .style("padding", "10px")
+		
+			    
+	const color = d3.scaleOrdinal(d3.schemeCategory10);
+			    
+	 // Add bars
+	  svg.selectAll('.bar')
 	    .data(this.entryCountPerCategory)
 	    .enter()
 	    .append('rect')
@@ -99,7 +126,31 @@ export class CategoryBarGraphComponent implements OnInit {
 	    .attr('width', (d) => x(d.entryCount || 0))
 	    .attr('height', y.bandwidth())
 	    .attr('y', yAttr)
-	    .attr('fill', 'steelblue');
+	    .attr('fill', (d, i) => color(String(i)))
+	    .on('mouseover', function (event, d) {
+	        const entryCount = d.entryCount || 0;
+	        const xPos = event.pageX;
+	        const yPos = event.pageY;
+
+	        tooltip
+	          .style('opacity', 1)
+	          .style('left', (xPos + 20) + 'px')
+	          .style('top', (yPos - 20) + 'px');
+	        tooltip.html(`<strong>${entryCount}</strong>`)
+	      })
+	    
+	    .on('mousemove', function (event, d) {
+	    	const xPos = event.pageX;
+	        const yPos = event.pageY;
+	    	tooltip
+	    	.style('left', (xPos + 20) + 'px')
+	    	.style('top', (yPos - 20) + 'px');
+	    })
+	    
+	      .on('mouseout', function (d) {
+	        tooltip
+	          .style('opacity', 0);
+	      });
 	}
 
 

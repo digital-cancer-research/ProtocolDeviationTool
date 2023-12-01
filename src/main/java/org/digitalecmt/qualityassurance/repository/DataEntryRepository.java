@@ -53,4 +53,19 @@ public interface DataEntryRepository
 	@Query("select count(*) from DataEntry d left join PdCategory c on d.categoryId=c.categoryId where c.dvcat like ?1")
 	Long countByCategory(String category);
 
+	@Query("SELECT DISTINCT d.siteId FROM DataEntry d")
+	List<String> findDistinctSiteIds();
+
+	Long countBySiteId(String siteId);
+
+	@Query("SELECT COUNT(d) FROM DataEntry d JOIN PdCategory c ON d.categoryId = c.categoryId WHERE c.dvcat = ?1 AND d.siteId = ?2")
+	Long countByCategoryIdAndSiteId(String category, String siteId);
+
+	Long countByStudyId(String study);
+
+	Long countByStudyIdAndSiteId(String study, String siteId);
+	
+	@Query("SELECT DISTINCT studyId FROM DataEntry")
+	List<String> findDistinctStudyIds();
+
 }

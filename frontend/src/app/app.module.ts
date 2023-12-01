@@ -13,6 +13,8 @@ import { StudyListComponent } from './study-list/study-list.component';
 import { CategoryTableComponent } from './category-table/category-table.component';
 import { VisualisationComponent } from './visualisation/visualisation.component';
 import { CategoryBarGraphComponent } from './category-bar-graph/category-bar-graph.component';
+import { CategoryPieGraphComponent } from './category-pie-graph/category-pie-graph.component';
+import { SiteSelectComponent } from './site-select/site-select.component';
 
 import { UploadService } from './upload/upload.service';
 import { UserService } from './user/user.service';
@@ -22,6 +24,9 @@ import { FileListService } from './file-list/file-list.service';
 import { StudyListService } from './study-list/study-list.service';
 import { VisualisationService } from './visualisation/visualisation.service';
 import { CategoryBarGraphService } from './category-bar-graph/category-bar-graph.service';
+import { CategoryPieGraphService } from './category-pie-graph/category-pie-graph.service';
+import { SiteSelectService } from './site-select/site-select.service';
+import { ShareSiteDataService } from './site-select/share-site-data.service';
 
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -41,6 +46,8 @@ import { CommonModule } from '@angular/common';
     CategoryTableComponent,
     VisualisationComponent,
     CategoryBarGraphComponent,
+    SiteSelectComponent,
+    CategoryPieGraphComponent,
   ],
   imports: [
 	BrowserModule,
@@ -58,6 +65,9 @@ import { CommonModule } from '@angular/common';
     StudyListService,
     VisualisationService,
     CategoryBarGraphService,
+    SiteSelectService,
+    ShareSiteDataService,
+    CategoryPieGraphService,
   ],
   bootstrap: [AppComponent]
 })

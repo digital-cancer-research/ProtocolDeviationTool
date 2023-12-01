@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.digitalecmt.qualityassurance.dto.CountPerStudyDTO;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryDTO;
 import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
 import org.digitalecmt.qualityassurance.model.persistence.PdCategory;
@@ -43,6 +44,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -59,26 +61,38 @@ public class VisualisationController {
     private Logger log = Logger.getLogger(VisualisationController.class.getName());
 
     @GetMapping("/total-rows")
-    public ResponseEntity<Long> getTotalRows() {
+    public ResponseEntity<Long> getTotalRows(@RequestParam(required = false) String siteId) {
         try {
-            Long totalRows = dataEntryRepository.count();
+            Long totalRows;
+            if (siteId != null) {
+                totalRows = dataEntryRepository.countBySiteId(siteId);
+            } else {
+                totalRows = dataEntryRepository.count();
+            }
             return new ResponseEntity<>(totalRows, HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     
     @GetMapping("/entry-counts-per-category")
-    public ResponseEntity<List<EntryCountPerCategoryDTO>> getEntryCountsPerCategory() {
+    public ResponseEntity<List<EntryCountPerCategoryDTO>> getEntryCountsPerCategory(
+            @RequestParam(required = false) String siteId) {
         try {
             List<EntryCountPerCategoryDTO> entryCounts = new ArrayList<>();
 
             // Fetch all categories
-            List<String> categories = pdCategoryRepository.findDistictDVCat();
+            List<String> categories = pdCategoryRepository.findDistinctDVCat();
             for (String category : categories) {
 //            	log.info("Category " + category);
                 // Fetch entry count for each category
-                Long entryCount = dataEntryRepository.countByCategory(category);
+            	Long entryCount;
+                if (siteId != null) {
+                    entryCount = dataEntryRepository.countByCategoryIdAndSiteId(category, siteId);
+                } else {
+                    entryCount = dataEntryRepository.countByCategory(category);
+                }
 //                log.info("Count:" + entryCount);
                 // Create DTO and add to the list
                 EntryCountPerCategoryDTO entryCountDTO = new EntryCountPerCategoryDTO();
@@ -93,4 +107,44 @@ public class VisualisationController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    @GetMapping("/count-per-study")
+    public ResponseEntity<List<CountPerStudyDTO>> getCountPerStudy(
+            @RequestParam(required = false) String siteId) {
+        try {
+            List<CountPerStudyDTO> entryCounts = new ArrayList<>();
+
+            // Fetch all studies
+            List<String> studies = dataEntryRepository.findDistinctStudyIds();
+            for (String study : studies) {
+            	Long entryCount;
+                if (siteId != null) {
+                    entryCount = dataEntryRepository.countByStudyIdAndSiteId(study, siteId);
+                } else {
+                    entryCount = dataEntryRepository.countByStudyId(study);
+                }
+                // Create DTO and add to the list
+                CountPerStudyDTO entryCountDTO = new CountPerStudyDTO();
+                entryCountDTO.setStudyId(study);
+                entryCountDTO.setEntryCount(entryCount);
+
+                entryCounts.add(entryCountDTO);
+            }
+
+            return new ResponseEntity<>(entryCounts, HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @GetMapping("/unique-sites")
+    public ResponseEntity<List<String>> getUniqueSites() {
+        try {
+            List<String> uniqueSites = dataEntryRepository.findDistinctSiteIds();
+            return new ResponseEntity<>(uniqueSites, HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

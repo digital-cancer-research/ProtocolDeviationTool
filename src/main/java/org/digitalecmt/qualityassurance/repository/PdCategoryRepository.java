@@ -27,10 +27,10 @@ package org.digitalecmt.qualityassurance.repository;
 import java.util.List;
 import java.util.Optional;
 
-import org.digitalecmt.qualityassurance.model.persistence.Dvspondes;
 import org.digitalecmt.qualityassurance.model.persistence.PdCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -40,5 +40,11 @@ public interface PdCategoryRepository
 	Optional<PdCategory> findByDvterm(String dvterm);
 	
 	@Query("SELECT DISTINCT dvcat FROM PdCategory")
-	List<String> findDistictDVCat();
+	List<String> findDistinctDVCat();
+
+//	@Query("SELECT DISTINCT pc.dvcat FROM PdCategory pc " +
+//	           "JOIN DataEntry de ON pc.category_id = de.category_id " +
+//	           "WHERE de.site_id = :siteId")
+//    List<String> findDistinctDVCatBySiteId(@Param("siteId") String siteId);
+
 }

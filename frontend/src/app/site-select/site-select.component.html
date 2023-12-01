@@ -1,0 +1,4 @@
+<label for="siteFilter">Select SiteId:</label>
+<select id="siteFilter" [(ngModel)]="selectedSiteId" (change)="onSiteChange()">
+  <option *ngFor="let siteId of uniqueSiteIds" [value]="siteId">{{ siteId }}</option>
+</select>
