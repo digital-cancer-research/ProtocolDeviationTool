@@ -7,7 +7,6 @@
         <th>DVSPONDES</th>
         <th>DVTERM</th>
         <th></th>
-        <th>DVDECOD</th>
         <th>DVCAT</th>
       </tr>
     </thead>
@@ -25,7 +24,6 @@
         <td>
           <span *ngIf="category.isEdited" style="cursor: pointer;" (click)="openAuditPopup(category.entryId)">🖉</span>
         </td>
-        <td>{{ category.dvdecod }}</td>
         <td>{{ category.dvcat }}</td>
       </tr>
     </tbody>
@@ -49,7 +47,7 @@
         <tbody>
           <tr *ngFor="let entry of auditEntries">
             <td>{{ entry.username }}</td>
-            <td>{{ entry.dateTimeEdited | date:'medium' }}</td>
+            <td>{{ entry.dateTimeEdited | date:'dd/MM/yyyy' }}</td>
             <td>{{ entry.changeFrom }}</td>
             <td>{{ entry.changeTo }}</td>
           </tr>

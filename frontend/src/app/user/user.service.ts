@@ -12,11 +12,10 @@ export class UserService {
   
   private currentUser: string | null = null;
   
-
   constructor(private http: HttpClient) {}
 
   getUsers(): Observable<User[]> {
-    // Make an HTTP GET request to fetch the list of users from your backend API
+    // Make an HTTP GET request to fetch the list of users
     return this.http.get<User[]>(`${this.baseUrl}/users`);
   }
 

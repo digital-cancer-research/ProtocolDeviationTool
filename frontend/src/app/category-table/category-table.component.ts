@@ -105,17 +105,26 @@ closeAuditPopup(): void {
   }
 }
 
-// Method to fetch audit entries
+//Method to fetch audit entries
 getAuditEntries(entryId: number): void {
-  this.http.get<CategoryEditAuditDTO[]>(`/api/table/audit-entries/${entryId}`).subscribe(
-    (data) => {
-      this.auditEntries = data;
-    },
-    (error) => {
-      console.error('Error fetching audit entries: ', error);
-    }
-  );
+this.http.get<CategoryEditAuditDTO[]>(`/api/table/audit-entries/${entryId}`).subscribe(
+ (data) => {
+   this.auditEntries = data;
+
+   // Sort the audit entries by date
+   this.auditEntries.sort((a, b) => {
+     const dateA = new Date(a.dateTimeEdited).getTime();
+     const dateB = new Date(b.dateTimeEdited).getTime();
+
+     return dateB - dateA; // Sort in descending order, change to dateA - dateB for ascending order
+   });
+ },
+ (error) => {
+   console.error('Error fetching audit entries: ', error);
+ }
+);
 }
+
 
 
 

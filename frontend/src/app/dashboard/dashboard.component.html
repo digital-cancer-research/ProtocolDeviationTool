@@ -1,0 +1,13 @@
+<app-border class="dashboard-background">
+  <app-header [pageTitle]="'DASHBOARD OVERVIEW'"></app-header>
+  <app-navigation-ribbon
+  [buttons]="[
+    { label: 'SITE ID', route: '/dashboard' },
+    { label: 'STUDY ID', route: '/about' },
+    { label: 'ADMIN', route: '/admin' }
+  ]">
+  </app-navigation-ribbon>
+
+  <app-site-spons-select></app-site-spons-select>
+  <app-footer [footerImage]="'assets/footer-logo.png'"></app-footer>
+</app-border>

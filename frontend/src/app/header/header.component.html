@@ -1,0 +1,24 @@
+<div class="header-container">
+  <div class="header-left-container">
+    <div class="header-left">
+      <div class="header-title">PROTOCOL DEVIATION MONITORING</div>
+      <img src="assets\clipboard-icon.png" alt="Icon" class="header-icon">
+    </div>
+  </div>
+  <div class="header-middle-container">
+    <div class="header-middle">{{ pageTitle }}</div>
+  </div>
+  <div class="header-right-container">
+    <div class="header-right">
+      <div class="user-dropdown">
+        <select [(ngModel)]="selectedUser" (change)="selectedUser && onSelectUser(selectedUser)">
+          <option value="" disabled>Select a user</option>
+          <option *ngFor="let user of users" [value]="user.username">{{ user.username }}</option>
+        </select>
+        <div class="selected-user">
+          <p>{{ selectedUser || 'NO USER SELECTED' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

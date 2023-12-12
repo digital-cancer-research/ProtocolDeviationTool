@@ -15,6 +15,7 @@ import { VisualisationComponent } from './visualisation/visualisation.component'
 import { CategoryBarGraphComponent } from './category-bar-graph/category-bar-graph.component';
 import { CategoryPieGraphComponent } from './category-pie-graph/category-pie-graph.component';
 import { SiteSelectComponent } from './site-select/site-select.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 import { UploadService } from './upload/upload.service';
 import { UserService } from './user/user.service';
@@ -30,6 +31,12 @@ import { ShareSiteDataService } from './site-select/share-site-data.service';
 
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { BorderComponent } from './border/border.component';
+import { HeaderComponent } from './header/header.component';
+import { FooterComponent } from './footer/footer.component';
+import { SiteSponsSelectComponent } from './site-spons-select/site-spons-select.component';
+import { NavigationRibbonComponent } from './navigation-ribbon/navigation-ribbon.component';
+import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.component';
 
 
 
@@ -48,6 +55,13 @@ import { CommonModule } from '@angular/common';
     CategoryBarGraphComponent,
     SiteSelectComponent,
     CategoryPieGraphComponent,
+    DashboardComponent,
+    BorderComponent,
+    HeaderComponent,
+    FooterComponent,
+    SiteSponsSelectComponent,
+    NavigationRibbonComponent,
+    SiteSponsorPageComponent,
   ],
   imports: [
 	BrowserModule,

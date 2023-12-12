@@ -19,15 +19,12 @@ export class UserSelectionComponent implements OnInit {
     // Fetch the list of users when the component initializes
     this.userService.getUsers().subscribe((users) => {
       this.users = users;
-      console.log(users);
       
     });
   }
   
   onUserSelected(): void {
   console.log('Selected user:', this.selectedUser);
-
-
   }
 
 
@@ -35,16 +32,9 @@ export class UserSelectionComponent implements OnInit {
     this.userService.setCurrentUser(username);
     this.selectedUser = username;
     
-    console.log('Selected user:', this.selectedUser);
-    // Debugging: Check the value of selectedUser
-    console.log('isAdmin (before API call):', this.isAdmin);
-    
     // Make an API call to check if the selected user is an admin
     this.authService.checkAdminRole(username).subscribe((isAdmin) => {
       this.isAdmin = isAdmin;
-      
-      // Debugging: Check the value of isAdmin after API call
-      console.log('isAdmin (after API call):', this.isAdmin);
     });
   }
 }
