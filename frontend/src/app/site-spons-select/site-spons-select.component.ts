@@ -6,5 +6,4 @@ import { Component } from '@angular/core';
   styleUrls: ['./site-spons-select.component.css']
 })
 export class SiteSponsSelectComponent {
-
 }

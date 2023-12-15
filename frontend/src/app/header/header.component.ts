@@ -9,37 +9,30 @@ import { User } from '../user/user.model';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
-	@Input() pageTitle: string = 'DEFAULT PAGE TITLE';
-	users: User[] = [];
-	  selectedUser: string | null = null;
-	  isAdmin = false; // Default to false
+  @Input() pageTitle: string = 'DEFAULT PAGE TITLE';
+  users: User[] = [];
+  selectedUser: string | null = null;
 
-	  constructor(private userService: UserService, private authService: AuthService) {}
+  constructor(private userService: UserService, private authService: AuthService) {}
 
-	  ngOnInit(): void {
-	    // Fetch the list of users when the component initializes
-	    this.userService.getUsers().subscribe((users) => {
-	      this.users = users;
-	      
-	    });
-	  }
-	  
-	  onUserSelected(): void {
-	  console.log('Selected user:', this.selectedUser);
-	  }
+  ngOnInit(): void {
+    // Fetch the list of users when the component initializes
+    this.userService.getUsers().subscribe((users) => {
+      this.users = users;
+    });
+  }
+  
+  onUserSelected(): void {
+    console.log('Selected user:', this.selectedUser);
+  }
 
+  onSelectUser(username: string): void {
+    this.userService.setCurrentUser(username);
+    this.selectedUser = username;
+    this.authService.checkAdminRole(username).subscribe();
+  }
 
-	  onSelectUser(username: string): void {
-	    this.userService.setCurrentUser(username);
-	    this.selectedUser = username;
-	    
-	    // Make an API call to check if the selected user is an admin
-	    this.authService.checkAdminRole(username).subscribe((isAdmin) => {
-	      this.isAdmin = isAdmin;
-	    });
-	  }
-	  
-	  get isAdminValue() {
-		  return this.isAdmin;
-	  }
+  get isAdmin(): boolean {
+    return this.authService.isAdmin;
+  }
 }

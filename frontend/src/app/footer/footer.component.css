@@ -15,15 +15,41 @@
   margin-bottom: 1%;
 }
 
+/* Media query for devices with pixel ratio greater than 1.1 */
+@media (-webkit-min-device-pixel-ratio: 1.1) {
+
+  .footer-image {
+  height: 108px;
+  }
+  
+  .footer-container {
+  width: 97%;
+}
+  
+}
+
 /* Media query for devices with pixel ratio greater than 1.25 */
 @media (-webkit-min-device-pixel-ratio: 1.25) {
 
   .footer-image {
-  height: 80px;
+  height: 90px;
   }
   
   .footer-container {
   width: 96.75%;
+}
+  
+}
+
+/* Media query for devices with pixel ratio greater than 1.5 */
+@media (-webkit-min-device-pixel-ratio: 1.5) {
+
+  .footer-image {
+  height: 60px;
+  }
+  
+  .footer-container {
+  width: 95.75%;
 }
   
 }

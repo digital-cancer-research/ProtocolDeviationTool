@@ -165,7 +165,7 @@ public class TableController {
             String changeTo = request.getDvterm();
             String username = request.getUsername();
             LocalDateTime currentLocalDateTime = LocalDateTime.now();
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
             String dateTimeEdited = currentLocalDateTime.format(dateTimeFormatter);
             int entryId = request.getEntryId();
 

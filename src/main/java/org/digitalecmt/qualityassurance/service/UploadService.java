@@ -31,6 +31,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +52,14 @@ import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
 import org.digitalecmt.qualityassurance.model.persistence.Dvspondes;
 import org.digitalecmt.qualityassurance.model.persistence.FileData;
 import org.digitalecmt.qualityassurance.model.persistence.Files;
+import org.digitalecmt.qualityassurance.model.persistence.SiteIdColour;
+import org.digitalecmt.qualityassurance.model.persistence.StudyIdColour;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.repository.DvspondesRepository;
 import org.digitalecmt.qualityassurance.repository.FileDataRepository;
 import org.digitalecmt.qualityassurance.repository.FilesRepository;
+import org.digitalecmt.qualityassurance.repository.SiteIdColourRepository;
+import org.digitalecmt.qualityassurance.repository.StudyIdColourRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.commons.lang3.StringUtils;
 
@@ -75,8 +80,17 @@ public class UploadService {
 
 	@Autowired
 	private FileDataRepository fileDataRepository;
+	
+	@Autowired
+	private SiteIdColourRepository siteIdColourRepository;
+	
+	@Autowired
+	private StudyIdColourRepository studyIdColourRepository;
 
 	private Logger log = Logger.getLogger(UploadService.class.getName());
+	
+	private String previousSiteIdColour = null;
+	private String previousStudyIdColour = null;
 
 	public String getFileExtension(String filename) {
 		int dotIndex = filename.lastIndexOf('.');
@@ -132,6 +146,28 @@ public class UploadService {
 		// Add the DataEntry instance to the list
 		dataEntrys.add(dataEntry);
 		dataEntryRepository.save(dataEntry);
+		
+		// Check if the siteId already has a color in the site_id_colour table
+	    SiteIdColour existingSiteColor = siteIdColourRepository.findBySiteId(siteId);
+
+	    // Save it to the "site_id_colour" table only if the siteId doesn't exist
+	    if (existingSiteColor == null) {
+	        SiteIdColour siteIdColour = new SiteIdColour();
+	        siteIdColour.setSiteId(siteId);
+	        siteIdColour.setColour(generateNextHexColour(previousSiteIdColour));
+	        siteIdColourRepository.save(siteIdColour);
+	    }
+	    
+	    // Check if the studyId already has a color in the study_id_colour table
+	    StudyIdColour existingStudyColor = studyIdColourRepository.findByStudyId(studyId);
+
+	    // Save it to the "study_id_colour" table only if the studyId doesn't exist
+	    if (existingStudyColor == null) {
+	        StudyIdColour studyIdColour = new StudyIdColour();
+	        studyIdColour.setStudyId(studyId);
+	        studyIdColour.setColour(generateNextHexColour(previousStudyIdColour));
+	        studyIdColourRepository.save(studyIdColour);
+	    }
 
 		// Link the file with the data
 		FileData fileData = new FileData();
@@ -140,6 +176,27 @@ public class UploadService {
 		fileDataRepository.save(fileData);
 
 	}
+    
+    public String generateNextHexColour(String previousColour) {
+        int offset = 5000;
+
+        // If previousColour is not present or invalid, generate a new color
+        if (previousColour == null || !previousColour.matches("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")) {
+            Random random = new Random();
+            int colour = random.nextInt(0xFFFFFF + 1);
+            previousColour = String.format("#%06X", colour);
+            return previousColour;
+        }
+
+        // Parse the previousColour and apply the offset
+        int previousColourValue = Integer.parseInt(previousColour.substring(1), 16);
+        int newColourValue = (previousColourValue + offset) & 0xFFFFFF;
+
+        // Update the previousColour for the next iteration
+        previousColour = String.format("#%06X", newColourValue);
+
+        return previousColour;
+    }
 
 	public ResponseEntity<UploadResponse> processDataEntryCSV(MultipartFile file, String username)
 			throws IOException, MissingCellsException {
@@ -150,7 +207,7 @@ public class UploadService {
 		// Store the filename and date
 		String fileName = file.getOriginalFilename();
 		LocalDateTime currentDateTime = LocalDateTime.now();
-		DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+		DateTimeFormatter f = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm:ss");
 		Files files = new Files();
 		files.setDateTimeUploaded(f.format(currentDateTime));
 		files.setFileName(fileName);
@@ -206,7 +263,7 @@ public class UploadService {
 		// Store the filename and date
 		String fileName = file.getOriginalFilename();
 		LocalDateTime currentDateTime = LocalDateTime.now();
-		DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+		DateTimeFormatter f = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm:ss");
 		Files files = new Files();
 		files.setDateTimeUploaded(f.format(currentDateTime));
 		files.setFileName(fileName);

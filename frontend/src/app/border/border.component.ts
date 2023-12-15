@@ -6,5 +6,4 @@ import { Component } from '@angular/core';
   styleUrls: ['./border.component.css']
 })
 export class BorderComponent {
-
 }

@@ -58,10 +58,27 @@ p {
   }
 }
 
+/* Media query for devices with pixel ratio greater than 1.1 */
+@media (-webkit-min-device-pixel-ratio: 1.1) {
+
+  img {
+  max-width: 135px;
+  }
+}
+
 /* Media query for devices with pixel ratio greater than 1.25 */
 @media (-webkit-min-device-pixel-ratio: 1.25) {
 
   img {
-  max-width: 100px;
+  max-width: 112.5px;
   }
 }
+
+/* Media query for devices with pixel ratio greater than 1.5 */
+@media (-webkit-min-device-pixel-ratio: 1.5) {
+
+  img {
+  max-width: 75px;
+  }
+}
+

@@ -6,5 +6,4 @@ import { Component } from '@angular/core';
   styleUrls: ['./site-sponsor-page.component.css']
 })
 export class SiteSponsorPageComponent {
-
 }

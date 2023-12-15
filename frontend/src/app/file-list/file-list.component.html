@@ -13,7 +13,7 @@
       <tr *ngFor="let file of files">
         <td>{{ file.fileName }}</td>
         <td>{{ file.username }}</td>
-        <td>{{ file.dateTimeUploaded | date: 'medium' }}</td>
+        <td>{{ file.dateTimeUploaded | date: 'dd-MMM-yyyy HH:mm' }}</td>
         <td>
           <button (click)="deleteFile(file.fileId)">Delete</button>
         </td>

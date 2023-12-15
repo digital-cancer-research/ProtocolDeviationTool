@@ -47,7 +47,7 @@
         <tbody>
           <tr *ngFor="let entry of auditEntries">
             <td>{{ entry.username }}</td>
-            <td>{{ entry.dateTimeEdited | date:'dd/MM/yyyy' }}</td>
+            <td>{{ entry.dateTimeEdited | date:'dd-MMM-yyyy' }}</td>
             <td>{{ entry.changeFrom }}</td>
             <td>{{ entry.changeTo }}</td>
           </tr>
