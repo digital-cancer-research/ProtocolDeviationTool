@@ -1,0 +1,10 @@
+<app-border class="dashboard-background">
+  <app-header [pageTitle]="'ADMINISTRATOR'"></app-header>
+  <app-navigation-ribbon
+  [buttons]="[
+    { label: 'ADMIN', route: '/admin' }
+  ]">
+  </app-navigation-ribbon>
+
+  <app-user-management></app-user-management>
+</app-border>

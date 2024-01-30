@@ -22,12 +22,15 @@ public class UserAccount {
 
     @Column(name = "role_id")
     private int roleId;
-
+    
     @Column(name = "is_site")
     private Boolean isSite;
 
     @Column(name = "is_sponsor")
     private Boolean isSponsor;
+    
+    @Column(name = "date_created")
+    private String dateCreated;
 
     // Getters and Setters
 
@@ -54,7 +57,7 @@ public class UserAccount {
     public void setRoleId(int roleId) {
         this.roleId = roleId;
     }
-
+    
     public Boolean getIsSite() {
         return isSite;
     }
@@ -69,5 +72,13 @@ public class UserAccount {
 
     public void setIsSponsor(Boolean isSponsor) {
         this.isSponsor = isSponsor;
+    }
+    
+    public String getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(String dateCreated) {
+        this.dateCreated = dateCreated;
     }
 }

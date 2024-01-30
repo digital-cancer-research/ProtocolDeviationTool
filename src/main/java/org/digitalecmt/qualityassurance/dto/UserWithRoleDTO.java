@@ -4,6 +4,7 @@ package org.digitalecmt.qualityassurance.dto;
 public class UserWithRoleDTO {
     private int userId;
     private String username;
+    private String dateCreated;
     private int roleId;
     private String roleName;
 
@@ -13,9 +14,10 @@ public class UserWithRoleDTO {
     }
     
 	// Constructor with parameters
-    public UserWithRoleDTO(int userId, String username, int roleId, String roleName) {
+    public UserWithRoleDTO(int userId, String username, String dateCreated, int roleId, String roleName) {
         this.userId = userId;
         this.username = username;
+        this.dateCreated = dateCreated;
         this.roleId = roleId;
         this.roleName = roleName;
     }
@@ -35,6 +37,14 @@ public class UserWithRoleDTO {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+    
+    public String getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(String dateCreated) {
+        this.dateCreated = dateCreated;
     }
 
     public int getRoleId() {

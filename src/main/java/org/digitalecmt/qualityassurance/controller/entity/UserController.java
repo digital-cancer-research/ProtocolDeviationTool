@@ -25,9 +25,18 @@
 package org.digitalecmt.qualityassurance.controller.entity;
 
 import org.digitalecmt.qualityassurance.dto.RoleChangeDTO;
+import org.digitalecmt.qualityassurance.dto.TeamChangeDTO;
+import org.digitalecmt.qualityassurance.dto.UserTeamDTO;
 import org.digitalecmt.qualityassurance.dto.UserWithRoleDTO;
+import org.digitalecmt.qualityassurance.dto.UserWithTeamDTO;
 import org.digitalecmt.qualityassurance.model.persistence.UserAccount;
+import org.digitalecmt.qualityassurance.model.persistence.UserTeam;
+import org.digitalecmt.qualityassurance.model.persistence.Role;
+import org.digitalecmt.qualityassurance.model.persistence.Team;
+import org.digitalecmt.qualityassurance.repository.RoleRepository;
+import org.digitalecmt.qualityassurance.repository.TeamRepository;
 import org.digitalecmt.qualityassurance.repository.UserAccountRepository;
+import org.digitalecmt.qualityassurance.repository.UserTeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +54,15 @@ public class UserController {
 	
     @Autowired
     private UserAccountRepository userRepository;
+    
+    @Autowired
+    private TeamRepository teamRepository;
+    
+    @Autowired
+    private UserTeamRepository userTeamRepository;
+    
+    @Autowired
+    private RoleRepository roleRepository;
     
     // Create a new user
     @PostMapping
@@ -122,8 +140,26 @@ public class UserController {
     
     @GetMapping("/get-users-with-roles")
     public ResponseEntity<List<UserWithRoleDTO>> getUsersWithRoles() {
-        List<UserWithRoleDTO> usersWithRoles = userRepository.findUsersWithRoles();
-        return new ResponseEntity<>(usersWithRoles, HttpStatus.OK);
+        List<UserWithRoleDTO> usersWithRolesTeams = userRepository.findUsersWithRoles();
+        return new ResponseEntity<>(usersWithRolesTeams, HttpStatus.OK);
+    }
+    
+    @GetMapping("/get-user-teams")
+    public ResponseEntity<List<UserWithTeamDTO>> getUserTeams() {
+        List<UserWithTeamDTO> teams = userTeamRepository.findUsersWithTeams();
+        return new ResponseEntity<>(teams, HttpStatus.OK);
+    }
+    
+    @GetMapping("/get-roles")
+    public ResponseEntity<List<Role>> getRoles() {
+        List<Role> roles = roleRepository.findAll();
+        return new ResponseEntity<>(roles, HttpStatus.OK);
+    }
+    
+    @GetMapping("/get-teams")
+    public ResponseEntity<List<Team>> getTeams() {
+        List<Team> teams = teamRepository.findAll();
+        return new ResponseEntity<>(teams, HttpStatus.OK);
     }
     
     @PostMapping("/change-user-role/{userId}")
@@ -144,16 +180,76 @@ public class UserController {
         }
     }
     
-    @PostMapping("/add-user-with-role")
-    public ResponseEntity<UserAccount> addUserWithRole(@RequestBody UserAccount newUser) {
-      try {
-        // Save the new user to the database
-        UserAccount newUserAccount = userRepository.save(newUser);
+    @PostMapping("/change-user-team/{userId}")
+    public ResponseEntity<HttpStatus> changeUserTeam(@PathVariable int userId, @RequestBody TeamChangeDTO teamChangeDTO) {
+        try {
+            Optional<UserAccount> userData = userRepository.findById(userId);
 
-        return new ResponseEntity<>(newUserAccount, HttpStatus.CREATED);
-      } catch (Exception e) {
-        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-      }
+            if (userData.isPresent()) {
+                UserAccount user = userData.get();
+
+                // Clear existing teams for the user
+                userTeamRepository.deleteByUserId(userId);
+
+                // Add the new teams for the user
+                List<Integer> newTeamIds = teamChangeDTO.getNewTeamIds();
+                for (Integer teamId : newTeamIds) {
+                    Optional<Team> teamData = teamRepository.findById(teamId);
+                    if (teamData.isPresent()) {
+                        Team team = teamData.get();
+                        UserTeam userTeam = new UserTeam();
+                        userTeam.setUserId(user.getUserId());
+                        userTeam.setTeamId(team.getTeamId());
+                        userTeamRepository.save(userTeam);
+                    } else {
+                        // Handle case where team with given ID is not found
+                        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                    }
+                }
+
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                // Handle case where user with given ID is not found
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            // Handle any exceptions that occur during processing
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
+    
+    @PostMapping("/add-user-with-role-team")
+    public ResponseEntity<UserAccount> addUserWithRoleAndTeam(@RequestBody UserTeamDTO userTeamDTO) {
+        try {
+            System.out.println("Received request to add user with role and team");
+
+            UserAccount newUser = userTeamDTO.getUser();
+            System.out.println(newUser);
+            List<Team> selectedTeams = userTeamDTO.getTeams();
+            System.out.println(selectedTeams);
+
+            // Save the new user to the database
+            UserAccount newUserAccount = userRepository.save(newUser);
+            System.out.println("New user saved to the database: " + newUserAccount.toString());
+
+            // Add the teams for the user
+            for (Team team : selectedTeams) {
+                UserTeam userTeam = new UserTeam();
+                userTeam.setUserId(newUserAccount.getUserId());
+                userTeam.setTeamId(team.getTeamId());
+                userTeamRepository.save(userTeam);
+                System.out.println("Added team " + team.getTeamId() + " for user " + newUserAccount.getUserId());
+            }
+
+            System.out.println("User with role and team successfully added");
+            return new ResponseEntity<>(newUserAccount, HttpStatus.CREATED);
+        } catch (Exception e) {
+            System.out.println("An error occurred while adding user with role and team: " + e.getMessage());
+            e.printStackTrace(); // Print stack trace for detailed error information
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
 

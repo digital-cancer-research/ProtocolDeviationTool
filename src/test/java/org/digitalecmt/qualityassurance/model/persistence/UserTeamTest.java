@@ -14,22 +14,6 @@ public class UserTeamTest {
     }
 
     @Test
-    public void testGetUserTeamId() {
-        int id = 123;
-        userTeam.setUserTeamId(id);
-
-        assertEquals(id, userTeam.getUserTeamId());
-    }
-
-    @Test
-    public void testSetUserTeamId() {
-        int id = 456;
-        userTeam.setUserTeamId(id);
-
-        assertEquals(id, userTeam.getUserTeamId());
-    }
-
-    @Test
     public void testGetUserId() {
         int userId = 789;
         userTeam.setUserId(userId);

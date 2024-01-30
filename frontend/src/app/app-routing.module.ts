@@ -4,9 +4,10 @@ import { UserManagementComponent } from './user-management/user-management.compo
 import { HomeComponent } from './home/home.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.component';
+import { AdministratorPageComponent } from './administrator-page/administrator-page.component';
 
 const routes: Routes = [
-  { path: 'admin', component: UserManagementComponent},
+  { path: 'admin', component: AdministratorPageComponent},
   { path: '', component: DashboardComponent },
   { path: 'dashboard', component: HomeComponent },
   { path: 'site-sponsor-page', component: SiteSponsorPageComponent },

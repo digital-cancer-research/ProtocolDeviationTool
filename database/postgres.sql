@@ -13,11 +13,11 @@ CREATE TABLE "user_account" (
   "username" VARCHAR UNIQUE NOT NULL,
   "role_id" INT,
   "is_site" BOOL,
-  "is_sponsor" BOOL
+  "is_sponsor" BOOL,
+  "date_created" VARCHAR
 );
 
 CREATE TABLE "user_team" (
-  "user_team_id" SERIAL PRIMARY KEY,
   "user_id" INT,
   "team_id" INT
 );
@@ -158,18 +158,20 @@ ALTER TABLE "category_edit_audit" ADD FOREIGN KEY ("entry_id") REFERENCES "data_
 -- Insert roles
 INSERT INTO "role" ("role_name") VALUES
   ('Admin'),
-  ('User');
+  ('User'),
+  ('Inactive');
+  
 
 -- Insert users with roles
-INSERT INTO "user_account" ("username", "role_id", "is_site", "is_sponsor") VALUES
-  ('AdminWithAllRoles', 1, true, true),
-  ('AdminWithSiteRole', 1, true, false),
-  ('AdminWithSponsorRole', 1, false, true),
-  ('AdminWithNoSpecialRoles', 1, false, false),
-  ('UserWithAllRoles', 2, true, true),
-  ('UserWithSiteRole', 2, true, false),
-  ('UserWithSponsorRole', 2, false, true),
-  ('UserWithNoSpecialRoles', 2, false, false);
+INSERT INTO "user_account" ("username", "role_id", "is_site", "is_sponsor", "date_created") VALUES
+  ('AdminWithAllRoles', 1, true, true, '01/01/2023'),
+  ('AdminWithSiteRole', 1, true, false, '02/01/2023'),
+  ('AdminWithSponsorRole', 1, false, true, '03/01/2023'),
+  ('AdminWithNoSpecialRoles', 1, false, false, '04/01/2023'),
+  ('UserWithAllRoles', 2, true, true, '05/01/2023'),
+  ('UserWithSiteRole', 2, true, false, '06/01/2023'),
+  ('UserWithSponsorRole', 2, false, true, '07/01/2023'),
+  ('UserWithNoSpecialRoles', 2, false, false, '08/01/2023');
 
 -- Insert category data
 INSERT INTO pd_category ("dvcat", "dvdecod", "dvterm")
@@ -403,3 +405,26 @@ VALUES
   ('Protocol deviation due to error in site file completion', '#009688'),
   ('Protocol deviation due to other errors with documentation for training', '#4CAF50'),
   ('Protocol deviation due to other site level documentation errors', '#8BC34A');
+
+
+-- Insert dummy teams
+INSERT INTO "team" ("team_name") VALUES
+  ('Team1'),
+  ('Team2'),
+  ('Team3'),
+  ('Team4'),
+  ('Team5'),
+  ('Team6'),
+  ('Team7'),
+  ('Team8'),
+  ('Team9'),
+  ('Team10'),
+  ('Team11'),
+  ('Team12');
+  
+-- Add dummy team assignment
+INSERT INTO "user_team" ("user_id", "team_id") VALUES
+  ('1', '1'),
+  ('1', '2'),
+  ('2', '1'),
+  ('2', '2');

@@ -1,60 +1,75 @@
+<div class="container">
+    <div class="add-user-form">
+        <h2>Create User and Assign Team</h2>
+        <form (ngSubmit)="onAddUserSubmit()">
+            <div class="form-group">
+                <label for="email">Email Address (Username):</label>
+                <input type="text" id="email" name="email" [(ngModel)]="newUser.username" required
+                    pattern="^(?!.*\.{2})[A-Za-z0-9._%+-]+(?:[.'][A-Za-z0-9._%+-]+)*@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$"
+                    #email="ngModel">
+                <div *ngIf="email.invalid && (email.dirty || email.touched)" class="error-message">
+                    <div *ngIf="email.hasError('required')">Username is required.</div>
+                    <div *ngIf="email.hasError('pattern')">Invalid email address.</div>
+                </div>
+            </div>
+            <div class="form-group">
+			    <label for="role">Role:</label>
+			    <select id="role" name="role" [(ngModel)]="newUser.roleId" required>
+			        <option *ngFor="let role of roles" [ngValue]="role.roleId">{{ role.roleName }}</option>
+			    </select>
+			</div>
+            <div class="form-group">
+                <label for="teams">Select Teams:</label>
+                <select id="teams" name="teams" [(ngModel)]="selectedTeams" multiple>
+                    <option *ngFor="let team of teams" [ngValue]="team.teamId">{{ team.teamName }}</option>
+                </select>
+            </div>
+            <button type="submit" [disabled]="email.invalid" class="add-user-button">Add User</button>
+        </form>
+    </div>
+
 <div class="user-management">
-  <h2>User Management</h2>
   <table>
     <thead>
       <tr>
-        <th>User ID</th>
         <th>Username</th>
-        <th>Current Role</th>
-        <th>Change Role</th>
+        <th>Date Created</th>
+        <th>Role</th>
+        <th>Teams</th>
         <th>Action</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let user of users">
-        <td>{{ user.userId }}</td>
+      <tr *ngFor="let user of pagedUsers">
         <td>{{ user.username }}</td>
-        <td>{{ roleMappings[user.roleId] }}</td>
+        <td>{{ user.dateCreated }}</td>
         <td>
-          <select [(ngModel)]="user.role">
-            <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-          </select>
+			<select [(ngModel)]="user.roleName">
+			    <option *ngFor="let role of roles" [ngValue]="role.roleName" [selected]="role.roleName === user.roleName">{{ role.roleName }}</option>
+			</select>		
         </td>
+		<td>
+		    <div style="max-height: 150px; overflow-y: auto;">
+		        <div *ngFor="let team of teams">
+		            <input type="checkbox" 
+		                   [checked]="isUserInTeam(user.userId, team.teamId)">
+		            {{ team.teamName }}
+		        </div>
+		    </div>
+		</td>
         <td>
-          <button (click)="changeUserRole(user.userId, user.role)">Change Role</button>
+          <button (click)="changeUserRole(user.userId, user.roleName);changeUserTeam(user.userId, selectedUserTeams[user.userId])">Update</button>
         </td>
       </tr>
     </tbody>
   </table>
+
+  <div class="pagination">
+    <span *ngFor="let page of pages" (click)="setPage(page)">{{ page }}</span>
+  </div>
 </div>
 
 
-<div class="add-user-form">
-  <h2>Add User</h2>
-  <form (ngSubmit)="onAddUserSubmit()">
-    <div class="form-group">
-	  <label for="email">Email Address (Username):</label>
-	  <input type="text" id="email" name="email" [(ngModel)]="newUser.username" required
-	    pattern="^(?!.*\.{2})[A-Za-z0-9._%+-]+(?:[.'][A-Za-z0-9._%+-]+)*@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$" #email="ngModel">
-	  <div *ngIf="email.invalid && (email.dirty || email.touched)" class="error-message">
-	    <div *ngIf="email.hasError('required')">Username is required.</div>
-	    <div *ngIf="email.hasError('pattern')">Invalid email address.</div>
-	  </div>
-	</div>
-    <div class="form-group">
-      <label for="role">Role:</label>
-      <select id="role" name="role" [(ngModel)]="newUser.roleId" required>
-        <option *ngFor="let role of roles" [ngValue]="role === 'Admin' ? 1 : 2">{{ role }}</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="isSite">Is Site:</label>
-      <input type="checkbox" id="isSite" name="isSite" [(ngModel)]="newUser.isSite">
-    </div>
-    <div class="form-group">
-      <label for="isSponsor">Is Sponsor:</label>
-      <input type="checkbox" id="isSponsor" name="isSponsor" [(ngModel)]="newUser.isSponsor">
-    </div>
-    <button type="submit" [disabled]="email.invalid">Add User</button>
-  </form>
+
 </div>
+
