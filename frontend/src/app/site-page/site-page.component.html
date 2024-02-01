@@ -1,0 +1,11 @@
+<app-border class="dashboard-background">
+  <app-header [pageTitle]="'SITE'"></app-header>
+  <app-navigation-ribbon
+  [buttons]="[
+    { label: 'ADMIN', route: '/admin' }
+  ]">
+  </app-navigation-ribbon>
+
+  <app-site-team-data-select></app-site-team-data-select>
+  <app-footer [footerImage]="'assets/footer-logo.png'"></app-footer>
+</app-border>

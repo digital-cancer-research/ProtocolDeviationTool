@@ -17,6 +17,9 @@ import { CategoryPieGraphComponent } from './category-pie-graph/category-pie-gra
 import { SiteSelectComponent } from './site-select/site-select.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AdministratorPageComponent } from './administrator-page/administrator-page.component';
+import { SitePageComponent } from './site-page/site-page.component';
+import { SiteTeamDataSelectComponent } from './site-team-data-select/site-team-data-select.component';
+
 
 import { UploadService } from './upload/upload.service';
 import { UserService } from './user/user.service';
@@ -64,6 +67,8 @@ import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.
     NavigationRibbonComponent,
     SiteSponsorPageComponent,
     AdministratorPageComponent,
+    SitePageComponent,
+    SiteTeamDataSelectComponent,
   ],
   imports: [
 	BrowserModule,
