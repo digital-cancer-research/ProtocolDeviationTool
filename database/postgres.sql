@@ -18,6 +18,7 @@ CREATE TABLE "user_account" (
 );
 
 CREATE TABLE "user_team" (
+  "user_team_id" SERIAL PRIMARY KEY,
   "user_id" INT,
   "team_id" INT
 );
@@ -131,6 +132,7 @@ CREATE sequence data_entry_seq increment by 1 start with 1;
 CREATE sequence dvspondes_seq increment by 1 start with 1;
 CREATE sequence user_account_seq increment by 1 start with 9;
 CREATE sequence category_edit_audit_seq increment by 1 start with 1;
+CREATE sequence user_team_seq increment by 1 start with 5;
 
 ALTER TABLE "user_account" ADD FOREIGN KEY ("role_id") REFERENCES "role" ("role_id") ON DELETE CASCADE ON UPDATE CASCADE;
 

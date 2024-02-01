@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
@@ -12,6 +13,11 @@ import jakarta.persistence.Table;
 public class UserTeam {
 
 	@Id
+	@Column(name = "user_team_id")
+	@SequenceGenerator(initialValue=1, name="user_team_seq", sequenceName="user_team_seq", allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="user_team_seq")
+    private int userTeamId;
+	
     @Column(name = "user_id")
     private int userId;
 
@@ -20,6 +26,14 @@ public class UserTeam {
 
     // Getters and Setters
 
+    public int getUserTeamId() {
+        return userTeamId;
+    }
+
+    public void setUserTeamId(int userTeamId) {
+        this.userTeamId = userTeamId;
+    }
+    
     public int getUserId() {
         return userId;
     }

@@ -28,6 +28,7 @@ import org.digitalecmt.qualityassurance.dto.RoleChangeDTO;
 import org.digitalecmt.qualityassurance.dto.TeamChangeDTO;
 import org.digitalecmt.qualityassurance.dto.UserTeamDTO;
 import org.digitalecmt.qualityassurance.dto.UserWithRoleDTO;
+import org.digitalecmt.qualityassurance.dto.UserWithRoleTeamDTO;
 import org.digitalecmt.qualityassurance.dto.UserWithTeamDTO;
 import org.digitalecmt.qualityassurance.model.persistence.UserAccount;
 import org.digitalecmt.qualityassurance.model.persistence.UserTeam;
@@ -42,6 +43,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.transaction.Transactional;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -180,66 +185,65 @@ public class UserController {
         }
     }
     
-    @PostMapping("/change-user-team/{userId}")
-    public ResponseEntity<HttpStatus> changeUserTeam(@PathVariable int userId, @RequestBody TeamChangeDTO teamChangeDTO) {
+    @Transactional
+    @PostMapping("/change-user-team")
+    public ResponseEntity<HttpStatus> changeUserTeam(@RequestBody TeamChangeDTO teamChangeDTO) {
         try {
-            Optional<UserAccount> userData = userRepository.findById(userId);
+        	System.out.println("Received request to add user with role and team");
 
-            if (userData.isPresent()) {
-                UserAccount user = userData.get();
+            System.out.println(teamChangeDTO.getUserId());
+            System.out.println(teamChangeDTO.getTeamId());
+            
+            // Delete existing UserTeam entries for the given userId
+            userTeamRepository.deleteByUserId(teamChangeDTO.getUserId());
 
-                // Clear existing teams for the user
-                userTeamRepository.deleteByUserId(userId);
-
-                // Add the new teams for the user
-                List<Integer> newTeamIds = teamChangeDTO.getNewTeamIds();
-                for (Integer teamId : newTeamIds) {
-                    Optional<Team> teamData = teamRepository.findById(teamId);
-                    if (teamData.isPresent()) {
-                        Team team = teamData.get();
-                        UserTeam userTeam = new UserTeam();
-                        userTeam.setUserId(user.getUserId());
-                        userTeam.setTeamId(team.getTeamId());
-                        userTeamRepository.save(userTeam);
-                    } else {
-                        // Handle case where team with given ID is not found
-                        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-                    }
+             	// Add the teams for the user
+                for (Integer team : teamChangeDTO.getTeamId()) {
+                    UserTeam userTeam = new UserTeam();
+                    userTeam.setUserId(teamChangeDTO.getUserId());
+                    userTeam.setTeamId(team);
+                    userTeamRepository.save(userTeam);
+                    System.out.println("Added team " + team + " for user " + teamChangeDTO.getUserId());
                 }
 
                 return new ResponseEntity<>(HttpStatus.OK);
-            } else {
-                // Handle case where user with given ID is not found
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
         } catch (Exception e) {
             // Handle any exceptions that occur during processing
+        	System.out.println("An error occurred while updating teams: " + e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     
     @PostMapping("/add-user-with-role-team")
-    public ResponseEntity<UserAccount> addUserWithRoleAndTeam(@RequestBody UserTeamDTO userTeamDTO) {
+    public ResponseEntity<UserAccount> addUserWithRoleAndTeam(@RequestBody UserWithRoleTeamDTO userRoleTeamDTO) {
         try {
             System.out.println("Received request to add user with role and team");
 
-            UserAccount newUser = userTeamDTO.getUser();
-            System.out.println(newUser);
-            List<Team> selectedTeams = userTeamDTO.getTeams();
-            System.out.println(selectedTeams);
+            UserAccount newUser = new UserAccount();
+            System.out.println(userRoleTeamDTO.getUsername());
+            System.out.println(userRoleTeamDTO.getRoleId());
+            System.out.println(userRoleTeamDTO.getTeamId());
+            
+            // Get the current time
+            LocalDateTime currentLocalDateTime = LocalDateTime.now();
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
+            String dateTimeEdited = currentLocalDateTime.format(dateTimeFormatter);
 
             // Save the new user to the database
+            newUser.setDateCreated(dateTimeEdited);
+            newUser.setUsername(userRoleTeamDTO.getUsername());
+            newUser.setRoleId(userRoleTeamDTO.getRoleId());
             UserAccount newUserAccount = userRepository.save(newUser);
             System.out.println("New user saved to the database: " + newUserAccount.toString());
 
             // Add the teams for the user
-            for (Team team : selectedTeams) {
+            for (Integer team : userRoleTeamDTO.getTeamId()) {
                 UserTeam userTeam = new UserTeam();
                 userTeam.setUserId(newUserAccount.getUserId());
-                userTeam.setTeamId(team.getTeamId());
+                userTeam.setTeamId(team);
                 userTeamRepository.save(userTeam);
-                System.out.println("Added team " + team.getTeamId() + " for user " + newUserAccount.getUserId());
+                System.out.println("Added team " + team + " for user " + newUserAccount.getUserId());
             }
 
             System.out.println("User with role and team successfully added");

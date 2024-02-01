@@ -33,17 +33,18 @@ export class UserManagementService {
     }
 
   changeUserRole(userId: number, newRoleId: number): Observable<void> {
-    // Make an HTTP POST request to change a user's role
-    return this.http.post<void>(`${this.baseUrl}/change-user-role/${userId}`, { newRoleId });
+	    // Make an HTTP POST request to change a user's role
+	    return this.http.post<void>(`${this.baseUrl}/change-user-role/${userId}`, { newRoleId });
   }
   
-  changeUserTeam(userId: number, teamIds: number[]): Observable<void> {
+  changeUserTeam(newUserTeam: UserTeam): Observable<void> {
     // Make an HTTP POST request to change a user's team
-    return this.http.post<void>(`${this.baseUrl}/change-user-team/${userId}`, { userId, teamIds });
+    return this.http.post<void>(`${this.baseUrl}/change-user-team`, newUserTeam);
   }
 	  
-  addUserWithRoleTeam(newUser: UserTeam): Observable<void> {
-    // Make an HTTP POST request to create a new user with role and teams
-    return this.http.post<void>(`${this.baseUrl}/add-user-with-role-team`, { newUser});
-  }
+  addUserWithRoleTeam(newUser: UserAccount): Observable<void> {
+	  // Make an HTTP POST request to create a new user with role and teams
+	  return this.http.post<void>(`${this.baseUrl}/add-user-with-role-team`, newUser);
+	}
+
 }
