@@ -78,7 +78,7 @@
 			    <div class="team-checkboxes">
 			        <input type="text" id="teamSearch{{user.userId}}" name="teamSearch{{user.userId}}" [(ngModel)]="userTeamSearchTerms[user.userId]" (ngModelChange)="filterUserTeams(user.userId)" placeholder="Search teams...">
 			        <div>
-			            <div *ngFor="let team of filteredUserTeams[user.userId]">
+			            <div *ngFor="let team of filteredUserTeams[user.userId]" class="team-checkbox-list">
 			                <input type="checkbox" 
 			                       [checked]="isTeamSelected(user.userId, team.teamId)"
 			                       (change)="toggleTeamSelection(user.userId, team.teamId)">

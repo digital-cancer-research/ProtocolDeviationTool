@@ -6,13 +6,17 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.component';
 import { AdministratorPageComponent } from './administrator-page/administrator-page.component';
 import { SitePageComponent } from './site-page/site-page.component';
+import { DataUploadPageComponent } from './data-upload-page/data-upload-page.component';
+import { DataVisualisationPageComponent } from './data-visualisation-page/data-visualisation-page.component';
 
 const routes: Routes = [
   { path: 'admin', component: AdministratorPageComponent},
-  { path: '', component: DashboardComponent },
+  { path: '', component: SiteSponsorPageComponent },
   { path: 'dashboard', component: HomeComponent },
   { path: 'site-sponsor-page', component: SiteSponsorPageComponent },
   { path: 'site', component: SitePageComponent },
+  { path: 'data-upload', component: DataUploadPageComponent },
+  { path: 'data-visualisation', component: DataVisualisationPageComponent },
 ];
 
 

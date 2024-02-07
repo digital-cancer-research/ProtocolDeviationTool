@@ -9,7 +9,7 @@ import { CategoryEditAuditDTO } from './category-audit.model';
 @Component({
   selector: 'app-category-table',
   templateUrl: './category-table.component.html',
-  styleUrls: ['./category-table.sass']
+  styleUrls: ['./category-table.component.css']
 })
 export class CategoryTableComponent implements OnInit {
   categories: UpdateCategoryDTO[] = [];

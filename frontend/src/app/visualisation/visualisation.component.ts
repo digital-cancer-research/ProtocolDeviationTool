@@ -6,7 +6,7 @@ import * as d3 from 'd3';
 @Component({
   selector: 'app-visualisation',
   templateUrl: './visualisation.component.html',
-  styleUrls: ['./visualisation.component.sass']
+  styleUrls: ['./visualisation.component.css']
 })
 export class VisualisationComponent implements OnInit {
   totalRows!: number;
@@ -65,7 +65,7 @@ export class VisualisationComponent implements OnInit {
 	  // Add the count
 	  svg.append('text')
 	    .attr('x', centerX)
-	    .attr('y', centerY)
+	    .attr('y', centerY + 12)
 	    .attr('text-anchor', 'middle')
 	    .text(`${this.totalRows}`)
 	    .attr('font-size', '48px')

@@ -1,0 +1,15 @@
+<app-border class="dashboard-background">
+  <app-header [pageTitle]="'DATA UPLOAD'"></app-header>
+  <app-navigation-ribbon
+  [buttons]="[
+    { label: 'ADMIN', route: '/admin' }
+  ]">
+  </app-navigation-ribbon>
+  <table>
+    <tr>
+      <td><app-upload></app-upload></td>
+      <td><app-file-list></app-file-list></td>
+    </tr>
+  </table>
+  <app-category-table></app-category-table>
+</app-border>

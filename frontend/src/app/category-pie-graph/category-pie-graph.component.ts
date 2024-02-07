@@ -8,7 +8,7 @@ import { ShareSiteDataService } from '../site-select/share-site-data.service';
 @Component({
   selector: 'app-category-pie-graph',
   templateUrl: './category-pie-graph.component.html',
-  styleUrls: ['./category-pie-graph.component.sass']
+  styleUrls: ['./category-pie-graph.component.css']
 })
 export class CategoryPieGraphComponent implements OnInit {
   entryCountPerStudy: EntryCountPerStudyDTO[] = [];
@@ -42,8 +42,8 @@ export class CategoryPieGraphComponent implements OnInit {
 	  d3.select('#categoryPieGraph').selectAll('*').remove();
 	  const nativeElement = this.elementRef.nativeElement;
 	  const margin = { top: 20, right: 20, bottom: 60, left: 400 };
-	  const width = 1000 - margin.left - margin.right;
-	  const height = 600 - margin.top - margin.bottom;
+	  const width = 800 - margin.left - margin.right;
+	  const height = 500 - margin.top - margin.bottom;
 
 	  const svg = d3
 	    .select('#categoryPieGraph')

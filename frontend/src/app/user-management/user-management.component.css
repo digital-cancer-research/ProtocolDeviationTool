@@ -160,6 +160,10 @@ td {
   width: 20%;
 }
 
+.team-checkbox-list {
+  text-align: left;
+}
+
 th {
   background-color: #009cee;
   color: white;

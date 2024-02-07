@@ -19,6 +19,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AdministratorPageComponent } from './administrator-page/administrator-page.component';
 import { SitePageComponent } from './site-page/site-page.component';
 import { SiteTeamDataSelectComponent } from './site-team-data-select/site-team-data-select.component';
+import { DataUploadPageComponent } from './data-upload-page/data-upload-page.component';
+import { DataVisualisationPageComponent } from './data-visualisation-page/data-visualisation-page.component';
 
 
 import { UploadService } from './upload/upload.service';
@@ -69,6 +71,8 @@ import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.
     AdministratorPageComponent,
     SitePageComponent,
     SiteTeamDataSelectComponent,
+    DataUploadPageComponent,
+    DataVisualisationPageComponent,
   ],
   imports: [
 	BrowserModule,

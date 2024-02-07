@@ -5,6 +5,7 @@ import { ShareSiteDataService } from '../site-select/share-site-data.service';
 @Component({
   selector: 'app-site-select',
   templateUrl: './site-select.component.html',
+  styleUrls: ['./site-select.component.css']
 })
 
 export class SiteSelectComponent implements OnInit {

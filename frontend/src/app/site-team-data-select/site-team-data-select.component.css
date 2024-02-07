@@ -18,6 +18,8 @@ button {
   text-align: center;
   color: black;
   font-weight: bold;
+  width: 250px;
+  height: 250px;
 }
 
 button:hover {
@@ -46,6 +48,8 @@ p {
   button {
     padding: 1.5em 2em;
     margin-bottom: 1.5em;
+    width: 150px;
+    height: 150px;
   }
 
   img {

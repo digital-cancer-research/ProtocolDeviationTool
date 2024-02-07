@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnChanges } from '@angular/core';
 import { UserManagementService } from './user-management.service';
 import { UserAccount } from './user-account.model';
 import { UserTeam } from './user-team.model';
@@ -8,7 +8,7 @@ import { UserTeam } from './user-team.model';
   templateUrl: './user-management.component.html',
   styleUrls: ['./user-management.component.css']
 })
-export class UserManagementComponent implements OnInit {
+export class UserManagementComponent implements OnInit, OnChanges {
 	  users: any[] = [];
 	  roles: any[] = [];
 	  teams: any[] = [];
@@ -53,11 +53,14 @@ export class UserManagementComponent implements OnInit {
 	    
 		// Initialize filteredTeams with all teams initially
 	    this.filteredTeams = this.teams;
+	    console.log("Filtered Teams");
 	    console.log(this.filteredTeams);
+	    console.log(this.users);
 	    this.users.forEach(user => {
             this.userTeamSearchTerms[user.userId] = '';
             this.filteredUserTeams[user.userId] = this.teams;
         });
+	    console.log("Filtered User Teams");
 	    console.log(this.filteredUserTeams);
 	  }
 	  
@@ -69,8 +72,8 @@ export class UserManagementComponent implements OnInit {
 	  }
 		
 	  filterUserTeams(userId: number): void {
-	        const searchTerm = this.userTeamSearchTerms[userId].toLowerCase();
-	        this.filteredUserTeams[userId] = this.teams.filter(team => team.teamName.toLowerCase().includes(searchTerm));
+	        this.filteredUserTeams[userId] = this.teams.filter(team => 
+	        team.teamName.toLowerCase().includes(this.userTeamSearchTerms[userId].toLowerCase()));
 	    }
 	  
 	  getTeams(): void {

@@ -3,7 +3,7 @@
   <table>
     <thead>
       <tr>
-        <th>STUDYID</th>
+        <th>STUDY ID</th>
         <th>DVSPONDES</th>
         <th>DVTERM</th>
         <th></th>
@@ -15,11 +15,13 @@
         <td>{{ category.studyId }}</td>
         <td>{{ category.dvspondesValue }}</td>
         <td>
-          <select [(ngModel)]="selectedDvTerm[i]" (change)="onDvTermSelect(i)">
-            <option *ngFor="let dvTerm of dvTerms" [value]="dvTerm.dvterm" [selected]="dvTerm.dvterm === selectedDvTerm[i]">
-              {{ dvTerm.dvterm }}
-            </option>
-          </select>
+          <div class="custom-select">
+            <select [(ngModel)]="selectedDvTerm[i]" (change)="onDvTermSelect(i)" class="custom-dropdown">
+              <option *ngFor="let dvTerm of dvTerms" [value]="dvTerm.dvterm" [selected]="dvTerm.dvterm === selectedDvTerm[i]">
+                {{ dvTerm.dvterm }}
+              </option>
+            </select>
+          </div>
         </td>
         <td>
           <span *ngIf="category.isEdited" style="cursor: pointer;" (click)="openAuditPopup(category.entryId)">🖉</span>
@@ -29,6 +31,7 @@
     </tbody>
   </table>
 </div>
+
 
 <div id="audit-popup" class="popup" style="display: none;">
   <div class="popup-content">

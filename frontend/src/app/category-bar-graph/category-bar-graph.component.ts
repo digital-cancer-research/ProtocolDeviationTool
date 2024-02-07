@@ -8,7 +8,7 @@ import { ShareSiteDataService } from '../site-select/share-site-data.service';
 @Component({
   selector: 'app-category-bar-graph',
   templateUrl: './category-bar-graph.component.html',
-  styleUrls: ['./category-bar-graph.component.sass']
+  styleUrls: ['./category-bar-graph.component.css']
 })
 export class CategoryBarGraphComponent implements OnInit {
   entryCountPerCategory: EntryCountPerCategoryDTO[] = [];
@@ -43,7 +43,7 @@ export class CategoryBarGraphComponent implements OnInit {
 	  const nativeElement = this.elementRef.nativeElement;
 	  const margin = { top: 50, right: 20, bottom: 60, left: 400 };
 	  const width = 1000 - margin.left - margin.right;
-	  const height = 400 - margin.top - margin.bottom;
+	  const height = 350 - margin.top - margin.bottom;
 
 	  const svg = d3
 	    .select('#categoryBarGraph')
@@ -92,12 +92,15 @@ export class CategoryBarGraphComponent implements OnInit {
 	    .style('font-size', '14px')
 	    .text('Category for Protocol Deviation');
 
-	  // Add X axis
-	  svg.append('g')
-	    .attr('transform', `translate(0, ${height})`)
-	    .call(d3.axisBottom(x)
-	    .ticks(d3.max(this.entryCountPerCategory, (d) => d.entryCount) || 0)
-	    .tickFormat(d3.format('d')));
+	 // Calculate the number of ticks for the x-axis
+	    const maxTicks = Math.min(10, this.entryCountPerCategory.length);
+
+	    // Add X axis
+	    svg.append('g')
+	       .attr('transform', `translate(0, ${height})`)
+	       .call(d3.axisBottom(x)
+	       .ticks(maxTicks)
+	       .tickFormat(d3.format('d')));
 	  
 	  // Add Y axis
 	  svg.append('g')

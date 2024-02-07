@@ -10,20 +10,25 @@ import { StudyList } from '../study-list/study-list.model';
 @Component({
   selector: 'app-upload',
   templateUrl: './upload.component.html',
+  styleUrls: ['./upload.component.css'],
 })
 export class UploadComponent {
   message: string | null = null;
   files: any[] = [];
   studies: StudyList[] = [];
+  selectedFileName: string = ''; // Variable to store the selected file name
 
   constructor(private http: HttpClient, private userService: UserService, private fileListService: FileListService, private studyListService: StudyListService) {}
 
-onFileSelected(event: any) {
-  const fileInput = event.target as HTMLInputElement;
-  if (fileInput.files && fileInput.files.length > 0) {
-    console.log('Selected file:', fileInput.files[0].name);
-  }
-}
+//Function to handle the file selection event
+ onFileSelected(event: any): void {
+   const fileInput = event.target as HTMLInputElement;
+   if (fileInput.files && fileInput.files.length > 0) {
+     this.selectedFileName = 'File Selected: ' + fileInput.files[0].name; // Update the selected file name
+   } else {
+     this.selectedFileName = ''; // Clear the file name if no file is selected
+   }
+ }
 
 loadFiles(): void {
     this.fileListService.getUploadedFiles().subscribe(
