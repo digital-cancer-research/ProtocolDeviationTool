@@ -31,6 +31,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -40,6 +41,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.multipart.MultipartFile;
+
+import jakarta.persistence.EntityNotFoundException;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -52,12 +56,14 @@ import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
 import org.digitalecmt.qualityassurance.model.persistence.Dvspondes;
 import org.digitalecmt.qualityassurance.model.persistence.FileData;
 import org.digitalecmt.qualityassurance.model.persistence.Files;
+import org.digitalecmt.qualityassurance.model.persistence.PdCategory;
 import org.digitalecmt.qualityassurance.model.persistence.SiteIdColour;
 import org.digitalecmt.qualityassurance.model.persistence.StudyIdColour;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.repository.DvspondesRepository;
 import org.digitalecmt.qualityassurance.repository.FileDataRepository;
 import org.digitalecmt.qualityassurance.repository.FilesRepository;
+import org.digitalecmt.qualityassurance.repository.PdCategoryRepository;
 import org.digitalecmt.qualityassurance.repository.SiteIdColourRepository;
 import org.digitalecmt.qualityassurance.repository.StudyIdColourRepository;
 import org.apache.poi.ss.usermodel.*;
@@ -86,6 +92,9 @@ public class UploadService {
 	
 	@Autowired
 	private StudyIdColourRepository studyIdColourRepository;
+	
+	@Autowired
+    private PdCategoryRepository pdCategoryRepository;
 
 	private Logger log = Logger.getLogger(UploadService.class.getName());
 	
@@ -119,8 +128,9 @@ public class UploadService {
 		}
 	}
 
+
 	public void parseAndAddData(String siteId, String studyId, String dvspondesValue, List<DataEntry> dataEntrys,
-			Files files) {
+			Files files, String DvtermValue) {
 
 //    	// Check if the study has a name, if not, set the name to studyId
 //    	Study study = studyRepository.findById(studyId).orElse(null);
@@ -142,7 +152,18 @@ public class UploadService {
 		dataEntry.setSiteId(siteId);
 		dataEntry.setStudyId(studyId);
 		dataEntry.setDvspondesId(dvspondes.getDvspondesId());
+		
+		// Fetch the category using the provided dvterm if its not empty
+		if (!DvtermValue.isEmpty()) {
+		    Optional<PdCategory> pdCategoryOptional = pdCategoryRepository.findByDvterm(DvtermValue);
 
+		    if (pdCategoryOptional.isPresent()) {
+		        PdCategory pdCategory = pdCategoryOptional.get();
+		        dataEntry.setCategoryId(pdCategory.getCategoryId());
+		    }
+		}
+        
+		
 		// Add the DataEntry instance to the list
 		dataEntrys.add(dataEntry);
 		dataEntryRepository.save(dataEntry);
@@ -223,6 +244,13 @@ public class UploadService {
 			String siteId = record.get("SITEID");
 			String studyId = record.get("STUDYID");
 			String dvspondesValue = record.get("DVSPONDES");
+			String dvtermValue = "";
+			if (csvParser.getHeaderMap().containsKey("DVTERM")) {
+				dvtermValue = record.get("DVTERM");
+			} else {
+				dvtermValue = "";
+			}
+			
 
 			if (StringUtils.isBlank(siteId)) {
 				missingCells.add("Row " + record.getRecordNumber() + ", Column SITEID");
@@ -235,7 +263,7 @@ public class UploadService {
 			}
 
 			if (missingCells.isEmpty()) {
-				parseAndAddData(siteId, studyId, dvspondesValue, dataEntrys, files);
+				parseAndAddData(siteId, studyId, dvspondesValue, dataEntrys, files, dvtermValue);
 			}
 		}
 
@@ -289,6 +317,12 @@ public class UploadService {
 			String siteId = dataFormatter.formatCellValue(row.getCell(0));
 			String studyId = dataFormatter.formatCellValue(row.getCell(1));
 			String dvspondesValue = dataFormatter.formatCellValue(row.getCell(2));
+			String dvtermValue = "";
+			if (row.getCell(5) != null) {
+		        dvtermValue = dataFormatter.formatCellValue(row.getCell(5));
+		    } else {
+		    	dvtermValue = "";
+		    }
 
 			// Stop processing when the first empty row is encountered
 			if (StringUtils.isBlank(siteId) && StringUtils.isBlank(studyId) && StringUtils.isBlank(dvspondesValue)) {
@@ -306,7 +340,7 @@ public class UploadService {
 			}
 
 			if (missingCells.isEmpty()) {
-				parseAndAddData(siteId, studyId, dvspondesValue, dataEntrys, files);
+				parseAndAddData(siteId, studyId, dvspondesValue, dataEntrys, files, dvtermValue);
 			}
 		}
 		if (!missingCells.isEmpty()) {
