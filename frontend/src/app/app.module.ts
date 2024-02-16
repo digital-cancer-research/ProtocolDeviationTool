@@ -21,6 +21,7 @@ import { SitePageComponent } from './site-page/site-page.component';
 import { SiteTeamDataSelectComponent } from './site-team-data-select/site-team-data-select.component';
 import { DataUploadPageComponent } from './data-upload-page/data-upload-page.component';
 import { DataVisualisationPageComponent } from './data-visualisation-page/data-visualisation-page.component';
+import { SiteTeamDataSelectMultiteamComponent } from './site-team-data-select-multiteam/site-team-data-select-multiteam.component';
 
 
 import { UploadService } from './upload/upload.service';
@@ -73,6 +74,7 @@ import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.
     SiteTeamDataSelectComponent,
     DataUploadPageComponent,
     DataVisualisationPageComponent,
+    SiteTeamDataSelectMultiteamComponent,
   ],
   imports: [
 	BrowserModule,

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output  } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UploadResponse } from './upload-response.model';
 import { UserService } from '../user/user.service';
@@ -13,6 +13,7 @@ import { StudyList } from '../study-list/study-list.model';
   styleUrls: ['./upload.component.css'],
 })
 export class UploadComponent {
+@Output() fileUploaded: EventEmitter<void> = new EventEmitter<void>();
   message: string | null = null;
   files: any[] = [];
   studies: StudyList[] = [];
@@ -78,6 +79,9 @@ uploadFile() {
           // Refresh the uploaded file list and the study list
           this.loadFiles();
           this.loadStudies();
+          
+       // Emit event when file is uploaded
+          this.fileUploaded.emit();
         },
         (error) => {
           // Handle upload error

@@ -143,6 +143,20 @@ public class UserController {
         }
     }
     
+    @GetMapping("/user-id")
+    public ResponseEntity<Integer> getUserIdByUsername(@RequestParam String username) {
+        Integer userId = userRepository.getUserIdByUsername(username);
+        return ResponseEntity.ok(userId);
+    }
+    
+    @GetMapping("/get-current-user-teams")
+    public ResponseEntity<List<UserWithTeamDTO>> getUserTeams(@RequestParam("userId") Integer userId) {
+    	System.out.println(userId);
+        List<UserWithTeamDTO> teams = userTeamRepository.findUserTeamsByUserId(userId);
+        System.out.println(teams);
+        return new ResponseEntity<>(teams, HttpStatus.OK);
+    }
+    
     @GetMapping("/get-users-with-roles")
     public ResponseEntity<List<UserWithRoleDTO>> getUsersWithRoles() {
         List<UserWithRoleDTO> usersWithRolesTeams = userRepository.findUsersWithRoles();

@@ -33,6 +33,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 @Repository
 public interface UserAccountRepository
@@ -43,4 +44,8 @@ public interface UserAccountRepository
 		       "FROM UserAccount u " + 	
 		       "JOIN Role r ON u.roleId = r.roleId")
 		List<UserWithRoleDTO> findUsersWithRoles();
+
+	@Query("SELECT u.userId FROM UserAccount u WHERE u.username = :username")
+    Integer getUserIdByUsername(@Param("username") String username);
+	
 }

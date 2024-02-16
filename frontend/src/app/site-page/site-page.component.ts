@@ -6,4 +6,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./site-page.component.css']
 })
 export class SitePageComponent {
+	userTeams: any[] = [];
+	handleUserTeams(teams: any[]): void {
+	    this.userTeams = teams;
+	  }
 }

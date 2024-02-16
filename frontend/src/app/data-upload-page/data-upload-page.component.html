@@ -7,7 +7,7 @@
   </app-navigation-ribbon>
   <table>
     <tr>
-      <td><app-upload></app-upload></td>
+      <td><app-upload (fileUploaded)="refreshData()"></app-upload></td>
       <td><app-file-list></app-file-list></td>
     </tr>
   </table>

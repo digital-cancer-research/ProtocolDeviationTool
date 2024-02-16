@@ -1,11 +1,19 @@
 <app-border class="dashboard-background">
-  <app-header [pageTitle]="'SITE'"></app-header>
+  <app-header (userTeamsSelected)="handleUserTeams($event)" [pageTitle]="'SITE'"></app-header>
   <app-navigation-ribbon
-  [buttons]="[
-    { label: 'ADMIN', route: '/admin' }
-  ]">
+    [buttons]="[
+      { label: 'ADMIN', route: '/admin' }
+    ]">
   </app-navigation-ribbon>
 
-  <app-site-team-data-select></app-site-team-data-select>
+  <!-- Conditionally render app-site-team-data-select or app-site-team-data-select-multiteam -->
+  <ng-container *ngIf="userTeams && userTeams.length <= 1">
+    <app-site-team-data-select [team]="userTeams[0]"></app-site-team-data-select>
+  </ng-container>
+
+  <ng-container *ngIf="userTeams && userTeams.length > 1">
+    <app-site-team-data-select-multiteam [teams]="userTeams"></app-site-team-data-select-multiteam>
+  </ng-container>
+
   <app-footer [footerImage]="'assets/footer-logo.png'"></app-footer>
 </app-border>

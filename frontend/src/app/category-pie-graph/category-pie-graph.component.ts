@@ -43,7 +43,7 @@ export class CategoryPieGraphComponent implements OnInit {
 	  const nativeElement = this.elementRef.nativeElement;
 	  const margin = { top: 20, right: 20, bottom: 60, left: 400 };
 	  const width = 800 - margin.left - margin.right;
-	  const height = 500 - margin.top - margin.bottom;
+	  const height = 400 - margin.top - margin.bottom;
 
 	  const svg = d3
 	    .select('#categoryPieGraph')

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from './user.model';
+import { UserTeam } from '../user-management/user-team.model';
 
 @Injectable({
   providedIn: 'root',
@@ -20,8 +21,17 @@ export class UserService {
   }
 
   getCurrentUser(): string | null {
-  return this.currentUser;
+  	return this.currentUser;
   }
+  
+  getUserIdByUsername(username: string): Observable<number> {
+	  return this.http.get<number>(`${this.baseUrl}/users/user-id?username=${username}`);
+	}
+  
+ //Method to fetch the teams of the current user
+	 getCurrentUserTeams(userId: number): Observable<UserTeam[]> {
+	  return this.http.get<UserTeam[]>(`${this.baseUrl}/users/get-current-user-teams?userId=${userId}`);
+	}
   
   setCurrentUser(username: string): void {
   this.currentUser = username;

@@ -8,6 +8,7 @@ import { UserTeam } from './user-team.model';
   templateUrl: './user-management.component.html',
   styleUrls: ['./user-management.component.css']
 })
+
 export class UserManagementComponent implements OnInit, OnChanges {
 	  users: any[] = [];
 	  roles: any[] = [];
@@ -53,15 +54,18 @@ export class UserManagementComponent implements OnInit, OnChanges {
 	    
 		// Initialize filteredTeams with all teams initially
 	    this.filteredTeams = this.teams;
-	    console.log("Filtered Teams");
-	    console.log(this.filteredTeams);
-	    console.log(this.users);
+	    this.initializeFilteredUserTeams();
+	  }
+	  
+	  ngOnChanges(): void {
+		  this.initializeFilteredUserTeams();
+		  }
+	  
+	  private initializeFilteredUserTeams(): void {
 	    this.users.forEach(user => {
-            this.userTeamSearchTerms[user.userId] = '';
-            this.filteredUserTeams[user.userId] = this.teams;
-        });
-	    console.log("Filtered User Teams");
-	    console.log(this.filteredUserTeams);
+	      this.userTeamSearchTerms[user.userId] = '';
+	      this.filteredUserTeams[user.userId] = this.teams;
+	    });
 	  }
 	  
 		// Function to filter teams based on search term
@@ -77,10 +81,8 @@ export class UserManagementComponent implements OnInit, OnChanges {
 	    }
 	  
 	  getTeams(): void {
-		    console.log('Fetching teams');
 		    // Make an API call to get teams
 		    this.userManagementService.getTeams().subscribe((data: any[]) => {
-		        console.log('Received data:', data);
 		        this.teams = data;
 		        this.filteredTeams = data;
 		    }, error => {
@@ -89,10 +91,8 @@ export class UserManagementComponent implements OnInit, OnChanges {
 		}
 	  
 	  getRoles(): void {
-		    console.log('Fetching roles');
 		    // Make an API call to get roles
 		    this.userManagementService.getRoles().subscribe((data: any[]) => {
-		        console.log('Received data:', data);
 		        this.roles = data;
 		    }, error => {
 		        console.error('Error fetching roles:', error);
@@ -101,11 +101,10 @@ export class UserManagementComponent implements OnInit, OnChanges {
 
 
 	  loadUsers(): void {
-		    console.log('Fetching users with roles');
 		    // Make an API call to get users with their roles
 		    this.userManagementService.getUsersWithRoles().subscribe((data: any[]) => {
-		        console.log('Received data:', data);
 		        this.users = data;
+		        this.initializeFilteredUserTeams();
 		        this.updatePage();
 		    }, error => {
 		        console.error('Error fetching users:', error);
@@ -113,21 +112,22 @@ export class UserManagementComponent implements OnInit, OnChanges {
 		}
 	  
 	  loadUserTeams(): void {
-		  console.log('Fetching users with teams');
 		  // Make an API call to get users with their teams
 		  this.userManagementService.getUserTeams().subscribe((data: any[]) => {
-		    console.log('Received data:', data);
 		    this.userTeams = data;
 		    this.updatePage();
 
 		    // Initialize selectedUserTeams with default team selections
 		    this.initSelectedUserTeams();
+		    
+		    this.initializeFilteredUserTeams();
 		  }, error => {
 		    console.error('Error fetching users:', error);
 		  });
 		}
 
 	  updatePage(): void {
+		  this.initializeFilteredUserTeams();
 	    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
 	    this.pagedUsers = this.users.slice(startIndex, startIndex + this.itemsPerPage);
 	  }
