@@ -52,9 +52,6 @@ export class UserManagementComponent implements OnInit, OnChanges {
 	    this.getRoles();
 	    this.getTeams();
 	    
-		// Initialize filteredTeams with all teams initially
-	    this.filteredTeams = this.teams;
-	    this.initializeFilteredUserTeams();
 	  }
 	  
 	  ngOnChanges(): void {
@@ -85,6 +82,9 @@ export class UserManagementComponent implements OnInit, OnChanges {
 		    this.userManagementService.getTeams().subscribe((data: any[]) => {
 		        this.teams = data;
 		        this.filteredTeams = data;
+				// Initialize filteredTeams with all teams initially
+			    this.filteredTeams = this.teams;
+			    this.initializeFilteredUserTeams();
 		    }, error => {
 		        console.error('Error fetching teams:', error);
 		    });
