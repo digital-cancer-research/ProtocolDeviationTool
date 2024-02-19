@@ -104,6 +104,7 @@ export class UserManagementComponent implements OnInit, OnChanges {
 		    // Make an API call to get users with their roles
 		    this.userManagementService.getUsersWithRoles().subscribe((data: any[]) => {
 		        this.users = data;
+				this.initSelectedUserTeams()
 		        this.initializeFilteredUserTeams();
 		        this.updatePage();
 		    }, error => {
@@ -119,7 +120,6 @@ export class UserManagementComponent implements OnInit, OnChanges {
 
 		    // Initialize selectedUserTeams with default team selections
 		    this.initSelectedUserTeams();
-		    
 		    this.initializeFilteredUserTeams();
 		  }, error => {
 		    console.error('Error fetching users:', error);
