@@ -45,12 +45,11 @@ public interface DataEntryRepository
 	@Query("SELECT new org.digitalecmt.qualityassurance.dto.DataEntryDTO(d.entryId, d.studyId, ds.dvspondesValue, c.categoryId, c.dvterm, c.dvdecod, c.dvcat) " +
 	           "FROM DataEntry d " +
 	           "JOIN Dvspondes ds ON d.dvspondesId = ds.dvspondesId " +
-	           "JOIN PdCategory c ON d.categoryId = c.categoryId")
+	           "JOIN DataEntryCategory dec ON d.entryId = dec.entryId " +
+	           "JOIN PdCategory c ON dec.categoryId = c.categoryId")
 	List<Object[]> getJoinedData();
-
-	Long countByCategoryId(Integer categoryId);
 	
-	@Query("select count(*) from DataEntry d left join PdCategory c on d.categoryId=c.categoryId where c.dvcat like ?1")
+	@Query("select count(*) from DataEntry d JOIN DataEntryCategory dec ON d.entryId = dec.entryId left join PdCategory c on dec.categoryId=c.categoryId where c.dvcat like ?1")
 	Long countByCategory(String category);
 
 	@Query("SELECT DISTINCT d.siteId FROM DataEntry d")
@@ -58,7 +57,7 @@ public interface DataEntryRepository
 
 	Long countBySiteId(String siteId);
 
-	@Query("SELECT COUNT(d) FROM DataEntry d JOIN PdCategory c ON d.categoryId = c.categoryId WHERE c.dvcat = ?1 AND d.siteId = ?2")
+	@Query("SELECT COUNT(d) FROM DataEntry d JOIN DataEntryCategory dec ON d.entryId = dec.entryId JOIN PdCategory c ON dec.categoryId = c.categoryId WHERE c.dvcat = ?1 AND d.siteId = ?2")
 	Long countByCategoryIdAndSiteId(String category, String siteId);
 
 	Long countByStudyId(String study);

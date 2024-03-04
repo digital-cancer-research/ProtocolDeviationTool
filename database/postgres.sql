@@ -58,13 +58,18 @@ CREATE TABLE "data_entry" (
   "dvs_cat" VARCHAR,
   "dvstdtc" VARCHAR,
   "user_id" INT,
-  "category_id" INT,
   "is_edited" BOOL
 );
 
 CREATE TABLE "dvspondes" (
   "dvspondes_id" SERIAL PRIMARY KEY,
   "dvspondes_value" VARCHAR NOT NULL
+);
+
+CREATE TABLE "data_entry_category" (
+  "data_entry_category_id" SERIAL PRIMARY KEY,
+  "entry_id" INT,
+  "category_id" INT
 );
 
 CREATE TABLE "pd_category" (
@@ -146,7 +151,9 @@ ALTER TABLE "user_study_access" ADD FOREIGN KEY ("user_id") REFERENCES "user_acc
 
 ALTER TABLE "data_entry" ADD FOREIGN KEY ("dvspondes_id") REFERENCES "dvspondes" ("dvspondes_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "data_entry" ADD FOREIGN KEY ("category_id") REFERENCES "pd_category" ("category_id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "data_entry_category" ADD FOREIGN KEY ("entry_id") REFERENCES "data_entry" ("entry_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE "data_entry_category" ADD FOREIGN KEY ("category_id") REFERENCES "pd_category" ("category_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE "file_data" ADD FOREIGN KEY ("file_id") REFERENCES "files" ("file_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -166,14 +173,14 @@ INSERT INTO "role" ("role_name") VALUES
 
 -- Insert users with roles
 INSERT INTO "user_account" ("username", "role_id", "is_site", "is_sponsor", "date_created") VALUES
-  ('AdminWithAllRoles', 1, true, true, '01/01/2023'),
-  ('AdminWithSiteRole', 1, true, false, '02/01/2023'),
-  ('AdminWithSponsorRole', 1, false, true, '03/01/2023'),
-  ('AdminWithNoSpecialRoles', 1, false, false, '04/01/2023'),
-  ('UserWithAllRoles', 2, true, true, '05/01/2023'),
-  ('UserWithSiteRole', 2, true, false, '06/01/2023'),
-  ('UserWithSponsorRole', 2, false, true, '07/01/2023'),
-  ('UserWithNoSpecialRoles', 2, false, false, '08/01/2023');
+  ('drjohndoe@gmail.com', 1, true, true, '01/01/2023'),
+  ('sara.smith.md@hospital.edu', 1, true, false, '02/01/2023'),
+  ('healthpro123@hotmail.com', 1, false, true, '03/01/2023'),
+  ('emily.green.md@clinic.org', 1, false, false, '04/01/2023'),
+  ('clinical.expert99@medcenter.net', 2, true, true, '05/01/2023'),
+  ('medresearcher23@outlook.com', 2, true, false, '06/01/2023'),
+  ('doctorcare456@gmail.com', 2, false, true, '07/01/2023'),
+  ('doctor.awesome@yahoo.com', 2, false, false, '08/01/2023');
 
 -- Insert category data
 INSERT INTO pd_category ("dvcat", "dvdecod", "dvterm")
@@ -411,18 +418,17 @@ VALUES
 
 -- Insert dummy teams
 INSERT INTO "team" ("team_name") VALUES
-  ('Team1'),
-  ('Team2'),
-  ('Team3'),
-  ('Team4'),
-  ('Team5'),
-  ('Team6'),
-  ('Team7'),
-  ('Team8'),
-  ('Team9'),
-  ('Team10'),
-  ('Team11'),
-  ('Team12');
+  ('Clinical Operations Team'),
+  ('Cardiovascular Research Team'),
+  ('Oncology Clinical Trials Unit'),
+  ('Neuroscience Investigative Group'),
+  ('Pediatric Clinical Research Consortium'),
+  ('Infectious Diseases Research Team'),
+  ('Endocrinology and Metabolism Study Group'),
+  ('Women''s Health Research Alliance'),
+  ('Surgical Outcomes Research Network'),
+  ('Geriatrics and Aging Research Collaborative'),
+  ('Translational Medicine Investigation Team');
   
 -- Add dummy team assignment
 INSERT INTO "user_team" ("user_id", "team_id") VALUES

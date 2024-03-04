@@ -30,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -59,6 +60,8 @@ import org.digitalecmt.qualityassurance.model.persistence.Files;
 import org.digitalecmt.qualityassurance.model.persistence.PdCategory;
 import org.digitalecmt.qualityassurance.model.persistence.SiteIdColour;
 import org.digitalecmt.qualityassurance.model.persistence.StudyIdColour;
+import org.digitalecmt.qualityassurance.model.persistence.DataEntryCategory;
+import org.digitalecmt.qualityassurance.repository.DataEntryCategoryRepository;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.repository.DvspondesRepository;
 import org.digitalecmt.qualityassurance.repository.FileDataRepository;
@@ -95,6 +98,9 @@ public class UploadService {
 	
 	@Autowired
     private PdCategoryRepository pdCategoryRepository;
+	
+	@Autowired
+	private DataEntryCategoryRepository dataEntryCategoryRepository;
 
 	private Logger log = Logger.getLogger(UploadService.class.getName());
 	
@@ -130,7 +136,7 @@ public class UploadService {
 
 
 	public void parseAndAddData(String siteId, String studyId, String dvspondesValue, List<DataEntry> dataEntrys,
-			Files files, String DvtermValue) {
+			Files files, List<String> dvtermValues) {
 
 //    	// Check if the study has a name, if not, set the name to studyId
 //    	Study study = studyRepository.findById(studyId).orElse(null);
@@ -152,21 +158,28 @@ public class UploadService {
 		dataEntry.setSiteId(siteId);
 		dataEntry.setStudyId(studyId);
 		dataEntry.setDvspondesId(dvspondes.getDvspondesId());
-		
-		// Fetch the category using the provided dvterm if its not empty
-		if (!DvtermValue.isEmpty()) {
-		    Optional<PdCategory> pdCategoryOptional = pdCategoryRepository.findByDvterm(DvtermValue);
-
-		    if (pdCategoryOptional.isPresent()) {
-		        PdCategory pdCategory = pdCategoryOptional.get();
-		        dataEntry.setCategoryId(pdCategory.getCategoryId());
-		    }
-		}
-        
-		
-		// Add the DataEntry instance to the list
 		dataEntrys.add(dataEntry);
 		dataEntryRepository.save(dataEntry);
+		
+		// Iterate over each dvterm value
+	    for (String dvtermValue : dvtermValues) {
+		
+			// Create a new DataEntryCategory instance and set its properties
+			DataEntryCategory dataEntryCategory = new DataEntryCategory();
+			
+			// Fetch the category using the provided dvterm if it's not empty
+	        if (!dvtermValue.isEmpty()) {
+	            Optional<PdCategory> pdCategoryOptional = pdCategoryRepository.findByDvterm(dvtermValue);
+	            if (pdCategoryOptional.isPresent()) {
+	                PdCategory pdCategory = pdCategoryOptional.get();
+	                dataEntryCategory.setCategoryId(pdCategory.getCategoryId());
+	            }
+	        }
+	        
+			// Finish setting up the DataEntryCategory instance
+			dataEntryCategory.setEntryId(dataEntry.getEntryId());
+			dataEntryCategoryRepository.save(dataEntryCategory);
+	    }
 		
 		// Check if the siteId already has a color in the site_id_colour table
 	    SiteIdColour existingSiteColor = siteIdColourRepository.findBySiteId(siteId);
@@ -244,12 +257,18 @@ public class UploadService {
 			String siteId = record.get("SITEID");
 			String studyId = record.get("STUDYID");
 			String dvspondesValue = record.get("DVSPONDES");
-			String dvtermValue = "";
+			List<String> dvtermValues;
 			if (csvParser.getHeaderMap().containsKey("DVTERM")) {
-				dvtermValue = record.get("DVTERM");
-			} else {
-				dvtermValue = "";
-			}
+		        String dvtermValue = record.get("DVTERM");
+		        if (StringUtils.isNotBlank(dvtermValue)) {
+		            // Split the dvtermValue by comma and store in a list
+		            dvtermValues = Arrays.asList(dvtermValue.split("\\s*;\\s*"));
+		        } else {
+		            dvtermValues = Arrays.asList();
+		        }
+		    } else {
+		        dvtermValues = Arrays.asList();
+		    }
 			
 
 			if (StringUtils.isBlank(siteId)) {
@@ -263,7 +282,7 @@ public class UploadService {
 			}
 
 			if (missingCells.isEmpty()) {
-				parseAndAddData(siteId, studyId, dvspondesValue, dataEntrys, files, dvtermValue);
+				parseAndAddData(siteId, studyId, dvspondesValue, dataEntrys, files, dvtermValues);
 			}
 		}
 
@@ -317,11 +336,18 @@ public class UploadService {
 			String siteId = dataFormatter.formatCellValue(row.getCell(0));
 			String studyId = dataFormatter.formatCellValue(row.getCell(1));
 			String dvspondesValue = dataFormatter.formatCellValue(row.getCell(2));
-			String dvtermValue = "";
-			if (row.getCell(5) != null) {
-		        dvtermValue = dataFormatter.formatCellValue(row.getCell(5));
+			List<String> dvtermValues;
+
+		    if (row.getCell(5) != null) {
+		        String dvtermValue = dataFormatter.formatCellValue(row.getCell(5));
+		        if (StringUtils.isNotBlank(dvtermValue)) {
+		            // Split the dvtermValue by comma and store in a list
+		            dvtermValues = Arrays.asList(dvtermValue.split("\\s*;\\s*"));
+		        } else {
+		            dvtermValues = Arrays.asList();
+		        }
 		    } else {
-		    	dvtermValue = "";
+		        dvtermValues = Arrays.asList();
 		    }
 
 			// Stop processing when the first empty row is encountered
@@ -340,7 +366,7 @@ public class UploadService {
 			}
 
 			if (missingCells.isEmpty()) {
-				parseAndAddData(siteId, studyId, dvspondesValue, dataEntrys, files, dvtermValue);
+				parseAndAddData(siteId, studyId, dvspondesValue, dataEntrys, files, dvtermValues);
 			}
 		}
 		if (!missingCells.isEmpty()) {

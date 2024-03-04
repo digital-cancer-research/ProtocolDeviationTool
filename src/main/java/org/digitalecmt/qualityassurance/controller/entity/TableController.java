@@ -35,9 +35,11 @@ import org.digitalecmt.qualityassurance.dto.PdCategoryDTO;
 import org.digitalecmt.qualityassurance.dto.UpdateCategoryDTO;
 import org.digitalecmt.qualityassurance.model.persistence.CategoryEditAudit;
 import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
+import org.digitalecmt.qualityassurance.model.persistence.DataEntryCategory;
 import org.digitalecmt.qualityassurance.model.persistence.Dvspondes;
 import org.digitalecmt.qualityassurance.model.persistence.PdCategory;
 import org.digitalecmt.qualityassurance.repository.CategoryEditAuditRepository;
+import org.digitalecmt.qualityassurance.repository.DataEntryCategoryRepository;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.repository.DvspondesRepository;
 import org.digitalecmt.qualityassurance.repository.PdCategoryRepository;
@@ -63,6 +65,9 @@ public class TableController {
     
     @Autowired
     private CategoryEditAuditRepository categoryEditAuditRepository;
+    
+    @Autowired
+    private DataEntryCategoryRepository dataEntryCategoryRepository;
 
 	// API endpoint to retrieve all data or filter by site ID and study ID
     @GetMapping("/data")
@@ -97,21 +102,29 @@ public class TableController {
             // Fetch the Dvspondes entity using dvspondesId
             Dvspondes dvspondes = dvspondesRepository.findById(entry.getDvspondesId()).orElse(null);
             
+            // Fetch the DataEntryCategory record to update based on entry_id
+            List<DataEntryCategory> dataEntryCategory = dataEntryCategoryRepository.findAllByEntryId(
+            		entry.getEntryId());
+            
             PdCategory pdCategory = null;
             Integer categoryId = 0;
+            List<Integer> categoryIds = new ArrayList<>();
             
             // Fetch the PdCategory entity using categoryId
-            if (entry.getCategoryId() != null) {
-            	pdCategory = pdCategoryRepository.findById(entry.getCategoryId()).orElse(null);
-            	categoryId = entry.getCategoryId();
+            for (DataEntryCategory dataEntryCategories : dataEntryCategory) {
+	            if (dataEntryCategories.getCategoryId() != null) {
+	            	pdCategory = pdCategoryRepository.findById(dataEntryCategories.getCategoryId()).orElse(null);
+	            	categoryId = dataEntryCategories.getCategoryId();
+	            	categoryIds.add(categoryId);
+	            }
             }
-            
+	            
             DataEntryDTO dto = new DataEntryDTO(
             	entry.getEntryId(),
                 entry.getSiteId(),
                 entry.getStudyId(),
                 (dvspondes != null) ? dvspondes.getDvspondesValue() : null,
-                categoryId,
+                categoryIds,
                 (pdCategory != null) ? pdCategory.getDvterm() : null,
                 (pdCategory != null) ? pdCategory.getDvdecod() : null,
                 (pdCategory != null) ? pdCategory.getDvcat() : null,
@@ -152,12 +165,22 @@ public class TableController {
             PdCategory pdCategory = pdCategoryRepository.findByDvterm(request.getDvterm())
                     .orElseThrow(() -> new EntityNotFoundException("PdCategory not found for dvterm: " + request.getDvterm()));
 
-            // Update the DataEntry record with the new category
-            dataEntry.setCategoryId(pdCategory.getCategoryId());
+            // Fetch the DataEntryCategory record to update based on entry_id and category_id
+            DataEntryCategory dataEntryCategory = new DataEntryCategory();
+            if (request.getCategoryId() != null) {
+	            dataEntryCategory = dataEntryCategoryRepository.findByEntryIdAndCategoryId(
+	                    request.getEntryId(), request.getCategoryId())
+	                    .orElseThrow(() -> new EntityNotFoundException("DataEntryCategory not found"));
+        	} else {
+        		dataEntryCategory.setEntryId(request.getEntryId());
+        	}
 
+            // Update the category_id of the DataEntryCategory record
+            dataEntryCategory.setCategoryId(pdCategory.getCategoryId());
+            dataEntryCategoryRepository.save(dataEntryCategory);
+            
             // Set the isEdited flag to true
             dataEntry.setIsEdited(true);
-
             dataEntryRepository.save(dataEntry);
 
             // Log the edit information

@@ -1,11 +1,13 @@
 package org.digitalecmt.qualityassurance.dto;
 
+import java.util.List;
+
 public class DataEntryDTO {
 	private int entryId;
 	private String siteId;
     private String studyId;
     private String dvspondesValue;
-    private Integer categoryId;
+    private List<Integer> categoryIds;
     private String dvterm;
     private String dvdecod;
     private String dvcat;
@@ -16,12 +18,12 @@ public class DataEntryDTO {
     }
 
     // Constructor with parameters
-    public DataEntryDTO(int entryId, String siteId, String studyId, String dvspondesValue, Integer categoryId, String dvterm, String dvdecod, String dvcat, Boolean isEdited) {
+    public DataEntryDTO(int entryId, String siteId, String studyId, String dvspondesValue, List<Integer> categoryIds, String dvterm, String dvdecod, String dvcat, Boolean isEdited) {
     	this.entryId = entryId;
     	this.siteId = siteId;
         this.studyId = studyId;
         this.dvspondesValue = dvspondesValue;
-        this.categoryId = categoryId;
+        this.categoryIds = categoryIds;
         this.dvterm = dvterm;
         this.dvdecod = dvdecod;
         this.dvcat = dvcat;
@@ -62,12 +64,12 @@ public class DataEntryDTO {
         this.dvspondesValue = dvspondesValue;
     }
     
-    public int getCategoryId() {
-        return categoryId;
+    public List<Integer> getCategoryIds() {
+        return categoryIds;
     }
 
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
+    public void setCategoryIds(List<Integer> categoryIds) {
+        this.categoryIds = categoryIds;
     }
     
     public String getDvterm() {

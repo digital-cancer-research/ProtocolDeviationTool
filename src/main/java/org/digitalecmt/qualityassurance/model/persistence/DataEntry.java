@@ -81,9 +81,6 @@ public class DataEntry {
     @Column(name = "user_id")
     private int userId;
     
-    @Column(name = "category_id")
-    private Integer categoryId;
-    
     @Column(name = "is_edited")
     private Boolean isEdited;
 
@@ -263,14 +260,6 @@ public class DataEntry {
 
     public void setUserId(int userId) {
         this.userId = userId;
-    }
-    
-    public Integer getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
     }
     
     public Boolean getIsEdited() {

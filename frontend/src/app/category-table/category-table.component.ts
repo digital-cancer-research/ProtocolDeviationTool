@@ -5,6 +5,7 @@ import { DvTermCategoryDTO } from './pd-category.model';
 import { UpdateCategoryDTO } from './update-category.model';
 import { UserService } from '../user/user.service';
 import { CategoryEditAuditDTO } from './category-audit.model';
+import { CategoryTableDataDTO } from './category-table-data.model';
 
 @Component({
   selector: 'app-category-table',
@@ -12,7 +13,7 @@ import { CategoryEditAuditDTO } from './category-audit.model';
   styleUrls: ['./category-table.component.css']
 })
 export class CategoryTableComponent implements OnInit {
-  categories: UpdateCategoryDTO[] = [];
+  categories: CategoryTableDataDTO[] = [];
   dvTerms: DvTermCategoryDTO[] = [];
   selectedDvTerm: (string | null)[] = [];
   isAuditPopupOpen = false;
@@ -26,7 +27,7 @@ export class CategoryTableComponent implements OnInit {
   }
 
   fetchData(): void {
-    this.http.get<UpdateCategoryDTO[]>('/api/table/data').subscribe(
+    this.http.get<CategoryTableDataDTO[]>('/api/table/data').subscribe(
       (data) => {
         // Sort data by studyId in ascending order
         this.categories = data.sort((a, b) => (a.studyId > b.studyId ? 1 : -1));

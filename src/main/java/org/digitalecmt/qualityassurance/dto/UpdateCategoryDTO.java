@@ -66,11 +66,11 @@ public class UpdateCategoryDTO {
         this.dvspondesValue = dvspondesValue;
     }
     
-    public int getCategoryId() {
+    public Integer getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(int categoryId) {
+    public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
     }
     
