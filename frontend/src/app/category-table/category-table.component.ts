@@ -25,11 +25,21 @@ export class CategoryTableComponent implements OnInit {
     this.fetchDvTermData();
   }
 
+
   fetchData(): void {
     this.http.get<UpdateCategoryDTO[]>('/api/table/data').subscribe(
       (data) => {
-        // Sort data by studyId in ascending order
-        this.categories = data.sort((a, b) => (a.studyId > b.studyId ? 1 : -1));
+    	  
+    	//Sort data by studyId in ascending order and then by dvspondes
+    	  this.categories = data.sort((a, b) => {
+    	     // Compare studyId first
+    	     if (a.studyId !== b.studyId) {
+    	         return a.studyId.localeCompare(b.studyId); // Sort studyId in ascending order
+    	     } else {
+    	         // If studyId is the same, compare dvspondes
+    	         return a.dvspondesValue.localeCompare(b.dvspondesValue); // Sort dvspondes in ascending order
+    	     }
+    	  });
         // Initialize selectedDvTerm for each row
         this.selectedDvTerm = data.map((category) => category.dvterm);
       },
@@ -76,6 +86,8 @@ onDvTermSelect(rowIndex: number): void {
     }).subscribe(
       () => {
         console.log('Category updated in the database');
+        this.fetchData();
+        this.fetchDvTermData();
       },
       (error) => {
         console.error('Error updating category in the database: ', error);

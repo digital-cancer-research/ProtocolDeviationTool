@@ -80,7 +80,7 @@ uploadFile() {
           this.loadFiles();
           this.loadStudies();
           
-       // Emit event when file is uploaded
+     	  // Emit event when file is uploaded
           this.fileUploaded.emit();
         },
         (error) => {
