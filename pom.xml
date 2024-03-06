@@ -109,7 +109,11 @@
 	</dependency>
 	
 	<!-- ============ OTHER DEPENDENCIES ============== -->
-	
+	<dependency>
+	    <groupId>org.json</groupId>
+	    <artifactId>json</artifactId>
+	    <version>20240303</version>
+	</dependency>
 	 <!-- PostgreSQL JDBC Driver -->
     <dependency>
         <groupId>org.postgresql</groupId>
