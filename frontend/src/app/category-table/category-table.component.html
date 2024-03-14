@@ -16,8 +16,8 @@
         <td>{{ category.dvspondesValue }}</td>
         <td>
           <div class="custom-select">
-            <select [(ngModel)]="selectedDvTerm[i]" (change)="onDvTermSelect(i)" class="custom-dropdown">
-              <option *ngFor="let dvTerm of dvTerms" [value]="dvTerm.dvterm" [selected]="dvTerm.dvterm === selectedDvTerm[i]">
+            <select [(ngModel)]="selectedDvTerm[i]" (change)="onDvTermSelect(i)" class="custom-dropdown" multiple>
+              <option *ngFor="let dvTerm of dvTerms" [value]="dvTerm.dvterm" [selected]="selectedDvTerm[i].includes(dvTerm.dvterm)">
                 {{ dvTerm.dvterm }}
               </option>
             </select>
@@ -26,11 +26,17 @@
         <td>
           <span *ngIf="category.isEdited" style="cursor: pointer;" (click)="openAuditPopup(category.entryId)">🖉</span>
         </td>
-        <td>{{ category.dvcat }}</td>
+        <td>
+		  <div *ngFor="let cat of removeDuplicates(category.dvcat)">
+		    &#8226; {{ cat }}<br>
+		  </div>
+		</td>
+
       </tr>
     </tbody>
   </table>
 </div>
+
 
 
 <div id="audit-popup" class="popup" style="display: none;">

@@ -109,6 +109,9 @@ public class TableController {
             PdCategory pdCategory = null;
             Integer categoryId = 0;
             List<Integer> categoryIds = new ArrayList<>();
+            List<String> dvterms = new ArrayList<>();
+            List<String> dvdecods = new ArrayList<>();
+            List<String> dvcats = new ArrayList<>();
             
             // Fetch the PdCategory entity using categoryId
             for (DataEntryCategory dataEntryCategories : dataEntryCategory) {
@@ -116,6 +119,9 @@ public class TableController {
 	            	pdCategory = pdCategoryRepository.findById(dataEntryCategories.getCategoryId()).orElse(null);
 	            	categoryId = dataEntryCategories.getCategoryId();
 	            	categoryIds.add(categoryId);
+	            	dvterms.add(pdCategory.getDvterm());
+                    dvdecods.add(pdCategory.getDvdecod());
+                    dvcats.add(pdCategory.getDvcat());
 	            }
             }
 	            
@@ -125,9 +131,9 @@ public class TableController {
                 entry.getStudyId(),
                 (dvspondes != null) ? dvspondes.getDvspondesValue() : null,
                 categoryIds,
-                (pdCategory != null) ? pdCategory.getDvterm() : null,
-                (pdCategory != null) ? pdCategory.getDvdecod() : null,
-                (pdCategory != null) ? pdCategory.getDvcat() : null,
+                dvterms,
+                dvdecods,
+                dvcats,
                 entry.getIsEdited()
             );
             dtos.add(dto);
@@ -155,37 +161,41 @@ public class TableController {
     }
     
     @PostMapping("/update-category")
-    public ResponseEntity<String> updateCategory(@RequestBody UpdateCategoryDTO request) {
+    public ResponseEntity<HttpStatus> updateCategory(@RequestBody UpdateCategoryDTO request) {
         try {
             // Find the DataEntry record to update by its ID (entryId)
             DataEntry dataEntry = dataEntryRepository.findById(request.getEntryId())
                     .orElseThrow(() -> new EntityNotFoundException("DataEntry not found"));
 
-            // Fetch the new category using the provided dvterm
-            PdCategory pdCategory = pdCategoryRepository.findByDvterm(request.getDvterm())
-                    .orElseThrow(() -> new EntityNotFoundException("PdCategory not found for dvterm: " + request.getDvterm()));
+            // Fetch the DataEntryCategory records to update based on entry_id
+            List<DataEntryCategory> dataEntryCategories = dataEntryCategoryRepository.findAllByEntryId(request.getEntryId());
 
-            // Fetch the DataEntryCategory record to update based on entry_id and category_id
-            DataEntryCategory dataEntryCategory = new DataEntryCategory();
-            if (request.getCategoryId() != null) {
-	            dataEntryCategory = dataEntryCategoryRepository.findByEntryIdAndCategoryId(
-	                    request.getEntryId(), request.getCategoryId())
-	                    .orElseThrow(() -> new EntityNotFoundException("DataEntryCategory not found"));
-        	} else {
-        		dataEntryCategory.setEntryId(request.getEntryId());
-        	}
+            // Fetch the PdCategory entities using the provided dvterms
+            List<PdCategory> pdCategories = pdCategoryRepository.findByDvtermIn(request.getDvterms());
 
-            // Update the category_id of the DataEntryCategory record
-            dataEntryCategory.setCategoryId(pdCategory.getCategoryId());
-            dataEntryCategoryRepository.save(dataEntryCategory);
-            
+            // Update the DataEntryCategory records
+            for (int i = 0; i < pdCategories.size(); i++) {
+                DataEntryCategory dataEntryCategory;
+                if (i < dataEntryCategories.size()) {
+                    // If the DataEntryCategory record exists, update it
+                    dataEntryCategory = dataEntryCategories.get(i);
+                } else {
+                    // If the DataEntryCategory record does not exist, create a new one
+                    dataEntryCategory = new DataEntryCategory();
+                    dataEntryCategory.setEntryId(request.getEntryId());
+                }
+                // Update the category_id of the DataEntryCategory record
+                dataEntryCategory.setCategoryId(pdCategories.get(i).getCategoryId());
+                dataEntryCategoryRepository.save(dataEntryCategory);
+            }
+
             // Set the isEdited flag to true
             dataEntry.setIsEdited(true);
             dataEntryRepository.save(dataEntry);
 
             // Log the edit information
-            String changeFrom = request.getOldDvterm();
-            String changeTo = request.getDvterm();
+            String changeFrom = String.join(",", request.getOldDvterms());
+            String changeTo = String.join(",", request.getDvterms());
             String username = request.getUsername();
             LocalDateTime currentLocalDateTime = LocalDateTime.now();
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
@@ -201,11 +211,12 @@ public class TableController {
 
             categoryEditAuditRepository.save(categoryEditAudit);
 
-            return new ResponseEntity<>("Category updated successfully", HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
-            return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
     
     @GetMapping("/audit-entries/{entryId}")
     public ResponseEntity<List<CategoryEditAuditDTO>> getAuditEntries(@PathVariable int entryId) {

@@ -8,9 +8,9 @@ public class DataEntryDTO {
     private String studyId;
     private String dvspondesValue;
     private List<Integer> categoryIds;
-    private String dvterm;
-    private String dvdecod;
-    private String dvcat;
+    private List<String> dvterm;
+    private List<String> dvdecod;
+    private List<String> dvcat;
     private Boolean isEdited;
 
  // No-argument constructor
@@ -18,7 +18,7 @@ public class DataEntryDTO {
     }
 
     // Constructor with parameters
-    public DataEntryDTO(int entryId, String siteId, String studyId, String dvspondesValue, List<Integer> categoryIds, String dvterm, String dvdecod, String dvcat, Boolean isEdited) {
+    public DataEntryDTO(int entryId, String siteId, String studyId, String dvspondesValue, List<Integer> categoryIds, List<String> dvterm, List<String> dvdecod, List<String> dvcat, Boolean isEdited) {
     	this.entryId = entryId;
     	this.siteId = siteId;
         this.studyId = studyId;
@@ -72,27 +72,27 @@ public class DataEntryDTO {
         this.categoryIds = categoryIds;
     }
     
-    public String getDvterm() {
+    public List<String> getDvterm() {
         return dvterm;
     }
 
-    public void setDvterm(String dvterm) {
+    public void setDvterm(List<String> dvterm) {
         this.dvterm = dvterm;
     }
 
-    public String getDvdecod() {
+    public List<String> getDvdecod() {
         return dvdecod;
     }
 
-    public void setDvdecod(String dvdecod) {
+    public void setDvdecod(List<String> dvdecod) {
         this.dvdecod = dvdecod;
     }
 
-    public String getDvcat() {
+    public List<String> getDvcat() {
         return dvcat;
     }
 
-    public void setDvcat(String dvcat) {
+    public void setDvcat(List<String> dvcat) {
         this.dvcat = dvcat;
     }
     

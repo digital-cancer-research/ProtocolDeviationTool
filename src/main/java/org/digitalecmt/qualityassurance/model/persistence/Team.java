@@ -15,8 +15,14 @@ public class Team {
     @Column(name = "team_id", columnDefinition = "serial")
     private int teamId;
 
-    @Column(name = "team_name", nullable = false)
+    @Column(name = "team_name", unique = true, nullable = false)
     private String teamName;
+    
+    @Column(name = "user_id")
+    private int userId;
+    
+    @Column(name = "date_created")
+    private String dateCreated;
 
     // Getters and Setters
 
@@ -34,5 +40,21 @@ public class Team {
 
     public void setTeamName(String teamName) {
         this.teamName = teamName;
+    }
+    
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+    
+    public String getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(String dateCreated) {
+        this.dateCreated = dateCreated;
     }
 }

@@ -110,6 +110,27 @@ export class CategoryPieGraphComponent implements OnInit {
 	        tooltip
 	          .style('opacity', 0);
 	      });
+	  
+		// Add legend
+	  const legend = svg.selectAll('.legend')
+	    .data(this.entryCountPerStudy)
+	    .enter().append('g')
+	    .attr('class', 'legend')
+	    .attr('transform', (d, i) => `translate(0, ${i * 20})`);
+
+	  legend.append('rect')
+	    .attr('x', width / 2 + 10)
+	    .attr('y', -height / 2 + margin.top)
+	    .attr('width', 18)
+	    .attr('height', 18)
+	    .style('fill', (d, i) => color(String(i)));
+
+	  legend.append('text')
+	    .attr('x', width / 2 + 40)
+	    .attr('y', -height / 2 + margin.top + 9)
+	    .attr('dy', '.35em')
+	    .style('text-anchor', 'start')
+	    .text((d) => d.studyId);
 
 	  
 	  // Add title above the pie chart

@@ -1,15 +1,17 @@
 package org.digitalecmt.qualityassurance.dto;
 
+import java.util.List;
+
 public class UpdateCategoryDTO {
 	private int entryId;
 	private String siteId;
     private String studyId;
     private String dvspondesValue;
-    private Integer categoryId;
-    private String dvterm;
-    private String oldDvterm;
-    private String dvdecod;
-    private String dvcat;
+    private List<Integer> categoryIds;
+    private List<String> dvterms;
+    private List<String> oldDvterms;
+    private List<String> dvdecods;
+    private List<String> dvcats;
     private String username;
     private Boolean isEdited;
 
@@ -18,16 +20,16 @@ public class UpdateCategoryDTO {
     }
 
     // Constructor with parameters
-    public UpdateCategoryDTO(int entryId, String siteId, String studyId, String dvspondesValue, Integer categoryId, String dvterm, String oldDvterm, String dvdecod, String dvcat, String username, Boolean isEdited) {
+    public UpdateCategoryDTO(int entryId, String siteId, String studyId, String dvspondesValue, List<Integer> categoryIds, List<String> dvterms, List<String> oldDvterms, List<String> dvdecods, List<String> dvcats, String username, Boolean isEdited) {
     	this.entryId = entryId;
     	this.siteId = siteId;
         this.studyId = studyId;
         this.dvspondesValue = dvspondesValue;
-        this.categoryId = categoryId;
-        this.dvterm = dvterm;
-        this.oldDvterm = oldDvterm;
-        this.dvdecod = dvdecod;
-        this.dvcat = dvcat;
+        this.categoryIds = categoryIds;
+        this.dvterms = dvterms;
+        this.oldDvterms = oldDvterms;
+        this.dvdecods = dvdecods;
+        this.dvcats = dvcats;
         this.username = username;
         this.isEdited = isEdited;
     }
@@ -66,44 +68,44 @@ public class UpdateCategoryDTO {
         this.dvspondesValue = dvspondesValue;
     }
     
-    public Integer getCategoryId() {
-        return categoryId;
+    public List<Integer> getCategoryId() {
+        return categoryIds;
     }
 
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
+    public void setCategoryIds(List<Integer> categoryIds) {
+        this.categoryIds = categoryIds;
     }
     
-    public String getDvterm() {
-        return dvterm;
+    public List<String> getDvterms() {
+        return dvterms;
     }
 
-    public void setDvterm(String dvterm) {
-        this.dvterm = dvterm;
+    public void setDvterms(List<String> dvterms) {
+        this.dvterms = dvterms;
     }
     
-    public String getOldDvterm() {
-        return oldDvterm;
+    public List<String> getOldDvterms() {
+        return oldDvterms;
     }
 
-    public void setOldDvterm(String oldDvterm) {
-        this.oldDvterm = oldDvterm;
+    public void setOldDvterms(List<String> oldDvterms) {
+        this.oldDvterms = oldDvterms;
     }
 
-    public String getDvdecod() {
-        return dvdecod;
+    public List<String> getDvdecods() {
+        return dvdecods;
     }
 
-    public void setDvdecod(String dvdecod) {
-        this.dvdecod = dvdecod;
+    public void setDvdecods(List<String> dvdecods) {
+        this.dvdecods = dvdecods;
     }
 
-    public String getDvcat() {
-        return dvcat;
+    public List<String> getDvcats() {
+        return dvcats;
     }
 
-    public void setDvcat(String dvcat) {
-        this.dvcat = dvcat;
+    public void setDvcats(List<String> dvcats) {
+        this.dvcats = dvcats;
     }
     
     public String getUsername() {

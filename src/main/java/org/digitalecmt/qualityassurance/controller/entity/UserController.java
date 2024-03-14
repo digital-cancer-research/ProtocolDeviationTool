@@ -24,6 +24,7 @@
 
 package org.digitalecmt.qualityassurance.controller.entity;
 
+import org.digitalecmt.qualityassurance.dto.TeamWithUsernameDTO;
 import org.digitalecmt.qualityassurance.dto.RoleChangeDTO;
 import org.digitalecmt.qualityassurance.dto.TeamChangeDTO;
 import org.digitalecmt.qualityassurance.dto.UserTeamDTO;
@@ -268,6 +269,102 @@ public class UserController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    @GetMapping("/get-teams-with-username")
+    public ResponseEntity<List<TeamWithUsernameDTO>> getTeamsWithUsername() {
+        List<TeamWithUsernameDTO> teams = teamRepository.findTeamsWithUsername();
+        return new ResponseEntity<>(teams, HttpStatus.OK);
+    }
+    
+    // Create a new team
+    @PostMapping("/create-new-team")
+    public ResponseEntity<Team> createTeam(@RequestBody TeamWithUsernameDTO teamWithUsernameDTO) {
+        try {
+            System.out.println("Received request to add new team");
+
+            Team newTeam = new Team();
+            System.out.println(teamWithUsernameDTO.getTeamName());
+            System.out.println(teamWithUsernameDTO.getUserId());
+            
+            // Get the current time
+            LocalDateTime currentLocalDateTime = LocalDateTime.now();
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
+            String dateTimeEdited = currentLocalDateTime.format(dateTimeFormatter);
+
+            // Save the new team to the database
+            newTeam.setDateCreated(dateTimeEdited);
+            newTeam.setTeamName(teamWithUsernameDTO.getTeamName());
+            newTeam.setUserId(teamWithUsernameDTO.getUserId());
+            Team newTeamData = teamRepository.save(newTeam);
+            System.out.println("New team saved to the database: " + newTeamData.toString());
+
+            System.out.println("Team successfully added");
+            return new ResponseEntity<>(newTeamData, HttpStatus.CREATED);
+        } catch (Exception e) {
+            System.out.println("An error occurred while adding team: " + e.getMessage());
+            e.printStackTrace(); // Print stack trace for detailed error information
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    // Delete a team
+    @PostMapping("/delete-team/{teamId}")
+    public ResponseEntity<HttpStatus> deleteTeam(@PathVariable int teamId) {
+        try {
+            System.out.println("Received request to delete team with ID: " + teamId);
+
+            // Check if the team exists
+            Optional<Team> optionalTeam = teamRepository.findById(teamId);
+            if (optionalTeam.isPresent()) {
+                Team teamToDelete = optionalTeam.get();
+
+                // Delete the team from the database
+                teamRepository.delete(teamToDelete);
+
+                System.out.println("Team successfully deleted");
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                System.out.println("Team with ID " + teamId + " not found");
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            System.out.println("An error occurred while deleting team: " + e.getMessage());
+            e.printStackTrace(); // Print stack trace for detailed error information
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+	// Change the team name
+    @PostMapping("/change-team-name/{teamId}")
+    public ResponseEntity<HttpStatus> changeTeamName(@PathVariable int teamId, @RequestBody String newTeamName) {
+        try {
+            System.out.println("Received request to change team name to " + newTeamName);
+
+            // Get the team from the database by its ID
+            Optional<Team> optionalTeam = teamRepository.findById(teamId);
+            if (optionalTeam.isPresent()) {
+                Team team = optionalTeam.get();
+                
+                // Update the team's name
+                team.setTeamName(newTeamName);
+                
+                // Save the updated team to the database
+                Team updatedTeam = teamRepository.save(team);
+                
+                System.out.println("Team name successfully updated");
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                System.out.println("Team not found with ID: " + teamId);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            System.out.println("An error occurred while changing team name: " + e.getMessage());
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 
 }
 

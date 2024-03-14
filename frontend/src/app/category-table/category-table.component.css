@@ -20,6 +20,7 @@
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
+  font-size: 14px;
 }
 
 .category-table th {
@@ -31,11 +32,11 @@
 }
 
 .category-table th:nth-child(2) {
-  width: 45%;
+  width: 40%;
 }
 
 .category-table th:nth-child(3) {
-  width: 25%;
+  width: 30%;
   border-right: none;
 }
 
@@ -61,7 +62,7 @@
 }
 
 .custom-dropdown {
-  max-width: 400px;
+  max-width: 600px;
 }
 
 .custom-select {
@@ -71,7 +72,7 @@
 }
 
 .custom-select select {
-  height: 60px;
+  height: 100px;
   white-space: normal;
 }
 

@@ -44,6 +44,8 @@ public interface PdCategoryRepository
 
 	Optional<PdCategory> findByDvdecod(String dvdecod);
 
+	List<PdCategory> findByDvtermIn(List<String> dvterms);
+
 //	@Query("SELECT DISTINCT pc.dvcat FROM PdCategory pc " +
 //	           "JOIN DataEntry de ON pc.category_id = de.category_id " +
 //	           "WHERE de.site_id = :siteId")

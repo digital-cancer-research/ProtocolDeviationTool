@@ -4,10 +4,10 @@ export interface CategoryTableDataDTO {
   studyId: string;
   dvspondesValue: string;
   categoryId: number[];
-  dvterm: string;
-  oldDvterm: string;
-  dvdecod: string;
-  dvcat: string;
+  dvterm: string[];
+  oldDvterm: string[];
+  dvdecod: string[];
+  dvcat: string[];
   username: string;
   isEdited: boolean;
 }

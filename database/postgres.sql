@@ -5,7 +5,9 @@ CREATE TABLE "role" (
 
 CREATE TABLE "team" (
   "team_id" SERIAL PRIMARY KEY,
-  "team_name" VARCHAR NOT NULL
+  "team_name" VARCHAR UNIQUE NOT NULL,
+  "user_id" INT,
+  "date_created" VARCHAR
 );
 
 CREATE TABLE "user_account" (
@@ -138,6 +140,8 @@ CREATE sequence dvspondes_seq increment by 1 start with 1;
 CREATE sequence user_account_seq increment by 1 start with 9;
 CREATE sequence category_edit_audit_seq increment by 1 start with 1;
 CREATE sequence user_team_seq increment by 1 start with 5;
+
+ALTER TABLE "team" ADD FOREIGN KEY ("user_id") REFERENCES "user_account" ("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE "user_account" ADD FOREIGN KEY ("role_id") REFERENCES "role" ("role_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -417,18 +421,18 @@ VALUES
 
 
 -- Insert dummy teams
-INSERT INTO "team" ("team_name") VALUES
-  ('Clinical Operations Team'),
-  ('Cardiovascular Research Team'),
-  ('Oncology Clinical Trials Unit'),
-  ('Neuroscience Investigative Group'),
-  ('Pediatric Clinical Research Consortium'),
-  ('Infectious Diseases Research Team'),
-  ('Endocrinology and Metabolism Study Group'),
-  ('Women''s Health Research Alliance'),
-  ('Surgical Outcomes Research Network'),
-  ('Geriatrics and Aging Research Collaborative'),
-  ('Translational Medicine Investigation Team');
+INSERT INTO "team" ("team_name", "user_id", "date_created") VALUES
+  ('Clinical Operations Team', 1, '01/01/2023'),
+  ('Cardiovascular Research Team', 1, '01/01/2023'),
+  ('Oncology Clinical Trials Unit', 1, '01/01/2023'),
+  ('Neuroscience Investigative Group', 1, '01/01/2023'),
+  ('Pediatric Clinical Research Consortium', 1, '01/01/2023'),
+  ('Infectious Diseases Research Team', 1, '01/01/2023'),
+  ('Endocrinology and Metabolism Study Group', 1, '01/01/2023'),
+  ('Women''s Health Research Alliance', 1, '01/01/2023'),
+  ('Surgical Outcomes Research Network', 1, '01/01/2023'),
+  ('Geriatrics and Aging Research Collaborative', 1, '01/01/2023'),
+  ('Translational Medicine Investigation Team', 1, '01/01/2023');
   
 -- Add dummy team assignment
 INSERT INTO "user_team" ("user_id", "team_id") VALUES

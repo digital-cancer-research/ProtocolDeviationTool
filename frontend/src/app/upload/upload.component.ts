@@ -53,7 +53,7 @@ uploadFile() {
   const fileInput = document.getElementById('fileInput') as HTMLInputElement;
   const file: File | null = fileInput?.files ? fileInput.files[0] : null;
   
-  // Get the current user's username from your service
+  // Get the current user's username from service
   const currentUsername = this.userService.getCurrentUser();
 
   if (!currentUsername) {
@@ -84,7 +84,6 @@ uploadFile() {
           this.fileUploaded.emit();
         },
         (error) => {
-          // Handle upload error
           if (error.error && error.error.message) {
             this.message = error.error.message;
           } else {

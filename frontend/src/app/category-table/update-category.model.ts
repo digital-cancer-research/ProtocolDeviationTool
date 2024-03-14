@@ -3,11 +3,11 @@ export interface UpdateCategoryDTO {
   siteId: string;
   studyId: string;
   dvspondesValue: string;
-  categoryId: number;
-  dvterm: string;
-  oldDvterm: string;
-  dvdecod: string;
-  dvcat: string;
+  categoryIds: number[];
+  dvterms: string[];
+  oldDvterms: string[];
+  dvdecods: string[];
+  dvcats: string[];
   username: string;
   isEdited: boolean;
 }

@@ -22,7 +22,7 @@ import { SiteTeamDataSelectComponent } from './site-team-data-select/site-team-d
 import { DataUploadPageComponent } from './data-upload-page/data-upload-page.component';
 import { DataVisualisationPageComponent } from './data-visualisation-page/data-visualisation-page.component';
 import { SiteTeamDataSelectMultiteamComponent } from './site-team-data-select-multiteam/site-team-data-select-multiteam.component';
-
+import { TeamManagementComponent } from './team-management/team-management.component';
 
 import { UploadService } from './upload/upload.service';
 import { UserService } from './user/user.service';
@@ -35,6 +35,7 @@ import { CategoryBarGraphService } from './category-bar-graph/category-bar-graph
 import { CategoryPieGraphService } from './category-pie-graph/category-pie-graph.service';
 import { SiteSelectService } from './site-select/site-select.service';
 import { ShareSiteDataService } from './site-select/share-site-data.service';
+import { TeamManagementService } from './team-management/team-management.service';
 
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -75,6 +76,7 @@ import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.
     DataUploadPageComponent,
     DataVisualisationPageComponent,
     SiteTeamDataSelectMultiteamComponent,
+    TeamManagementComponent,
   ],
   imports: [
 	BrowserModule,
@@ -95,6 +97,7 @@ import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.
     SiteSelectService,
     ShareSiteDataService,
     CategoryPieGraphService,
+    TeamManagementService,
   ],
   bootstrap: [AppComponent]
 })

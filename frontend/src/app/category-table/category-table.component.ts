@@ -15,7 +15,7 @@ import { CategoryTableDataDTO } from './category-table-data.model';
 export class CategoryTableComponent implements OnInit {
   categories: CategoryTableDataDTO[] = [];
   dvTerms: DvTermCategoryDTO[] = [];
-  selectedDvTerm: (string | null)[] = [];
+  selectedDvTerm: (string | null)[][] = [];
   isAuditPopupOpen = false;
   auditEntries: CategoryEditAuditDTO[] = [];
 
@@ -25,6 +25,11 @@ export class CategoryTableComponent implements OnInit {
     this.fetchData();
     this.fetchDvTermData();
   }
+  
+  removeDuplicates(array: string[]): string[] {
+	    return array.filter((value, index, self) => self.indexOf(value) === index);
+	  }
+
 
   fetchData(): void {
     this.http.get<CategoryTableDataDTO[]>('/api/table/data').subscribe(
@@ -51,39 +56,49 @@ export class CategoryTableComponent implements OnInit {
     );
   }
   
-onDvTermSelect(rowIndex: number): void {
-  const selectedDvTermForRow = this.selectedDvTerm[rowIndex];
-  const selectedDvTermObj = this.dvTerms.find((dvTerm) => dvTerm.dvterm === selectedDvTermForRow);
-  const oldDvtermForRow = this.categories[rowIndex].dvterm;
+  onDvTermSelect(rowIndex: number): void {
+	  const selectedDvTermsForRow = this.selectedDvTerm[rowIndex];
+	  const oldDvtermsForRow = this.categories[rowIndex].dvterm;
 
-  if (selectedDvTermObj) {
-    // Update the category for the selected row
-    this.categories[rowIndex].dvterm = selectedDvTermObj.dvterm;
-    this.categories[rowIndex].dvdecod = selectedDvTermObj.dvdecod;
-    this.categories[rowIndex].dvcat = selectedDvTermObj.dvcat;
+	  // Convert selectedDvTermsForRow to an array of dvterm values
+	  const selectedDvtermValues = Array.from(selectedDvTermsForRow)
+	    .filter((dvterm: string | null): dvterm is string => dvterm !== null) // Filter out null values
+	    .map((selectedDvterm: string) => {
+	      const selectedDvTermObj = this.dvTerms.find((dvTerm) => dvTerm.dvterm === selectedDvterm);
+	      return selectedDvTermObj ? selectedDvTermObj.dvterm : null;
+	    });
 
-    // Send an HTTP POST request to update the database
-    const entryId = this.categories[rowIndex].entryId;
-    const dvterm = selectedDvTermObj.dvterm;
+	  // Filter out null values from selectedDvtermValues
+	  const filteredSelectedDvtermValues: string[] = selectedDvtermValues.filter((dvterm: string | null): dvterm is string => dvterm !== null);
 
-    // Include the old dvterm and the username in the request
-    const currentUsername = this.userService.getCurrentUser();
-    
-    this.http.post('/api/table/update-category', {
-      entryId,
-      dvterm,
-      oldDvterm: oldDvtermForRow,
-      username: currentUsername,
-    }).subscribe(
-      () => {
-        console.log('Category updated in the database');
-      },
-      (error) => {
-        console.error('Error updating category in the database: ', error);
-      }
-    );
-  }
-}
+	  // Update the category for the selected row
+	  this.categories[rowIndex].dvterm = filteredSelectedDvtermValues;
+	  
+	  // Send an HTTP POST request to update the database
+	  const entryId = this.categories[rowIndex].entryId;
+
+	  // Include the old dvterm and the username in the request
+	  const currentUsername = this.userService.getCurrentUser();
+
+	  this.http.post('/api/table/update-category', {
+	    entryId,
+	    dvterms: filteredSelectedDvtermValues,
+	    oldDvterms: oldDvtermsForRow,
+	    username: currentUsername,
+	  }).subscribe(
+	    () => {
+	      console.log('Category updated in the database');
+	    },
+	    (error) => {
+	      console.error('Error updating category in the database: ', error);
+	    }
+	  );
+	}
+
+
+
+
+
 
 openAuditPopup(entryId: number): void {
 
