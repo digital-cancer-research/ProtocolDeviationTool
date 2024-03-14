@@ -37,6 +37,7 @@ import java.util.Random;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -71,6 +72,16 @@ import org.digitalecmt.qualityassurance.repository.SiteIdColourRepository;
 import org.digitalecmt.qualityassurance.repository.StudyIdColourRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.apache.http.HttpResponse;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 @Service
 public class UploadService {
@@ -104,6 +115,9 @@ public class UploadService {
 
 	private Logger log = Logger.getLogger(UploadService.class.getName());
 	
+	@Value("${prediction.url}")
+    private String predictionUrl;
+	
 	private String previousSiteIdColour = null;
 	private String previousStudyIdColour = null;
 
@@ -129,6 +143,7 @@ public class UploadService {
 		} catch (MissingCellsException e) {
 			return ResponseEntity.ok(new UploadResponse("Failed to upload the file. \n Mandatory data fields are missing. \n" + e.getMessage()));
 		} catch (Exception e) {
+			System.out.println(e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(new UploadResponse("Failed to process the file."));
 		}
@@ -153,13 +168,42 @@ public class UploadService {
 		dvspondes.setDvspondesValue(dvspondesValue);
 		dvspondesRepository.save(dvspondes);
 
+		// Make API call to auto categorise uploaded data
+		HttpResponse response = null;
+		String responseBody = null;
+	    try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+	        HttpPost httpPost = new HttpPost(predictionUrl);
+
+	        // Set headers
+	        httpPost.setHeader("Content-Type", "application/json");
+
+	        // Set request body
+	        String json = "{\"query\":\"" + dvspondesValue + "\", \"num_predictions\": 1}";
+	        StringEntity entity = new StringEntity(json);
+	        httpPost.setEntity(entity);
+
+	        // Execute the request
+	        response = httpClient.execute(httpPost);
+
+	        // Process the response
+	        HttpEntity responseEntity = response.getEntity();
+	        if (responseEntity != null) {
+	            responseBody = EntityUtils.toString(responseEntity);
+//	            System.out.println("Response: " + responseBody);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        // Handle exceptions
+	    }
+	    
+	    
+	    
+		
 		// Create a new DataEntry instance and set its properties
 		DataEntry dataEntry = new DataEntry();
 		dataEntry.setSiteId(siteId);
 		dataEntry.setStudyId(studyId);
 		dataEntry.setDvspondesId(dvspondes.getDvspondesId());
-		dataEntrys.add(dataEntry);
-		dataEntryRepository.save(dataEntry);
 		
 		// Iterate over each dvterm value
 	    for (String dvtermValue : dvtermValues) {
@@ -174,12 +218,35 @@ public class UploadService {
 	                PdCategory pdCategory = pdCategoryOptional.get();
 	                dataEntryCategory.setCategoryId(pdCategory.getCategoryId());
 	            }
-	        }
+	        } else {
+//				System.out.println(response);
+				// Parse the JSON response string
+			    JSONObject jsonResponse = new JSONObject(responseBody);
+			    
+			    // Get the 'categories' array from the JSON response
+			    JSONArray categoriesArray = jsonResponse.getJSONArray("categories");
+			    
+			    // Get the first element of the 'categories' array
+			    JSONObject firstCategory = categoriesArray.getJSONObject(0);
+			    
+			    // Get the value of the 'dvdecod' field from the first category
+			    String dvdecodValue = firstCategory.getString("dvdecod");
+				Optional<PdCategory> pdCategoryOptional = pdCategoryRepository.findByDvdecod(dvdecodValue);
+				
+				if (pdCategoryOptional.isPresent()) {
+			        PdCategory pdCategory = pdCategoryOptional.get();
+			        dataEntryCategory.setCategoryId(pdCategory.getCategoryId());
+				}
+			}
 	        
 			// Finish setting up the DataEntryCategory instance
 			dataEntryCategory.setEntryId(dataEntry.getEntryId());
 			dataEntryCategoryRepository.save(dataEntryCategory);
 	    }
+	    
+	    	// Add the DataEntry instance to the list
+	 		dataEntrys.add(dataEntry);
+	 		dataEntryRepository.save(dataEntry);
 		
 		// Check if the siteId already has a color in the site_id_colour table
 	    SiteIdColour existingSiteColor = siteIdColourRepository.findBySiteId(siteId);

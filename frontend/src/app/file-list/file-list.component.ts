@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FileListService } from './file-list.service';
 
@@ -9,6 +9,7 @@ import { FileListService } from './file-list.service';
   styleUrls: ['./file-list.component.css'],
 })
 export class FileListComponent implements OnInit {
+	@Output() fileDeleted: EventEmitter<void> = new EventEmitter<void>();
   files: any[] = [];
 
   constructor(private fileListService: FileListService) {}
@@ -33,6 +34,9 @@ export class FileListComponent implements OnInit {
     this.fileListService.deleteFile(fileId).subscribe(
       () => {
         this.files = this.files.filter((file) => file.fileId !== fileId);
+        
+     	// Emit event when file is deleted
+        this.fileDeleted.emit();
       },
       (error) => {
         console.error('Error deleting file:', error);
