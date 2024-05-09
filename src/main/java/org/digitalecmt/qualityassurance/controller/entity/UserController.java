@@ -33,8 +33,14 @@ import org.digitalecmt.qualityassurance.dto.UserWithRoleTeamDTO;
 import org.digitalecmt.qualityassurance.dto.UserWithTeamDTO;
 import org.digitalecmt.qualityassurance.model.persistence.UserAccount;
 import org.digitalecmt.qualityassurance.model.persistence.UserTeam;
+import org.digitalecmt.qualityassurance.model.persistence.AuditTrail;
+import org.digitalecmt.qualityassurance.model.persistence.CategoryEditAudit;
+import org.digitalecmt.qualityassurance.model.persistence.CurrentSites;
 import org.digitalecmt.qualityassurance.model.persistence.Role;
 import org.digitalecmt.qualityassurance.model.persistence.Team;
+import org.digitalecmt.qualityassurance.repository.AuditTrailRepository;
+import org.digitalecmt.qualityassurance.repository.CurrentSitesRepository;
+import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.repository.RoleRepository;
 import org.digitalecmt.qualityassurance.repository.TeamRepository;
 import org.digitalecmt.qualityassurance.repository.UserAccountRepository;
@@ -42,12 +48,14 @@ import org.digitalecmt.qualityassurance.repository.UserTeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -57,6 +65,9 @@ import java.util.logging.Logger;
 public class UserController {
 
 	private Logger log = Logger.getLogger(UserController.class.getName());
+	
+	private String currentUsername = "Default User";
+    private Integer currentUserId = 1;
 	
     @Autowired
     private UserAccountRepository userRepository;
@@ -69,6 +80,30 @@ public class UserController {
     
     @Autowired
     private RoleRepository roleRepository;
+    
+    @Autowired
+    private DataEntryRepository dataEntryRepository;
+    
+    @Autowired
+    private CurrentSitesRepository currentSitesRepository;
+    
+    @Autowired
+    private AuditTrailRepository auditTrailRepository;
+    
+    @PostMapping("/setCurrentUser")
+    public ResponseEntity<Void> setCurrentUser(@RequestBody String username) {
+    	System.out.println(username);
+        this.currentUsername = username;
+        System.out.println(username);
+        this.currentUserId = userRepository.getUserIdByUsername(username);
+        System.out.println(currentUserId);
+        
+        if (currentUserId == null) {
+            // Handle case where userId could not be retrieved
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().build();
+    }
     
     // Create a new user
     @PostMapping
@@ -189,8 +224,28 @@ public class UserController {
 
             if (userData.isPresent()) {
                 UserAccount user = userData.get();
+                int oldRole = user.getRoleId();
                 user.setRoleId(roleChangeDTO.getNewRoleId());
+                
+                // Log the audit information
+                LocalDateTime currentLocalDateTime = LocalDateTime.now();
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
+                String dateTimeEdited = currentLocalDateTime.format(dateTimeFormatter);
+
+                AuditTrail audit = new AuditTrail();
+                audit.setUserId(currentUserId);
+                audit.setEntityChanged(String.valueOf(userId));
+                audit.setAttributeChanged("Changed User Role");
+                audit.setChangeFrom(String.valueOf(oldRole));
+                audit.setChangeTo(String.valueOf(roleChangeDTO.getNewRoleId()));
+                audit.setDateTimeEdited(dateTimeEdited);
                 userRepository.save(user);
+                
+                
+                if (String.valueOf(oldRole) != String.valueOf(roleChangeDTO.getNewRoleId())) {
+                	auditTrailRepository.save(audit);
+                }
+                
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -203,14 +258,20 @@ public class UserController {
     @Transactional
     @PostMapping("/change-user-team")
     public ResponseEntity<HttpStatus> changeUserTeam(@RequestBody TeamChangeDTO teamChangeDTO) {
-        try {
-        	System.out.println("Received request to add user with role and team");
+        try {          
+        	
+        	// Fetch existing UserTeam entries for the given userId
+        	List<UserTeam> oldTeams = userTeamRepository.findByUserId(teamChangeDTO.getUserId());
 
-            System.out.println(teamChangeDTO.getUserId());
-            System.out.println(teamChangeDTO.getTeamId());
-            
+        	// Extract IDs from existing UserTeam entries and store them in a list
+        	List<Integer> oldTeamIds = new ArrayList<>();
+        	for (UserTeam userTeam : oldTeams) {
+        	    oldTeamIds.add(userTeam.getTeamId());
+        	}
+
             // Delete existing UserTeam entries for the given userId
             userTeamRepository.deleteByUserId(teamChangeDTO.getUserId());
+            List<Integer> newTeams = new ArrayList<>();
 
              	// Add the teams for the user
                 for (Integer team : teamChangeDTO.getTeamId()) {
@@ -218,7 +279,23 @@ public class UserController {
                     userTeam.setUserId(teamChangeDTO.getUserId());
                     userTeam.setTeamId(team);
                     userTeamRepository.save(userTeam);
-                    System.out.println("Added team " + team + " for user " + teamChangeDTO.getUserId());
+                    newTeams.add(team);
+                }
+                
+                // Log the audit information
+                LocalDateTime currentLocalDateTime = LocalDateTime.now();
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
+                String dateTimeEdited = currentLocalDateTime.format(dateTimeFormatter);
+
+                AuditTrail audit = new AuditTrail();
+                audit.setUserId(currentUserId);
+                audit.setEntityChanged(String.valueOf(teamChangeDTO.getUserId()));
+                audit.setAttributeChanged("Changed User Team");
+                audit.setChangeFrom(String.valueOf(oldTeams));
+                audit.setChangeTo(String.valueOf(newTeams));
+                audit.setDateTimeEdited(dateTimeEdited);
+                if (String.valueOf(oldTeams) != String.valueOf(newTeams)) {
+                	auditTrailRepository.save(audit);
                 }
 
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -280,11 +357,8 @@ public class UserController {
     @PostMapping("/create-new-team")
     public ResponseEntity<Team> createTeam(@RequestBody TeamWithUsernameDTO teamWithUsernameDTO) {
         try {
-            System.out.println("Received request to add new team");
 
             Team newTeam = new Team();
-            System.out.println(teamWithUsernameDTO.getTeamName());
-            System.out.println(teamWithUsernameDTO.getUserId());
             
             // Get the current time
             LocalDateTime currentLocalDateTime = LocalDateTime.now();
@@ -296,9 +370,20 @@ public class UserController {
             newTeam.setTeamName(teamWithUsernameDTO.getTeamName());
             newTeam.setUserId(teamWithUsernameDTO.getUserId());
             Team newTeamData = teamRepository.save(newTeam);
-            System.out.println("New team saved to the database: " + newTeamData.toString());
-
-            System.out.println("Team successfully added");
+            
+            // Log the audit information
+            AuditTrail audit = new AuditTrail();
+            audit.setUserId(currentUserId);
+            audit.setEntityChanged(null);
+            audit.setAttributeChanged("Create Team");
+            audit.setChangeFrom(null);
+            audit.setChangeTo(String.valueOf(teamWithUsernameDTO.getTeamName()));
+            audit.setDateTimeEdited(dateTimeEdited);
+            if (null != String.valueOf(teamWithUsernameDTO.getTeamName())) {
+            	auditTrailRepository.save(audit);
+            }
+            
+           
             return new ResponseEntity<>(newTeamData, HttpStatus.CREATED);
         } catch (Exception e) {
             System.out.println("An error occurred while adding team: " + e.getMessage());
@@ -311,7 +396,6 @@ public class UserController {
     @PostMapping("/delete-team/{teamId}")
     public ResponseEntity<HttpStatus> deleteTeam(@PathVariable int teamId) {
         try {
-            System.out.println("Received request to delete team with ID: " + teamId);
 
             // Check if the team exists
             Optional<Team> optionalTeam = teamRepository.findById(teamId);
@@ -321,10 +405,24 @@ public class UserController {
                 // Delete the team from the database
                 teamRepository.delete(teamToDelete);
 
-                System.out.println("Team successfully deleted");
+                // Log the audit information
+                LocalDateTime currentLocalDateTime = LocalDateTime.now();
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
+                String dateTimeEdited = currentLocalDateTime.format(dateTimeFormatter);
+
+                AuditTrail audit = new AuditTrail();
+                audit.setUserId(currentUserId);
+                audit.setEntityChanged(String.valueOf(teamToDelete.getTeamName()));
+                audit.setAttributeChanged("Delete Team");
+                audit.setChangeFrom(String.valueOf(teamToDelete.getTeamName()));
+                audit.setChangeTo(null);
+                audit.setDateTimeEdited(dateTimeEdited);
+                if (null != String.valueOf(teamToDelete.getTeamName())) {
+                	auditTrailRepository.save(audit);
+                }
+                
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
-                System.out.println("Team with ID " + teamId + " not found");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
@@ -338,12 +436,16 @@ public class UserController {
     @PostMapping("/change-team-name/{teamId}")
     public ResponseEntity<HttpStatus> changeTeamName(@PathVariable int teamId, @RequestBody String newTeamName) {
         try {
-            System.out.println("Received request to change team name to " + newTeamName);
 
             // Get the team from the database by its ID
             Optional<Team> optionalTeam = teamRepository.findById(teamId);
             if (optionalTeam.isPresent()) {
                 Team team = optionalTeam.get();
+                
+                AuditTrail audit = new AuditTrail();
+                audit.setEntityChanged(team.getTeamName());
+                String oldTeamName = team.getTeamName();
+                audit.setChangeFrom(oldTeamName);
                 
                 // Update the team's name
                 team.setTeamName(newTeamName);
@@ -351,16 +453,60 @@ public class UserController {
                 // Save the updated team to the database
                 Team updatedTeam = teamRepository.save(team);
                 
-                System.out.println("Team name successfully updated");
+                // Log the audit information
+                LocalDateTime currentLocalDateTime = LocalDateTime.now();
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
+                String dateTimeEdited = currentLocalDateTime.format(dateTimeFormatter);
+
+                
+                audit.setUserId(currentUserId);
+                audit.setAttributeChanged("Change Team Name");
+                audit.setChangeTo(newTeamName);
+                audit.setDateTimeEdited(dateTimeEdited);
+                if (oldTeamName != newTeamName) {
+                	auditTrailRepository.save(audit);
+                }
+                
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
-                System.out.println("Team not found with ID: " + teamId);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
             System.out.println("An error occurred while changing team name: " + e.getMessage());
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @GetMapping("/unique-sites")
+    public ResponseEntity<List<String>> getUniqueSites() {
+        try {
+            List<String> uniqueSites = dataEntryRepository.findDistinctSiteIds();
+            return new ResponseEntity<>(uniqueSites, HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @PostMapping("/update-sites")
+    @Transactional
+    public ResponseEntity<String> updateSites(@RequestBody List<String> siteIds) {
+        try {
+            // Remove all current active sites
+            currentSitesRepository.deleteAll();
+
+            // Add new list of active sites
+            for (String siteId : siteIds) {
+                CurrentSites currentSite = new CurrentSites();
+                currentSite.setSiteId(siteId);
+                currentSitesRepository.save(currentSite);
+            }
+
+            return new ResponseEntity<>("Active sites updated successfully", HttpStatus.OK);
+        } catch (Exception ex) {
+            // Rollback in case of exceptions
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return new ResponseEntity<>("Failed to update active sites", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
