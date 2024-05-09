@@ -19,6 +19,16 @@ CREATE TABLE "user_account" (
   "date_created" VARCHAR
 );
 
+CREATE TABLE "audit_trail" (
+  "audit_trail_id" SERIAL PRIMARY KEY,
+  "user_id" INT,
+  "entity_changed" VARCHAR,
+  "attribute_changed" VARCHAR,
+  "change_from" VARCHAR,
+  "change_to" VARCHAR,
+  "date_time_edited" VARCHAR
+);
+
 CREATE TABLE "user_team" (
   "user_team_id" SERIAL PRIMARY KEY,
   "user_id" INT,
@@ -103,6 +113,10 @@ CREATE TABLE "category_edit_audit" (
   "date_time_edited" VARCHAR
 );
 
+CREATE TABLE "current_sites" (
+  "site_id" VARCHAR PRIMARY KEY
+);
+
 CREATE TABLE "site_id_colour" (
   "site_id" VARCHAR UNIQUE,
   "colour" VARCHAR(7)
@@ -140,6 +154,7 @@ CREATE sequence dvspondes_seq increment by 1 start with 1;
 CREATE sequence user_account_seq increment by 1 start with 9;
 CREATE sequence category_edit_audit_seq increment by 1 start with 1;
 CREATE sequence user_team_seq increment by 1 start with 5;
+CREATE sequence audit_trail_seq increment by 1 start with 1;
 
 ALTER TABLE "team" ADD FOREIGN KEY ("user_id") REFERENCES "user_account" ("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
