@@ -239,14 +239,15 @@ public class UploadService {
 				}
 			}
 	        
+	        // Add the DataEntry instance to the list
+	 		dataEntryRepository.save(dataEntry);
+	        
 			// Finish setting up the DataEntryCategory instance
 			dataEntryCategory.setEntryId(dataEntry.getEntryId());
 			dataEntryCategoryRepository.save(dataEntryCategory);
 	    }
 	    
-	    	// Add the DataEntry instance to the list
-	 		dataEntrys.add(dataEntry);
-	 		dataEntryRepository.save(dataEntry);
+    	
 		
 		// Check if the siteId already has a color in the site_id_colour table
 	    SiteIdColour existingSiteColor = siteIdColourRepository.findBySiteId(siteId);
