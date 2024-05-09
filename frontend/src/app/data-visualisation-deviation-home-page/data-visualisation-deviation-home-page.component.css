@@ -1,0 +1,31 @@
+.dashboard-background {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 10px 0 10px;
+}
+
+
+
+.nav-button {
+  width: 250px;
+  height: 50px;
+  background-color: #009cee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: white;
+  margin-right: 10px;
+}
+
+.nav-button:hover {
+  background-color: #0070a3;
+}

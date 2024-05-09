@@ -8,6 +8,7 @@ import { AdministratorPageComponent } from './administrator-page/administrator-p
 import { SitePageComponent } from './site-page/site-page.component';
 import { DataUploadPageComponent } from './data-upload-page/data-upload-page.component';
 import { DataVisualisationPageComponent } from './data-visualisation-page/data-visualisation-page.component';
+import { DataVisualisationDeviationHomePageComponent } from './data-visualisation-deviation-home-page/data-visualisation-deviation-home-page.component';
 
 const routes: Routes = [
   { path: 'admin', component: AdministratorPageComponent},
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: 'site', component: SitePageComponent },
   { path: 'data-upload', component: DataUploadPageComponent },
   { path: 'data-visualisation', component: DataVisualisationPageComponent },
+  { path: 'data-visualisation-deviation-home', component: DataVisualisationDeviationHomePageComponent },
 ];
 
 

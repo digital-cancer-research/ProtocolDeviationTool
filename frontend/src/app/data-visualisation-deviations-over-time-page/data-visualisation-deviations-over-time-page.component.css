@@ -1,0 +1,48 @@
+.dashboard-background {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 5px;
+  width: 70%;
+}
+
+/* Adjust the size of the grid items */
+app-visualisation,
+app-category-bar-graph,
+app-category-pie-graph,
+.placeholder {
+  width: 100%;
+  align-items: center;
+  justify-items: center;
+}
+
+/* Define the placement of the grid items */
+app-visualisation {
+  grid-column: 1;
+  grid-row: 1;
+  padding-left: 100px;
+}
+
+app-category-bar-graph {
+  grid-column: 2;
+  grid-row: 1;
+  margin-left: -150px;
+}
+
+app-category-pie-graph {
+  grid-column: 1;
+  grid-row: 2;
+  padding-left: 180px;
+  padding-bottom: -20px;
+}
+
+.app-category-bar-graph-segmented {
+  grid-column: 2;
+  grid-row: 2;
+}
