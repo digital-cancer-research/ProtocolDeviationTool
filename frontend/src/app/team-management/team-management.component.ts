@@ -50,6 +50,7 @@ export class TeamManagementComponent implements OnInit {
 		    // Make an API call to get teams
 		    this.teamManagementService.getTeams().subscribe((data: any[]) => {
 		        this.teams = data;
+		        this.updatePage();
 		    }, error => {
 		        console.error('Error fetching teams:', error);
 		    });
