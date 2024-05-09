@@ -8,6 +8,9 @@ CREATE TABLE role (
 CREATE TABLE team (
   team_id INTEGER PRIMARY KEY AUTOINCREMENT,
   team_name TEXT NOT NULL
+  user_id INTEGER,
+  date_created TEXT,
+  FOREIGN KEY (user_id) REFERENCES user_account (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
 );
 
 CREATE TABLE user_account (
@@ -16,7 +19,19 @@ CREATE TABLE user_account (
   role_id INTEGER,
   is_site BOOLEAN,
   is_sponsor BOOLEAN,
+  date_created TEXT,
   FOREIGN KEY (role_id) REFERENCES role (role_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE audit_trail (
+  audit_trail_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER,
+  entity_changed TEXT,
+  attribute_changed TEXT,
+  change_from TEXT,
+  change_to TEXT,
+  date_time_edited TEXT,
+  FOREIGN KEY (user_id) REFERENCES user_account (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
 );
 
 CREATE TABLE user_team (
@@ -27,25 +42,18 @@ CREATE TABLE user_team (
   FOREIGN KEY (team_id) REFERENCES team (team_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE study (
-  study_id TEXT PRIMARY KEY,
-  study_name TEXT NOT NULL
-);
-
 CREATE TABLE team_study_access (
   team_study_access_id INTEGER PRIMARY KEY AUTOINCREMENT,
   team_id INTEGER,
   study_id TEXT,
-  FOREIGN KEY (team_id) REFERENCES team (team_id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (study_id) REFERENCES study (study_id) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (team_id) REFERENCES team (team_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE user_study_access (
   user_study_access_id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER,
   study_id TEXT,
-  FOREIGN KEY (user_id) REFERENCES user_account (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (study_id) REFERENCES study (study_id) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (user_id) REFERENCES user_account (user_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE data_entry (
@@ -71,15 +79,21 @@ CREATE TABLE data_entry (
   dvs_cat TEXT,
   dvstdtc TIMESTAMP,
   user_id INTEGER,
-  category_id INTEGER,
   is_edited BOOL,
-  FOREIGN KEY (dvspondes_id) REFERENCES dvspondes (dvspondes_id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (category_id) REFERENCES pd_category (category_id) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (dvspondes_id) REFERENCES dvspondes (dvspondes_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE dvspondes (
   dvspondes_id INTEGER PRIMARY KEY AUTOINCREMENT,
   dvspondes_value TEXT NOT NULL
+);
+
+CREATE TABLE data_entry_category (
+  data_entry_category_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  entry_id INTEGER,
+  category_id INTEGER,
+  FOREIGN KEY (category_id) REFERENCES pd_category (category_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY(entry_id) REFERENCES data_entry(entry_id) ON DELETE CASCADE
 );
 
 CREATE TABLE pd_category (
@@ -111,7 +125,13 @@ CREATE TABLE category_edit_audit (
   change_from TEXT,
   change_to TEXT,
   username TEXT,
-  date_time_edited TEXT
+  date_time_edited TEXT,
+  FOREIGN KEY(username) REFERENCES user_account(username) ON DELETE CASCADE,
+  FOREIGN KEY(entry_id) REFERENCES data_entry(entry_id) ON DELETE CASCADE
+);
+
+CREATE TABLE current_sites (
+  site_id TEXT PRIMARY KEY
 );
 
 CREATE TABLE site_id_colour (
@@ -162,6 +182,9 @@ INSERT INTO user_account_seq (next_val) VALUES (9);
 
 CREATE TABLE category_edit_audit_seq (next_val INTEGER);
 INSERT INTO category_edit_audit_seq (next_val) VALUES (1);
+
+CREATE TABLE audit_trail_seq (next_val INTEGER);
+INSERT INTO audit_trail_seq (next_val) VALUES (1);
 
 
 
