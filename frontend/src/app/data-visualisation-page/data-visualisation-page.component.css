@@ -16,33 +16,41 @@
 app-visualisation,
 app-category-bar-graph,
 app-category-pie-graph,
-.placeholder {
+app-category-bar-graph-segmented,
+app-site-study-level-select {
   width: 100%;
   align-items: center;
   justify-items: center;
 }
 
 /* Define the placement of the grid items */
-app-visualisation {
+app-site-study-level-select {
   grid-column: 1;
+  grid-row: 1;
+  padding-left: 20px;
+}
+
+app-visualisation {
+  grid-column: 2;
   grid-row: 1;
   padding-left: 100px;
 }
 
 app-category-bar-graph {
-  grid-column: 2;
+  grid-column: 3;
   grid-row: 1;
-  margin-left: -150px;
+  margin-left: -200px;
 }
 
 app-category-pie-graph {
-  grid-column: 1;
+  grid-column: 2;
   grid-row: 2;
-  padding-left: 180px;
+  padding-left: 80px;
   padding-bottom: -20px;
 }
 
-.placeholder {
-  grid-column: 2;
+app-category-bar-graph-segmented {
+  grid-column: 3;
   grid-row: 2;
+  margin-left: -100px;
 }
