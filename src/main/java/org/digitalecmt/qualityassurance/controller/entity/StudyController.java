@@ -62,4 +62,10 @@ public class StudyController {
             return new ResponseEntity<>(Collections.singletonMap("message", "Study not found"), HttpStatus.NOT_FOUND);
         }
     }
+    
+    @GetMapping("/study-ids")
+    public ResponseEntity<List<String>> getAllStudyIds() {
+        List<String> studyIds = dataEntryRepository.findDistinctStudyIds();
+        return new ResponseEntity<>(studyIds, HttpStatus.OK);
+    }
 }

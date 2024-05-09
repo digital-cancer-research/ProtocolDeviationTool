@@ -33,9 +33,11 @@ export class UserService {
 	  return this.http.get<UserTeam[]>(`${this.baseUrl}/users/get-current-user-teams?userId=${userId}`);
 	}
   
-  setCurrentUser(username: string): void {
-  this.currentUser = username;
-  localStorage.setItem('currentUser', username);
-  }
+ setCurrentUser(username: string): Observable<void> {
+	  this.currentUser = username;
+	  localStorage.setItem('currentUser', username);
+	  return this.http.post<void>(`${this.baseUrl}/users/setCurrentUser`, { username });
+	}
+
 
 }

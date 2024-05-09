@@ -27,9 +27,11 @@ package org.digitalecmt.qualityassurance.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryPerStudyDTO;
 import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -66,5 +68,15 @@ public interface DataEntryRepository
 	
 	@Query("SELECT DISTINCT studyId FROM DataEntry")
 	List<String> findDistinctStudyIds();
+	
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryPerStudyDTO(c.dvcat, COUNT(d), d.studyId) " +
+		       "FROM DataEntry d " +
+		       "JOIN DataEntryCategory dec ON d.entryId = dec.entryId " +
+		       "JOIN PdCategory c ON dec.categoryId = c.categoryId " +
+		       "WHERE (:siteId IS NULL OR d.siteId = :siteId) " +
+		       "GROUP BY c.dvcat, d.studyId")
+		List<EntryCountPerCategoryPerStudyDTO> countByCategoryAndStudy(@Param("siteId") String siteId);
+
+
 
 }

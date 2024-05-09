@@ -27,8 +27,11 @@ package org.digitalecmt.qualityassurance.controller.entity;
 import java.util.List;
 
 import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
+import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.service.DataEntryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
