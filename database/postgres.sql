@@ -160,7 +160,7 @@ ALTER TABLE "team" ADD FOREIGN KEY ("user_id") REFERENCES "user_account" ("user_
 
 ALTER TABLE "user_account" ADD FOREIGN KEY ("role_id") REFERENCES "role" ("role_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE "audit_trail" ADD FOREIGN KEY ("entry_id") REFERENCES "data_entry" ("entry_id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "audit_trail" ADD FOREIGN KEY ("user_id") REFERENCES "user_account" ("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE "user_team" ADD FOREIGN KEY ("user_id") REFERENCES "user_account" ("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
