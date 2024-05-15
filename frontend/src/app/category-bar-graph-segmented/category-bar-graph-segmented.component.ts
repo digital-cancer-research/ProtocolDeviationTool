@@ -43,9 +43,9 @@ export class CategoryBarGraphSegmentedComponent implements OnInit {
 
 	  createD3BarGraph() {
 		  d3.select(this.elementRef.nativeElement).selectAll('*').remove();
-		    const margin = { top: 20, right: 30, bottom: 30, left: 60 };
-		    const width = 600 - margin.left - margin.right;
-		    const height = 400 - margin.top - margin.bottom;
+		    const margin = { top: 50, right: 30, bottom: 30, left: 100 };
+		    const width = 800 - margin.left - margin.right;
+		    const height = 380 - margin.top - margin.bottom;
 
 		    // Append SVG to the component's element
 		    const svg = d3.select(this.elementRef.nativeElement).append('svg')
@@ -137,7 +137,7 @@ export class CategoryBarGraphSegmentedComponent implements OnInit {
 		    svg.append('text')
 		      .attr('transform', 'rotate(-90)')
 		      .attr('x', -height / 2)
-		      .attr('y', -margin.left / 1.1)
+		      .attr('y', -margin.left / 1.2)
 		      .attr('text-anchor', 'middle')
 		      .text('Study ID');
 		    

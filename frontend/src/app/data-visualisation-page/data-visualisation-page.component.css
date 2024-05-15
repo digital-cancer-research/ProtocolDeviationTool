@@ -28,6 +28,7 @@ app-site-study-level-select {
   grid-column: 1;
   grid-row: 1;
   padding-left: 20px;
+  padding-top: 50px;
 }
 
 app-visualisation {
