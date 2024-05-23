@@ -146,7 +146,7 @@ export class CategoryBarGraphComponent implements OnInit {
 	    	const xPos = event.pageX;
 	        const yPos = event.pageY;
 	    	tooltip
-	    	.style('left', (xPos + 20) + 'px')
+	    	.style('left', (xPos + 30) + 'px')
 	    	.style('top', (yPos - 20) + 'px');
 	    })
 	    

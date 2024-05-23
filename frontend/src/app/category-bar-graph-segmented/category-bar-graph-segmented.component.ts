@@ -30,8 +30,6 @@ export class CategoryBarGraphSegmentedComponent implements OnInit {
 	    this.categoryBarGraphSegmentedService.getEntryCountPerCategoryPerStudy(this.selectedSiteId).subscribe(
 	      data => {
 	        this.entryCountPerCategoryPerStudy = data;
-	        console.log(this.entryCountPerCategoryPerStudy);
-
 	        this.createD3BarGraph();
 
 	      },
@@ -43,52 +41,57 @@ export class CategoryBarGraphSegmentedComponent implements OnInit {
 
 	  createD3BarGraph() {
 		  d3.select(this.elementRef.nativeElement).selectAll('*').remove();
-		    const margin = { top: 50, right: 30, bottom: 30, left: 100 };
-		    const width = 800 - margin.left - margin.right;
-		    const height = 380 - margin.top - margin.bottom;
+		  const margin = { top: 50, right: 30, bottom: 30, left: 100 };
+		  const width = 800 - margin.left - margin.right;
+		  const height = 380 - margin.top - margin.bottom;
 
-		    // Append SVG to the component's element
-		    const svg = d3.select(this.elementRef.nativeElement).append('svg')
-		      .attr('width', width + margin.left + margin.right)
-		      .attr('height', height + margin.top + margin.bottom)
-		      .append('g')
-		      .attr('transform', `translate(${margin.left},${margin.top})`);
-		    
-			 // Calculate the total entry count for each study
-		    const totalEntryCounts = this.entryCountPerCategoryPerStudy.map(entry => ({
-		      studyId: entry.studyId,
-		      totalEntryCount: d3.sum(this.entryCountPerCategoryPerStudy.filter(d => d.studyId === entry.studyId), d => d.entryCount)!
-		    }));
+		  // Append SVG to the component's element
+		  const svg = d3.select(this.elementRef.nativeElement).append('svg')
+		    .attr('width', width + margin.left + margin.right)
+		    .attr('height', height + margin.top + margin.bottom)
+		    .append('g')
+		    .attr('transform', `translate(${margin.left},${margin.top})`);
+		  
+		  // Calculate the total entry count for each study
+		  const totalEntryCounts = this.entryCountPerCategoryPerStudy.map(entry => ({
+		    studyId: entry.studyId,
+		    totalEntryCount: d3.sum(this.entryCountPerCategoryPerStudy.filter(d => d.studyId === entry.studyId), d => d.entryCount)!
+		  }));
 
-		    // Define scales
-		    const xScale = d3.scaleLinear()
-		      .domain([0, d3.max(totalEntryCounts, d => d.totalEntryCount)!])
-		      .range([0, width]);
+		  // Define scales
+		  const xScale = d3.scaleLinear()
+		    .domain([0, d3.max(totalEntryCounts, d => d.totalEntryCount)!])
+		    .range([0, width]);
 
-		    const yScale = d3.scaleBand()
-		      .domain(this.entryCountPerCategoryPerStudy.map(d => d.studyId))
-		      .range([height, 0])
-		      .padding(0.1);
+		  const yScale = d3.scaleBand()
+		    .domain(this.entryCountPerCategoryPerStudy.map(d => d.studyId))
+		    .range([height, 0])
+		    .padding(0.1);
 
-		    // Define color scale
-		    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+		  // Define color scale
+		  const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
-		    // Create stacked bars
-		    svg.selectAll('.bar')
-		      .data(this.entryCountPerCategoryPerStudy)
-		      .enter().append('rect')
-		      .attr('class', 'bar')
-		      .attr('x', d => {
-		    	    let sum = 0;
-		    	    // Calculate the cumulative entry count up to the current category
-		    	    for (const entry of this.entryCountPerCategoryPerStudy.filter(e => e.studyId === d.studyId)) {
-		    	      if (entry.dvcat === d.dvcat) break;
-		    	      sum += entry.entryCount;
-		    	    }
-		    	    return xScale(sum);
-		    	  })
-		      .attr('y', d => yScale(d.studyId)!)
-		      .attr('width', d => xScale(d.entryCount)!)
+
+		  // Create stacked bars
+		  svg.selectAll('.bar')
+		    .data(this.entryCountPerCategoryPerStudy)
+		    .enter().append('rect')
+		    .attr('class', 'bar')
+		    .attr('x', d => {
+		      let sum = 0;
+		      // Calculate the cumulative entry count up to the current category
+		      for (const entry of this.entryCountPerCategoryPerStudy.filter(e => e.studyId === d.studyId)) {
+		        if (entry.dvcat === d.dvcat) break;
+		        sum += entry.entryCount;
+		      }
+		      return xScale(sum);
+		    })
+		    .attr('y', d => {
+		      return yScale(d.studyId)!;
+		    })
+		    .attr('width', d => {
+		      return xScale(d.entryCount)!;
+		    })
 		      .attr('height', yScale.bandwidth())
 		      .style('fill', d => colorScale(d.dvcat))
 		      .on('mouseover', function (event, d) {
@@ -107,13 +110,17 @@ export class CategoryBarGraphSegmentedComponent implements OnInit {
 		            const yPos = event.pageY;
 
 		            tooltip
-		                .style('left', (xPos + 20) + 'px')
-		                .style('top', (yPos - 20) + 'px');
+		                .style('left', (xPos + 30) + 'px')
+		                .style('top', (yPos + 20) + 'px');
 		        })
-		        .on('mouseout', function (d) {
-		            tooltip
-		                .style('opacity', 0);
-		        });
+		        .on('mouseout', function (event: MouseEvent) {
+		        	  const relatedTarget = event.relatedTarget as Element | null;
+		        	  if (relatedTarget && relatedTarget.classList.contains('tooltip')) {
+		        	    return;
+		        	  }
+		        	  tooltip.style('opacity', 0);
+		        	});
+
 
 		    // Add y-axis
 		    svg.append('g')
