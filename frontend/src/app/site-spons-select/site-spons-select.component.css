@@ -44,7 +44,7 @@ p {
   font-size: 1em;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and ((max-width: 600px) or (max-height: 800px)) {
   button {
     padding: 1em 2em;
     margin-bottom: 1.5em;
@@ -54,6 +54,24 @@ p {
 
   img {
     max-width: 150px;
+    margin-bottom: 0.5em;
+  }
+
+  p {
+    font-size: 0.8em;
+  }
+}
+
+@media screen and (max-height: 600px) {
+  button {
+    padding: 1em 2em;
+    margin-bottom: 1.5em;
+    width: 100px;
+    height: 100px;
+  }
+
+  img {
+    max-width: 100px;
     margin-bottom: 0.5em;
   }
 
