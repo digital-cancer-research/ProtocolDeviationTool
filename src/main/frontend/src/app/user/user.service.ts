@@ -9,7 +9,7 @@ import { UserTeam } from '../user-management/user-team.model';
 })
 
 export class UserService {
-  private readonly baseUrl = 'http://localhost:8080/api';
+  private readonly baseUrl = 'api';
   
   private currentUser: string | null = null;
   

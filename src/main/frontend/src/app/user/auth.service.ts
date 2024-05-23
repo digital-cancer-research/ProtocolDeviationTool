@@ -7,7 +7,7 @@ import { tap } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly baseUrl = 'http://localhost:8080/api/users';
+  private readonly baseUrl = 'api/users';
 
   private isAdminSubject = new BehaviorSubject<boolean>(false);
   isAdmin$: Observable<boolean> = this.isAdminSubject.asObservable();

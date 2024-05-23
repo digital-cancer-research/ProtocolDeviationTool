@@ -37,7 +37,7 @@
 		<profile>
 			<id>postgres</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
 				<spring.profiles.active>postgres</spring.profiles.active>
@@ -46,7 +46,7 @@
 		<profile>
 			<id>postgres-azure</id>
 			<activation>
-				<activeByDefault>false</activeByDefault>
+				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
 				<spring.profiles.active>postgres-azure</spring.profiles.active>

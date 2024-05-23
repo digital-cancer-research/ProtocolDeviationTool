@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class SiteStudyLevelSelectService {
-	private baseUrl = 'http://localhost:8080/api/studies/study-ids';
+	private baseUrl = 'api/studies/study-ids';
 
 	  constructor(private http: HttpClient) {}
 

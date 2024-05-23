@@ -7,7 +7,7 @@ import { Team } from './team.model';
   providedIn: 'root',
 })
 export class TeamManagementService {
-  private readonly baseUrl = 'http://localhost:8080/api/users';
+  private readonly baseUrl = 'api/users';
 
   constructor(private http: HttpClient) {}
   

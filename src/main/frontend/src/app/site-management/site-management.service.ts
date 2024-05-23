@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class SiteManagementService {
-  private readonly baseUrl = 'http://localhost:8080/api/users';
+  private readonly baseUrl = 'api/users';
 
   constructor(private http: HttpClient) {}
   

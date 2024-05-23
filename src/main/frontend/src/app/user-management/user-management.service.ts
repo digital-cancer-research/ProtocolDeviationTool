@@ -8,7 +8,7 @@ import { UserTeam } from './user-team.model';
   providedIn: 'root',
 })
 export class UserManagementService {
-  private readonly baseUrl = 'http://localhost:8080/api/users';
+  private readonly baseUrl = 'api/users';
 
   constructor(private http: HttpClient) {}
 

@@ -7,7 +7,7 @@ import { StudyList } from './study-list.model'; // Import the correct model
   providedIn: 'root',
 })
 export class StudyListService {
-  private baseUrl = 'http://localhost:8080/api/studies';
+  private baseUrl = 'api/studies';
 
   constructor(private http: HttpClient) {}
 

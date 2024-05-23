@@ -70,7 +70,7 @@ uploadFile() {
     
 
     this.http
-      .post<UploadResponse>('http://localhost:8080/api/upload', formData)
+      .post<UploadResponse>('api/upload', formData)
       .subscribe(
         (response) => {
           // Handle the message from the server
