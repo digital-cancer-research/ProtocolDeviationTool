@@ -44,9 +44,9 @@ p {
   font-size: 1em;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and ((max-width: 600px) or (max-height: 800px)) {
   button {
-    padding: 1.5em 2em;
+    padding: 1em 2em;
     margin-bottom: 1.5em;
     width: 150px;
     height: 150px;
@@ -62,27 +62,41 @@ p {
   }
 }
 
-/* Media query for devices with pixel ratio greater than 1.1 */
-@media (-webkit-min-device-pixel-ratio: 1.1) {
+@media screen and (max-height: 600px) {
+  button {
+    padding: 1em 2em;
+    margin-bottom: 1.5em;
+    width: 100px;
+    height: 100px;
+  }
 
   img {
-  max-width: 135px;
+    max-width: 100px;
+    margin-bottom: 0.5em;
+  }
+
+  p {
+    font-size: 0.5em;
+  }
+}
+
+/* Media query for devices with pixel ratio greater than 1.1 */
+@media (-webkit-min-device-pixel-ratio: 1.1) {
+  img {
+    max-width: 135px;
   }
 }
 
 /* Media query for devices with pixel ratio greater than 1.25 */
 @media (-webkit-min-device-pixel-ratio: 1.25) {
-
   img {
-  max-width: 112.5px;
+    max-width: 112.5px;
   }
 }
 
 /* Media query for devices with pixel ratio greater than 1.5 */
 @media (-webkit-min-device-pixel-ratio: 1.5) {
-
   img {
-  max-width: 75px;
+    max-width: 75px;
   }
 }
-
