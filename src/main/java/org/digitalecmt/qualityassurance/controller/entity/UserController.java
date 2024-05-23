@@ -25,6 +25,7 @@
 package org.digitalecmt.qualityassurance.controller.entity;
 
 import org.digitalecmt.qualityassurance.dto.TeamWithUsernameDTO;
+import org.digitalecmt.qualityassurance.dto.AuditTrailDTO;
 import org.digitalecmt.qualityassurance.dto.RoleChangeDTO;
 import org.digitalecmt.qualityassurance.dto.TeamChangeDTO;
 import org.digitalecmt.qualityassurance.dto.UserTeamDTO;
@@ -36,6 +37,7 @@ import org.digitalecmt.qualityassurance.model.persistence.UserTeam;
 import org.digitalecmt.qualityassurance.model.persistence.AuditTrail;
 import org.digitalecmt.qualityassurance.model.persistence.CategoryEditAudit;
 import org.digitalecmt.qualityassurance.model.persistence.CurrentSites;
+import org.digitalecmt.qualityassurance.model.persistence.DataEntryCategory;
 import org.digitalecmt.qualityassurance.model.persistence.Role;
 import org.digitalecmt.qualityassurance.model.persistence.Team;
 import org.digitalecmt.qualityassurance.repository.AuditTrailRepository;
@@ -221,6 +223,7 @@ public class UserController {
     public ResponseEntity<HttpStatus> changeUserRole(@PathVariable int userId, @RequestBody RoleChangeDTO roleChangeDTO) {
         try {
             Optional<UserAccount> userData = userRepository.findById(userId);
+            List<Role> roles = roleRepository.findAll();
 
             if (userData.isPresent()) {
                 UserAccount user = userData.get();
@@ -234,10 +237,10 @@ public class UserController {
 
                 AuditTrail audit = new AuditTrail();
                 audit.setUserId(currentUserId);
-                audit.setEntityChanged(String.valueOf(userId));
+                audit.setEntityChanged(user.getUsername());
                 audit.setAttributeChanged("Changed User Role");
-                audit.setChangeFrom(String.valueOf(oldRole));
-                audit.setChangeTo(String.valueOf(roleChangeDTO.getNewRoleId()));
+                audit.setChangeFrom(roleRepository.findById(oldRole).map(Role::getRoleName).orElse(null));
+                audit.setChangeTo(roleRepository.findById(roleChangeDTO.getNewRoleId()).map(Role::getRoleName).orElse(null));
                 audit.setDateTimeEdited(dateTimeEdited);
                 userRepository.save(user);
                 
@@ -262,6 +265,8 @@ public class UserController {
         	
         	// Fetch existing UserTeam entries for the given userId
         	List<UserTeam> oldTeams = userTeamRepository.findByUserId(teamChangeDTO.getUserId());
+        	Optional<UserAccount> userData = userRepository.findById(teamChangeDTO.getUserId());
+        	UserAccount user = userData.get();
 
         	// Extract IDs from existing UserTeam entries and store them in a list
         	List<Integer> oldTeamIds = new ArrayList<>();
@@ -289,7 +294,7 @@ public class UserController {
 
                 AuditTrail audit = new AuditTrail();
                 audit.setUserId(currentUserId);
-                audit.setEntityChanged(String.valueOf(teamChangeDTO.getUserId()));
+                audit.setEntityChanged(user.getUsername());
                 audit.setAttributeChanged("Changed User Team");
                 audit.setChangeFrom(String.valueOf(oldTeams));
                 audit.setChangeTo(String.valueOf(newTeams));
@@ -336,6 +341,18 @@ public class UserController {
                 userTeam.setTeamId(team);
                 userTeamRepository.save(userTeam);
                 System.out.println("Added team " + team + " for user " + newUserAccount.getUserId());
+            }
+            
+            // Log the audit information
+            AuditTrail audit = new AuditTrail();
+            audit.setUserId(currentUserId);
+            audit.setEntityChanged(null);
+            audit.setAttributeChanged("Create Team");
+            audit.setChangeFrom(null);
+            audit.setChangeTo(userRoleTeamDTO.getUsername());
+            audit.setDateTimeEdited(dateTimeEdited);
+            if (null != userRoleTeamDTO.getUsername()) {
+            	auditTrailRepository.save(audit);
             }
 
             System.out.println("User with role and team successfully added");
@@ -510,6 +527,12 @@ public class UserController {
         }
     }
 
+    // Retrieve audit data
+    @GetMapping("/get-audit-trail-data")
+    public ResponseEntity<List<AuditTrailDTO>> getAllAuditTrails() {
+        List<AuditTrailDTO> auditTrails = auditTrailRepository.findAllAuditTrails();
+        return ResponseEntity.ok(auditTrails);
+    }
 
 
 }

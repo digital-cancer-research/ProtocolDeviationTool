@@ -1,0 +1,24 @@
+.category-selection {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.category-selection h4 {
+  margin-top: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.category-selection label {
+  display: block;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+.category-selection input[type="checkbox"] {
+  margin-right: 10px;
+  cursor: pointer;
+}

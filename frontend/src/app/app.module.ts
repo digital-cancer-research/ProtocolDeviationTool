@@ -29,6 +29,9 @@ import { DataVisualisationDeviationHomePageComponent } from './data-visualisatio
 import { DataVisualisationDeviationsPageComponent } from './data-visualisation-deviations-page/data-visualisation-deviations-page.component';
 import { DataVisualisationDeviationsOverTimePageComponent } from './data-visualisation-deviations-over-time-page/data-visualisation-deviations-over-time-page.component';
 import { SiteStudyLevelSelectComponent } from './site-study-level-select/site-study-level-select.component';
+import { AuditTrailManagementComponent } from './audit-trail-management/audit-trail-management.component';
+import { CategoryBarGraphSegmentedSiteComponent } from './category-bar-graph-segmented-site/category-bar-graph-segmented-site.component';
+
 
 import { UploadService } from './upload/upload.service';
 import { UserService } from './user/user.service';
@@ -45,6 +48,8 @@ import { ShareSiteDataService } from './site-select/share-site-data.service';
 import { TeamManagementService } from './team-management/team-management.service';
 import { SiteManagementService } from './site-management/site-management.service';
 import { SiteStudyLevelSelectService } from './site-study-level-select/site-study-level-select.service';
+import { AuditTrailManagementService } from './audit-trail-management/audit-trail-management.service';
+import { CategoryBarGraphSegmentedSiteService } from './category-bar-graph-segmented-site/category-bar-graph-segmented-site.service';
 
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -92,6 +97,8 @@ import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.
     DataVisualisationDeviationsPageComponent,
     DataVisualisationDeviationsOverTimePageComponent,
     SiteStudyLevelSelectComponent,
+    AuditTrailManagementComponent,
+    CategoryBarGraphSegmentedSiteComponent,
   ],
   imports: [
 	BrowserModule,
@@ -116,6 +123,8 @@ import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.
     CategoryBarGraphSegmentedService,
     SiteManagementService,
     SiteStudyLevelSelectService,
+    AuditTrailManagementService,
+    CategoryBarGraphSegmentedSiteService,
   ],
   bootstrap: [AppComponent]
 })

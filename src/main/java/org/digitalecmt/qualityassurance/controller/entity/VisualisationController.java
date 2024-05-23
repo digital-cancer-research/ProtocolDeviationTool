@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 import org.digitalecmt.qualityassurance.dto.CountPerStudyDTO;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryDTO;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryPerStudyDTO;
+import org.digitalecmt.qualityassurance.dto.EntryCountPerSubcategoryPerCategoryDTO;
 import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
 import org.digitalecmt.qualityassurance.model.persistence.PdCategory;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
@@ -152,39 +153,27 @@ public class VisualisationController {
     public ResponseEntity<List<EntryCountPerCategoryPerStudyDTO>> getEntryCountsPerCategoryPerStudy(
             @RequestParam(required = false) String siteId) {
         try {
-            List<EntryCountPerCategoryPerStudyDTO> entryCounts = new ArrayList<>();
-
-            // Fetch all categories
-            List<String> categories = pdCategoryRepository.findDistinctDVCat();
-            // Fetch all studies
-            List<String> studies = dataEntryRepository.findDistinctStudyIds();
-
-            // Iterate over each category and study to get entry count
-            for (String category : categories) {
-                for (String study : studies) {
-                    // Fetch entry count for each category and study
-                    Long entryCount;
-                    if (siteId != null) {
-                        entryCount = dataEntryRepository.countByCategoryIdAndSiteId(category, siteId);
-                    } else {
-                        entryCount = dataEntryRepository.countByCategory(category);
-                    }
-
-                    // Create DTO and add to the list
-                    EntryCountPerCategoryPerStudyDTO entryCountDTO = new EntryCountPerCategoryPerStudyDTO();
-                    entryCountDTO.setDvcat(category);
-                    entryCountDTO.setEntryCount(entryCount);
-                    entryCountDTO.setStudyId(study);
-
-                    entryCounts.add(entryCountDTO);
-                }
-            }
+            // Fetch entry counts directly from the repository
+            List<EntryCountPerCategoryPerStudyDTO> entryCounts = dataEntryRepository.countByCategoryAndStudy(siteId);
 
             return new ResponseEntity<>(entryCounts, HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    @GetMapping("/entry-counts-per-subcategory-per-category")
+    public ResponseEntity<List<EntryCountPerSubcategoryPerCategoryDTO>> getEntryCountsPerSubcategoryPerCategory(
+            @RequestParam(required = false) String siteId) {
+        try {
+            List<EntryCountPerSubcategoryPerCategoryDTO> entryCounts = dataEntryRepository.countBySubcategoryAndCategory(siteId);
+            return new ResponseEntity<>(entryCounts, HttpStatus.OK);
+        } catch (Exception ex) {
+        	ex.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 
 

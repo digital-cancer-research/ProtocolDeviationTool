@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryPerStudyDTO;
+import org.digitalecmt.qualityassurance.dto.EntryCountPerSubcategoryPerCategoryDTO;
 import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -76,6 +77,15 @@ public interface DataEntryRepository
 		       "WHERE (:siteId IS NULL OR d.siteId = :siteId) " +
 		       "GROUP BY c.dvcat, d.studyId")
 		List<EntryCountPerCategoryPerStudyDTO> countByCategoryAndStudy(@Param("siteId") String siteId);
+	
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.EntryCountPerSubcategoryPerCategoryDTO(c.dvcat, c.dvdecod, COUNT(d)) " +
+		       "FROM DataEntry d " +
+		       "JOIN DataEntryCategory dec ON d.entryId = dec.entryId " +
+		       "JOIN PdCategory c ON dec.categoryId = c.categoryId " +
+		       "WHERE (:siteId IS NULL OR d.siteId = :siteId) " +
+		       "GROUP BY c.dvcat, c.dvdecod")
+		List<EntryCountPerSubcategoryPerCategoryDTO> countBySubcategoryAndCategory(@Param("siteId") String siteId);
+
 
 
 
