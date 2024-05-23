@@ -347,7 +347,7 @@ public class UserController {
             AuditTrail audit = new AuditTrail();
             audit.setUserId(currentUserId);
             audit.setEntityChanged(null);
-            audit.setAttributeChanged("Create Team");
+            audit.setAttributeChanged("Create User");
             audit.setChangeFrom(null);
             audit.setChangeTo(userRoleTeamDTO.getUsername());
             audit.setDateTimeEdited(dateTimeEdited);
