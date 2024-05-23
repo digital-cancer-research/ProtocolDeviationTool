@@ -9,9 +9,10 @@
     <div class="nav-button" (click)="showUserManagement()">User Management</div>
     <div class="nav-button" (click)="showTeamManagement()">Team Management</div>
     <div class="nav-button" (click)="showSiteManagement()">Site Management</div>
-    <div class="nav-button">Audit Trail</div>
+    <div class="nav-button" (click)="showAuditTrail()">Audit Trail</div>
   </div>
   <app-user-management *ngIf="isUserManagementVisible"></app-user-management>
   <app-team-management *ngIf="isTeamManagementVisible"></app-team-management>
   <app-site-management *ngIf="isSiteManagementVisible"></app-site-management>
+  <app-audit-trail-management *ngIf="isAuditTrailVisible"></app-audit-trail-management>
 </app-border>

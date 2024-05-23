@@ -10,17 +10,20 @@ export class AdministratorPageComponent {
   isUserManagementVisible: boolean = true;
   isTeamManagementVisible: boolean = false;
   isSiteManagementVisible: boolean = false;
+  isAuditTrailVisible: boolean = false;
 
   showUserManagement() {
     this.isUserManagementVisible = true;
     this.isTeamManagementVisible = false;
     this.isSiteManagementVisible = false;
+    this.isAuditTrailVisible = false;
   }
 
   showTeamManagement() {
     this.isUserManagementVisible = false;
     this.isTeamManagementVisible = true;
     this.isSiteManagementVisible = false;
+    this.isAuditTrailVisible = false;
     
  	// Call initializeComponent() method of app-team-management component
     const teamManagementComponent: any = document.querySelector('app-team-management');
@@ -33,6 +36,14 @@ export class AdministratorPageComponent {
 	    this.isUserManagementVisible = false;
 	    this.isTeamManagementVisible = false;
 	    this.isSiteManagementVisible = true;
+	    this.isAuditTrailVisible = false;
+	  }
+  
+  showAuditTrail() {
+	    this.isUserManagementVisible = false;
+	    this.isTeamManagementVisible = false;
+	    this.isSiteManagementVisible = false;
+	    this.isAuditTrailVisible = true;
 	  }
 
 }
