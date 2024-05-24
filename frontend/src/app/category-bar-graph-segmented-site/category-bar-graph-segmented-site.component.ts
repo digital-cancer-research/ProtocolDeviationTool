@@ -53,6 +53,16 @@ export class CategoryBarGraphSegmentedSiteComponent implements OnInit {
 		    .append('g')
 		    .attr('transform', `translate(${margin.left},${margin.top})`);
 
+		  // Define custom colours
+		  const customColours = [
+			  "#FF0000", "#FF7F00", "#FFD400", "#FFFF00", "#BFFF00", "#6AFF00",
+			  "#00EAFF", "#0095FF", "#0040FF", "#AA00FF", "#FF00AA", "#EDB9B9",
+			  "#E7E9B9", "#B9EDE0", "#B9D7ED", "#DCB9ED", "#8F2323", "#8F6A23",
+			  "#4F8F23", "#23628F", "#6B238F", "#000000", "#737373", "#CCCCCC"
+			];
+
+
+
 		  // Group data by dvcat and calculate total entry count for each dvcat
 		  const groupedData = d3.group(this.entryCountPerSubcategoryPerCategory, d => d.dvcat);
 		  const dvcatTotals = Array.from(groupedData, ([dvcat, values]) => ({
@@ -68,9 +78,9 @@ export class CategoryBarGraphSegmentedSiteComponent implements OnInit {
 		  let cumulativeCounts: any[] = [];
 		  dvcatTotals.forEach(group => {
 		    let cumulativeCount = 0;
-		    group.values.forEach(entry => {
+		    group.values.forEach((entry, index) => {
 		      cumulativeCount += entry.entryCount;
-		      cumulativeCounts.push({ ...entry, cumulativeCount });
+		      cumulativeCounts.push({ ...entry, cumulativeCount, color: customColours[index % customColours.length] });
 		    });
 		  });
 
@@ -84,9 +94,6 @@ export class CategoryBarGraphSegmentedSiteComponent implements OnInit {
 		    .range([height, 0])
 		    .padding(0.1);
 
-		  // Define color scale
-		  const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
-
 		  // Create stacked bars
 		  svg.selectAll('.bar')
 		    .data(cumulativeCounts)
@@ -96,7 +103,7 @@ export class CategoryBarGraphSegmentedSiteComponent implements OnInit {
 		    .attr('y', d => yScale(d.dvcat)!)
 		    .attr('width', d => xScale(d.entryCount)!)
 		    .attr('height', yScale.bandwidth())
-		    .style('fill', d => colorScale(d.dvdecod))
+		    .style('fill', d => d.color)
 		    .on('mouseover', function (event, d) {
 		        const xPos = event.pageX;
 		        const yPos = event.pageY;
@@ -217,5 +224,9 @@ export class CategoryBarGraphSegmentedSiteComponent implements OnInit {
 		      .style('border-width', '1px')
 		      .style('border-radius', '5px')
 		      .style('padding', '10px');
+		    
+		 
+
+		    
 		  }
 		}
