@@ -1,0 +1,22 @@
+<div class="selection-form">
+  <form (ngSubmit)="goToPage()">
+    <label>
+      <input type="radio" name="level" [(ngModel)]="selectedLevel" value="Site Level">
+      Site Level
+    </label>
+    <label>
+      <input type="radio" name="level" [(ngModel)]="selectedLevel" value="Study Level">
+      Study Level
+    </label>
+
+    <div *ngIf="selectedLevel === 'Study Level'">
+      <label for="study">Select a Study:</label>
+      <input type="text" placeholder="Search studies..." [(ngModel)]="searchTerm">
+      <select class="dropdown" id="study" [(ngModel)]="selectedStudy">
+        <option *ngFor="let study of filteredStudies" [value]="study">{{study}}</option>
+      </select>
+    </div>
+
+    <button type="submit">Go</button>
+  </form>
+</div>

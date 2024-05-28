@@ -1,0 +1,88 @@
+.site-team-data-select-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+}
+
+button {
+  border: none;
+  background-color: #009cee;
+  padding: 2em 3em;
+  cursor: pointer;
+  margin-bottom: 2em;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease-in-out;
+  text-align: center;
+  color: black;
+  font-weight: bold;
+  width: 250px;
+  height: 250px;
+}
+
+button:hover {
+  background-color: #007bb5;
+}
+
+img {
+  width: 100%;
+  max-width: 180px;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 1em;
+  transition: transform 0.3s ease-in-out;
+}
+
+button:hover img {
+  transform: scale(1.1);
+}
+
+p {
+  margin: 0;
+  font-size: 1em;
+}
+
+@media screen and (max-width: 600px) {
+  button {
+    padding: 1.5em 2em;
+    margin-bottom: 1.5em;
+    width: 150px;
+    height: 150px;
+  }
+
+  img {
+    max-width: 150px;
+    margin-bottom: 0.5em;
+  }
+
+  p {
+    font-size: 0.8em;
+  }
+}
+
+/* Media query for devices with pixel ratio greater than 1.1 */
+@media (-webkit-min-device-pixel-ratio: 1.1) {
+
+  img {
+  max-width: 135px;
+  }
+}
+
+/* Media query for devices with pixel ratio greater than 1.25 */
+@media (-webkit-min-device-pixel-ratio: 1.25) {
+
+  img {
+  max-width: 112.5px;
+  }
+}
+
+/* Media query for devices with pixel ratio greater than 1.5 */
+@media (-webkit-min-device-pixel-ratio: 1.5) {
+
+  img {
+  max-width: 75px;
+  }
+}
+
