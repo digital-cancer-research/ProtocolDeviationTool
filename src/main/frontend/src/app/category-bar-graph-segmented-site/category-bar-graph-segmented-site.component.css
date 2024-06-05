@@ -1,24 +1,27 @@
-.category-selection {
-  background-color: #f0f0f0;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-bottom: 20px;
+.container {
+  display: flex;
+  overflow-y: auto;
+  max-height: 70vh;
 }
 
-.category-selection h4 {
-  margin-top: 0;
-  font-size: 18px;
-  color: #333;
+.filters {
+  flex: 1;
+  padding-left: 50px;
+  padding-right: 10px;
+  max-height: 100%;
+  overflow-y: auto;
 }
 
-.category-selection label {
-  display: block;
-  margin-bottom: 5px;
-  cursor: pointer;
+.checkbox-container {
+  max-height: 200px;
+  overflow-y: auto;
 }
 
-.category-selection input[type="checkbox"] {
-  margin-right: 10px;
-  cursor: pointer;
+.checkbox {
+  margin-bottom: 10px;
+}
+
+.chart-container {
+  flex: 2;
+  height: 100%;
 }

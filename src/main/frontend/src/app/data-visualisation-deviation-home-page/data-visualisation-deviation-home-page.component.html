@@ -6,9 +6,8 @@
   ]">
   </app-navigation-ribbon>
   <div class="nav-container">
-    <div class="nav-button" (click)="showUserManagement()">Total protocol deviations</div>
-    <div class="nav-button" (click)="showTeamManagement()">Total protocol deviations over time</div>
+    <div class="nav-button">Total protocol deviations</div>
+    <div class="nav-button">Total protocol deviations over time</div>
   </div>
- <!--  <app-user-management *ngIf="isUserManagementVisible"></app-user-management>
-  <app-team-management *ngIf="isTeamManagementVisible"></app-team-management> -->
+  <app-category-bar-graph-segmented-site></app-category-bar-graph-segmented-site>
 </app-border>
