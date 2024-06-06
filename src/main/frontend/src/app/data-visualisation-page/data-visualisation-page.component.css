@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: hidden;
   
 }
 
@@ -27,19 +28,20 @@ app-site-study-level-select {
 app-site-study-level-select {
   grid-column: 1;
   grid-row: 1;
-  padding-left: 20px;
+  padding-left: 80px;
+  max-width: 100px;
 }
 
 app-visualisation {
   grid-column: 2;
   grid-row: 1;
-  padding-left: 100px;
+  margin-left: 20px;
 }
 
 app-category-bar-graph {
   grid-column: 3;
   grid-row: 1;
-  margin-left: -200px;
+  margin-left: -250px;
 }
 
 app-category-pie-graph {
@@ -47,10 +49,13 @@ app-category-pie-graph {
   grid-row: 2;
   padding-left: 80px;
   padding-bottom: -20px;
+  margin-top: -250px;
 }
 
 app-category-bar-graph-segmented {
   grid-column: 3;
   grid-row: 2;
   margin-left: -100px;
+  margin-top: -300px;
 }
+

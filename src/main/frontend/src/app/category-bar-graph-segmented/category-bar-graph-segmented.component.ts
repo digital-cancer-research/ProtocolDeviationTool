@@ -43,8 +43,8 @@ export class CategoryBarGraphSegmentedComponent implements OnInit {
 
 	  createD3BarGraph() {
 		  d3.select(this.elementRef.nativeElement).selectAll('*').remove();
-		    const margin = { top: 20, right: 30, bottom: 30, left: 60 };
-		    const width = 600 - margin.left - margin.right;
+		    const margin = { top: 45, right: 30, bottom: 100, left: 120 };
+		    const width = 850 - margin.left - margin.right;
 		    const height = 400 - margin.top - margin.bottom;
 
 		    // Append SVG to the component's element
@@ -130,6 +130,7 @@ export class CategoryBarGraphSegmentedComponent implements OnInit {
 		    svg.append('text')
 		      .attr('x', width / 2)
 		      .attr('y', -margin.top / 2)
+		      .style('font-size', '20px')
 		      .attr('text-anchor', 'middle')
 		      .text('Total number of PDs per category (DVCAT) per study at site');
 
@@ -137,14 +138,14 @@ export class CategoryBarGraphSegmentedComponent implements OnInit {
 		    svg.append('text')
 		      .attr('transform', 'rotate(-90)')
 		      .attr('x', -height / 2)
-		      .attr('y', -margin.left / 1.1)
+		      .attr('y', -margin.left + 30)
 		      .attr('text-anchor', 'middle')
 		      .text('Study ID');
 		    
 			 // Add X axis label
 		    svg.append('text')
 		        .attr('x', width / 2)
-		        .attr('y', height + margin.bottom)
+		        .attr('y', height + margin.bottom - 40)
 		        .attr('text-anchor', 'middle')
 		        .style('font-size', '14px')
 		        .text('Entry Count');
