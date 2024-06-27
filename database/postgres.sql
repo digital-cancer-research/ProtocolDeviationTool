@@ -271,7 +271,7 @@ VALUES
   ('WRONG STUDY TREATMENT/ADMINISTRATION/DOSE', 'USE OF STUDY TREATMENT IMPACTED BY TEMPERATURE EXCURSION - NOT REPORTED/APPROVED/DISAPPROVED FOR FURTHER USE', 'Protocol Deviation where study medication was used even though the study treatment was maintained outside the temperature range allowed by the protocol.'),
   ('WRONG STUDY TREATMENT/ADMINISTRATION/DOSE', 'WRONG STUDY TREATMENT OR ASSIGNMENT ADMINISTERED', 'Protocol Deviation where the wrong study treatment was administered to the subject.'),
   ('WRONG STUDY TREATMENT/ADMINISTRATION/DOSE', 'OTHER DEVIATION RELATED TO WRONG STUDY TREATMENT/ADMINISTRATION/DOSE', 'Any other Protocol Deviation where a subject was administered the wrong study treatment, wrong study treatment administration and/or wrong dose.'),
-  ('SITE LEVEL ERROR', 'ERRORS IN DELEGATION  LOG COMPLETION', 'Protocol deviation due to error in delegation log completion'),
+  ('SITE LEVEL ERROR', 'ERRORS IN DELEGATION LOG COMPLETION', 'Protocol deviation due to error in delegation log completion'),
   ('SITE LEVEL ERROR', 'ERRORS IN SITE FILE COMPLETION', 'Protocol deviation due to error in site file completion'),
   ('SITE LEVEL ERROR', 'ERRORS IN DOCUMENTATION FOR TRAINING', 'Protocol deviation due to other errors with documentation for training'),
   ('SITE LEVEL ERROR', 'OTHER SITE LEVEL DOCUMENTATION ERRORS', 'Protocol deviation due to other site level documentation errors');
@@ -358,7 +358,7 @@ VALUES
   ('USE OF STUDY TREATMENT IMPACTED BY TEMPERATURE EXCURSION - NOT REPORTED/APPROVED/DISAPPROVED FOR FURTHER USE', '#3F51B5'),
   ('WRONG STUDY TREATMENT OR ASSIGNMENT ADMINISTERED', '#2196F3'),
   ('OTHER DEVIATION RELATED TO WRONG STUDY TREATMENT/ADMINISTRATION/DOSE', '#03A9F4'),
-  ('ERRORS IN DELEGATION  LOG COMPLETION', '#00BCD4'),
+  ('ERRORS IN DELEGATION LOG COMPLETION', '#00BCD4'),
   ('ERRORS IN SITE FILE COMPLETION', '#009688'),
   ('ERRORS IN DOCUMENTATION FOR TRAINING', '#4CAF50'),
   ('OTHER SITE LEVEL DOCUMENTATION ERRORS', '#8BC34A');
