@@ -11,7 +11,7 @@ import { Observable } from 'rxjs';
 
 export class SiteManagementComponent implements OnInit {
 	  sites: any[] = [];
-	  newSites: string[] = [];
+	  newSites: { [siteId: string]: boolean } = {};
 	  
 	  
 	  // Pagination properties
@@ -48,18 +48,20 @@ export class SiteManagementComponent implements OnInit {
 		    });
 		}
 	  
-	  updateSites(updatedSites: string[]): void {
-		  this.siteManagementService.updateSites(this.newSites).subscribe({
-		    next: () => {
-		      console.log('Sites updated successfully');
-		      this.getSites();
-			  this.updatePage();
-		    },
-		    error: (error) => {
-		      console.error('Failed to update sites:', error);
-		    }
-		  });
-		}
+	  updateSites(): void {
+		    const selectedSites = Object.keys(this.newSites).filter(siteId => this.newSites[siteId]);
+		    
+		    this.siteManagementService.updateSites(selectedSites).subscribe({
+		      next: () => {
+		        console.log('Sites updated successfully');
+		        this.getSites();
+		        this.updatePage();
+		      },
+		      error: (error) => {
+		        console.error('Failed to update sites:', error);
+		      }
+		    });
+		  }
 
 
 	  updatePage(): void {
