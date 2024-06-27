@@ -33,7 +33,6 @@ export class SiteSelectComponent implements OnInit {
   }
 
   onSiteChange() {
-	  console.log('Selected Site ID:', this.selectedSiteId);
 	  this.shareSiteDataService.updateSelectedSiteId(this.selectedSiteId);
 	  this.siteSelected.emit(this.selectedSiteId);
 	}

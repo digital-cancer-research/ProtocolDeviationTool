@@ -15,14 +15,10 @@ export class UserSelectionComponent implements OnInit {
   constructor(private userService: UserService, private authService: AuthService) {}
 
   ngOnInit(): void {
-    // Fetch the list of users when the component initializes
+    // Fetch the list of users when the component initialises
     this.userService.getUsers().subscribe((users) => {
       this.users = users;
     });
-  }
-  
-  onUserSelected(): void {
-    console.log('Selected user:', this.selectedUser);
   }
 
   onSelectUser(username: string): void {

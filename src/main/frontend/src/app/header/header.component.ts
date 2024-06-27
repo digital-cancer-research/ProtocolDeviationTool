@@ -24,11 +24,6 @@ export class HeaderComponent {
     });
   }
   
-  onUserSelected(): void {
-    console.log('Selected user:', this.selectedUser);
-    console.log('Selected users teams:', this.userTeamsSelected);
-  }
-
   onSelectUser(username: string): void {
     this.userService.setCurrentUser(username);
     this.selectedUser = username;
@@ -44,7 +39,6 @@ export class HeaderComponent {
         console.error('Error fetching user ID:', error);
       }
     );
-    this.onUserSelected();
     this.authService.checkAdminRole(username).subscribe();
   }
   

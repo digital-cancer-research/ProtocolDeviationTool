@@ -9,12 +9,7 @@ export class SiteTeamDataSelectMultiteamComponent {
 	  @Input() teams: any[] = [];
 	  searchTerm: string = '';
 	  selectedTeams: { [teamId: number]: boolean } = {};
-
-	  selectTeam(team: any): void {
-	    // Handle the selected team
-	    console.log('Selected team:', team);
-	  }
-
+	  
 	  get filteredTeams(): any[] {
 	    if (!this.searchTerm.trim()) {
 	      // If the search term is empty, return all teams

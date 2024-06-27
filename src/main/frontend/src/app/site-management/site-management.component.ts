@@ -33,7 +33,7 @@ export class SiteManagementComponent implements OnInit {
 	    this.updatePage();
 	  }
 	  
-	  initializeComponent(): void {
+	  initialiseComponent(): void {
 		  this.getSites();
 		  this.updatePage();
 		  }
@@ -53,7 +53,6 @@ export class SiteManagementComponent implements OnInit {
 		    
 		    this.siteManagementService.updateSites(selectedSites).subscribe({
 		      next: () => {
-		        console.log('Sites updated successfully');
 		        this.getSites();
 		        this.updatePage();
 		      },

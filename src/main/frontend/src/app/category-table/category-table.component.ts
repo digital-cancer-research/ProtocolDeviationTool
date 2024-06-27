@@ -75,7 +75,7 @@ export class CategoryTableComponent implements OnInit {
     	         return a.dvspondesValue.localeCompare(b.dvspondesValue); // Sort dvspondes in ascending order
     	     }
     	  });
-        // Initialize selectedDvTerm for each row
+        // Initialise selectedDvTerm for each row
         this.selectedDvdecod = data.map((category) => category.dvdecod);
         this.updatePage();
       },
@@ -159,9 +159,9 @@ export class CategoryTableComponent implements OnInit {
 	      case 'dvspondesValue':
 	        return category.dvspondesValue;
 	      case 'dvcat':
-	        return category.dvcat.join(', '); // Join DVCAT array into a string for sorting
+	        return category.dvcat.join(', ');
 	      case 'dvdecod':
-	        return category.dvdecod.join(', '); // Join DVDECOD array into a string for sorting
+	        return category.dvdecod.join(', ');
 	      default:
 	        return '';
 	    }
@@ -240,7 +240,7 @@ export class CategoryTableComponent implements OnInit {
 	    this.http.post('/api/table/update-study-id', { entryId: category.entryId, newStudyId: trimmedStudyId }).subscribe(
 	      () => {
 	        category.studyId = trimmedStudyId; // Update the study ID in the local list
-	        this.sortTable(this.sortedColumn); // Re-sort the table if necessary
+	        this.sortTable(this.sortedColumn);
 	      },
 	      (error) => {
 	        console.error(`Error updating study ID ${category.entryId}:`, error);

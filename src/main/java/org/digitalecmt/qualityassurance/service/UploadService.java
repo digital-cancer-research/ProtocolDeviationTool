@@ -89,9 +89,6 @@ public class UploadService {
 	@Autowired
 	private DataEntryRepository dataEntryRepository;
 
-//    @Autowired
-//    private StudyRepository studyRepository;
-
 	@Autowired
 	private DvspondesRepository dvspondesRepository;
 
@@ -155,16 +152,6 @@ public class UploadService {
 		
 		Boolean useMockCategorisationApi = false;
 
-//    	// Check if the study has a name, if not, set the name to studyId
-//    	Study study = studyRepository.findById(studyId).orElse(null);
-//    	if (study == null) {
-//    	    study = new Study();
-//    	    study.setStudyId(studyId);
-//    	    study.setStudyName(studyId);
-//    	}
-//    	// Save the study to the "study" table
-//    	studyRepository.save(study);
-
 		// Save it to the "dvspondes" table
 		Dvspondes dvspondes = new Dvspondes();
 		dvspondes.setDvspondesValue(dvspondesValue);
@@ -193,11 +180,9 @@ public class UploadService {
 		        HttpEntity responseEntity = response.getEntity();
 		        if (responseEntity != null) {
 		            responseBody = EntityUtils.toString(responseEntity);
-	//	            System.out.println("Response: " + responseBody);
 		        }
 		    } catch (Exception e) {
 		        e.printStackTrace();
-		        // Handle exceptions
 		    }
 		}
 	    
@@ -213,7 +198,6 @@ public class UploadService {
 		if (!dvdecodValues.isEmpty()) {
 			// Iterate over each dvterm value
 		    for (String dvdecodValue : dvdecodValues) {
-		    	System.out.println(dvdecodValue);
 				// Create a new DataEntryCategory instance and set its properties
 				DataEntryCategory dataEntryCategory = new DataEntryCategory();
 				
@@ -225,7 +209,6 @@ public class UploadService {
 		                dataEntryCategory.setCategoryId(pdCategory.getCategoryId());
 		            }
 		        } else if (useMockCategorisationApi) {
-	//				System.out.println(response);
 					// Parse the JSON response string
 				    JSONObject jsonResponse = new JSONObject(responseBody);
 				    
@@ -247,8 +230,6 @@ public class UploadService {
 		        
 		        // Add the DataEntry instance to the list
 		 		dataEntryRepository.save(dataEntry);
-		        
-		 		System.out.println(dataEntry.getEntryId());
 		 		
 				// Finish setting up the DataEntryCategory instance
 				dataEntryCategory.setEntryId(dataEntry.getEntryId());
@@ -257,7 +238,6 @@ public class UploadService {
 	    } else {
 	    	// Add the DataEntry instance to the list
 	 		dataEntryRepository.save(dataEntry);
-	 		System.out.println(dataEntry.getEntryId());
 	    }
 	    
     	
@@ -370,14 +350,7 @@ public class UploadService {
 		if (!missingCells.isEmpty()) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			throw new MissingCellsException("Missing fields : \n " + String.join("\n", missingCells));
-
-			// Handle missing cells and return a response with an error message
-//	            String errorMessage = "Missing cells:\n" + String.join("\n", missingCells);
-//	            UploadResponse response = new UploadResponse(errorMessage);
-//	            return ResponseEntity.badRequest().body(response);
 		} else {
-			// Save the dataEntries to the "dataEntries" table
-			// dataEntryRepository.saveAll(dataEntrys);
 			return ResponseEntity.ok(new UploadResponse("CSV file uploaded."));
 		}
 	}

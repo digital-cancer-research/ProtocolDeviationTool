@@ -165,46 +165,34 @@ public class TableController {
     @PostMapping("/update-category")
     public ResponseEntity<HttpStatus> updateCategory(@RequestBody UpdateCategoryDTO request) {
         try {
-            System.out.println("Received request to update category: " + request);
             
             // Find the DataEntry record to update by its ID (entryId)
             DataEntry dataEntry = dataEntryRepository.findById(request.getEntryId())
                     .orElseThrow(() -> new EntityNotFoundException("DataEntry not found"));
-            System.out.println("Found DataEntry: " + dataEntry);
 
             // Fetch the DataEntryCategory records to update based on entry_id
             List<DataEntryCategory> dataEntryCategories = dataEntryCategoryRepository.findAllByEntryId(request.getEntryId());
-            System.out.println("Found DataEntryCategories: " + dataEntryCategories);
-
-            System.out.println("Found Dvdecods: " + request.getDvdecods());
-            
             // Fetch the PdCategory entities using the provided dvdecods
             List<PdCategory> pdCategories = pdCategoryRepository.findByDvdecodIn(request.getDvdecods());
-            System.out.println("Found PdCategories: " + pdCategories);
-
             // Update the DataEntryCategory records
             for (int i = 0; i < pdCategories.size(); i++) {
                 DataEntryCategory dataEntryCategory;
                 if (i < dataEntryCategories.size()) {
                     // If the DataEntryCategory record exists, update it
                     dataEntryCategory = dataEntryCategories.get(i);
-                    System.out.println("Updating existing DataEntryCategory: " + dataEntryCategory);
                 } else {
                     // If the DataEntryCategory record does not exist, create a new one
                     dataEntryCategory = new DataEntryCategory();
                     dataEntryCategory.setEntryId(request.getEntryId());
-                    System.out.println("Creating new DataEntryCategory: " + dataEntryCategory);
                 }
                 // Update the category_id of the DataEntryCategory record
                 dataEntryCategory.setCategoryId(pdCategories.get(i).getCategoryId());
                 dataEntryCategoryRepository.save(dataEntryCategory);
-                System.out.println("Saved DataEntryCategory: " + dataEntryCategory);
             }
 
             // Set the isEdited flag to true
             dataEntry.setIsEdited(true);
             dataEntryRepository.save(dataEntry);
-            System.out.println("Updated DataEntry isEdited flag and saved DataEntry: " + dataEntry);
 
             // Log the edit information
             String changeFrom = String.join(",", request.getOldDvdecods());
@@ -215,13 +203,6 @@ public class TableController {
             String dateTimeEdited = currentLocalDateTime.format(dateTimeFormatter);
             int entryId = request.getEntryId();
 
-            System.out.println("Logging edit information");
-            System.out.println("changeFrom: " + changeFrom);
-            System.out.println("changeTo: " + changeTo);
-            System.out.println("username: " + username);
-            System.out.println("dateTimeEdited: " + dateTimeEdited);
-            System.out.println("entryId: " + entryId);
-
             CategoryEditAudit categoryEditAudit = new CategoryEditAudit();
             categoryEditAudit.setEntryId(entryId);
             categoryEditAudit.setChangeFrom(changeFrom);
@@ -230,7 +211,6 @@ public class TableController {
             categoryEditAudit.setDateTimeEdited(dateTimeEdited);
 
             categoryEditAuditRepository.save(categoryEditAudit);
-            System.out.println("Saved CategoryEditAudit: " + categoryEditAudit);
 
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
@@ -244,12 +224,9 @@ public class TableController {
     @GetMapping("/audit-entries/{entryId}")
     public ResponseEntity<List<CategoryEditAuditDTO>> getAuditEntries(@PathVariable int entryId) {
         try {
-//            System.out.println("Fetching audit entries for entryId: " + entryId);
 
             // Fetch all audit entries for the given entryId
             List<CategoryEditAuditDTO> auditEntries = categoryEditAuditRepository.findAllByEntryId(entryId);
-
-//            System.out.println("Fetched audit entries: " + auditEntries);
             
             return new ResponseEntity<>(auditEntries, HttpStatus.OK);
         } catch (Exception ex) {
@@ -274,7 +251,7 @@ public class TableController {
                 return ResponseEntity.notFound().build();
             }
         } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().build(); // Handle invalid entryId format
+            return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

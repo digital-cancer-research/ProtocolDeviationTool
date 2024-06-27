@@ -55,7 +55,6 @@ public class UploadController {
     public ResponseEntity<UploadResponse> uploadFile(@RequestParam("file") MultipartFile file, String username) {
         try {
             return uploadService.checkFileFormat(file, username);
-//            return ResponseEntity.ok(new UploadResponse("Data has been loaded"));
         } catch (MissingCellsException e) {
         	return ResponseEntity.ok(new UploadResponse("Data not uploaded. Required data fields missing. Missing cells: \n " + e.getMessage()));
         } catch (Exception e) {

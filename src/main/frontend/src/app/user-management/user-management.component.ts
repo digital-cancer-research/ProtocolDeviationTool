@@ -28,7 +28,7 @@ export class UserManagementComponent implements OnInit, OnChanges {
 	  newUser: UserAccount = { username: '', roleId: 2, teamId: [] };
 	  selectedTeams: number[] = [];
 	  
-	  // Initialize selectedUserTeams to store selected teams for each user
+	  // Initialise selectedUserTeams to store selected teams for each user
 	  selectedUserTeams: { [userId: number]: number[] } = {};
 
 	  // Pagination properties
@@ -55,10 +55,10 @@ export class UserManagementComponent implements OnInit, OnChanges {
 	  }
 	  
 	  ngOnChanges(): void {
-		  this.initializeFilteredUserTeams();
+		  this.initialiseFilteredUserTeams();
 		  }
 	  
-	  private initializeFilteredUserTeams(): void {
+	  private initialiseFilteredUserTeams(): void {
 	    this.users.forEach(user => {
 	      this.userTeamSearchTerms[user.userId] = '';
 	      this.filteredUserTeams[user.userId] = this.teams;
@@ -82,9 +82,9 @@ export class UserManagementComponent implements OnInit, OnChanges {
 		    this.userManagementService.getTeams().subscribe((data: any[]) => {
 		        this.teams = data;
 		        this.filteredTeams = data;
-				// Initialize filteredTeams with all teams initially
+				// Initialise filteredTeams with all teams initially
 			    this.filteredTeams = this.teams;
-			    this.initializeFilteredUserTeams();
+			    this.initialiseFilteredUserTeams();
 		    }, error => {
 		        console.error('Error fetching teams:', error);
 		    });
@@ -105,7 +105,7 @@ export class UserManagementComponent implements OnInit, OnChanges {
 		    this.userManagementService.getUsersWithRoles().subscribe((data: any[]) => {
 		        this.users = data;
 				this.initSelectedUserTeams()
-		        this.initializeFilteredUserTeams();
+		        this.initialiseFilteredUserTeams();
 		        this.updatePage();
 		    }, error => {
 		        console.error('Error fetching users:', error);
@@ -118,16 +118,16 @@ export class UserManagementComponent implements OnInit, OnChanges {
 		    this.userTeams = data;
 		    this.updatePage();
 
-		    // Initialize selectedUserTeams with default team selections
+		    // Initialise selectedUserTeams with default team selections
 		    this.initSelectedUserTeams();
-		    this.initializeFilteredUserTeams();
+		    this.initialiseFilteredUserTeams();
 		  }, error => {
 		    console.error('Error fetching users:', error);
 		  });
 		}
 
 	  updatePage(): void {
-		  this.initializeFilteredUserTeams();
+		  this.initialiseFilteredUserTeams();
 	    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
 	    this.pagedUsers = this.users.slice(startIndex, startIndex + this.itemsPerPage);
 	  }
@@ -206,10 +206,6 @@ export class UserManagementComponent implements OnInit, OnChanges {
 		}
 
 		updateUser(userId: number, roleName: string, selectedTeams: number[]): void {
-		  // Implement logic to update the user with the selected role and teams
-		  console.log(`Updating user ${userId}`);
-		  console.log(`New role: ${roleName}`);
-		  console.log(`Selected teams: ${selectedTeams}`);
 		  
 			// Update user role first
 		    this.changeUserRole(userId, roleName);
@@ -248,7 +244,6 @@ export class UserManagementComponent implements OnInit, OnChanges {
 	  
 	  changeUserTeam(userTeam: UserTeam): void {
 		  // Make an API call to change a user's teams
-		  console.log(userTeam);
 		  this.userManagementService.changeUserTeam(userTeam).subscribe(() => {
 		    // Update the user's teams in the local list
 		    const userToUpdate = this.users.find((user) => user.userId === userTeam.userId);
@@ -274,7 +269,6 @@ export class UserManagementComponent implements OnInit, OnChanges {
 
 	  onAddUserSubmit(): void {
 	    // Call the service to add a new user
-	    console.log(this.newUser);
 	    this.userManagementService.addUserWithRoleTeam(this.newUser).subscribe(() => {
 	      // Refresh the user list after adding a new user
 	      this.formNotSubmitted = false;

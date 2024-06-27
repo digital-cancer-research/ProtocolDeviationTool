@@ -25,10 +25,10 @@ export class AdministratorPageComponent {
     this.isSiteManagementVisible = false;
     this.isAuditTrailManagementVisible = false;
     
- 	// Call initializeComponent() method of app-team-management component
+ 	// Call initialiseComponent() method of app-team-management component
     const teamManagementComponent: any = document.querySelector('app-team-management');
     if (teamManagementComponent) {
-      teamManagementComponent.initializeComponent();
+      teamManagementComponent.initialiseComponent();
     }
   }
   

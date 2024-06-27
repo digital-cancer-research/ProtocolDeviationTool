@@ -339,12 +339,8 @@ public class UserController {
     @PostMapping("/add-user-with-role-team")
     public ResponseEntity<UserAccount> addUserWithRoleAndTeam(@RequestBody UserWithRoleTeamDTO userRoleTeamDTO) {
         try {
-            System.out.println("Received request to add user with role and team");
 
             UserAccount newUser = new UserAccount();
-            System.out.println(userRoleTeamDTO.getUsername());
-            System.out.println(userRoleTeamDTO.getRoleId());
-            System.out.println(userRoleTeamDTO.getTeamId());
             
             // Get the current time
             LocalDateTime currentLocalDateTime = LocalDateTime.now();
@@ -356,7 +352,6 @@ public class UserController {
             newUser.setUsername(userRoleTeamDTO.getUsername());
             newUser.setRoleId(userRoleTeamDTO.getRoleId());
             UserAccount newUserAccount = userRepository.save(newUser);
-            System.out.println("New user saved to the database: " + newUserAccount.toString());
 
             // Add the teams for the user
             for (Integer team : userRoleTeamDTO.getTeamId()) {
@@ -364,7 +359,6 @@ public class UserController {
                 userTeam.setUserId(newUserAccount.getUserId());
                 userTeam.setTeamId(team);
                 userTeamRepository.save(userTeam);
-                System.out.println("Added team " + team + " for user " + newUserAccount.getUserId());
             }
             
             // Log the audit information
@@ -379,11 +373,9 @@ public class UserController {
             	auditTrailRepository.save(audit);
             }
 
-            System.out.println("User with role and team successfully added");
             return new ResponseEntity<>(newUserAccount, HttpStatus.CREATED);
         } catch (Exception e) {
             System.out.println("An error occurred while adding user with role and team: " + e.getMessage());
-            e.printStackTrace(); // Print stack trace for detailed error information
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -432,7 +424,6 @@ public class UserController {
             return new ResponseEntity<>(newTeamData, HttpStatus.CREATED);
         } catch (Exception e) {
             System.out.println("An error occurred while adding team: " + e.getMessage());
-            e.printStackTrace(); // Print stack trace for detailed error information
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -472,7 +463,6 @@ public class UserController {
             }
         } catch (Exception e) {
             System.out.println("An error occurred while deleting team: " + e.getMessage());
-            e.printStackTrace(); // Print stack trace for detailed error information
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -518,7 +508,6 @@ public class UserController {
             }
         } catch (Exception e) {
             System.out.println("An error occurred while changing team name: " + e.getMessage());
-            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

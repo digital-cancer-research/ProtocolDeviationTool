@@ -41,7 +41,7 @@ export class TeamManagementComponent implements OnInit {
 	    this.updatePage();
 	  }
 	  
-	  initializeComponent(): void {
+	  initialiseComponent(): void {
 		  this.getTeams();
 		  this.updatePage();
 		  }
@@ -119,9 +119,6 @@ export class TeamManagementComponent implements OnInit {
 
 		submitTeamName(team: any): void {
 		  const newTeamName = team.editedTeamName;
-		  console.log(newTeamName);
-		  console.log(team.teamId);
-		  console.log(team);
 		  // Make an API call to change the team name
 		  this.teamManagementService.changeTeamName(team.teamId, newTeamName).subscribe(() => {
 		    // Update the team name locally after successful change
@@ -168,7 +165,6 @@ export class TeamManagementComponent implements OnInit {
 			      this.newTeam.userId = userId;
 
 			      // Call the service to add a new team
-			      console.log('New Team:', this.newTeam);
 			      this.teamManagementService.addTeam(this.newTeam).subscribe(() => {
 			        // Clear the form
 			        this.newTeam = { teamName: '' };
