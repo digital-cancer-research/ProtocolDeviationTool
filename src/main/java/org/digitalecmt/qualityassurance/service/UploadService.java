@@ -152,6 +152,8 @@ public class UploadService {
 
 	public void parseAndAddData(String siteId, String studyId, String dvspondesValue, List<DataEntry> dataEntrys,
 			Files files, List<String> dvdecodValues) {
+		
+		Boolean useMockCategorisationApi = false;
 
 //    	// Check if the study has a name, if not, set the name to studyId
 //    	Study study = studyRepository.findById(studyId).orElse(null);
@@ -168,33 +170,36 @@ public class UploadService {
 		dvspondes.setDvspondesValue(dvspondesValue);
 		dvspondesRepository.save(dvspondes);
 
-		// Make API call to auto categorise uploaded data
 		HttpResponse response = null;
 		String responseBody = null;
-	    try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-	        HttpPost httpPost = new HttpPost(predictionUrl);
-
-	        // Set headers
-	        httpPost.setHeader("Content-Type", "application/json");
-
-	        // Set request body
-	        String json = "{\"query\":\"" + dvspondesValue + "\", \"num_predictions\": 1}";
-	        StringEntity entity = new StringEntity(json);
-	        httpPost.setEntity(entity);
-
-	        // Execute the request
-	        response = httpClient.execute(httpPost);
-
-	        // Process the response
-	        HttpEntity responseEntity = response.getEntity();
-	        if (responseEntity != null) {
-	            responseBody = EntityUtils.toString(responseEntity);
-//	            System.out.println("Response: " + responseBody);
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        // Handle exceptions
-	    }
+		if (useMockCategorisationApi) {
+			// Make API call to auto categorise uploaded data
+			
+		    try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+		        HttpPost httpPost = new HttpPost(predictionUrl);
+	
+		        // Set headers
+		        httpPost.setHeader("Content-Type", "application/json");
+	
+		        // Set request body
+		        String json = "{\"query\":\"" + dvspondesValue + "\", \"num_predictions\": 1}";
+		        StringEntity entity = new StringEntity(json);
+		        httpPost.setEntity(entity);
+	
+		        // Execute the request
+		        response = httpClient.execute(httpPost);
+	
+		        // Process the response
+		        HttpEntity responseEntity = response.getEntity();
+		        if (responseEntity != null) {
+		            responseBody = EntityUtils.toString(responseEntity);
+	//	            System.out.println("Response: " + responseBody);
+		        }
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        // Handle exceptions
+		    }
+		}
 	    
 	    
 	    
@@ -205,46 +210,54 @@ public class UploadService {
 		dataEntry.setStudyId(studyId);
 		dataEntry.setDvspondesId(dvspondes.getDvspondesId());
 		
-		// Iterate over each dvterm value
-	    for (String dvdecodValue : dvdecodValues) {
-		
-			// Create a new DataEntryCategory instance and set its properties
-			DataEntryCategory dataEntryCategory = new DataEntryCategory();
-			
-			// Fetch the category using the provided dvterm if it's not empty
-	        if (!dvdecodValue.isEmpty()) {
-	            Optional<PdCategory> pdCategoryOptional = pdCategoryRepository.findByDvdecod(dvdecodValue);
-	            if (pdCategoryOptional.isPresent()) {
-	                PdCategory pdCategory = pdCategoryOptional.get();
-	                dataEntryCategory.setCategoryId(pdCategory.getCategoryId());
-	            }
-	        } else {
-//				System.out.println(response);
-				// Parse the JSON response string
-			    JSONObject jsonResponse = new JSONObject(responseBody);
-			    
-			    // Get the 'categories' array from the JSON response
-			    JSONArray categoriesArray = jsonResponse.getJSONArray("categories");
-			    
-			    // Get the first element of the 'categories' array
-			    JSONObject firstCategory = categoriesArray.getJSONObject(0);
-			    
-			    // Get the value of the 'dvdecod' field from the first category
-			    String dvdecodValue2 = firstCategory.getString("dvdecod");
-				Optional<PdCategory> pdCategoryOptional = pdCategoryRepository.findByDvdecod(dvdecodValue2);
+		if (!dvdecodValues.isEmpty()) {
+			// Iterate over each dvterm value
+		    for (String dvdecodValue : dvdecodValues) {
+		    	System.out.println(dvdecodValue);
+				// Create a new DataEntryCategory instance and set its properties
+				DataEntryCategory dataEntryCategory = new DataEntryCategory();
 				
-				if (pdCategoryOptional.isPresent()) {
-			        PdCategory pdCategory = pdCategoryOptional.get();
-			        dataEntryCategory.setCategoryId(pdCategory.getCategoryId());
+				// Fetch the category using the provided dvterm if it's not empty
+		        if (!dvdecodValue.isEmpty()) {
+		            Optional<PdCategory> pdCategoryOptional = pdCategoryRepository.findByDvdecod(dvdecodValue);
+		            if (pdCategoryOptional.isPresent()) {
+		                PdCategory pdCategory = pdCategoryOptional.get();
+		                dataEntryCategory.setCategoryId(pdCategory.getCategoryId());
+		            }
+		        } else if (useMockCategorisationApi) {
+	//				System.out.println(response);
+					// Parse the JSON response string
+				    JSONObject jsonResponse = new JSONObject(responseBody);
+				    
+				    // Get the 'categories' array from the JSON response
+				    JSONArray categoriesArray = jsonResponse.getJSONArray("categories");
+				    
+				    // Get the first element of the 'categories' array
+				    JSONObject firstCategory = categoriesArray.getJSONObject(0);
+				    
+				    // Get the value of the 'dvdecod' field from the first category
+				    String dvdecodValue2 = firstCategory.getString("dvdecod");
+					Optional<PdCategory> pdCategoryOptional = pdCategoryRepository.findByDvdecod(dvdecodValue2);
+					
+					if (pdCategoryOptional.isPresent()) {
+				        PdCategory pdCategory = pdCategoryOptional.get();
+				        dataEntryCategory.setCategoryId(pdCategory.getCategoryId());
+					}
 				}
-			}
-	        
-	        // Add the DataEntry instance to the list
+		        
+		        // Add the DataEntry instance to the list
+		 		dataEntryRepository.save(dataEntry);
+		        
+		 		System.out.println(dataEntry.getEntryId());
+		 		
+				// Finish setting up the DataEntryCategory instance
+				dataEntryCategory.setEntryId(dataEntry.getEntryId());
+				dataEntryCategoryRepository.save(dataEntryCategory);
+		    }
+	    } else {
+	    	// Add the DataEntry instance to the list
 	 		dataEntryRepository.save(dataEntry);
-	        
-			// Finish setting up the DataEntryCategory instance
-			dataEntryCategory.setEntryId(dataEntry.getEntryId());
-			dataEntryCategoryRepository.save(dataEntryCategory);
+	 		System.out.println(dataEntry.getEntryId());
 	    }
 	    
     	
