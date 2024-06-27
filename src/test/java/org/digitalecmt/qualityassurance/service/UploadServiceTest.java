@@ -145,6 +145,8 @@ public class UploadServiceTest {
         MockMultipartFile csvFile = new MockMultipartFile("dataEntry.csv", csvData.getBytes());
 
         uploadService.processDataEntryCSV(csvFile, csvData);
+        
+        verify(dataEntryRepository, times(5)).save(any());
     }
     
     @Test
@@ -189,6 +191,8 @@ public class UploadServiceTest {
 			MockMultipartFile excelFile = new MockMultipartFile("dataEntry.xlsx", inputStream);
 
 			uploadService.processDataEntryExcel(excelFile, null);
+			
+			verify(dataEntryRepository, times(5)).save(any());
 		}
     }
     
