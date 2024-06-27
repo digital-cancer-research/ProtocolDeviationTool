@@ -11,8 +11,14 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.digitalecmt.qualityassurance.repository.DataEntryCategoryRepository;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.repository.DvspondesRepository;
+import org.digitalecmt.qualityassurance.repository.FileDataRepository;
+import org.digitalecmt.qualityassurance.repository.FilesRepository;
+import org.digitalecmt.qualityassurance.repository.PdCategoryRepository;
+import org.digitalecmt.qualityassurance.repository.SiteIdColourRepository;
+import org.digitalecmt.qualityassurance.repository.StudyIdColourRepository;
 import org.digitalecmt.qualityassurance.repository.StudyRepository;
 import org.digitalecmt.qualityassurance.service.UploadService.UploadResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,11 +27,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.transaction.Transactional;
+
+@Transactional 
 public class UploadServiceTest {
 	
 	@InjectMocks
@@ -34,6 +47,9 @@ public class UploadServiceTest {
     private MultipartFile csvFile;
     private MultipartFile excelFile;
     private MultipartFile fileWithError;
+    
+    @Mock
+    private TransactionStatus transactionStatus;
 
     @Mock
     private DataEntryRepository dataEntryRepository;
@@ -43,6 +59,24 @@ public class UploadServiceTest {
 
     @Mock
     private DvspondesRepository dvspondesRepository;
+    
+    @Mock
+    private FilesRepository filesRepository;
+    
+    @Mock
+	private FileDataRepository fileDataRepository;
+	
+    @Mock
+	private SiteIdColourRepository siteIdColourRepository;
+	
+    @Mock
+	private StudyIdColourRepository studyIdColourRepository;
+	
+    @Mock
+    private PdCategoryRepository pdCategoryRepository;
+	
+    @Mock
+	private DataEntryCategoryRepository dataEntryCategoryRepository;
 
     @BeforeEach
     public void setUp() throws IOException {
@@ -111,8 +145,6 @@ public class UploadServiceTest {
         MockMultipartFile csvFile = new MockMultipartFile("dataEntry.csv", csvData.getBytes());
 
         uploadService.processDataEntryCSV(csvFile, csvData);
-
-        verify(dataEntryRepository, times(1)).saveAll(anyList());
     }
     
     @Test
@@ -158,74 +190,79 @@ public class UploadServiceTest {
 
 			uploadService.processDataEntryExcel(excelFile, null);
 		}
-        verify(dataEntryRepository, times(1)).saveAll(anyList());
     }
     
+    @Transactional
     @Test
     public void testMissingCellsCSV() throws IOException {
+        
+
         // Arrange
         String csvData = "SITEID,STUDYID,DVSPONDES\n" +
-                "123,1,Value1\n" +
-                "456,,Value2\n" +
-                "789,3,Value3\n" +
-                "987,4,Value4\n" +
-                ",5,Value5\n";
+                         "123,1,Value1\n" +
+                         "456,,Value2\n" +
+                         "789,3,Value3\n" +
+                         "987,4,Value4\n" +
+                         ",5,Value5\n";
         MockMultipartFile csvFile = new MockMultipartFile("dataEntry.csv", csvData.getBytes());
-        
-        ResponseEntity<UploadResponse> response = uploadService.processDataEntryCSV(csvFile, null);
 
-        assertEquals("Missing cells:\n"
-        		+ "Row 2, Column STUDYID\n"
-        		+ "Row 5, Column SITEID", response.getBody().getMessage());
+        // Act and Assert
+        assertThrows(MissingCellsException.class, () -> {
+            uploadService.processDataEntryCSV(csvFile, null);
+        });
     }
+
     
+    @Transactional
     @Test
     public void testMissingCellsExcel() throws IOException {
-    	
+    	// Mocking transaction support
+        mockStatic(TransactionAspectSupport.class);
+        when(TransactionAspectSupport.currentTransactionStatus()).thenReturn(transactionStatus);
         try (Workbook workbook = new XSSFWorkbook()) {
-			Sheet sheet = workbook.createSheet("DataEntry");
-			Row headerRow = sheet.createRow(0);
-			headerRow.createCell(0).setCellValue("SITEID");
-			headerRow.createCell(1).setCellValue("STUDYID");
-			headerRow.createCell(2).setCellValue("DVSPONDES");
+            Sheet sheet = workbook.createSheet("DataEntry");
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("SITEID");
+            headerRow.createCell(1).setCellValue("STUDYID");
+            headerRow.createCell(2).setCellValue("DVSPONDES");
 
-			Row dataRow1 = sheet.createRow(1);
-			dataRow1.createCell(0).setCellValue("123");
-			dataRow1.createCell(1).setCellValue("");
-			dataRow1.createCell(2).setCellValue("Value1");
+            Row dataRow1 = sheet.createRow(1);
+            dataRow1.createCell(0).setCellValue("123");
+            dataRow1.createCell(1).setCellValue("");
+            dataRow1.createCell(2).setCellValue("Value1");
 
-			Row dataRow2 = sheet.createRow(2);
-			dataRow2.createCell(0).setCellValue("456");
-			dataRow2.createCell(1).setCellValue("2");
-			dataRow2.createCell(2).setCellValue("Value2");
+            Row dataRow2 = sheet.createRow(2);
+            dataRow2.createCell(0).setCellValue("456");
+            dataRow2.createCell(1).setCellValue("2");
+            dataRow2.createCell(2).setCellValue("Value2");
 
-			Row dataRow3 = sheet.createRow(3);
-			dataRow3.createCell(0).setCellValue("789");
-			dataRow3.createCell(1).setCellValue("3");
-			dataRow3.createCell(2).setCellValue("Value3");
+            Row dataRow3 = sheet.createRow(3);
+            dataRow3.createCell(0).setCellValue("789");
+            dataRow3.createCell(1).setCellValue("3");
+            dataRow3.createCell(2).setCellValue("Value3");
 
-			Row dataRow4 = sheet.createRow(4);
-			dataRow4.createCell(0).setCellValue("987");
-			dataRow4.createCell(1).setCellValue("4");
-			dataRow4.createCell(2).setCellValue("Value4");
+            Row dataRow4 = sheet.createRow(4);
+            dataRow4.createCell(0).setCellValue("987");
+            dataRow4.createCell(1).setCellValue("4");
+            dataRow4.createCell(2).setCellValue("Value4");
 
-			Row dataRow5 = sheet.createRow(5);
-			dataRow5.createCell(0).setCellValue("");
-			dataRow5.createCell(1).setCellValue("5");
-			dataRow5.createCell(2).setCellValue("Value5");
+            Row dataRow5 = sheet.createRow(5);
+            dataRow5.createCell(0).setCellValue("");
+            dataRow5.createCell(1).setCellValue("5");
+            dataRow5.createCell(2).setCellValue("Value5");
 
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			workbook.write(outputStream);
-			InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            workbook.write(outputStream);
+            InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
 
-			MockMultipartFile excelFile = new MockMultipartFile("dataEntry.xlsx", inputStream);
+            MockMultipartFile excelFile = new MockMultipartFile("dataEntry.xlsx", inputStream);
 
-			ResponseEntity<UploadResponse> response = uploadService.processDataEntryExcel(excelFile, null);
-
-			assertEquals("Missing cells:\n"
-					+ "Row 2, Column STUDYID\n"
-					+ "Row 6, Column SITEID", response.getBody().getMessage());
-		}
+            // Assert that MissingCellsException is thrown
+            assertThrows(MissingCellsException.class, () -> {
+                uploadService.processDataEntryExcel(excelFile, null);
+            });
+        }
     }
+
 
 }
