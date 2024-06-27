@@ -151,7 +151,7 @@ public class UploadService {
 
 
 	public void parseAndAddData(String siteId, String studyId, String dvspondesValue, List<DataEntry> dataEntrys,
-			Files files, List<String> dvtermValues) {
+			Files files, List<String> dvdecodValues) {
 
 //    	// Check if the study has a name, if not, set the name to studyId
 //    	Study study = studyRepository.findById(studyId).orElse(null);
@@ -206,14 +206,14 @@ public class UploadService {
 		dataEntry.setDvspondesId(dvspondes.getDvspondesId());
 		
 		// Iterate over each dvterm value
-	    for (String dvtermValue : dvtermValues) {
+	    for (String dvdecodValue : dvdecodValues) {
 		
 			// Create a new DataEntryCategory instance and set its properties
 			DataEntryCategory dataEntryCategory = new DataEntryCategory();
 			
 			// Fetch the category using the provided dvterm if it's not empty
-	        if (!dvtermValue.isEmpty()) {
-	            Optional<PdCategory> pdCategoryOptional = pdCategoryRepository.findByDvterm(dvtermValue);
+	        if (!dvdecodValue.isEmpty()) {
+	            Optional<PdCategory> pdCategoryOptional = pdCategoryRepository.findByDvdecod(dvdecodValue);
 	            if (pdCategoryOptional.isPresent()) {
 	                PdCategory pdCategory = pdCategoryOptional.get();
 	                dataEntryCategory.setCategoryId(pdCategory.getCategoryId());
@@ -230,8 +230,8 @@ public class UploadService {
 			    JSONObject firstCategory = categoriesArray.getJSONObject(0);
 			    
 			    // Get the value of the 'dvdecod' field from the first category
-			    String dvdecodValue = firstCategory.getString("dvdecod");
-				Optional<PdCategory> pdCategoryOptional = pdCategoryRepository.findByDvdecod(dvdecodValue);
+			    String dvdecodValue2 = firstCategory.getString("dvdecod");
+				Optional<PdCategory> pdCategoryOptional = pdCategoryRepository.findByDvdecod(dvdecodValue2);
 				
 				if (pdCategoryOptional.isPresent()) {
 			        PdCategory pdCategory = pdCategoryOptional.get();
@@ -325,17 +325,17 @@ public class UploadService {
 			String siteId = record.get("SITEID");
 			String studyId = record.get("STUDYID");
 			String dvspondesValue = record.get("DVSPONDES");
-			List<String> dvtermValues;
-			if (csvParser.getHeaderMap().containsKey("DVTERM")) {
-		        String dvtermValue = record.get("DVTERM");
-		        if (StringUtils.isNotBlank(dvtermValue)) {
+			List<String> dvdecodValues;
+			if (csvParser.getHeaderMap().containsKey("DVDECOD")) {
+		        String dvdecodValue = record.get("DVDECOD");
+		        if (StringUtils.isNotBlank(dvdecodValue)) {
 		            // Split the dvtermValue by comma and store in a list
-		            dvtermValues = Arrays.asList(dvtermValue.split("\\s*;\\s*"));
+		        	dvdecodValues = Arrays.asList(dvdecodValue.split("\\s*;\\s*"));
 		        } else {
-		            dvtermValues = Arrays.asList();
+		        	dvdecodValues = Arrays.asList();
 		        }
 		    } else {
-		        dvtermValues = Arrays.asList();
+		    	dvdecodValues = Arrays.asList();
 		    }
 			
 
@@ -350,7 +350,7 @@ public class UploadService {
 			}
 
 			if (missingCells.isEmpty()) {
-				parseAndAddData(siteId, studyId, dvspondesValue, dataEntrys, files, dvtermValues);
+				parseAndAddData(siteId, studyId, dvspondesValue, dataEntrys, files, dvdecodValues);
 			}
 		}
 
@@ -404,18 +404,18 @@ public class UploadService {
 			String siteId = dataFormatter.formatCellValue(row.getCell(0));
 			String studyId = dataFormatter.formatCellValue(row.getCell(1));
 			String dvspondesValue = dataFormatter.formatCellValue(row.getCell(2));
-			List<String> dvtermValues;
+			List<String> dvdecodValues;
 
-		    if (row.getCell(5) != null) {
-		        String dvtermValue = dataFormatter.formatCellValue(row.getCell(5));
-		        if (StringUtils.isNotBlank(dvtermValue)) {
+		    if (row.getCell(4) != null) {
+		        String dvdecodValue = dataFormatter.formatCellValue(row.getCell(4));
+		        if (StringUtils.isNotBlank(dvdecodValue)) {
 		            // Split the dvtermValue by comma and store in a list
-		            dvtermValues = Arrays.asList(dvtermValue.split("\\s*;\\s*"));
+		        	dvdecodValues = Arrays.asList(dvdecodValue.split("\\s*;\\s*"));
 		        } else {
-		            dvtermValues = Arrays.asList();
+		        	dvdecodValues = Arrays.asList();
 		        }
 		    } else {
-		        dvtermValues = Arrays.asList();
+		        dvdecodValues = Arrays.asList();
 		    }
 
 			// Stop processing when the first empty row is encountered
@@ -434,7 +434,7 @@ public class UploadService {
 			}
 
 			if (missingCells.isEmpty()) {
-				parseAndAddData(siteId, studyId, dvspondesValue, dataEntrys, files, dvtermValues);
+				parseAndAddData(siteId, studyId, dvspondesValue, dataEntrys, files, dvdecodValues);
 			}
 		}
 		if (!missingCells.isEmpty()) {
