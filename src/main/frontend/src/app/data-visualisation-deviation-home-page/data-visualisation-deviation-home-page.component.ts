@@ -7,5 +7,12 @@ import { TeamManagementComponent } from '../team-management/team-management.comp
   styleUrls: ['./data-visualisation-deviation-home-page.component.css']
 })
 export class DataVisualisationDeviationHomePageComponent {
+	isCategoryTableVisible: boolean = false;
+	selectedDvdecod: string | null = null;
+
+	  showCategoryTable(dvdecod: string) {
+		  this.selectedDvdecod = dvdecod;
+	    this.isCategoryTableVisible = true;
+	  }
 
 }

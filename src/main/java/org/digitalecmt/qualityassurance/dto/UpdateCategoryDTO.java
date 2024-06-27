@@ -9,7 +9,7 @@ public class UpdateCategoryDTO {
     private String dvspondesValue;
     private List<Integer> categoryIds;
     private List<String> dvterms;
-    private List<String> oldDvterms;
+    private List<String> oldDvdecods;
     private List<String> dvdecods;
     private List<String> dvcats;
     private String username;
@@ -20,14 +20,14 @@ public class UpdateCategoryDTO {
     }
 
     // Constructor with parameters
-    public UpdateCategoryDTO(int entryId, String siteId, String studyId, String dvspondesValue, List<Integer> categoryIds, List<String> dvterms, List<String> oldDvterms, List<String> dvdecods, List<String> dvcats, String username, Boolean isEdited) {
+    public UpdateCategoryDTO(int entryId, String siteId, String studyId, String dvspondesValue, List<Integer> categoryIds, List<String> dvterms, List<String> oldDvdecods, List<String> dvdecods, List<String> dvcats, String username, Boolean isEdited) {
     	this.entryId = entryId;
     	this.siteId = siteId;
         this.studyId = studyId;
         this.dvspondesValue = dvspondesValue;
         this.categoryIds = categoryIds;
         this.dvterms = dvterms;
-        this.oldDvterms = oldDvterms;
+        this.oldDvdecods = oldDvdecods;
         this.dvdecods = dvdecods;
         this.dvcats = dvcats;
         this.username = username;
@@ -84,12 +84,12 @@ public class UpdateCategoryDTO {
         this.dvterms = dvterms;
     }
     
-    public List<String> getOldDvterms() {
-        return oldDvterms;
+    public List<String> getOldDvdecods() {
+        return oldDvdecods;
     }
 
-    public void setOldDvterms(List<String> oldDvterms) {
-        this.oldDvterms = oldDvterms;
+    public void setOldDvdecods(List<String> oldDvdecods) {
+        this.oldDvdecods = oldDvdecods;
     }
 
     public List<String> getDvdecods() {

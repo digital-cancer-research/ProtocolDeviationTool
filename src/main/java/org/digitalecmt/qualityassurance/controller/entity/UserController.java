@@ -94,11 +94,8 @@ public class UserController {
     
     @PostMapping("/setCurrentUser")
     public ResponseEntity<Void> setCurrentUser(@RequestBody String username) {
-    	System.out.println(username);
         this.currentUsername = username;
-        System.out.println(username);
         this.currentUserId = userRepository.getUserIdByUsername(username);
-        System.out.println(currentUserId);
         
         if (currentUserId == null) {
             // Handle case where userId could not be retrieved
@@ -121,8 +118,12 @@ public class UserController {
     // Get all users
     @GetMapping
     public ResponseEntity<List<UserAccount>> getAllUsers() {
-        List<UserAccount> users = userRepository.findAll();
-        return new ResponseEntity<>(users, HttpStatus.OK);
+    	try {
+	        List<UserAccount> users = userRepository.findAll();
+	        return new ResponseEntity<>(users, HttpStatus.OK);
+    	} catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // Get a single user by ID
@@ -165,6 +166,7 @@ public class UserController {
         }
     }
     
+	// Check if current user is an admin
     @GetMapping("/check-admin-role")
     public ResponseEntity<Boolean> checkAdminRole(@RequestParam String username) {
         // Use the username to fetch the user's role from the database
@@ -176,47 +178,69 @@ public class UserController {
             boolean isAdmin = user.getRoleId() == 1;
             return ResponseEntity.ok(isAdmin);
         } else {
-            // User not found or other error handling
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
         }
     }
     
     @GetMapping("/user-id")
     public ResponseEntity<Integer> getUserIdByUsername(@RequestParam String username) {
-        Integer userId = userRepository.getUserIdByUsername(username);
-        return ResponseEntity.ok(userId);
+    	try {
+	        Integer userId = userRepository.getUserIdByUsername(username);
+	        return ResponseEntity.ok(userId);
+    	} catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        
     }
     
     @GetMapping("/get-current-user-teams")
     public ResponseEntity<List<UserWithTeamDTO>> getUserTeams(@RequestParam("userId") Integer userId) {
-    	System.out.println(userId);
-        List<UserWithTeamDTO> teams = userTeamRepository.findUserTeamsByUserId(userId);
-        System.out.println(teams);
-        return new ResponseEntity<>(teams, HttpStatus.OK);
+    	try {
+	        List<UserWithTeamDTO> teams = userTeamRepository.findUserTeamsByUserId(userId);
+	        return new ResponseEntity<>(teams, HttpStatus.OK);
+    	} catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     
     @GetMapping("/get-users-with-roles")
     public ResponseEntity<List<UserWithRoleDTO>> getUsersWithRoles() {
-        List<UserWithRoleDTO> usersWithRolesTeams = userRepository.findUsersWithRoles();
-        return new ResponseEntity<>(usersWithRolesTeams, HttpStatus.OK);
+    	try {
+	        List<UserWithRoleDTO> usersWithRolesTeams = userRepository.findUsersWithRoles();
+	        return new ResponseEntity<>(usersWithRolesTeams, HttpStatus.OK);
+    	} catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     
     @GetMapping("/get-user-teams")
     public ResponseEntity<List<UserWithTeamDTO>> getUserTeams() {
-        List<UserWithTeamDTO> teams = userTeamRepository.findUsersWithTeams();
-        return new ResponseEntity<>(teams, HttpStatus.OK);
+    	try {
+	        List<UserWithTeamDTO> teams = userTeamRepository.findUsersWithTeams();
+	        return new ResponseEntity<>(teams, HttpStatus.OK);
+    	} catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     
     @GetMapping("/get-roles")
     public ResponseEntity<List<Role>> getRoles() {
-        List<Role> roles = roleRepository.findAll();
-        return new ResponseEntity<>(roles, HttpStatus.OK);
+    	try {
+	        List<Role> roles = roleRepository.findAll();
+	        return new ResponseEntity<>(roles, HttpStatus.OK);
+    	} catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     
     @GetMapping("/get-teams")
     public ResponseEntity<List<Team>> getTeams() {
-        List<Team> teams = teamRepository.findAll();
-        return new ResponseEntity<>(teams, HttpStatus.OK);
+    	try {
+	        List<Team> teams = teamRepository.findAll();
+	        return new ResponseEntity<>(teams, HttpStatus.OK);
+    	} catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     
     @PostMapping("/change-user-role/{userId}")
@@ -366,8 +390,12 @@ public class UserController {
     
     @GetMapping("/get-teams-with-username")
     public ResponseEntity<List<TeamWithUsernameDTO>> getTeamsWithUsername() {
-        List<TeamWithUsernameDTO> teams = teamRepository.findTeamsWithUsername();
-        return new ResponseEntity<>(teams, HttpStatus.OK);
+    	try {
+	        List<TeamWithUsernameDTO> teams = teamRepository.findTeamsWithUsername();
+	        return new ResponseEntity<>(teams, HttpStatus.OK);
+    	} catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     
     // Create a new team
@@ -530,8 +558,12 @@ public class UserController {
     // Retrieve audit data
     @GetMapping("/get-audit-trail-data")
     public ResponseEntity<List<AuditTrailDTO>> getAllAuditTrails() {
-        List<AuditTrailDTO> auditTrails = auditTrailRepository.findAllAuditTrails();
-        return ResponseEntity.ok(auditTrails);
+    	try {
+	        List<AuditTrailDTO> auditTrails = auditTrailRepository.findAllAuditTrails();
+	        return ResponseEntity.ok(auditTrails);
+    	} catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 

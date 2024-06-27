@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, EventEmitter, Output } from '@angular/core';
 import { CategoryBarGraphSegmentedSiteService } from './category-bar-graph-segmented-site.service';
 import { EntryCountPerSubcategoryPerCategoryDTO } from './category-bar-graph-segmented-site.model';
 import * as d3 from 'd3';
@@ -15,6 +15,8 @@ export class CategoryBarGraphSegmentedSiteComponent implements OnInit {
   selectedSiteId?: string;
   dvcatTotals: { dvcat: string, total: number, values: EntryCountPerSubcategoryPerCategoryDTO[], isChecked: boolean }[] = [];
   toggleFilter!: (dvcat: string) => void;
+  
+  @Output() barClicked = new EventEmitter<string>();
 
   constructor(private elementRef: ElementRef,
     private categoryBarGraphSegmentedSiteService: CategoryBarGraphSegmentedSiteService,
@@ -239,7 +241,10 @@ export class CategoryBarGraphSegmentedSiteComponent implements OnInit {
 	    .attr('y', d => yScale(d.entryCount)!)
 	    .attr('width', xScale.bandwidth())
 	    .attr('height', d => height - yScale(d.entryCount)!)
-	    .style('fill', (d, i) => customColours[i % customColours.length]);
+	    .style('fill', (d, i) => customColours[i % customColours.length])
+	    .on('click', (event: MouseEvent, d: any) => {
+	        this.barClicked.emit(d.dvdecod);
+	      });
 
 	  // Add x-axis
 	  svg.append('g')

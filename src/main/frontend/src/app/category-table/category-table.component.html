@@ -3,22 +3,34 @@
   <table>
     <thead>
       <tr>
-        <th>STUDY ID</th>
-        <th>DVSPONDES</th>
-        <th>DVTERM</th>
+        <th (click)="sortTable('studyId')">STUDY ID <span *ngIf="sortedColumn === 'studyId' && sortDirection === 'asc'">&#x25B2;</span><span *ngIf="sortedColumn === 'studyId' && sortDirection === 'desc'">&#x25BC;</span></th>
+        <th>DVSPONDES
+          <div class="search-input">
+            <input type="text" [(ngModel)]="dvspondesFilter" (input)="applyDvspondesFilter()" placeholder="Search...">
+          </div>
+        </th>
+        <th (click)="sortTable('dvcat')">DVCAT <span *ngIf="sortedColumn === 'dvcat' && sortDirection === 'asc'">&#x25B2;</span><span *ngIf="sortedColumn === 'dvcat' && sortDirection === 'desc'">&#x25BC;</span></th>
+        <th (click)="sortTable('dvdecod')">DVDECOD <span *ngIf="sortedColumn === 'dvdecod' && sortDirection === 'asc'">&#x25B2;</span><span *ngIf="sortedColumn === 'dvdecod' && sortDirection === 'desc'">&#x25BC;</span></th>
         <th></th>
-        <th>DVCAT</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let category of categories; let i = index">
-        <td>{{ category.studyId }}</td>
+      <tr *ngFor="let category of pagedCategories; let i = index">
+        <td>
+          <span *ngIf="editingStudyId !== category.entryId" (click)="startEditingStudyId(category.entryId)">{{ category.studyId }} 🖉</span>
+          <input *ngIf="editingStudyId === category.entryId" type="text" [(ngModel)]="category.studyId" (blur)="stopEditingStudyId(category)">
+        </td>
         <td>{{ category.dvspondesValue }}</td>
         <td>
+          <div *ngFor="let cat of removeDuplicates(category.dvcat)">
+            &#8226; {{ cat }}<br>
+          </div>
+        </td>
+        <td>
           <div class="custom-select">
-            <select [(ngModel)]="selectedDvTerm[i]" (change)="onDvTermSelect(i)" class="custom-dropdown" multiple>
-              <option *ngFor="let dvTerm of dvTerms" [value]="dvTerm.dvterm" [selected]="selectedDvTerm[i].includes(dvTerm.dvterm)">
-                {{ dvTerm.dvterm }}
+            <select [(ngModel)]="selectedDvdecod[i]" (change)="onDvTermSelect(i)" class="custom-dropdown" multiple>
+              <option *ngFor="let dvTerm of dvTerms" [value]="dvTerm.dvdecod" [selected]="selectedDvdecod[i].includes(dvTerm.dvdecod)">
+                {{ dvTerm.dvdecod }}
               </option>
             </select>
           </div>
@@ -26,15 +38,19 @@
         <td>
           <span *ngIf="category.isEdited" style="cursor: pointer;" (click)="openAuditPopup(category.entryId)">🖉</span>
         </td>
-        <td>
-		  <div *ngFor="let cat of removeDuplicates(category.dvcat)">
-		    &#8226; {{ cat }}<br>
-		  </div>
-		</td>
-
       </tr>
     </tbody>
   </table>
+  
+  <div class="pagination">
+  <span (click)="setPage(1)" [class.page-button-disabled]="disabledFirstButton"><<</span>
+  <span (click)="setPage(currentPage - 1)" [class.page-button-disabled]="disabledPreviousButton">Previous</span>
+  <span *ngFor="let page of pages" (click)="setPage(page)" [class.page-button-active]="currentPage === page">{{ page }}</span>
+  <span (click)="setPage(currentPage + 1)" [class.page-button-disabled]="disabledNextButton">Next</span>
+  <span (click)="setPage(pages.length)" [class.page-button-disabled]="disabledLastButton">>></span>
+</div>
+  
+  
 </div>
 
 

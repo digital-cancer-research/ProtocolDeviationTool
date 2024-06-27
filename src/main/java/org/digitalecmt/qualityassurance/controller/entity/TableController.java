@@ -28,6 +28,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.digitalecmt.qualityassurance.dto.CategoryEditAuditDTO;
 import org.digitalecmt.qualityassurance.dto.DataEntryDTO;
@@ -163,15 +165,22 @@ public class TableController {
     @PostMapping("/update-category")
     public ResponseEntity<HttpStatus> updateCategory(@RequestBody UpdateCategoryDTO request) {
         try {
+            System.out.println("Received request to update category: " + request);
+            
             // Find the DataEntry record to update by its ID (entryId)
             DataEntry dataEntry = dataEntryRepository.findById(request.getEntryId())
                     .orElseThrow(() -> new EntityNotFoundException("DataEntry not found"));
+            System.out.println("Found DataEntry: " + dataEntry);
 
             // Fetch the DataEntryCategory records to update based on entry_id
             List<DataEntryCategory> dataEntryCategories = dataEntryCategoryRepository.findAllByEntryId(request.getEntryId());
+            System.out.println("Found DataEntryCategories: " + dataEntryCategories);
 
-            // Fetch the PdCategory entities using the provided dvterms
-            List<PdCategory> pdCategories = pdCategoryRepository.findByDvtermIn(request.getDvterms());
+            System.out.println("Found Dvdecods: " + request.getDvdecods());
+            
+            // Fetch the PdCategory entities using the provided dvdecods
+            List<PdCategory> pdCategories = pdCategoryRepository.findByDvdecodIn(request.getDvdecods());
+            System.out.println("Found PdCategories: " + pdCategories);
 
             // Update the DataEntryCategory records
             for (int i = 0; i < pdCategories.size(); i++) {
@@ -179,28 +188,39 @@ public class TableController {
                 if (i < dataEntryCategories.size()) {
                     // If the DataEntryCategory record exists, update it
                     dataEntryCategory = dataEntryCategories.get(i);
+                    System.out.println("Updating existing DataEntryCategory: " + dataEntryCategory);
                 } else {
                     // If the DataEntryCategory record does not exist, create a new one
                     dataEntryCategory = new DataEntryCategory();
                     dataEntryCategory.setEntryId(request.getEntryId());
+                    System.out.println("Creating new DataEntryCategory: " + dataEntryCategory);
                 }
                 // Update the category_id of the DataEntryCategory record
                 dataEntryCategory.setCategoryId(pdCategories.get(i).getCategoryId());
                 dataEntryCategoryRepository.save(dataEntryCategory);
+                System.out.println("Saved DataEntryCategory: " + dataEntryCategory);
             }
 
             // Set the isEdited flag to true
             dataEntry.setIsEdited(true);
             dataEntryRepository.save(dataEntry);
+            System.out.println("Updated DataEntry isEdited flag and saved DataEntry: " + dataEntry);
 
             // Log the edit information
-            String changeFrom = String.join(",", request.getOldDvterms());
-            String changeTo = String.join(",", request.getDvterms());
+            String changeFrom = String.join(",", request.getOldDvdecods());
+            String changeTo = String.join(",", request.getDvdecods());
             String username = request.getUsername();
             LocalDateTime currentLocalDateTime = LocalDateTime.now();
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
             String dateTimeEdited = currentLocalDateTime.format(dateTimeFormatter);
             int entryId = request.getEntryId();
+
+            System.out.println("Logging edit information");
+            System.out.println("changeFrom: " + changeFrom);
+            System.out.println("changeTo: " + changeTo);
+            System.out.println("username: " + username);
+            System.out.println("dateTimeEdited: " + dateTimeEdited);
+            System.out.println("entryId: " + entryId);
 
             CategoryEditAudit categoryEditAudit = new CategoryEditAudit();
             categoryEditAudit.setEntryId(entryId);
@@ -210,12 +230,15 @@ public class TableController {
             categoryEditAudit.setDateTimeEdited(dateTimeEdited);
 
             categoryEditAuditRepository.save(categoryEditAudit);
+            System.out.println("Saved CategoryEditAudit: " + categoryEditAudit);
 
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
+            System.out.println("EntityNotFoundException: " + ex.getMessage());
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
 
     
     @GetMapping("/audit-entries/{entryId}")
@@ -232,6 +255,28 @@ public class TableController {
         } catch (Exception ex) {
             System.out.println("Error fetching audit entries: " + ex.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @PostMapping("/update-study-id")
+    public ResponseEntity<Void> updateStudyId(@RequestBody Map<String, Object> payload) {
+        try {
+            Long entryId = Long.valueOf(payload.get("entryId").toString());
+            String newStudyId = (String) payload.get("newStudyId");
+
+            Optional<DataEntry> optionalDataEntry = dataEntryRepository.findByEntryId(entryId);
+            if (optionalDataEntry.isPresent()) {
+                DataEntry dataEntry = optionalDataEntry.get();
+                dataEntry.setStudyId(newStudyId);
+                dataEntryRepository.save(dataEntry);
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().build(); // Handle invalid entryId format
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

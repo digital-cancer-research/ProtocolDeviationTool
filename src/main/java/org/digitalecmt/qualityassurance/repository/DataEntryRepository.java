@@ -86,6 +86,8 @@ public interface DataEntryRepository
 		       "GROUP BY c.dvcat, c.dvdecod")
 		List<EntryCountPerSubcategoryPerCategoryDTO> countBySubcategoryAndCategory(@Param("siteId") String siteId);
 
+	Optional<DataEntry> findByEntryId(Long entryId);
+
 
 
 

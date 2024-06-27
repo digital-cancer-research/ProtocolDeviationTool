@@ -1,6 +1,7 @@
 .dashboard-background {
   position: relative;
-  overflow: hidden;
+  overflow: auto;
+  height: 100vh;
 }
 
 .nav-container {
@@ -9,8 +10,6 @@
   justify-content: center;
   padding: 10px 10px 0 10px;
 }
-
-
 
 .nav-button {
   width: 250px;
@@ -28,4 +27,23 @@
 
 .nav-button:hover {
   background-color: #0070a3;
+}
+
+.content-container {
+  overflow: auto;
+  height: 70vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+app-category-bar-graph-segmented-site,
+app-category-table {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+app-category-table {
+  width: 100%;
+  margin-top: 100px;
 }
