@@ -77,6 +77,7 @@ export class CategoryTableComponent implements OnInit {
     	  });
         // Initialise selectedDvTerm for each row
         this.selectedDvdecod = data.map((category) => category.dvdecod);
+        this.applyFilter();
         this.updatePage();
       },
       (error) => {
@@ -125,7 +126,7 @@ export class CategoryTableComponent implements OnInit {
 	}
 
 	get pages(): number[] {
-	  return Array.from({ length: Math.ceil(this.categories.length / this.itemsPerPage) }, (_, i) => i + 1);
+	  return Array.from({ length: Math.ceil(this.filteredCategories.length / this.itemsPerPage) }, (_, i) => i + 1);
 	}
 	
 	sortTable(column: string): void {
