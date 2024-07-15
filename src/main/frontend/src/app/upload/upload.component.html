@@ -6,5 +6,5 @@
     <button (click)="uploadFile()" class="upload-button">Upload</button>
   </div>
   <p>{{ selectedFileName }}</p>
-  <p class="message" *ngIf="message">{{ message }}</p>
+  <p [ngClass]="messageType" *ngIf="message">{{ message }}</p>
 </div>
