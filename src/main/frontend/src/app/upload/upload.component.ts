@@ -92,6 +92,7 @@ uploadFile() {
           console.error('Upload error', error);
         }
       );
+      fileInput.value="";
   } else {
     this.message = 'Please select a file to upload';
   }
