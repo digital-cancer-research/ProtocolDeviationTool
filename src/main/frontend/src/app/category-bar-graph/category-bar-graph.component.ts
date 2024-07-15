@@ -69,7 +69,7 @@ export class CategoryBarGraphComponent implements OnInit {
 
 	  // Add title
 	  svg.append('text')
-	    .attr('x', width / 2)
+	    .attr('x', width / 4)
 	    .attr('y', -margin.top / 2)
 	    .attr('text-anchor', 'middle')
 	    .style('font-size', '20px')
