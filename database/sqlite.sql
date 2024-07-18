@@ -7,10 +7,10 @@ CREATE TABLE role (
 
 CREATE TABLE team (
   team_id INTEGER PRIMARY KEY AUTOINCREMENT,
-  team_name TEXT NOT NULL
+  team_name TEXT NOT NULL,
   user_id INTEGER,
   date_created TEXT,
-  FOREIGN KEY (user_id) REFERENCES user_account (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES user_account (user_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE user_account (
@@ -31,7 +31,7 @@ CREATE TABLE audit_trail (
   change_from TEXT,
   change_to TEXT,
   date_time_edited TEXT,
-  FOREIGN KEY (user_id) REFERENCES user_account (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES user_account (user_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE user_team (
