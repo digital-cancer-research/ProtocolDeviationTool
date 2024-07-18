@@ -47,8 +47,13 @@ h2 {
   background-color: #0070a3;
 }
 
-p.message {
+.error {
   color: red;
+  margin-top: 5px;
+}
+
+.success {
+  color: green;
   margin-top: 5px;
 }
 

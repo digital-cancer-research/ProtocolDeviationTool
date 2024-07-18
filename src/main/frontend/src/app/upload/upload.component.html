@@ -11,4 +11,6 @@
       <p class="message">{{ message }}</p>
     </div>
   </div>
+  <p>{{ selectedFileName }}</p>
+  <p [ngClass]="messageType" *ngIf="message">{{ message }}</p>
 </div>

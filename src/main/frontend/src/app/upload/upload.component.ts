@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output  } from '@angular/core';
+import { Component, EventEmitter, Input, Output  } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UploadResponse } from './upload-response.model';
 import { UserService } from '../user/user.service';
@@ -13,6 +13,7 @@ import { StudyList } from '../study-list/study-list.model';
   styleUrls: ['./upload.component.css'],
 })
 export class UploadComponent {
+@Input() messageType: string = '';
 @Output() fileUploaded: EventEmitter<void> = new EventEmitter<void>();
   message: string | null = null;
   files: any[] = [];
@@ -26,8 +27,10 @@ export class UploadComponent {
    const fileInput = event.target as HTMLInputElement;
    if (fileInput.files && fileInput.files.length > 0) {
      this.selectedFileName = 'File Selected: ' + fileInput.files[0].name; // Update the selected file name
+     this.message = "";
    } else {
      this.selectedFileName = ''; // Clear the file name if no file is selected
+     this.message = "";
    }
  }
 
@@ -57,6 +60,7 @@ uploadFile() {
   const currentUsername = this.userService.getCurrentUser();
 
   if (!currentUsername) {
+    this.messageType = 'error';
     this.message = 'Please select a user before uploading a file.';
     return;
   }
@@ -73,6 +77,7 @@ uploadFile() {
       .post<UploadResponse>('api/upload', formData)
       .subscribe(
         (response) => {
+          this.messageType = 'success';
           // Handle the message from the server
           this.message = response.message;
           
@@ -84,6 +89,7 @@ uploadFile() {
           this.fileUploaded.emit();
         },
         (error) => {
+          this.messageType = 'error';
           if (error.error && error.error.message) {
             this.message = error.error.message;
           } else {
@@ -92,7 +98,10 @@ uploadFile() {
           console.error('Upload error', error);
         }
       );
+      fileInput.value="";
   } else {
+    this.messageType = 'error';
+    this.selectedFileName = "";
     this.message = 'Please select a file to upload';
   }
 }
