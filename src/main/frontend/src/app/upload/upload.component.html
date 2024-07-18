@@ -1,16 +1,12 @@
 <div class="file-upload-container">
 <h2>Upload File</h2>
-  <div class="buttons" ngClass="message">
-    <div class="button-container">
-      <input type="file" (change)="onFileSelected($event)" id="fileInput">
-      <label for="fileInput" class="file-button">Choose File</label>
-      <button (click)="uploadFile()" class="upload-button">Upload</button>
-    </div>
-    <p>{{ selectedFileName }}</p>
-    <div class="error" *ngIf="message"> 
-      <p class="message">{{ message }}</p>
-    </div>
+  <div class="button-container">
+    <input type="file" (change)="onFileSelected($event)" id="fileInput">
+    <label for="fileInput" class="file-button">Choose File</label>
+    <button (click)="uploadFile()" class="upload-button">Upload</button>
   </div>
   <p>{{ selectedFileName }}</p>
-  <p [ngClass]="messageType" *ngIf="message">{{ message }}</p>
+  <div [ngClass]="messageType" *ngIf="message"> 
+    <p [ngClass]="messageType">{{ message }}</p>
+  </div>
 </div>
