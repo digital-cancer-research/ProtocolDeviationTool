@@ -148,7 +148,7 @@ export class CategoryBarGraphSegmentedComponent implements OnInit {
 		        .attr('y', height + margin.bottom - 40)
 		        .attr('text-anchor', 'middle')
 		        .style('font-size', '14px')
-		        .text('Entry Count');
+		        .text('Total number of PDs per DVCAT');
 
 
 		    // Define tooltip
