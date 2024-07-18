@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ElementRef, AfterViewInit, HostListener } from '@angular/core';
 import { VisualisationService } from './visualisation.service';
 import { ShareSiteDataService } from '../site-select/share-site-data.service';
 import * as d3 from 'd3';
@@ -26,8 +26,13 @@ export class VisualisationComponent implements OnInit {
 
   }
 
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    this.createD3Chart();
+  }
+
   fetchTotalRows() {
-    // Fetch total rows based on the selected siteId
+
     this.visualisationService.getTotalRows(this.selectedSiteId).subscribe(
       (data) => {
         this.totalRows = data;
@@ -42,42 +47,33 @@ export class VisualisationComponent implements OnInit {
   createD3Chart() {
 	  d3.select(this.elementRef.nativeElement).selectAll('*').remove();
 	  const nativeElement = this.elementRef.nativeElement;
-	  const svgWidth = window.innerWidth / 4;
-	  const svgHeight = 200;
-	  const padding = { top: 50, left: 50 };
+	  const svgWidth = (window.innerWidth)/6;
+	  const svgHeight = (window.innerHeight)/6;
 
 	  const svg = d3.select(nativeElement).append('svg')
 	    .attr('width', svgWidth)
 	    .attr('height', svgHeight);
 
 	  // Calculate the center position for the rectangle and text
-	  const centerX = (svgWidth + 50) / 2;
-	  const centerY = (svgHeight + 50) / 2;
+	  const centerX = (svgWidth) / 2;
+	  const centerY = (svgHeight) / 2;
 
 	  // Add a rectangle to represent the data
 	  svg.append('rect')
-	    .attr('x', padding.left)
-	    .attr('y', padding.top)
-	    .attr('width', svgWidth - padding.left)
-	    .attr('height', svgHeight - padding.top)
+	    .attr('x', 0)
+	    .attr('y', 0)
+	    .attr('width', svgWidth)
+	    .attr('height', svgHeight)
 	    .attr('fill', 'steelblue');
 
 	  // Add the count
 	  svg.append('text')
 	    .attr('x', centerX)
-	    .attr('y', centerY + 12)
+	    .attr('y', centerY + 15)
 	    .attr('text-anchor', 'middle')
 	    .text(`${this.totalRows}`)
-	    .attr('font-size', '48px')
+	    .attr('font-size', '5vh')
 	    .attr('fill', 'white');
-
-	  // Add a title
-	  svg.append('text')
-	    .attr('x', centerX)
-	    .attr('y', padding.top - 10)
-	    .attr('text-anchor', 'middle')
-	    .text('Total number of PDs at site')
-	    .style('font-size', '20px');
 	}
 
 
