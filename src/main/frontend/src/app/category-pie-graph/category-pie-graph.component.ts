@@ -48,8 +48,8 @@ export class CategoryPieGraphComponent implements OnInit {
 	  const svg = d3
 	    .select('#categoryPieGraph')
 	    .append('svg')
-	    .attr('width', width + margin.left + margin.right)
-	    .attr('height', height + margin.top + margin.bottom)
+	    .attr('width', 480)
+	    .attr('height', 300)
 	    .append('g')
 	    .attr('transform', `translate(${width / 2},${height / 2})`);
 
