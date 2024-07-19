@@ -47,12 +47,12 @@ h2 {
   background-color: #0070a3;
 }
 
-.error {
+p.error {
   color: red;
   margin-top: 5px;
 }
 
-.success {
+p.success {
   color: green;
   margin-top: 5px;
 }
@@ -64,6 +64,7 @@ p {
 div.error {
   height: 100px;
   overflow-y: scroll;
+  animation: 0.5s dropDown;
 }
 
 @keyframes dropDown {
@@ -73,8 +74,4 @@ div.error {
     height: 100px;
   }
 
-}
-
-div.error {
-  animation: 0.5s dropDown;
 }

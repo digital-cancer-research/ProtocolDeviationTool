@@ -80,12 +80,14 @@ uploadFile() {
           this.messageType = 'success';
           // Handle the message from the server
           this.message = response.message;
-          
+          if (this.message.includes("Failed")) {
+            this.messageType = "error";
+          }
           // Refresh the uploaded file list and the study list
           this.loadFiles();
           this.loadStudies();
           
-     	  // Emit event when file is uploaded
+          // Emit event when file is uploaded
           this.fileUploaded.emit();
         },
         (error) => {
@@ -95,7 +97,6 @@ uploadFile() {
           } else {
             this.message = 'An unknown error occurred.';
           }
-          console.error('Upload error', error);
         }
       );
       fileInput.value="";
