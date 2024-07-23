@@ -1,14 +1,12 @@
-<app-border class="dashboard-background">
-  <app-header [pageTitle]="'DATA UPLOAD'"></app-header>
-  <app-navigation-ribbon
+<app-header [pageTitle]="'DATA UPLOAD'"></app-header>
+<app-navigation-ribbon
   [buttons]="[
     { label: 'ADMIN', route: '/admin' }
   ]">
-  </app-navigation-ribbon>
-  <table>
-    <tr>
-      <td><app-upload (fileUploaded)="refreshData()"></app-upload></td>
-      <td><app-file-list (fileDeleted)="refreshData()"></app-file-list></td>
-    </tr>
-  </table>
-</app-border>
+</app-navigation-ribbon>
+<table>
+  <tr>
+    <td><app-upload (fileUploaded)="refreshData()"></app-upload></td>
+    <td><app-file-list (fileDeleted)="refreshData()"></app-file-list></td>
+  </tr>
+</table>
