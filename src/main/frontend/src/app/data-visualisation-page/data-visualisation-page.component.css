@@ -1,61 +1,140 @@
-.dashboard-background {
+div.page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+div.content {
+  display: flex;
+  flex: 1;
+  height: 100%;
+}
+
+div.select {
+   flex: 1 6;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   height: 80vh;
+   padding-left: 10px;
+}
+
+div.visuals {
+  flex: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 100px;
+}
+
+div.top, div.bottom {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+div.top > div, div.bottom > div {
+  height: 100%;
+  width: 100%;
+}
+
+div.count {
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: hidden;
-  
+  justify-content: center;
+  flex: 1 4 0;
 }
 
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 5px;
-  width: 70%;
+div.count > p {
+  font-size: 3vh;
+  text-align: center;
+  flex: 1;
 }
 
-/* Adjust the size of the grid items */
-app-visualisation,
-app-category-bar-graph,
-app-category-pie-graph,
-app-category-bar-graph-segmented,
-app-site-study-level-select {
-  width: 100%;
+div.bar {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-items: center;
+  justify-content: center;
+  flex: 3;
 }
 
-/* Define the placement of the grid items */
-app-site-study-level-select {
-  grid-column: 1;
-  grid-row: 1;
-  padding-left: 80px;
-  max-width: 100px;
+div.barContent {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 5px;
 }
 
-app-visualisation {
-  grid-column: 2;
-  grid-row: 1;
-  margin-left: 20px;
+div.barContent > p {
+  writing-mode:tb-rl;
+  transform: rotate(180deg);
+  text-align: end;
+  font-size: 2vh;
+  /* flex: 0.5; */
+  margin-right: 0;
 }
 
-app-category-bar-graph {
-  grid-column: 3;
-  grid-row: 1;
-  margin-left: -250px;
+div.bar > p {
+  font-size: 2vh;
 }
 
-app-category-pie-graph {
-  grid-column: 2;
-  grid-row: 2;
-  padding-left: 80px;
-  padding-bottom: -20px;
-  margin-top: -250px;
+text {
+  font-size: 2vh;
 }
 
-app-category-bar-graph-segmented {
-  grid-column: 3;
-  grid-row: 2;
-  margin-left: -100px;
-  margin-top: -300px;
+div.donut {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 2 1 0;
 }
 
+div.donut > p {
+  font-size: 1.5vw;
+}
+
+div.donutContent {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+div.histogram {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 3;
+  max-height: 350;
+}
+
+div.histogram > p {
+  font-size: 2vh;
+  text-align: center;
+  /* flex: 1; */
+  height: 100%;
+}
+
+div.histogramContent {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+div.histogramContent > p {
+  writing-mode:tb-rl;
+  transform: rotate(180deg);
+  text-align: end;
+  font-size: 2vh;
+  margin-right: 0;
+}
