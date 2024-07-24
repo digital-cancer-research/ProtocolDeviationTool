@@ -8,7 +8,7 @@
 	          <label for="teamName">Team Name:</label>
 	          <input type="text" id="teamName" name="teamName" [(ngModel)]="newTeam.teamName" required>
 	        </div>
-	        <button type="submit" class="add-user-button">CREATE TEAM</button>
+	        <button type="submit" class="add-user-button">CREATE</button>
 	        <div class="error-message">
 	          <div *ngIf="newTeam.teamName.errors && newTeam.teamName.touched">
 	            <div *ngIf="newTeam.teamName.errors.required">ERROR: TEAM NAME IS REQUIRED.</div>
