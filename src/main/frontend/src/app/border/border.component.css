@@ -1,4 +1,6 @@
 .border-container {
   border: 10px solid #009cee;
   border-radius: 10px;
+  height: 95vh;
+  width: 99%;
 }

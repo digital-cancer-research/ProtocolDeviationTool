@@ -1,9 +1,10 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, HostListener } from '@angular/core';
 import { CategoryPieGraphService } from './category-pie-graph.service';
 import { EntryCountPerStudyDTO } from './category-pie-graph.model';
 import * as d3 from 'd3';
 import { scaleLinear, scaleBand, max, ValueFn } from 'd3';
 import { ShareSiteDataService } from '../site-select/share-site-data.service';
+import { DimensionService } from '../services/dimension-service.service';
 
 @Component({
   selector: 'app-category-pie-graph',
@@ -11,47 +12,63 @@ import { ShareSiteDataService } from '../site-select/share-site-data.service';
   styleUrls: ['./category-pie-graph.component.css']
 })
 export class CategoryPieGraphComponent implements OnInit {
-  entryCountPerStudy: EntryCountPerStudyDTO[] = [];
-  selectedSiteId?: string;
+	entryCountPerStudy: EntryCountPerStudyDTO[] = [];
+	selectedSiteId?: string;
+	constructor(private elementRef: ElementRef,
+		private categoryPieGraphService: CategoryPieGraphService, 
+		private shareSiteDataService: ShareSiteDataService) {}
 
-  constructor(private elementRef: ElementRef,
-		  private categoryPieGraphService: CategoryPieGraphService, 
-		  private shareSiteDataService: ShareSiteDataService) {}
+	ngOnInit() {
+		this.shareSiteDataService.selectedSiteId$.subscribe((siteId: string | undefined) => {
+			this.selectedSiteId = siteId;
+			this.loadEntryCountPerStudy();
+		});
+	}
 
-  ngOnInit() {
-	  this.shareSiteDataService.selectedSiteId$.subscribe((siteId: string | undefined) => {
-	  	this.selectedSiteId = siteId;
-	  	this.loadEntryCountPerStudy();
-	});
-  }
+	@HostListener('window:resize', ['$event'])
+	onResize(event: Event) {
+		this.createD3PieGraph();
+	}
 
-  loadEntryCountPerStudy() {
-    this.categoryPieGraphService.getEntryCountPerStudy(this.selectedSiteId).subscribe(
-      data => {
-        this.entryCountPerStudy = data;
-        this.createD3PieGraph();
-        
-      },
-      error => {
-        console.error('Error loading data: ', error);
-      }
-    );
-  }
+	loadEntryCountPerStudy() {
+		this.categoryPieGraphService.getEntryCountPerStudy(this.selectedSiteId).subscribe(
+		data => {
+			this.entryCountPerStudy = data;
+			this.createD3PieGraph();
+		},
+		error => {
+			console.error('Error loading data: ', error);
+		});
+		
+	}
 
   createD3PieGraph() {
-	  d3.select('#categoryPieGraph').selectAll('*').remove();
 	  const nativeElement = this.elementRef.nativeElement;
-	  const margin = { top: 20, right: 20, bottom: 60, left: 400 };
-	  const width = 800 - margin.left - margin.right;
-	  const height = 400 - margin.top - margin.bottom;
+	  const div = d3.select('div.donutContent');
+	  div.selectChild('svg').remove();
+	  DimensionService.getHTMLDimensions(div);
+	  const divDimensions = DimensionService.getHTMLDimensions(div);
+	  const margin = { top: 0.05*divDimensions.height,
+		 			   right: 0.25*divDimensions.width,
+					   bottom: 0.35*divDimensions.height,
+					   left: 0.35*divDimensions.width
+					};
+	  const width = divDimensions.width - margin.left - margin.right;
+	  const height = 0.7*divDimensions.height - margin.bottom;
 
-	  const svg = d3
-	    .select('#categoryPieGraph')
+	  const svg = div
 	    .append('svg')
-	    .attr('width', 480)
-	    .attr('height', 300)
+	    .attr('width', width + margin.left + margin.right)
+	    .attr('height', height + margin.top + margin.bottom)
 	    .append('g')
-	    .attr('transform', `translate(${width / 2},${height / 2})`);
+	    .attr('transform', `translate(${width/2.5},${height/1.3})`);
+
+	if (width < 684) {
+		div.
+		select('svg')
+		.attr('viewBox', `-20 0 ${width + margin.left} ${height + margin.top + margin.bottom}`)
+	}
+
 
 	  const pie = d3.pie<EntryCountPerStudyDTO>()
 	    .value((d) => d.entryCount || 0)
@@ -59,8 +76,8 @@ export class CategoryPieGraphComponent implements OnInit {
 
 	  const arcs = pie(this.entryCountPerStudy);
 
-	  const outerRadius = Math.min(width, height) / 2.5;
-	  const innerRadius = Math.min(width, height) / 7.5;
+	  const outerRadius = Math.min(width, height) / 1.5;
+	  const innerRadius = Math.min(width, height) / 10;
 
 	  const arc = d3.arc<d3.PieArcDatum<EntryCountPerStudyDTO>>()
 	    .innerRadius(innerRadius)
@@ -106,41 +123,33 @@ export class CategoryPieGraphComponent implements OnInit {
 	    	.style('top', (yPos - 20) + 'px');
 	    })
 	    
-	      .on('mouseout', function (d) {
-	        tooltip
-	          .style('opacity', 0);
-	      });
-	  
-		// Add legend
+		.on('mouseout', function (d) {
+		tooltip
+			.style('opacity', 0);
+		});
+	
+	// Add legend
+	
 	  const legend = svg.selectAll('.legend')
 	    .data(this.entryCountPerStudy)
 	    .enter().append('g')
 	    .attr('class', 'legend')
-	    .attr('transform', (d, i) => `translate(0, ${i * 20})`);
+	    .attr('transform', (d, i) => `translate(0, ${i * 0.18*height})`);
 
 	  legend.append('rect')
 	    .attr('x', width / 2 + 10)
-	    .attr('y', -height / 2 + margin.top)
-	    .attr('width', 18)
-	    .attr('height', 18)
+	    .attr('y', -height / 1.5 + margin.top)
+	    .attr('width', 0.1*height)
+	    .attr('height', 0.1*height)
 	    .style('fill', (d, i) => color(String(i)));
 
 	  legend.append('text')
 	    .attr('x', width / 2 + 40)
-	    .attr('y', -height / 2 + margin.top + 9)
+	    .attr('y', -height / 1.6 + margin.top)
 	    .attr('dy', '.35em')
 	    .style('text-anchor', 'start')
+		.style('font-size', '2vh')
 	    .text((d) => d.studyId);
 
-	  
-	  // Add title above the pie chart
-	  svg.append('text')
-	    .attr('text-anchor', 'middle')
-	    .style('font-size', '20px')
-	    .attr('y', -height / 2 + margin.top)
-	    .text('Total number of PDs per study');
-
 	}
-
-
 }
