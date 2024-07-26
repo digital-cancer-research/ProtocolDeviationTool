@@ -40,6 +40,7 @@ export class HeaderComponent {
       }
     );
     this.authService.checkAdminRole(username).subscribe();
+    this.userService.checkIfUserIsPartOfMultipleTeams(username).subscribe();
   }
   
   loadSelectedUserTeams(userId: number): void {

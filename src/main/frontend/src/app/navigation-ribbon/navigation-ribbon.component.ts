@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AuthService } from '../user/auth.service';
+import { UserService } from '../user/user.service';
 
 @Component({
   selector: 'app-navigation-ribbon',
@@ -7,15 +8,26 @@ import { AuthService } from '../user/auth.service';
   styleUrls: ['./navigation-ribbon.component.css']
 })
 export class NavigationRibbonComponent implements OnInit {
-  @Input() buttons: { label: string, route: string }[] = [];
-  isAdmin = false; // Default to false
+  buttons: { label: string, route: string }[] = [{ label: 'STUDY ID', route: '/admin' }, 
+                                                 { label: 'ADMINISTRATOR', route: '/admin' }, 
+                                                 { label: 'TEAM SELECTION', route: '/site' },
+                                                 { label: 'DATA', route: '/data-upload' },
+                                                 { label: 'VISUALISATION', route: '/data-visualisation' }];
 
-  constructor(private authService: AuthService) {}
+  isStudyIdSelected: boolean = false;
+  isAdmin: boolean = false;
+  isPartOfMultipleTeams: boolean = false;
+
+
+  constructor(private authService: AuthService, private userService: UserService) {}
 
   ngOnInit(): void {
-    // Fetch the isAdmin status when the component initializes
     this.authService.isAdmin$.subscribe((isAdmin) => {
       this.isAdmin = isAdmin;
     });
+
+    this.userService.isUserPartOfMultipleTeams$.subscribe((isPartOfMultipleTeams) => {
+      this.isPartOfMultipleTeams = isPartOfMultipleTeams;
+    })
   }
 }
