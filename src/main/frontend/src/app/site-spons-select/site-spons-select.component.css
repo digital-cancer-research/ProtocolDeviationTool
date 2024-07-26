@@ -51,29 +51,29 @@ p {
 /* Style for Medium Screen */
 @media (max-height:950px) {
   button {
-      width: 250px; /* whatever width you want for medium screen */
+      width: 250px; 
       max-width: 100%;
       max-height: 100%;
-      height: 250px; /* whatever height you want for medium screen */
+      height: 250px;
   }
 }
 
 @media (max-height:830px) {
   button {
-      width: 200px; /* whatever width you want for medium screen */
+      width: 200px; 
       max-width: 100%;
       max-height: 100%;
-      height: 200px; /* whatever height you want for medium screen */
+      height: 200px;
   }
 }
 
 
 @media (max-width:767px) {
   button {
-    width: 200px; /* whatever width you want for medium screen */
+    width: 200px; 
     max-width: 100%;
     max-height: 100%;
-    height: 200px; /* whatever height you want for medium screen */
+    height: 200px;
   }
 }
 
@@ -81,17 +81,17 @@ p {
 /* Style for Small Screen */
 @media (max-width:575px), (max-height: 720px) {
   button {
-      width: 150px; /* whatever width you want for mobile screen */
+      width: 150px; 
       max-width: 100%;
       max-height: 100%;
-      height: 150px; /* whatever height you want for mobile screen */
+      height: 150px; 
     }
 }
     @media (max-height:635px) {
       button {
-          width: 135px; /* whatever width you want for medium screen */
+          width: 135px; 
           max-width: 100%;
           max-height: 100%;
-          height: 135px; /* whatever height you want for medium screen */
+          height: 135px;
       }
     }
