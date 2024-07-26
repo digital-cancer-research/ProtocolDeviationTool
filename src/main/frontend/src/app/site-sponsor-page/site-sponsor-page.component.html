@@ -1,14 +1,14 @@
-<div>
-	<app-header [pageTitle]="' '"></app-header>
-	<app-navigation-ribbon
-	[buttons]="[
-		{ label: 'ADMIN', route: '/admin' }
-	]">
-	</app-navigation-ribbon>
-</div>
-<div>
-	<app-site-spons-select></app-site-spons-select>
-</div>
-	<div>
-	<app-footer [footerImage]="'assets/footer-logo.png'"></app-footer>
+<div class="page">
+	<header>
+		<app-header [pageTitle]="' '"></app-header>
+		<app-navigation-ribbon
+			[buttons]="[
+			{ label: 'ADMIN', route: '/admin' }
+			]">
+		</app-navigation-ribbon>
+	</header>
+	<main>
+		<app-site-spons-select></app-site-spons-select>
+	</main>
+<app-footer [footerImage]="'assets/footer-logo.png'"></app-footer>
 </div>
