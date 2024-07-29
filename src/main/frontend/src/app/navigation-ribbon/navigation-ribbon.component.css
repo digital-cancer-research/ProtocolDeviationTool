@@ -20,22 +20,33 @@ a {
   text-decoration: none;
   color: grey;
   font-weight: bold;
-  font-size: 16px;
   transition: color 0.3s ease-in-out;
   pointer-events: none;
+  font-size: 1rem;
+}
+
+@media (max-width:930px) {
+  a {
+    font-size: 0.8rem;
+  }
+
+}
+@media (max-width:800px) {
+  a {
+    font-size: 0.6rem;
+  }
 }
 
 a.clickable {
   text-decoration: none;
   color: white;
   font-weight: bold;
-  font-size: 16px;
   transition: color 0.3s ease-in-out;
   pointer-events: all;
 }
 
 div.wrapper.clickable {
-  cursor: pointer;
+  cursor: default;
 }
 
 /* Define the animation */

@@ -1,13 +1,16 @@
 <nav>
   <ul>
     <ng-container *ngFor="let button of buttons">
-      <div class="wrapper"
+      <div *ngIf="true" class="wrapper"
            [ngClass]="{
              'clickable': 
                (button.label !== 'ADMINISTRATOR' && button.label !== 'TEAM SELECTION') ||
                (button.label === 'ADMINISTRATOR' && isAdmin) ||
                (button.label === 'TEAM SELECTION' && isPartOfMultipleTeams)
-           }">
+           }"
+           [attr.title]="
+             (button.label === 'ADMINISTRATOR' && !isAdmin) ? 'You are not an admin' :
+             (button.label === 'TEAM SELECTION' && !isPartOfMultipleTeams) ? 'You are not part of multiple teams' : ''">
         <a [routerLink]="button.route"
            [ngClass]="{
              'clickable': 

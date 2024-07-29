@@ -8,7 +8,7 @@ import { UserService } from '../user/user.service';
   styleUrls: ['./navigation-ribbon.component.css']
 })
 export class NavigationRibbonComponent implements OnInit {
-  buttons: { label: string, route: string }[] = [{ label: 'STUDY ID', route: '/admin' }, 
+  buttons: { label: string, route: string }[] = [{ label: 'STUDY ID', route: '/data-visualisation' }, 
                                                  { label: 'ADMINISTRATOR', route: '/admin' }, 
                                                  { label: 'TEAM SELECTION', route: '/site' },
                                                  { label: 'DATA', route: '/data-upload' },
