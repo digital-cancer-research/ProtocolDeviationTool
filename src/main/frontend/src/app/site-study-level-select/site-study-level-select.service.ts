@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHandler } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
@@ -7,8 +7,10 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class SiteStudyLevelSelectService {
 	private baseUrl = 'api/studies/study-ids';
-	#selectedStudyIdSubject = new BehaviorSubject<string>('');
-	selectedStudyIdObservable = this.#selectedStudyIdSubject.asObservable();
+	#selectedLevelSubject = new BehaviorSubject<string | null>(null);
+	selectedLevelObservable$ = this.#selectedLevelSubject.asObservable();
+	#selectedStudySubject = new BehaviorSubject<string>('');
+	selectedStudyIdObservable$ = this.#selectedStudySubject.asObservable();
 	
 	  constructor(private http: HttpClient) {}
 
@@ -16,13 +18,21 @@ export class SiteStudyLevelSelectService {
 	    return this.http.get<string[]>(this.baseUrl);
 	  }
 
-	  setSelectedStudyId(value: string | null) {
-		if (value !== null) {
-			this.#selectedStudyIdSubject.next(value);
+	  setSelectedStudyId(studyId: string | null) {
+		if (studyId !== null) {
+			this.#selectedStudySubject.next(studyId);
 		}
 	  }
 
-	  getSelectedStudyId() {
-		return this.#selectedStudyIdSubject.value;
+	  getSelectedStudy() {
+		return this.#selectedStudySubject.value;
+	  }
+
+	  setSelectedLevel(level: string | null) {
+		this.#selectedLevelSubject.next(level);
+	  }
+
+	  getSelectedLevel() {
+		return this.#selectedLevelSubject.value;
 	  }
 }
