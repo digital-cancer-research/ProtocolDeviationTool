@@ -46,4 +46,9 @@ export class SiteStudyLevelSelectComponent {
 		      studyId.toLowerCase().includes(this.searchTerm.toLowerCase())
 		    );
 	  }
+
+	  onSelectStudyId(event: any) {
+		this.siteStudyLevelSelectService.setSelectedStudyId(this.selectedStudy);
+	  }
+
 	}

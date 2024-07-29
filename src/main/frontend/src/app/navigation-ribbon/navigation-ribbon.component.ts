@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AuthService } from '../user/auth.service';
 import { UserService } from '../user/user.service';
+import { Subscription } from 'rxjs';
+import { SiteStudyLevelSelectService } from '../site-study-level-select/site-study-level-select.service';
 
 @Component({
   selector: 'app-navigation-ribbon',
@@ -8,18 +10,26 @@ import { UserService } from '../user/user.service';
   styleUrls: ['./navigation-ribbon.component.css']
 })
 export class NavigationRibbonComponent implements OnInit {
-  buttons: { label: string, route: string }[] = [{ label: 'STUDY ID', route: '/data-visualisation' }, 
-                                                 { label: 'ADMINISTRATOR', route: '/admin' }, 
-                                                 { label: 'TEAM SELECTION', route: '/site' },
-                                                 { label: 'DATA', route: '/data-upload' },
-                                                 { label: 'VISUALISATION', route: '/data-visualisation' }];
+  
+  buttons: { label: string, route: string }[] = [
+    { label: 'STUDY ID', route: '/data-visualisation' }, 
+    { label: 'ADMINISTRATOR', route: '/admin' }, 
+    { label: 'TEAM SELECTION', route: '/site' },
+    { label: 'DATA', route: '/data-upload' },
+    { label: 'VISUALISATION', route: '/data-visualisation' }
+  ];
 
   isStudyIdSelected: boolean = false;
   isAdmin: boolean = false;
   isPartOfMultipleTeams: boolean = false;
+  studyId: string = "";
+  studyIdSubscription!: Subscription;
 
-
-  constructor(private authService: AuthService, private userService: UserService) {}
+  constructor(
+    private authService: AuthService, 
+    private userService: UserService, 
+    private siteStudyLevelSelectService: SiteStudyLevelSelectService
+  ) {}
 
   ngOnInit(): void {
     this.authService.isAdmin$.subscribe((isAdmin) => {
@@ -28,6 +38,17 @@ export class NavigationRibbonComponent implements OnInit {
 
     this.userService.isUserPartOfMultipleTeams$.subscribe((isPartOfMultipleTeams) => {
       this.isPartOfMultipleTeams = isPartOfMultipleTeams;
+    });
+    
+    this.studyIdSubscription = this.siteStudyLevelSelectService.selectedStudyIdObservable.subscribe((studyId: string) => {
+      this.studyId = studyId;
+      if (studyId !== "") {
+        this.buttons[0].label = `STUDY ID: ${this.studyId}`;
+      }
+      else {
+        this.buttons[0].label = `STUDY ID`;
+      }
     })
+    
   }
 }

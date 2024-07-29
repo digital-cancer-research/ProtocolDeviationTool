@@ -13,7 +13,7 @@
       <label for="study">Select a Study:</label>
       <br>
       <input type="text" placeholder="Search studies..." [(ngModel)]="searchTerm">
-      <select class="dropdown" id="study" [(ngModel)]="selectedStudy">
+      <select (change)="onSelectStudyId($event)" class="dropdown" id="study" [(ngModel)]="selectedStudy">
         <option *ngFor="let study of filteredStudies" [value]="study">{{study}}</option>
       </select>
     </div>
