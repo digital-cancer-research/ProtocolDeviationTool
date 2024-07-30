@@ -55,10 +55,15 @@
 .user-dropdown {
   width: 300px;
   align-items: right;
+  flex: 1;
 }
 
 .selected-user {
   margin-top: 10px;
+}
+
+p {
+  margin: 5px;
 }
 
 /* Style for Medium Screen */
