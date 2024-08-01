@@ -1,47 +1,75 @@
-import { Component, Input, EventEmitter, Output } from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnInit, OnDestroy } from '@angular/core';
 import { UserService } from '../user/user.service';
 import { AuthService } from '../user/auth.service';
 import { User } from '../user/user.model';
+import { Subscription } from 'rxjs';
+import { UserTeam } from '../user-management/user-team.model';
+import { UserManagementService } from '../user-management/user-management.service';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit, OnDestroy {
   @Input() pageTitle: string = 'DEFAULT PAGE TITLE';
   @Output() userTeamsSelected: EventEmitter<any[]> = new EventEmitter<any[]>();
   users: User[] = [];
   selectedUser: string | null = null;
-  selectedUserTeams: any[] | null = null;
+  selectedUserTeams: UserTeam[] | null = null;
+  userIdSubscription!: Subscription;
+  userTeamsSubscription!: Subscription;
+  currentUserSubscription!: Subscription;
+  allTeamsSubscription!: Subscription;
+  currentUserId!: number;
+  teams!: any[];
 
-  constructor(private userService: UserService, private authService: AuthService) {}
+  constructor(
+    private userService: UserService, 
+    private authService: AuthService, 
+    private userManagementService: UserManagementService
+  ) {}
 
   ngOnInit(): void {
     // Fetch the list of users when the component initializes
-    this.userService.getUsers().subscribe((users) => {
+    this.currentUserSubscription = this.userService.getUsers().subscribe((users) => {
       this.users = users;
     });
+    this.allTeamsSubscription = this.userManagementService.getTeams().subscribe((teams) => {
+      this.teams = teams;
+    })
+  }
+
+  ngOnDestroy(): void {
+    if (this.userIdSubscription) this.userIdSubscription.unsubscribe();
+    if (this.userTeamsSubscription) this.userTeamsSubscription.unsubscribe();
+    if (this.currentUserSubscription) this.currentUserSubscription.unsubscribe();
+    if (this.allTeamsSubscription) this.allTeamsSubscription.unsubscribe();
   }
   
   onSelectUser(username: string): void {
     this.userService.setCurrentUser(username);
     this.selectedUser = username;
-    
-
- 	// Fetch the user ID of the selected user
-    this.userService.getUserIdByUsername(username).subscribe(
-      (userId) => {
-        // Fetch the teams of the selected user using the obtained user ID
-        this.loadSelectedUserTeams(userId);
-      },
-      (error) => {
-        console.error('Error fetching user ID:', error);
-      }
-    );
+    this.subscribeToUserIdandTeams(username);
     this.authService.checkAdminRole(username).subscribe();
+    console.log(this.userTeamsSelected);
   }
   
+  subscribeToUserIdandTeams(username: string) {
+    if (this.userIdSubscription) this.userIdSubscription.unsubscribe();
+    this.userIdSubscription = this.userService.getUserIdByUsername(username).subscribe((userId) => {
+      this.currentUserId = userId;
+      this.subscribeToUserTeams();
+    });
+  }
+  
+  subscribeToUserTeams() {
+    if (this.userTeamsSubscription) this.userTeamsSubscription.unsubscribe();
+    this.userTeamsSubscription = this.userService.getCurrentUserTeams(this.currentUserId).subscribe((selectedUserTeams) => {
+      this.selectedUserTeams = selectedUserTeams;
+    })
+  }
+
   loadSelectedUserTeams(userId: number): void {
 	    this.userService.getCurrentUserTeams(userId).subscribe(
 	      (userTeams) => {
@@ -56,5 +84,27 @@ export class HeaderComponent {
 
   get isAdmin(): boolean {
     return this.authService.isAdmin;
+  }
+
+    get selectedUserTeamsAsString(): string {
+    let selectedUserTeamsId = this.selectedUserTeams?.flatMap(currentTeam => currentTeam.teamId);
+    if (selectedUserTeamsId !== undefined) {
+      let userSelectedTeams = "";
+      console.log(this.selectedUserTeams
+        ?.map((currentTeams) => currentTeams.teamId)
+        .join(", ")
+        .trim() || ''
+      )  
+      try {
+      for (let index of selectedUserTeamsId) {
+        userSelectedTeams += this.teams[index].teamName + ", ";
+          }
+          return userSelectedTeams.trimEnd().substring(0, userSelectedTeams.length - 2);  
+        }
+        catch {
+          return "";
+        }
+      }
+      return "";
   }
 }
