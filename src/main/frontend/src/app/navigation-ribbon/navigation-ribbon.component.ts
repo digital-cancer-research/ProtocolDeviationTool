@@ -12,8 +12,9 @@ import { SiteStudyLevelSelectService } from '../site-study-level-select/site-stu
 export class NavigationRibbonComponent implements OnInit, OnDestroy {
   isAdmin: boolean = false;
   isPartOfMultipleTeams: boolean = false;
+  isStudySelected: boolean = false;
   studyId: string = "";
-  studyIdSubscription!: Subscription;
+  // studyIdSubscription!: Subscription;
   authSubscription!: Subscription;
   userSubscription!: Subscription;
 
@@ -28,7 +29,7 @@ export class NavigationRibbonComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService, 
     private userService: UserService, 
-    private siteStudyLevelSelectService: SiteStudyLevelSelectService
+    // private siteStudyLevelSelectService: SiteStudyLevelSelectService
   ) {}
 
   ngOnInit(): void {
@@ -40,19 +41,35 @@ export class NavigationRibbonComponent implements OnInit, OnDestroy {
       this.isPartOfMultipleTeams = isPartOfMultipleTeams;
     });
 
-    this.studyIdSubscription = this.siteStudyLevelSelectService.selectedStudyIdObservable$.subscribe((studyId: string) => {
-      this.studyId = studyId;
-      if (studyId !== "") {
-        this.buttons[0].label = `STUDY ID: ${this.studyId}`;
-      } else {
-        this.buttons[0].label = `STUDY ID`;
-      }
-    });
+    // this.studyIdSubscription = this.siteStudyLevelSelectService.selectedStudyIdObservable$.subscribe((studyId: string) => {
+    //   this.studyId = studyId;
+    //   if (studyId !== "") {
+    //     this.buttons[0].label = `STUDY ID: ${this.studyId}`;
+    //   } else {
+    //     this.buttons[0].label = `STUDY ID`;
+    //   }
+    // });
   }
 
   ngOnDestroy(): void {
     if (this.authSubscription) this.authSubscription.unsubscribe();
     if (this.userSubscription) this.userSubscription.unsubscribe();
-    if (this.studyIdSubscription) this.studyIdSubscription.unsubscribe();
+    // if (this.studyIdSubscription) this.studyIdSubscription.unsubscribe();
+  }
+
+  shouldDisplayButton(button: any): boolean {
+    switch (button.label) {
+      case 'STUDY ID':
+        return this.isStudySelected;
+      case 'ADMINISTRATOR':
+        return this.isAdmin;
+      case 'TEAM SELECTION':
+        return this.isPartOfMultipleTeams;
+      case 'DATA':
+      case 'VISUALISATION':
+        return true;
+      default:
+        return false;
+    }
   }
 }
