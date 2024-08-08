@@ -4,7 +4,7 @@ import { SitePageComponent } from './site-page.component';
 
 describe('SitePageComponent', () => {
   let component: SitePageComponent;
-  let fixture: ComponentFixture<SiteSponsorPageComponent>;
+  let fixture: ComponentFixture<SitePageComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
