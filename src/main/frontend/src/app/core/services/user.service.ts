@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { User } from '../models/user.model';
 import { Team } from '../models/team.model';
+import { UserTeam } from '../models/user-team';
 
 /**
  * Service for managing user data.
@@ -66,16 +67,6 @@ export class UserService {
   }
 
   /**
-   * Retrieves the teams of the current user.
-   * @returns {Observable<Team>} An observable containing the user's teams.
-   */
-  getCurrentUserTeams(): Observable<Team[]> {
-    return (this.currentUser$.pipe(
-      map(user => user?.teams ?? [])
-    ))
-  }
-
-  /**
    * Retrieves the selected team of the currently logged-in user.
    * @returns {Observable<Team | null>} An observable containing the selected team or null if no team is selected.
    */
@@ -93,6 +84,35 @@ export class UserService {
   isCurrentUserPartOfMultipleTeams(): Observable<boolean | null> {
     return this.currentUser$.pipe(
       map(user => user ? user.teams.length > 1 : null)
+    );
+  }
+
+  /**
+   * Returns all user team connections.
+   * @returns {Observable<UserTeam[]>} An observable containing all user teams.
+   */
+  getAllUserTeams(): Observable<UserTeam[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/users/get-user-teams`);
+  }
+
+  getUserTeamsByUserId(userId: number): Observable<UserTeam[]> {
+    return this.getAllUserTeams().pipe(
+      map(userTeams => userTeams.filter(userTeam => userTeam.userId === userId))
+    );
+  }
+
+  /**
+   * Retrieves the teams of the current user.
+   * @returns {Observable<Team>} An observable containing the user's teams.
+   */
+  getCurrentUserTeams(): Observable<Team[]> {
+    return this.currentUser$.pipe(
+      filter(user => user !== null),
+      switchMap(user => this.getUserTeamsByUserId((user as User).userId)),
+      map(userTeams => userTeams.map(userTeam => ({
+        teamId: userTeam.teamId,
+        teamName: userTeam.teamName
+      } as Team)))
     );
   }
 }
