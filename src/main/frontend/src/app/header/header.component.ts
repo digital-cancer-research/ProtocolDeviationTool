@@ -45,11 +45,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.selectedTeam = null;
     }
     else {
-      this.userService.getUserByUsername(username).subscribe((user) => {
-        this.selectedUser = user;
-        this.userService.setCurrentUser(this.selectedUser);
-        this.authService.checkAdminRole(username).subscribe();
-      })
+      this.userService.getUserByUsername(username).subscribe(
+        (user) => {
+          this.selectedUser = user;
+          this.userService.setCurrentUser(user);
+
+          this.userService.getUserTeamsByUserId(this.selectedUser.userId).subscribe(
+            (teams) => {
+              if (teams.length === 1) {
+                user.selectedTeam = teams[0];
+                this.selectedTeam = teams[0];
+              }
+            })
+          this.authService.checkAdminRole(username).subscribe();
+        })
     }
   }
 
