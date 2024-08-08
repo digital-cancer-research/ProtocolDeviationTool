@@ -127,8 +127,8 @@ public class UserController {
     }
 
     // Get a single user by ID
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserAccount> getUserById(@PathVariable int userId) {
+    @GetMapping("/user")
+    public ResponseEntity<UserAccount> getUserById(@RequestParam int userId) {
         Optional<UserAccount> userData = userRepository.findById(userId);
 
         if (userData.isPresent()) {
