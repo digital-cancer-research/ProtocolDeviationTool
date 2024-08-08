@@ -6,11 +6,17 @@
     <ul class="team-list">
       <li *ngFor="let team of filteredTeams">
         <label>
-          <input type="checkbox" [(ngModel)]="selectedTeams[team.teamId]">
+          <input 
+            type="radio" 
+            name="team" 
+            [value]="team" 
+            [(ngModel)]="teamToBeConfirmed"
+          />
           {{ team.teamName }}
         </label>
       </li>
     </ul>
+    <button class="confirm" (click)="confirmTeam()"> Confirm </button>
   </div>
   
 	<div class="site-team-data-select-container">

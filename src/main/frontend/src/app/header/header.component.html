@@ -17,7 +17,7 @@
         </select>
         <div *ngIf="selectedUser" class="selected-user">
           <p>{{ selectedUser.username }}</p>
-          <p>{{ selectedUser.selectedTeam?.teamName || "NO TEAM SELECTED" }}</p>
+          <p>{{ selectedTeam?.teamName || "NO TEAM SELECTED" }}</p>
         </div>
       </div>
     </div>

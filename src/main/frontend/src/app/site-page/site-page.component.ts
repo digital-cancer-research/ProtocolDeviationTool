@@ -13,16 +13,13 @@ export class SitePageComponent implements OnInit, OnDestroy {
 	selectedTeamSubscription!: Subscription;
 	userTeams: Team[] = [];
 	userTeamsSubscription!: Subscription;
-	handleUserTeams(teams: any[]): void {
-		this.userTeams = teams;
-	}
 
 	constructor(
 		private userService: UserService,
 	  ) { }
 
 	ngOnInit(): void {
-		this.selectedTeamSubscription = this.userService.getCurrentUserSelectedTeam().subscribe(team => {
+		this.selectedTeamSubscription = this.userService.currentUserSelectedTeam$.subscribe(team => {
 			this.selectedTeam = team;
 		})
 		this.userTeamsSubscription = this.userService.getCurrentUserTeams().subscribe(teams => {

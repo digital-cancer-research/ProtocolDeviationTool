@@ -28,7 +28,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.usersSubscription = this.userService.getUsers().subscribe((users) => {
       this.users = users;
     });
-    this.selectedTeamSubscription = this.userService.getCurrentUserSelectedTeam().subscribe((team) => {
+    this.selectedTeamSubscription = this.userService.currentUserSelectedTeam$.subscribe((team) => {
       this.selectedTeam = team;
     });
   }
@@ -53,6 +53,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
           this.userService.getUserTeamsByUserId(this.selectedUser.userId).subscribe(
             (teams) => {
               if (teams.length === 1) {
+                this.userService.setCurrentUserSelectedTeam(teams[0]);
                 user.selectedTeam = teams[0];
                 this.selectedTeam = teams[0];
               }

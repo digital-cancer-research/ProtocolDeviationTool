@@ -16,8 +16,10 @@ import { UserTeam } from '../models/user-team';
 export class UserService {
   protected readonly baseUrl = 'api';
 
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  currentUserSubject = new BehaviorSubject<User | null>(null);
   currentUser$ = this.currentUserSubject.asObservable();
+  currentUserSelectedTeamSubject = new BehaviorSubject<Team | null>(null);
+  currentUserSelectedTeam$ = this.currentUserSelectedTeamSubject.asObservable();
 
   constructor(protected http: HttpClient) { }
 
@@ -27,6 +29,14 @@ export class UserService {
    */
   setCurrentUser(user: User | null): void {
     this.currentUserSubject.next(user);
+  }
+  
+  /**
+   * Sets the current user team.
+   * @param {Team} team - The team to set as the current user team.
+   */
+  setCurrentUserSelectedTeam(team: Team | null): void {
+    this.currentUserSelectedTeamSubject.next(team);
   }
 
   /**
@@ -66,15 +76,15 @@ export class UserService {
     return this.http.get<number>(`${this.baseUrl}/users/user-id?username=${username}`);
   }
 
-  /**
-   * Retrieves the selected team of the currently logged-in user.
-   * @returns {Observable<Team | null>} An observable containing the selected team or null if no team is selected.
-   */
-  getCurrentUserSelectedTeam(): Observable<Team | null> {
-    return this.currentUser$.pipe(
-      map(user => user?.selectedTeam ?? null)
-    );
-  }
+  // /**
+  //  * Retrieves the selected team of the currently logged-in user.
+  //  * @returns {Observable<Team | null>} An observable containing the selected team or null if no team is selected.
+  //  */
+  // getCurrentUserSelectedTeam(): Observable<Team | null> {
+  //   return this.currentUser$.pipe(
+  //     map(user => user?.selectedTeam ?? null)
+  //   );
+  // }
 
   /**
    * Checks if the current user is part of multiple teams.

@@ -22,7 +22,7 @@ export class TeamService {
    * @returns An observable of the array of teams.
    */
   getTeams(): Observable<Team[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/get-teams`);
+    return this.http.get<Team[]>(`${this.baseUrl}/get-teams`);
   }
 
   /**
