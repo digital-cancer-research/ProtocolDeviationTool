@@ -1,11 +1,13 @@
 <div class="selection-form">
   <form (ngSubmit)="goToPage()">
     <label>
-      <input type="radio" name="level" [(ngModel)]="selectedLevel" value="Site Level" (change)="onLevelChange('Site Level')">
+      <input type="radio" name="level" [(ngModel)]="selectedLevel" value="Site Level"
+        (change)="onLevelChange('Site Level')">
       Site Level
     </label>
     <label>
-      <input type="radio" name="level" [(ngModel)]="selectedLevel" value="Study Level" (change)="onLevelChange('Study Level')">
+      <input type="radio" name="level" [(ngModel)]="selectedLevel" value="Study Level"
+        (change)="onLevelChange('Study Level')">
       Study Level
     </label>
 

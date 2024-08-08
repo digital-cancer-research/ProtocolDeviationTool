@@ -53,26 +53,26 @@ p {
 /* Style for Medium Screen */
 @media (max-height:950px) {
   button {
-      width: 250px; 
-      max-width: 100%;
-      max-height: 100%;
-      height: 250px;
+    width: 250px;
+    max-width: 100%;
+    max-height: 100%;
+    height: 250px;
   }
 }
 
 @media (max-height:830px) {
   button {
-      width: 200px; 
-      max-width: 100%;
-      max-height: 100%;
-      height: 200px; 
+    width: 200px;
+    max-width: 100%;
+    max-height: 100%;
+    height: 200px;
   }
 }
 
 
 @media (max-width:767px) {
   button {
-    width: 200px; 
+    width: 200px;
     max-width: 100%;
     max-height: 100%;
     height: 200px;
@@ -81,19 +81,21 @@ p {
 
 
 /* Style for Small Screen */
-@media (max-width:575px), (max-height: 720px) {
+@media (max-width:575px),
+(max-height: 720px) {
   button {
-      width: 150px; 
-      max-width: 100%;
-      max-height: 100%;
-      height: 150px;
-    }
+    width: 150px;
+    max-width: 100%;
+    max-height: 100%;
+    height: 150px;
+  }
 }
-    @media (max-height:635px) {
-      button {
-          width: 135px; 
-          max-width: 100%;
-          max-height: 100%;
-          height: 135px; 
-      }
-    }
+
+@media (max-height:635px) {
+  button {
+    width: 135px;
+    max-width: 100%;
+    max-height: 100%;
+    height: 135px;
+  }
+}

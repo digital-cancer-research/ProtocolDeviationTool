@@ -1,88 +1,95 @@
 <div class="container">
 	<div class="container">
-	  <div class="add-user-form">
-	    <h2>Create Team</h2>
-	    <form (ngSubmit)="ChangeTeamName()">
-	      <div class="form-row">
-	        <div class="form-group">
-	          <label for="teamName">Team Name:</label>
-	          <input type="text" id="teamName" name="teamName" [(ngModel)]="newTeam.teamName" required>
-	        </div>
-	        <button type="submit" class="add-user-button">CREATE</button>
-	        <div class="error-message">
-	          <div *ngIf="newTeam.teamName.errors && newTeam.teamName.touched">
-	            <div *ngIf="newTeam.teamName.errors.required">ERROR: TEAM NAME IS REQUIRED.</div>
-	          </div>
-	        </div>
-	      </div>
-	    </form>
-	  </div>
+		<div class="add-user-form">
+			<h2>Create Team</h2>
+			<form (ngSubmit)="ChangeTeamName()">
+				<div class="form-row">
+					<div class="form-group">
+						<label for="teamName">Team Name:</label>
+						<input type="text" id="teamName" name="teamName" [(ngModel)]="newTeam.teamName" required>
+					</div>
+					<button type="submit" class="add-user-button">CREATE</button>
+					<div class="error-message">
+						<div *ngIf="newTeam.teamName.errors && newTeam.teamName.touched">
+							<div *ngIf="newTeam.teamName.errors.required">ERROR: TEAM NAME IS REQUIRED.</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
 	</div>
 
 
-<div class="overlay" *ngIf="isTeamCreated">
-  <div class="popup">
-    <span class="close" (click)="closePopup()">&times;</span>
-    <div class="popup-content">
-      <p>TEAM CREATED</p>
-    </div>
-  </div>
-</div>
+	<div class="overlay" *ngIf="isTeamCreated">
+		<div class="popup">
+			<span class="close" (click)="closePopup()">&times;</span>
+			<div class="popup-content">
+				<p>TEAM CREATED</p>
+			</div>
+		</div>
+	</div>
 
 
 
 	<div class="user-management">
-	  <table>
-	    <thead>
-	      <tr>
-	        <th (click)="sortTable('teamName')">Team Name <span *ngIf="sortedColumn === 'teamName' && sortDirection === 'asc'">&#x25B2;</span><span *ngIf="sortedColumn === 'teamName' && sortDirection === 'desc'">&#x25BC;</span></th>
-	        <th (click)="sortTable('dateCreated')">Creation Date <span *ngIf="sortedColumn === 'dateCreated' && sortDirection === 'asc'">&#x25B2;</span><span *ngIf="sortedColumn === 'dateCreated' && sortDirection === 'desc'">&#x25BC;</span></th>
-	        <th (click)="sortTable('username')">Created By <span *ngIf="sortedColumn === 'username' && sortDirection === 'asc'">&#x25B2;</span><span *ngIf="sortedColumn === 'roleName' && sortDirection === 'desc'">&#x25BC;</span></th>
-	        <th></th>
-	        <th></th>
-	      </tr>
-	    </thead>
-	    <tbody>
-	      <tr *ngFor="let team of pagedTeams">
-	        <td>
-	          <ng-container *ngIf="!team.editing; else editTeamInput">
-	            {{ team.teamName }}
-	          </ng-container>
-	          <ng-template #editTeamInput>
-	            <input type="text" [(ngModel)]="team.editedTeamName" required>
-	          </ng-template>
-	        </td>
-	        <td>{{ team.dateCreated }}</td>
-	        <td>{{ team.username }}</td>
-	        <td>
-			  <button *ngIf="!team.editing" (click)="toggleEditing(team)">Edit</button>
-			  <button *ngIf="team.editing" (click)="submitTeamName(team)">Submit</button>
-			</td>
-	        <td>
-	          <button *ngIf="!team.editing" (click)="deleteTeam(team.teamId)">Delete</button>
-	          <button *ngIf="team.editing" (click)="cancelEditing(team)">Cancel</button>
-	        </td>
-	      </tr>
-	    </tbody>
-	  </table>
+		<table>
+			<thead>
+				<tr>
+					<th (click)="sortTable('teamName')">Team Name <span
+							*ngIf="sortedColumn === 'teamName' && sortDirection === 'asc'">&#x25B2;</span><span
+							*ngIf="sortedColumn === 'teamName' && sortDirection === 'desc'">&#x25BC;</span></th>
+					<th (click)="sortTable('dateCreated')">Creation Date <span
+							*ngIf="sortedColumn === 'dateCreated' && sortDirection === 'asc'">&#x25B2;</span><span
+							*ngIf="sortedColumn === 'dateCreated' && sortDirection === 'desc'">&#x25BC;</span></th>
+					<th (click)="sortTable('username')">Created By <span
+							*ngIf="sortedColumn === 'username' && sortDirection === 'asc'">&#x25B2;</span><span
+							*ngIf="sortedColumn === 'roleName' && sortDirection === 'desc'">&#x25BC;</span></th>
+					<th></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let team of pagedTeams">
+					<td>
+						<ng-container *ngIf="!team.editing; else editTeamInput">
+							{{ team.teamName }}
+						</ng-container>
+						<ng-template #editTeamInput>
+							<input type="text" [(ngModel)]="team.editedTeamName" required>
+						</ng-template>
+					</td>
+					<td>{{ team.dateCreated }}</td>
+					<td>{{ team.username }}</td>
+					<td>
+						<button *ngIf="!team.editing" (click)="toggleEditing(team)">Edit</button>
+						<button *ngIf="team.editing" (click)="submitTeamName(team)">Submit</button>
+					</td>
+					<td>
+						<button *ngIf="!team.editing" (click)="deleteTeam(team.teamId)">Delete</button>
+						<button *ngIf="team.editing" (click)="cancelEditing(team)">Cancel</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 
-	  
+
 		<div class="pagination">
-		    <!-- First Button -->
-		    <span (click)="setPage(1)" [class.page-button-disabled]="disabledFirstButton"><<</span>
-		    
-		    <!-- Previous Button -->
-		    <span (click)="setPage(currentPage - 1)" [class.page-button-disabled]="disabledPreviousButton">Previous</span>
-		    
-		    <!-- Page Numbers -->
-		    <span *ngFor="let page of pages" (click)="setPage(page)" [class.page-button-active]="currentPage === page">{{ page }}</span>
-		    
-		    <!-- Next Button -->
-		    <span (click)="setPage(currentPage + 1)" [class.page-button-disabled]="disabledNextButton">Next</span>
-		    
-		    <!-- Last Button -->
-		    <span (click)="setPage(pages.length)" [class.page-button-disabled]="disabledLastButton">>></span>
+			<!-- First Button -->
+			<span (click)="setPage(1)" [class.page-button-disabled]="disabledFirstButton"></span>
+
+			<!-- Previous Button -->
+			<span (click)="setPage(currentPage - 1)"
+				[class.page-button-disabled]="disabledPreviousButton">Previous</span>
+
+			<!-- Page Numbers -->
+			<span *ngFor="let page of pages" (click)="setPage(page)"
+				[class.page-button-active]="currentPage === page">{{ page }}</span>
+
+			<!-- Next Button -->
+			<span (click)="setPage(currentPage + 1)" [class.page-button-disabled]="disabledNextButton">Next</span>
+
+			<!-- Last Button -->
+			<span (click)="setPage(pages.length)" [class.page-button-disabled]="disabledLastButton">>></span>
 		</div>
 	</div>
 </div>
-

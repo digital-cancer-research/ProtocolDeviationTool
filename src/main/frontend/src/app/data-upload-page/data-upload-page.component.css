@@ -11,11 +11,13 @@ td {
 .app-upload,
 .app-file-list,
 .app-category-table {
-  margin-bottom: 20px; /* Adjust margin as needed */
+  margin-bottom: 20px;
+  /* Adjust margin as needed */
 }
 
 .app-category-table {
-  clear: both; /* Ensures it clears the floated cells */
+  clear: both;
+  /* Ensures it clears the floated cells */
 }
 
 /* Style for app-upload, app-file-list, and app-category-table components can be added here */

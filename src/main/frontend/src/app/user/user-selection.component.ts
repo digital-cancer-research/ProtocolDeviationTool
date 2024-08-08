@@ -12,7 +12,7 @@ export class UserSelectionComponent implements OnInit {
   users: User[] = [];
   selectedUser: string | null = null;
 
-  constructor(private userService: UserService, private authService: AuthService) {}
+  constructor(private userService: UserService, private authService: AuthService) { }
 
   ngOnInit(): void {
     // Fetch the list of users when the component initialises

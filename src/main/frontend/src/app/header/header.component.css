@@ -72,21 +72,28 @@ p {
   .header-icon {
     height: 35px;
   }
-  .header-title, .header-middle {
+
+  .header-title,
+  .header-middle {
     font-size: 1em;
   }
+
   .header-right {
     font-size: 0.8em;
   }
 
 }
+
 @media (max-width:430px) {
   .header-icon {
     height: 30px;
   }
-  .header-title, .header-middle {
+
+  .header-title,
+  .header-middle {
     font-size: 0.7em;
   }
+
   .header-right {
     font-size: 0.5em;
   }
@@ -94,11 +101,12 @@ p {
 
 
 /* Style for Small Screen */
-@media (max-width:575px), (max-height: 720px) {
+@media (max-width:575px),
+(max-height: 720px) {
   button {
-      width: 150px; 
-      max-width: 100%;
-      max-height: 100%;
-      height: 150px;
+    width: 150px;
+    max-width: 100%;
+    max-height: 100%;
+    height: 150px;
   }
 }

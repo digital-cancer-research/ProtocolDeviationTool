@@ -12,11 +12,11 @@ export class SiteStudyLevelSelectComponent implements OnInit {
 	selectedLevel: string | null = null;
 	selectedStudy: string | null = null;
 	searchTerm: string = "";
-	
+
 	constructor(
 		private router: Router,
 		private siteStudyLevelSelectService: SiteStudyLevelSelectService
-	) {}
+	) { }
 
 	ngOnInit(): void {
 		this.loadStudyIds();
@@ -26,22 +26,22 @@ export class SiteStudyLevelSelectComponent implements OnInit {
 	}
 
 	loadStudyIds(): void {
-	this.siteStudyLevelSelectService.getAllStudyIds().subscribe(
-		(studyIds) => {
-			this.studies = studyIds;
-		},
-		(error) => {
-			console.error('Error fetching study IDs:', error);
-		}
-	);
+		this.siteStudyLevelSelectService.getAllStudyIds().subscribe(
+			(studyIds) => {
+				this.studies = studyIds;
+			},
+			(error) => {
+				console.error('Error fetching study IDs:', error);
+			}
+		);
 	}
 
 	goToPage(): void {
-	if (this.selectedLevel === 'Site Level') {
-		this.router.navigate(['/data-visualisation-deviation-home']);
-	} else if (this.selectedLevel === 'Study Level' && this.studies.length) {
-		// dropdown selection
-	}
+		if (this.selectedLevel === 'Site Level') {
+			this.router.navigate(['/data-visualisation-deviation-home']);
+		} else if (this.selectedLevel === 'Study Level' && this.studies.length) {
+			// dropdown selection
+		}
 	}
 
 	get filteredStudies(): string[] {

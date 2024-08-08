@@ -19,18 +19,18 @@ export class NavigationRibbonComponent implements OnInit, OnDestroy {
   userSubscription!: Subscription;
 
   buttons: { label: string, route: string }[] = [
-    { label: 'STUDY ID', route: '/data-visualisation' }, 
-    { label: 'ADMINISTRATOR', route: '/admin' }, 
+    { label: 'STUDY ID', route: '/data-visualisation' },
+    { label: 'ADMINISTRATOR', route: '/admin' },
     { label: 'TEAM SELECTION', route: '/site' },
     { label: 'DATA', route: '/data-upload' },
     { label: 'VISUALISATION', route: '/data-visualisation' }
   ];
 
   constructor(
-    private authService: AuthService, 
-    private userService: UserService, 
+    private authService: AuthService,
+    private userService: UserService,
     // private siteStudyLevelSelectService: SiteStudyLevelSelectService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.authSubscription = this.authService.isAdmin$.subscribe((isAdmin) => {

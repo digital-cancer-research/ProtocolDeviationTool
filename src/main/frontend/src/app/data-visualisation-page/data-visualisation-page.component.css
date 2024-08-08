@@ -12,12 +12,12 @@ div.content {
 }
 
 div.select {
-   flex: 1 6;
-   display: flex;
-   flex-direction: column;
-   justify-content: center;
-   height: 80vh;
-   padding-left: 10px;
+  flex: 1 6;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 80vh;
+  padding-left: 10px;
 }
 
 div.visuals {
@@ -28,13 +28,15 @@ div.visuals {
   min-width: 100px;
 }
 
-div.top, div.bottom {
+div.top,
+div.bottom {
   display: flex;
   height: 100%;
   width: 100%;
 }
 
-div.top > div, div.bottom > div {
+div.top>div,
+div.bottom>div {
   height: 100%;
   width: 100%;
 }
@@ -47,7 +49,7 @@ div.count {
   flex: 1 4 0;
 }
 
-div.count > p {
+div.count>p {
   font-size: 3vh;
   text-align: center;
   flex: 1;
@@ -70,8 +72,8 @@ div.barContent {
   gap: 5px;
 }
 
-div.barContent > p {
-  writing-mode:tb-rl;
+div.barContent>p {
+  writing-mode: tb-rl;
   transform: rotate(180deg);
   text-align: end;
   font-size: 2vh;
@@ -79,7 +81,7 @@ div.barContent > p {
   margin-right: 0;
 }
 
-div.bar > p {
+div.bar>p {
   font-size: 2vh;
 }
 
@@ -94,7 +96,7 @@ div.donut {
   flex: 2 1 0;
 }
 
-div.donut > p {
+div.donut>p {
   font-size: 1.5vw;
 }
 
@@ -116,7 +118,7 @@ div.histogram {
   max-height: 350;
 }
 
-div.histogram > p {
+div.histogram>p {
   font-size: 2vh;
   text-align: center;
   /* flex: 1; */
@@ -131,8 +133,8 @@ div.histogramContent {
   justify-content: center;
 }
 
-div.histogramContent > p {
-  writing-mode:tb-rl;
+div.histogramContent>p {
+  writing-mode: tb-rl;
   transform: rotate(180deg);
   text-align: end;
   font-size: 2vh;

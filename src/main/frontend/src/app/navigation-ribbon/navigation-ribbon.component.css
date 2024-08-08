@@ -26,6 +26,7 @@ a {
   }
 
 }
+
 @media (max-width:800px) {
   a {
     font-size: 0.6rem;
@@ -39,7 +40,8 @@ a:hover {
   color: #007bb5;
   background-clip: text;
   -webkit-background-clip: text;
-  color: transparent; /* Ensure the text color is visible only when the gradient is applied */
+  color: transparent;
+  /* Ensure the text color is visible only when the gradient is applied */
 }
 
 div {
@@ -47,4 +49,3 @@ div {
   flex: 1;
   text-align: center;
 }
-

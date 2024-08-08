@@ -25,10 +25,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   teams!: any[];
 
   constructor(
-    private userService: UserService, 
-    private authService: AuthService, 
+    private userService: UserService,
+    private authService: AuthService,
     private userManagementService: UserManagementService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Fetch the list of users when the component initializes
@@ -46,14 +46,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.currentUserSubscription) this.currentUserSubscription.unsubscribe();
     if (this.allTeamsSubscription) this.allTeamsSubscription.unsubscribe();
   }
-  
+
   onSelectUser(username: string): void {
     this.userService.setCurrentUser(username);
     this.selectedUser = username;
     this.subscribeToUserIdandTeams(username);
     this.authService.checkAdminRole(username).subscribe();
   }
-  
+
   subscribeToUserIdandTeams(username: string) {
     if (this.userIdSubscription) this.userIdSubscription.unsubscribe();
     this.userIdSubscription = this.userService.getUserIdByUsername(username).subscribe((userId) => {
@@ -61,7 +61,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.subscribeToUserTeams(username);
     });
   }
-  
+
   subscribeToUserTeams(username: string) {
     if (this.userTeamsSubscription) this.userTeamsSubscription.unsubscribe();
     this.userTeamsSubscription = this.userService.getCurrentUserTeams(this.currentUserId).subscribe((selectedUserTeams) => {
@@ -71,35 +71,35 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   loadSelectedUserTeams(userId: number): void {
-	    this.userService.getCurrentUserTeams(userId).subscribe(
-	      (userTeams) => {
-	    	// Emit the selected user's teams to the parent component
-	          this.userTeamsSelected.emit(userTeams);
-	      },
-	      (error) => {
-	        console.error('Error fetching user teams:', error);
-	      }
-	    );
-	  }
+    this.userService.getCurrentUserTeams(userId).subscribe(
+      (userTeams) => {
+        // Emit the selected user's teams to the parent component
+        this.userTeamsSelected.emit(userTeams);
+      },
+      (error) => {
+        console.error('Error fetching user teams:', error);
+      }
+    );
+  }
 
   get isAdmin(): boolean {
     return this.authService.isAdmin;
   }
 
-    get selectedUserTeamsAsString(): string {
+  get selectedUserTeamsAsString(): string {
     let selectedUserTeamsId = this.selectedUserTeams?.flatMap(currentTeam => currentTeam.teamId);
     if (selectedUserTeamsId !== undefined) {
-      let userSelectedTeams = "";  
+      let userSelectedTeams = "";
       try {
-      for (let index of selectedUserTeamsId) {
-        userSelectedTeams += this.teams[index].teamName + ", ";
-          }
-          return userSelectedTeams.trimEnd().substring(0, userSelectedTeams.length - 2);  
+        for (let index of selectedUserTeamsId) {
+          userSelectedTeams += this.teams[index].teamName + ", ";
         }
-        catch {
-          return "";
-        }
+        return userSelectedTeams.trimEnd().substring(0, userSelectedTeams.length - 2);
       }
-      return "";
+      catch {
+        return "";
+      }
+    }
+    return "";
   }
 }
