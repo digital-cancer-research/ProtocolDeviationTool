@@ -2,7 +2,7 @@
   <!-- Team selection with search bar -->
   <div class="team-selection">
     <h3>Select a Team:</h3>
-    <input type="text" [(ngModel)]="searchTerm" placeholder="Search teams">
+    <input class="search" type="text" [(ngModel)]="searchTerm" placeholder="Search teams">
     <ul class="team-list">
       <li *ngFor="let team of filteredTeams">
         <label>
