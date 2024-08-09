@@ -43,6 +43,7 @@
   justify-content: center;
   padding: 8px;
   margin: 10px;
+  margin-left: 0px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
@@ -110,3 +111,36 @@ p {
   font-size: 1em;
 }
 
+button.confirm {
+  width: 150px;
+  height: 30px;
+  background-color: #009cee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: white;
+  /* Text color */
+  margin-right: 10px;
+}
+
+/* Hover effect for button.confirm */
+button.confirm:hover {
+  background-color: #007bb5;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Active/click effect for button.confirm */
+button.confirm:active {
+  background-color: #005f8a;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.1s ease, box-shadow 0.1s ease;
+  transform: scale(0.98);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+p.confirmationMessage {
+  color: green;
+}

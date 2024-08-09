@@ -59,6 +59,7 @@ import { FooterComponent } from './footer/footer.component';
 import { SiteSponsSelectComponent } from './site-spons-select/site-spons-select.component';
 import { NavigationRibbonComponent } from './navigation-ribbon/navigation-ribbon.component';
 import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.component';
+import { CoreModule } from './core/core.module';
 
 
 
@@ -98,14 +99,15 @@ import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.
     DataVisualisationDeviationsOverTimePageComponent,
     SiteStudyLevelSelectComponent,
     AuditTrailManagementComponent,
-    CategoryBarGraphSegmentedSiteComponent,
+    CategoryBarGraphSegmentedSiteComponent
   ],
   imports: [
-	BrowserModule,
-	HttpClientModule,
-	AppRoutingModule,
-	FormsModule,
-	CommonModule,
+    BrowserModule,
+    HttpClientModule,
+    AppRoutingModule,
+    FormsModule,
+    CommonModule,
+    CoreModule
 ],
   providers: [
     UploadService,

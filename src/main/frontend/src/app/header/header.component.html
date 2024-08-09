@@ -11,15 +11,13 @@
   <div class="header-right-container">
     <div class="header-right">
       <div class="user-dropdown">
-        <select [(ngModel)]="selectedUser" (change)="selectedUser && onSelectUser(selectedUser)">
-          <option value="" disabled>Select a user</option>
+        <select [(ngModel)]="usernameSelected" #select (change)="onSelectUser(select.value)">
+          <option value="">Select a user</option>
           <option *ngFor="let user of users" [value]="user.username">{{ user.username }}</option>
         </select>
-        <div class="selected-user">
-          <p>{{ selectedUser || 'NO USER SELECTED' }}</p>
-        </div>
-        <div>
-          <p>{{ selectedUserTeamsAsString || 'No teams found' }}</p>
+        <div *ngIf="selectedUser" class="selected-user">
+          <p>{{ selectedUser.username }}</p>
+          <p>{{ selectedTeam?.teamName || "NO TEAM SELECTED" }}</p>
         </div>
       </div>
     </div>

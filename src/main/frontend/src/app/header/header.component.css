@@ -38,6 +38,7 @@
 .header-right-container {
   text-align: right;
   width: 30%;
+  height: 100%;
 }
 
 .header-middle {
@@ -47,9 +48,10 @@
 
 .header-right {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-end;
   font-weight: bold;
+  height: 100%;
 }
 
 
