@@ -11,7 +11,7 @@
   <div class="header-right-container">
     <div class="header-right">
       <div class="user-dropdown">
-        <select #select (change)="onSelectUser(select.value)">
+        <select [(ngModel)]="usernameSelected" #select (change)="onSelectUser(select.value)">
           <option value="">Select a user</option>
           <option *ngFor="let user of users" [value]="user.username">{{ user.username }}</option>
         </select>

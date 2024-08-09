@@ -18,6 +18,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   selectedTeam: Team | null = null;
   usersSubscription!: Subscription;
   selectedTeamSubscription!: Subscription;
+  usernameSelected: string = "";
 
   constructor(
     private userService: UserService,
@@ -31,6 +32,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.selectedTeamSubscription = this.userService.currentUserSelectedTeam$.subscribe((team) => {
       this.selectedTeam = team;
     });
+    this.userService.currentUser$.subscribe((user) => {
+      if (user?.username !== undefined) {
+        this.usernameSelected = user?.username;
+        this.selectedUser = user;
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -43,10 +50,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.selectedUser = null;
       this.userService.setCurrentUser(null);
       this.selectedTeam = null;
+      this.userService.setCurrentUserSelectedTeam(null);
     }
     else {
       this.userService.getUserByUsername(username).subscribe(
         (user) => {
+          if (user !== this.selectedUser) {
+            this.selectedTeam = null;
+            this.userService.setCurrentUserSelectedTeam(null);
+          }
           this.selectedUser = user;
           this.userService.setCurrentUser(user);
 
