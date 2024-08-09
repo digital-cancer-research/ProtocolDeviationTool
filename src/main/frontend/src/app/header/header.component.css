@@ -17,6 +17,7 @@
   height: 50px;
   width: auto;
   margin-left: 10px;
+  cursor: pointer;
 }
 
 .header-title {
