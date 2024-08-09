@@ -16,6 +16,7 @@ export class SiteTeamDataSelectMultiteamComponent implements OnInit {
 	teamToBeConfirmed: Team | null = null;
 	selectedTeam: Team | null = null;
 	selectedTeamSubscription!: Subscription;
+	isTeamSelected: boolean = false;
 
 	constructor(private userService: UserService, private teamService: TeamService) { }
 
@@ -26,7 +27,10 @@ export class SiteTeamDataSelectMultiteamComponent implements OnInit {
 	}
 
 	confirmTeam(): void {
-		this.userService.setCurrentUserSelectedTeam(this.teamToBeConfirmed);
+		if (this.teamToBeConfirmed !== null) {
+			this.userService.setCurrentUserSelectedTeam(this.teamToBeConfirmed);
+			this.isTeamSelected = true;
+		}
 	}
 
 	get filteredTeams(): any[] {
