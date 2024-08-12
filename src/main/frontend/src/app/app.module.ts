@@ -100,11 +100,13 @@ import { CoreModule } from './core/core.module';
         AuditTrailManagementComponent,
         CategoryBarGraphSegmentedSiteComponent
     ],
-    bootstrap: [AppComponent], imports: [BrowserModule,
+    bootstrap: [AppComponent], 
+    imports: [BrowserModule,
         AppRoutingModule,
         FormsModule,
         CommonModule,
-        CoreModule], providers: [
+        CoreModule],
+    providers: [
         UploadService,
         UserService,
         AuthService,
