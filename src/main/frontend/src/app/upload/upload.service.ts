@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class UploadService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   uploadFile(file: File) {
     const formData = new FormData();

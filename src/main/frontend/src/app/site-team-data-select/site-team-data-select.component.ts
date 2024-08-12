@@ -9,5 +9,5 @@ import { User } from '../user/user.model';
   styleUrls: ['./site-team-data-select.component.css']
 })
 export class SiteTeamDataSelectComponent {
-	@Input() team: any;
+  @Input() team: any;
 }

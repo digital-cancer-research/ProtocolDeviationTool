@@ -1,9 +1,9 @@
 <nav>
   <ul>
-    <li *ngFor="let button of buttons">
-      <ng-container *ngIf="button.label !== 'ADMIN' || isAdmin">
+    <ng-container *ngFor="let button of buttons">
+      <li *ngIf="shouldDisplayButton(button)">
         <a [routerLink]="button.route">{{ button.label }}</a>
-      </ng-container>
-    </li>
+      </li>
+    </ng-container>
   </ul>
 </nav>

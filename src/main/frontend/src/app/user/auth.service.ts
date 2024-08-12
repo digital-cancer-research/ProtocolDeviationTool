@@ -12,7 +12,7 @@ export class AuthService {
   private isAdminSubject = new BehaviorSubject<boolean>(false);
   isAdmin$: Observable<boolean> = this.isAdminSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   checkAdminRole(username: string): Observable<boolean> {
     // Make an HTTP GET request to check if the user has the admin role
