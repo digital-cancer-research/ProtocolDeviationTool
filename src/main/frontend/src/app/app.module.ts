@@ -60,7 +60,7 @@ import { SiteSponsSelectComponent } from './site-spons-select/site-spons-select.
 import { NavigationRibbonComponent } from './navigation-ribbon/navigation-ribbon.component';
 import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.component';
 import { CoreModule } from './core/core.module';
-
+import { ChartModule } from 'primeng/chart';
 
 
 
@@ -105,7 +105,9 @@ import { CoreModule } from './core/core.module';
         AppRoutingModule,
         FormsModule,
         CommonModule,
-        CoreModule],
+        CoreModule,
+        ChartModule
+    ],
     providers: [
         UploadService,
         UserService,
