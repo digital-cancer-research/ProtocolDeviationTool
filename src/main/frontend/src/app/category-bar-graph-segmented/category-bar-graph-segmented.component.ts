@@ -2,7 +2,6 @@ import { Component, OnInit, ElementRef, HostListener } from '@angular/core';
 import { CategoryBarGraphSegmentedService } from './category-bar-graph-segmented.service';
 import { EntryCountPerCategoryPerStudyDTO } from './category-bar-graph-segmented.model';
 import * as d3 from 'd3';
-import { scaleLinear, scaleBand, max, ValueFn } from 'd3';
 import { ShareSiteDataService } from '../site-select/share-site-data.service';
 import { DimensionService } from '../services/dimension-service.service';
 import * as _ from 'lodash';
@@ -25,7 +24,7 @@ export class CategoryBarGraphSegmentedComponent implements OnInit {
 		plugins: {
 			title: {
 				display: true,
-				text: 'Total number of PDs per category (DVCAT) per study at site',
+				text: 'Total number of PDs per category (DVCAT) per study for team',
 				font: {
 					size: 16
 				}

@@ -21,7 +21,7 @@ export class CategoryBarGraphComponent implements OnInit {
 		plugins: {
 			title: {
 				display: true,
-				text: 'Total number of PDs per category (DVCAT) at site',
+				text: 'Total number of PDs per category (DVCAT) for team',
 				font: {
 					size: 16
 				}

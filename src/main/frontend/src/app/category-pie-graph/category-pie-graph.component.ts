@@ -19,7 +19,7 @@ export class CategoryPieGraphComponent implements OnInit {
 		plugins: {
 			title: {
 				display: true,
-				text: 'Total number of PDs per study',
+				text: 'Total number of PDs per study for team',
 				font: {
 					size: 16
 				}
