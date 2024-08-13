@@ -1,7 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { UserService } from '../user/user.service';
-import { AuthService } from '../user/auth.service';
-import { User } from '../user/user.model';
 
 @Component({
   selector: 'app-site-team-data-select',

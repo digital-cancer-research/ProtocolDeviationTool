@@ -1,10 +1,16 @@
 <div class="site-spons-container">
-  <button [routerLink]="'/site'">
-    <img src="assets/site-icon.svg" alt="Site Image">
-    <p>SITE</p>
-  </button>
-  <button [routerLink]="'/dashboard'">
-    <img src="assets/sponsor-icon.svg" alt="Sponsor Image">
-    <p>SPONSOR</p>
-  </button>
+  <div class="site-spons-container">
+    <app-page-button
+      [routerLink]="'/site'"
+      icon = "assets/site-icon.svg"
+      alt = "Site image" 
+      label ="SITE">
+    </app-page-button>
+    <app-page-button
+      [routerLink]="'/dashboard'"
+      icon = "assets/sponsor-icon.svg"
+      alt = "Sponsor image" 
+      label ="SPONSOR">
+    </app-page-button>
+  </div>
 </div>
