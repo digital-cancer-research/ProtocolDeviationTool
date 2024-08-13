@@ -31,9 +31,9 @@ export class CategoryBarGraphComponent implements OnInit {
 			x: {
 				title: {
 					display: true,
-					text: 'Months',
+					text: 'Total number of PDs per category',
 					font: {
-						size: 16
+						size: 13
 					}
 				},
 			},
@@ -42,7 +42,7 @@ export class CategoryBarGraphComponent implements OnInit {
 					display: true,
 					text: 'Category for Protocol Deviation',
 					font: {
-						size: 16
+						size: 13
 					}
 				},
 				beginAtZero: true,
@@ -85,6 +85,8 @@ export class CategoryBarGraphComponent implements OnInit {
 	}
 	@HostListener('window:resize', ['$event'])
 	onResize(event: Event) {
+		this.width = 0;
+		this.height = 0;
 		this.setWidthAndHeightToParent();
 	}
 

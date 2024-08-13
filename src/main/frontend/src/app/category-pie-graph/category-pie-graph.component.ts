@@ -30,7 +30,7 @@ export class CategoryPieGraphComponent implements OnInit {
 		private categoryPieGraphService: CategoryPieGraphService,
 		private shareSiteDataService: ShareSiteDataService,
 	) { }
-	
+
 	ngOnInit() {
 		this.shareSiteDataService.selectedSiteId$.subscribe((siteId: string | undefined) => {
 			this.setWidthAndHeightToParent();
@@ -59,6 +59,8 @@ export class CategoryPieGraphComponent implements OnInit {
 
 	@HostListener('window:resize', ['$event'])
 	onResize(event: Event) {
+		this.width = 0;
+		this.height = 0;
 		this.setWidthAndHeightToParent();
 	}
 

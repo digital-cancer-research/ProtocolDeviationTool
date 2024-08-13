@@ -84,6 +84,8 @@ export class CategoryBarGraphSegmentedComponent implements OnInit {
 
 	@HostListener('window:resize', ['$event'])
 	onResize(event: Event) {
+		this.width = 0;
+		this.height = 0;
 		this.setWidthAndHeightToParent();
 	}
 
