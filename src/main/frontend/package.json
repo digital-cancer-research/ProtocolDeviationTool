@@ -31,6 +31,7 @@
     "@angular/cli": "~18.1.4",
     "@angular/compiler-cli": "^18.1.4",
     "@types/d3": "^7.4.3",
+    "@types/lodash": "^4.17.7",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

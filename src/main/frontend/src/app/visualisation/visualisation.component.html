@@ -1,3 +1,9 @@
-<p>Total number of PDs at site</p>
-<figure id="visualisation">
-</figure>
+<div class="card">
+    <div class="container">
+        <div class="data" *ngIf="!error">
+            <h4>Total number of PDs at site</h4>
+            <p>{{ totalRows }}</p>
+        </div>
+        <h4 *ngIf="error">{{ errorMessage }}</h4>
+    </div>
+</div>

@@ -19,31 +19,16 @@
           <app-visualisation></app-visualisation>
         </div>
         <div class="bar">
-          <p>Total number of PDs per category (DVCAT) at site</p>
-          <div class="barContent">
-            <p>Category for Protocol Deviation</p>
-            <app-category-bar-graph></app-category-bar-graph>
-          </div>
+          <app-category-bar-graph></app-category-bar-graph>
         </div>
       </div>
 
       <div class="bottom">
-        <div class="donut">
+        <div class="pie">
           <app-category-pie-graph></app-category-pie-graph>
         </div>
         <div class="histogram">
-          <p>Total number of PDs per category (DVCAT) per study at site</p>
-          <div class="histogramContent">
-            <p>Study ID</p>
-            <app-category-bar-graph-segmented></app-category-bar-graph-segmented>
-          </div>
-          <p>Total number of PDs per DVCAT</p>
-          <p>Total number of PDs per category (DVCAT) per study at site</p>
-          <div class="histogramContent">
-            <p>Study ID</p>
-            <app-category-bar-graph-segmented></app-category-bar-graph-segmented>
-          </div>
-          <p>Total number of PDs per DVCAT</p>
+          <app-category-bar-graph-segmented></app-category-bar-graph-segmented>
         </div>
       </div>
 

@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CategoryPieGraphService } from './category-pie-graph.service';
 import { ShareSiteDataService } from '../site-select/share-site-data.service';
+import * as d3 from 'd3';
+import { DimensionService } from '../services/dimension-service.service';
 
 @Component({
 	selector: 'app-category-pie-graph',
@@ -8,20 +10,33 @@ import { ShareSiteDataService } from '../site-select/share-site-data.service';
 	styleUrls: ['./category-pie-graph.component.css']
 })
 export class CategoryPieGraphComponent implements OnInit {
-
+	width: number = 0;
+	height: number = 0;
 	selectedSiteId?: string;
 	data: any;
 	error: boolean = false;
-
+	options = {
+		plugins: {
+			title: {
+				display: true,
+				text: 'Total number of PDs per study',
+				font: {
+					size: 16
+				}
+			}
+		}
+	}
 	constructor(
 		private categoryPieGraphService: CategoryPieGraphService,
-		private shareSiteDataService: ShareSiteDataService
+		private shareSiteDataService: ShareSiteDataService,
 	) { }
-
+	
 	ngOnInit() {
 		this.shareSiteDataService.selectedSiteId$.subscribe((siteId: string | undefined) => {
+			this.setWidthAndHeightToParent();
 			this.selectedSiteId = siteId;
 			this.loadEntryCountPerStudy();
+			this.error = false;
 		});
 	}
 
@@ -40,6 +55,17 @@ export class CategoryPieGraphComponent implements OnInit {
 				error = true;
 				console.error('Error loading data for pie graph: ', error);
 			});
-
 	}
+
+	@HostListener('window:resize', ['$event'])
+	onResize(event: Event) {
+		this.setWidthAndHeightToParent();
+	}
+
+	setWidthAndHeightToParent(parent: any = d3.select('div.pie')) {
+		let dim = DimensionService.getHTMLDimensions(parent);
+		this.width = dim.width;
+		this.height = dim.height;
+	}
+
 }

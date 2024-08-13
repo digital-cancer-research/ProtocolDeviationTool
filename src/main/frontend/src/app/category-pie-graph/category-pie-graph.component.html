@@ -1,4 +1,6 @@
-<h3 *ngIf="error">Total number of PDs per study</h3>
 <p-chart type="pie"
-    [data]="data">
+    [data]="data"
+    [options]="options"
+    [width]="width+'px'"
+    [height]="height+'px'">
 </p-chart>

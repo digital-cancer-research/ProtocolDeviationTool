@@ -61,7 +61,7 @@ import { NavigationRibbonComponent } from './navigation-ribbon/navigation-ribbon
 import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.component';
 import { CoreModule } from './core/core.module';
 import { ChartModule } from 'primeng/chart';
-
+import { CardModule } from 'primeng/card';
 
 
 @NgModule({ declarations: [
@@ -106,7 +106,8 @@ import { ChartModule } from 'primeng/chart';
         FormsModule,
         CommonModule,
         CoreModule,
-        ChartModule
+        ChartModule,
+        CardModule
     ],
     providers: [
         UploadService,
