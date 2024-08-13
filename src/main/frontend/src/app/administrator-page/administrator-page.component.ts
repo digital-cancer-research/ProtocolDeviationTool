@@ -24,26 +24,26 @@ export class AdministratorPageComponent {
     this.isTeamManagementVisible = true;
     this.isSiteManagementVisible = false;
     this.isAuditTrailManagementVisible = false;
-    
- 	// Call initialiseComponent() method of app-team-management component
+
+    // Call initialiseComponent() method of app-team-management component
     const teamManagementComponent: any = document.querySelector('app-team-management');
     if (teamManagementComponent) {
       teamManagementComponent.initialiseComponent();
     }
   }
-  
+
   showSiteManagement() {
-	    this.isUserManagementVisible = false;
-	    this.isTeamManagementVisible = false;
-	    this.isSiteManagementVisible = true;
-	    this.isAuditTrailManagementVisible = false;
-	  }
-  
+    this.isUserManagementVisible = false;
+    this.isTeamManagementVisible = false;
+    this.isSiteManagementVisible = true;
+    this.isAuditTrailManagementVisible = false;
+  }
+
   showAuditTrailManagement() {
-	    this.isUserManagementVisible = false;
-	    this.isTeamManagementVisible = false;
-	    this.isSiteManagementVisible = false;
-	    this.isAuditTrailManagementVisible = true;
-	  }
+    this.isUserManagementVisible = false;
+    this.isTeamManagementVisible = false;
+    this.isSiteManagementVisible = false;
+    this.isAuditTrailManagementVisible = true;
+  }
 
 }

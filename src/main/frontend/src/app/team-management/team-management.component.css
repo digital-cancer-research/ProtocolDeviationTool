@@ -197,14 +197,14 @@ th {
 }
 
 .page-button-active {
-    background-color: #009cee;
-    color: white;
+  background-color: #009cee;
+  color: white;
 }
 
 .page-button-disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 
@@ -227,7 +227,8 @@ th {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  color: white; /* Text color */
+  color: white;
+  /* Text color */
   margin-right: 10px;
 }
 

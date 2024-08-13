@@ -1,11 +1,11 @@
 <div class="page">
   <header>
     <app-header [pageTitle]="'DATA VISUALISATION'"></app-header>
-    <app-navigation-ribbon [buttons]="[{ label: 'ADMIN', route: '/admin' }]">
+    <app-navigation-ribbon>
     </app-navigation-ribbon>
   </header>
   <div class="content">
-    
+
     <div class="select">
       <app-site-select></app-site-select>
       <app-site-study-level-select></app-site-study-level-select>
@@ -32,17 +32,17 @@
           <div class="donutContent">
             <app-category-pie-graph></app-category-pie-graph>
           </div>
-        </div>  
-        <div class="histogram">
-        <p>Total number of PDs per category (DVCAT) per study at site</p>
-        <div class="histogramContent">
-          <p>Study ID</p>
-          <app-category-bar-graph-segmented></app-category-bar-graph-segmented>
         </div>
-        <p>Total number of PDs per DVCAT</p>
+        <div class="histogram">
+          <p>Total number of PDs per category (DVCAT) per study at site</p>
+          <div class="histogramContent">
+            <p>Study ID</p>
+            <app-category-bar-graph-segmented></app-category-bar-graph-segmented>
+          </div>
+          <p>Total number of PDs per DVCAT</p>
         </div>
       </div>
 
-      </div>
     </div>
+  </div>
 </div>

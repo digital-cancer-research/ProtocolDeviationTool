@@ -5,29 +5,22 @@ import { UserService } from '../core/services/user.service';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-site-team-data-select-multiteam',
-  templateUrl: './site-team-data-select-multiteam.component.html',
-  styleUrls: ['./site-team-data-select-multiteam.component.css']
+	selector: 'app-site-team-data-select-multiteam',
+	templateUrl: './site-team-data-select-multiteam.component.html',
+	styleUrls: ['./site-team-data-select-multiteam.component.css']
 })
 export class SiteTeamDataSelectMultiteamComponent implements OnInit, OnDestroy {
   @Input() teams: Team[] = [];
   searchTerm: string = '';
   teamToBeConfirmed: Team | null = null;
-  selectedTeam: Team | null = null;
   selectedTeamSubscription!: Subscription;
-  isTeamSelected: boolean = false;
+  isTeamConfirmed: boolean = false;
 
   constructor(private userService: UserService, private teamService: TeamService) { }
 
   ngOnInit(): void {
     this.selectedTeamSubscription = this.userService.currentUserSelectedTeam$.subscribe((team) => {
-      this.selectedTeam = team;
-      if (this.selectedTeam === null) {
-        this.isTeamSelected = false;
-      }
-      else {
-        this.isTeamSelected = true;
-      }
+      this.teamToBeConfirmed = team;
     });
   }
 
@@ -38,7 +31,7 @@ export class SiteTeamDataSelectMultiteamComponent implements OnInit, OnDestroy {
   confirmTeam(): void {
     if (this.teamToBeConfirmed !== null) {
       this.userService.setCurrentUserSelectedTeam(this.teamToBeConfirmed);
-      this.isTeamSelected = true;
+      this.isTeamConfirmed = true;
     }
   }
 
