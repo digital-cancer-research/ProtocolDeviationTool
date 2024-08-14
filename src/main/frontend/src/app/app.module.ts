@@ -61,6 +61,7 @@ import { AuditTrailManagementService } from './audit-trail-management/audit-trai
 import { CategoryBarGraphSegmentedSiteService } from './category-bar-graph-segmented-site/category-bar-graph-segmented-site.service';
 import { ChartModule } from 'primeng/chart';
 import { CardModule } from 'primeng/card';
+import { DataUploadTabComponent } from "./data-upload-tab/data-upload-tab.component";
 
 
 @NgModule({ declarations: [
@@ -97,7 +98,8 @@ import { CardModule } from 'primeng/card';
         DataVisualisationDeviationsOverTimePageComponent,
         SiteStudyLevelSelectComponent,
         AuditTrailManagementComponent,
-        CategoryBarGraphSegmentedSiteComponent
+        CategoryBarGraphSegmentedSiteComponent,
+        DataUploadTabComponent
     ],
     bootstrap: [AppComponent], 
     imports: [BrowserModule,
@@ -107,7 +109,7 @@ import { CardModule } from 'primeng/card';
         CoreModule,
         SharedModule,
         ChartModule,
-        CardModule
+        CardModule,
     ],
     providers: [
         UploadService,
@@ -129,5 +131,4 @@ import { CardModule } from 'primeng/card';
         CategoryBarGraphSegmentedSiteService,
         provideHttpClient(withInterceptorsFromDi()),
     ] })
-
 export class AppModule { }
