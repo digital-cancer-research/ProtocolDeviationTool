@@ -1,9 +1,9 @@
 <div class="selection-form">
-  <form (ngSubmit)="goToPage()">
+  <form (ngSubmit)="goToPage()" [ngClass]="{'small': elementHeight < 100}" name="form">
     <label>
       <input type="radio" name="level" [(ngModel)]="selectedLevel" value="Site Level"
         (change)="onLevelChange('Site Level')">
-      Site Level
+      Team Level
     </label>
     <label>
       <input type="radio" name="level" [(ngModel)]="selectedLevel" value="Study Level"
