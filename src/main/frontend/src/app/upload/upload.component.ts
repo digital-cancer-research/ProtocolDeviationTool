@@ -18,6 +18,7 @@ export class UploadComponent {
   files: any[] = [];
   studies: StudyList[] = [];
   selectedFileName: string = ''; // Variable to store the selected file name
+  isLoading: boolean = false;
 
   constructor(private http: HttpClient, private userService: UserService, private fileListService: FileListService, private studyListService: StudyListService) { }
 
@@ -58,10 +59,12 @@ export class UploadComponent {
     let currentUsername: string | undefined;
     this.userService.currentUser$.subscribe(
       (user) => {
+        this.isLoading = true;
         currentUsername = user?.username;
         if (!currentUsername) {
           this.messageType = 'error';
           this.message = 'Please select a user before uploading a file.';
+          this.isLoading = false
           return;
         }
 
@@ -91,21 +94,25 @@ export class UploadComponent {
 
                 // Emit event when file is uploaded
                 this.fileUploaded.emit();
+                this.isLoading = false;
               },
               (error) => {
                 this.messageType = 'error';
                 if (error.error && error.error.message) {
                   this.message = error.error.message;
+                  this.isLoading = false;
                 } else {
                   this.message = 'An unknown error occurred.';
+                  this.isLoading = false;
                 }
               }
             );
-          fileInput.value = "";
-        } else {
-          this.messageType = 'error';
-          this.selectedFileName = "";
-          this.message = 'Please select a file to upload';
+            fileInput.value = "";
+          } else {
+            this.messageType = 'error';
+            this.selectedFileName = "";
+            this.message = 'Please select a file to upload';
+            this.isLoading = false;
         }
       }
     );
