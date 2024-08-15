@@ -15,12 +15,16 @@ export class SiteTeamDataSelectMultiteamComponent implements OnInit, OnDestroy {
   teamToBeConfirmed: Team | null = null;
   selectedTeamSubscription!: Subscription;
   isTeamConfirmed: boolean = false;
+  userSubscription!: Subscription;
 
   constructor(private userService: UserService, private teamService: TeamService) { }
 
   ngOnInit(): void {
     this.selectedTeamSubscription = this.userService.currentUserSelectedTeam$.subscribe((team) => {
       this.teamToBeConfirmed = team;
+    });
+    this.userSubscription = this.userService.currentUser$.subscribe((user) => {
+      this.isTeamConfirmed = false;
     });
   }
 

@@ -1,10 +1,14 @@
 <div class="site-team-data-select-container">
-  <button [routerLink]="'/data-upload'">
-    <img src="assets/data-upload-icon.svg" alt="Data Upload Image">
-    <p>DATA UPLOAD</p>
-  </button>
-  <button [routerLink]="'/data-visualisation'">
-    <img src="assets/data-visualisation-icon.svg" alt="Data Upload Image">
-    <p>DATA VISUALISATION</p>
-  </button>
+  <app-page-button
+    [routerLink]="'/data-upload'"
+    icon = "assets/data-upload-icon.svg"
+    alt = "Data upload image" 
+    label ="DATA UPLOAD">
+  </app-page-button>
+  <app-page-button
+    [routerLink]="'/data-visualisation'"
+    icon = "assets/data-visualisation-icon.svg"
+    alt = "Data visualisation" 
+    label ="DATA VISUALISATION">
+  </app-page-button>
 </div>
