@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { SiteStudyLevelSelectService } from './site-study-level-select.service';
 
@@ -12,16 +12,20 @@ export class SiteStudyLevelSelectComponent implements OnInit {
 	selectedLevel: string | null = null;
 	selectedStudy: string | null = null;
 	searchTerm: string = "";
+	elementHeight: number = 0;
+	@ViewChild('SiteStudyLevelSelectComponent') component!: ElementRef; 
 
 	constructor(
 		private router: Router,
-		private siteStudyLevelSelectService: SiteStudyLevelSelectService
+		private siteStudyLevelSelectService: SiteStudyLevelSelectService,
+		private el:ElementRef
 	) { }
 
 	ngOnInit(): void {
 		this.loadStudyIds();
 		this.selectedLevel = this.siteStudyLevelSelectService.getSelectedLevel();
 		this.selectedStudy = this.siteStudyLevelSelectService.getSelectedStudy();
+		this.elementHeight = this.el.nativeElement.offsetHeight;
 		console.log("Search term: " + this.searchTerm);
 	}
 

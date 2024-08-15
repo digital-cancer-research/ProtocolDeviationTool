@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -59,74 +59,83 @@ import { SiteManagementService } from './site-management/site-management.service
 import { SiteStudyLevelSelectService } from './site-study-level-select/site-study-level-select.service';
 import { AuditTrailManagementService } from './audit-trail-management/audit-trail-management.service';
 import { CategoryBarGraphSegmentedSiteService } from './category-bar-graph-segmented-site/category-bar-graph-segmented-site.service';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { BorderComponent } from './border/border.component';
+import { HeaderComponent } from './header/header.component';
+import { FooterComponent } from './footer/footer.component';
+import { SiteSponsSelectComponent } from './site-spons-select/site-spons-select.component';
+import { NavigationRibbonComponent } from './navigation-ribbon/navigation-ribbon.component';
+import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.component';
+import { CoreModule } from './core/core.module';
+import { ChartModule } from 'primeng/chart';
+import { CardModule } from 'primeng/card';
 
 
+@NgModule({ declarations: [
+        AppComponent,
+        UploadComponent,
+        UserSelectionComponent,
+        UserManagementComponent,
+        HomeComponent,
+        FileListComponent,
+        StudyListComponent,
+        CategoryTableComponent,
+        VisualisationComponent,
+        CategoryBarGraphComponent,
+        SiteSelectComponent,
+        CategoryPieGraphComponent,
+        DashboardComponent,
+        BorderComponent,
+        HeaderComponent,
+        FooterComponent,
+        SiteSponsSelectComponent,
+        NavigationRibbonComponent,
+        SiteSponsorPageComponent,
+        AdministratorPageComponent,
+        SitePageComponent,
+        SiteTeamDataSelectComponent,
+        DataUploadPageComponent,
+        DataVisualisationPageComponent,
+        SiteTeamDataSelectMultiteamComponent,
+        TeamManagementComponent,
+        CategoryBarGraphSegmentedComponent,
+        SiteManagementComponent,
+        DataVisualisationDeviationHomePageComponent,
+        DataVisualisationDeviationsPageComponent,
+        DataVisualisationDeviationsOverTimePageComponent,
+        SiteStudyLevelSelectComponent,
+        AuditTrailManagementComponent,
+        CategoryBarGraphSegmentedSiteComponent
+    ],
+    bootstrap: [AppComponent], 
+    imports: [BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        CommonModule,
+        CoreModule,
+        ChartModule,
+        CardModule
+    ],
+    providers: [
+        UploadService,
+        UserService,
+        AuthService,
+        UserManagementService,
+        FileListService,
+        StudyListService,
+        VisualisationService,
+        CategoryBarGraphService,
+        SiteSelectService,
+        ShareSiteDataService,
+        CategoryPieGraphService,
+        TeamManagementService,
+        CategoryBarGraphSegmentedService,
+        SiteManagementService,
+        SiteStudyLevelSelectService,
+        AuditTrailManagementService,
+        CategoryBarGraphSegmentedSiteService,
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    UploadComponent,
-    UserSelectionComponent,
-    UserManagementComponent,
-    HomeComponent,
-    FileListComponent,
-    StudyListComponent,
-    CategoryTableComponent,
-    VisualisationComponent,
-    CategoryBarGraphComponent,
-    SiteSelectComponent,
-    CategoryPieGraphComponent,
-    DashboardComponent,
-    BorderComponent,
-    HeaderComponent,
-    FooterComponent,
-    SiteSponsSelectComponent,
-    NavigationRibbonComponent,
-    SiteSponsorPageComponent,
-    AdministratorPageComponent,
-    SitePageComponent,
-    SiteTeamDataSelectComponent,
-    DataUploadPageComponent,
-    DataVisualisationPageComponent,
-    SiteTeamDataSelectMultiteamComponent,
-    TeamManagementComponent,
-    CategoryBarGraphSegmentedComponent,
-    SiteManagementComponent,
-    DataVisualisationDeviationHomePageComponent,
-    DataVisualisationDeviationsPageComponent,
-    DataVisualisationDeviationsOverTimePageComponent,
-    SiteStudyLevelSelectComponent,
-    AuditTrailManagementComponent,
-    CategoryBarGraphSegmentedSiteComponent,
-  ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    AppRoutingModule,
-    FormsModule,
-    CommonModule,
-    CoreModule,
-    SharedModule
-],
-  providers: [
-    UploadService,
-    UserService,
-    AuthService,
-    UserManagementService,
-    FileListService,
-    StudyListService,
-    VisualisationService,
-    CategoryBarGraphService,
-    SiteSelectService,
-    ShareSiteDataService,
-    CategoryPieGraphService,
-    TeamManagementService,
-    CategoryBarGraphSegmentedService,
-    SiteManagementService,
-    SiteStudyLevelSelectService,
-    AuditTrailManagementService,
-    CategoryBarGraphSegmentedSiteService,
-  ],
-  bootstrap: [AppComponent]
-})
 export class AppModule { }

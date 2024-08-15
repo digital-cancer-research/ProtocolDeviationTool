@@ -1,13 +1,13 @@
 <div class="page">
   <header>
-    <app-header [pageTitle]="'DATA VISUALISATION'"></app-header>
+    <app-header [pageTitle]="'SUMMARY DASHBOARD'"></app-header>
     <app-navigation-ribbon>
     </app-navigation-ribbon>
   </header>
   <div class="content">
 
+
     <div class="select">
-      <app-site-select></app-site-select>
       <app-site-study-level-select></app-site-study-level-select>
     </div>
 
@@ -18,28 +18,16 @@
           <app-visualisation></app-visualisation>
         </div>
         <div class="bar">
-          <p>Total number of PDs per category (DVCAT) at site</p>
-          <div class="barContent">
-            <p>Category for Protocol Deviation</p>
-            <app-category-bar-graph></app-category-bar-graph>
-          </div>
+          <app-category-bar-graph></app-category-bar-graph>
         </div>
       </div>
 
       <div class="bottom">
-        <div class="donut">
-          <p>Total number of PDs per study</p>
-          <div class="donutContent">
-            <app-category-pie-graph></app-category-pie-graph>
-          </div>
+        <div class="pie">
+          <app-category-pie-graph></app-category-pie-graph>
         </div>
         <div class="histogram">
-          <p>Total number of PDs per category (DVCAT) per study at site</p>
-          <div class="histogramContent">
-            <p>Study ID</p>
-            <app-category-bar-graph-segmented></app-category-bar-graph-segmented>
-          </div>
-          <p>Total number of PDs per DVCAT</p>
+          <app-category-bar-graph-segmented></app-category-bar-graph-segmented>
         </div>
       </div>
 
