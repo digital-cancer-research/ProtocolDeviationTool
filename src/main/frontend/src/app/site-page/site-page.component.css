@@ -1,7 +1,6 @@
 .page {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 32px);
 }
 
 main,
