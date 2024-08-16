@@ -1,3 +1,7 @@
+app-data-visualisation-page {
+  flex: 1;
+}
+
 /* Large Screen */
 div.page {
   display: flex;
