@@ -1,14 +1,9 @@
-<app-border class="dashboard-background">
-  <app-header [pageTitle]="'SITE LEVEL PROTOCOL DEVIATIONS'"></app-header>
-  <app-navigation-ribbon>
-  </app-navigation-ribbon>
-  <div class="nav-container">
-    <div class="nav-button">Total protocol deviations</div>
-    <div class="nav-button">Total protocol deviations over time</div>
-  </div>
-  <div class="content-container">
-    <app-category-bar-graph-segmented-site
-      (barClicked)="showCategoryTable($event)"></app-category-bar-graph-segmented-site>
-    <app-category-table *ngIf="isCategoryTableVisible" [filterValue]="selectedDvdecod"></app-category-table>
-  </div>
-</app-border>
+<div class="nav-container">
+  <div class="nav-button">Total protocol deviations</div>
+  <div class="nav-button">Total protocol deviations over time</div>
+</div>
+<div class="content-container">
+  <app-category-bar-graph-segmented-site
+    (barClicked)="showCategoryTable($event)"></app-category-bar-graph-segmented-site>
+  <app-category-table *ngIf="isCategoryTableVisible" [filterValue]="selectedDvdecod"></app-category-table>
+</div>

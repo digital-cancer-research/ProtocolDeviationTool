@@ -2,8 +2,9 @@ import { Component, Input, EventEmitter, Output, OnInit, OnDestroy } from '@angu
 import { UserService } from '../core/services/user.service';
 import { AuthService } from '../user/auth.service';
 import { User } from '../core/models/user.model';
-import { Subscription } from 'rxjs';
+import { filter, map, Observable, Subscription } from 'rxjs';
 import { Team } from '../core/models/team.model';
+import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -19,19 +20,34 @@ export class HeaderComponent implements OnInit, OnDestroy {
   usersSubscription!: Subscription;
   selectedTeamSubscription!: Subscription;
   usernameSelected: string = "";
+  urlPath$: Observable<string> = new Observable<string>();
+  urlPathString: string = "";
 
   constructor(
     private userService: UserService,
     private authService: AuthService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
+    this.urlPath$ = this.router.events.pipe(
+      filter((event: any) => event instanceof NavigationEnd),
+      map((event: NavigationEnd) => event.url)
+    );
+
+    this.urlPath$.subscribe((url => {
+      this.urlPathString = url;
+      this.setPageTitle();
+    }))
+
     this.usersSubscription = this.userService.getUsers().subscribe((users) => {
       this.users = users;
     });
+
     this.selectedTeamSubscription = this.userService.currentUserSelectedTeam$.subscribe((team) => {
       this.selectedTeam = team;
     });
+
     this.userService.currentUser$.subscribe((user) => {
       if (user?.username !== undefined) {
         this.usernameSelected = user?.username;
@@ -77,5 +93,30 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   get isAdmin(): boolean {
     return this.authService.isAdmin;
+  }
+
+  setPageTitle() {
+    switch (this.urlPathString) {
+      case ('/site'): {
+        this.pageTitle = "SITE PAGE";
+        break;
+      }
+      case ('/data-upload'): {
+        this.pageTitle = "DATA UPLOAD";
+        break;
+      }
+      case ('/data-visualisation'): {
+        this.pageTitle = "TEAM SUMMARY DASHBOARD";
+        break;
+      }
+      case ('/data-visualisation-deviation-home'): {
+        this.pageTitle = "<TEAM LEVEL> VISUALISATIONS";
+        break;
+      }
+      default: {
+        this.pageTitle = "";
+        break;
+      }
+    }
   }
 }
