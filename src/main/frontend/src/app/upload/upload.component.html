@@ -4,6 +4,8 @@
     <input type="file" (change)="onFileSelected($event)" id="fileInput">
     <label for="fileInput" class="file-button">Choose File</label>
     <button (click)="uploadFile()" class="upload-button">Upload</button>
+    <!-- Loading icon -->
+    <div class="spinner" *ngIf="isLoading"></div>
   </div>
   <p>{{ selectedFileName }}</p>
   <div [ngClass]="messageType" *ngIf="message">

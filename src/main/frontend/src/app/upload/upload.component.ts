@@ -1,11 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UploadResponse } from './upload-response.model';
-import { UserService } from '../user/user.service';
+import { UserService } from '../core/services/user.service';
 import { FileListService } from '../file-list/file-list.service';
 import { StudyListService } from '../study-list/study-list.service';
 import { StudyList } from '../study-list/study-list.model';
-
 
 @Component({
   selector: 'app-upload',
@@ -19,6 +18,7 @@ export class UploadComponent {
   files: any[] = [];
   studies: StudyList[] = [];
   selectedFileName: string = ''; // Variable to store the selected file name
+  isLoading: boolean = false;
 
   constructor(private http: HttpClient, private userService: UserService, private fileListService: FileListService, private studyListService: StudyListService) { }
 
@@ -51,59 +51,70 @@ export class UploadComponent {
     });
   }
 
-
   uploadFile() {
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     const file: File | null = fileInput?.files ? fileInput.files[0] : null;
 
     // Get the current user's username from service
-    const currentUsername = this.userService.getCurrentUser();
+    let currentUsername: string | undefined;
+    this.userService.currentUser$.subscribe(
+      (user) => {
+        this.isLoading = true;
+        currentUsername = user?.username;
+        if (!currentUsername) {
+          this.messageType = 'error';
+          this.message = 'Please select a user before uploading a file.';
+          this.isLoading = false
+          return;
+        }
 
-    if (!currentUsername) {
-      this.messageType = 'error';
-      this.message = 'Please select a user before uploading a file.';
-      return;
-    }
+        if (file) {
+          const formData = new FormData();
+          formData.append('file', file);
 
-    if (file) {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      // Append the current user's username to the FormData
-      formData.append('username', currentUsername);
-
-
-      this.http
-        .post<UploadResponse>('api/upload', formData)
-        .subscribe(
-          (response) => {
-            this.messageType = 'success';
-            // Handle the message from the server
-            this.message = response.message;
-            if (this.message.includes("Failed")) {
-              this.messageType = "error";
-            }
-            // Refresh the uploaded file list and the study list
-            this.loadFiles();
-            this.loadStudies();
-
-            // Emit event when file is uploaded
-            this.fileUploaded.emit();
-          },
-          (error) => {
-            this.messageType = 'error';
-            if (error.error && error.error.message) {
-              this.message = error.error.message;
-            } else {
-              this.message = 'An unknown error occurred.';
-            }
+          // Append the current user's username to the FormData
+          if (currentUsername) {
+            formData.append('username', currentUsername);
           }
-        );
-      fileInput.value = "";
-    } else {
-      this.messageType = 'error';
-      this.selectedFileName = "";
-      this.message = 'Please select a file to upload';
-    }
+
+
+          this.http
+            .post<UploadResponse>('api/upload', formData)
+            .subscribe(
+              (response) => {
+                this.messageType = 'success';
+                // Handle the message from the server
+                this.message = response.message;
+                if (this.message.includes("Failed")) {
+                  this.messageType = "error";
+                }
+                // Refresh the uploaded file list and the study list
+                this.loadFiles();
+                this.loadStudies();
+
+                // Emit event when file is uploaded
+                this.fileUploaded.emit();
+                this.isLoading = false;
+              },
+              (error) => {
+                this.messageType = 'error';
+                if (error.error && error.error.message) {
+                  this.message = error.error.message;
+                  this.isLoading = false;
+                } else {
+                  this.message = 'An unknown error occurred.';
+                  this.isLoading = false;
+                }
+              }
+            );
+            fileInput.value = "";
+          } else {
+            this.messageType = 'error';
+            this.selectedFileName = "";
+            this.message = 'Please select a file to upload';
+            this.isLoading = false;
+        }
+      }
+    );
   }
 }
