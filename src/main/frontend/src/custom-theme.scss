@@ -1,0 +1,228 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+@use 'sass:color';
+@use 'sass:map';
+@use 'sass:math';
+
+/// Estimate a hue using the given previous and next hues.
+@function _estimate-hue($hues, $hue, $prev-hue, $next-hue) {
+  $weight: math.div($next-hue - $hue, $next-hue - $prev-hue) * 100%;
+  @return color.mix(map.get($hues, $prev-hue), map.get($hues, $next-hue), $weight);
+}
+
+@function _patch-missing-hues($palette) {
+  $neutral: map.get($palette, neutral);
+  $palette: map.set($palette, neutral, 4, _estimate-hue($neutral, 4, 0, 10));
+  $palette: map.set($palette, neutral, 6, _estimate-hue($neutral, 6, 0, 10));
+  $palette: map.set($palette, neutral, 12, _estimate-hue($neutral, 12, 10, 20));
+  $palette: map.set($palette, neutral, 17, _estimate-hue($neutral, 17, 10, 20));
+  $palette: map.set($palette, neutral, 22, _estimate-hue($neutral, 22, 20, 25));
+  $palette: map.set($palette, neutral, 24, _estimate-hue($neutral, 24, 20, 25));
+  $palette: map.set($palette, neutral, 87, _estimate-hue($neutral, 87, 80, 90));
+  $palette: map.set($palette, neutral, 92, _estimate-hue($neutral, 92, 90, 95));
+  $palette: map.set($palette, neutral, 94, _estimate-hue($neutral, 94, 90, 95));
+  $palette: map.set($palette, neutral, 96, _estimate-hue($neutral, 96, 95, 98));
+  @return $palette;
+}
+
+/// Adds the error colors to the given palette.
+@function _patch-error-palette($palette) {
+  @return map.merge(
+    $palette,
+    (
+      error: (
+        0: #000000,
+        10: #410002,
+        20: #690005,
+        25: #7e0007,
+        30: #93000a,
+        35: #a80710,
+        40: #ba1a1a,
+        50: #de3730,
+        60: #ff5449,
+        70: #ff897d,
+        80: #ffb4ab,
+        90: #ffdad6,
+        95: #ffedea,
+        98: #fff8f7,
+        99: #fffbff,
+        100: #ffffff,
+      ),
+    )
+  );
+}
+
+@function _apply-patches($palette) {
+  @return _patch-missing-hues(_patch-error-palette($palette));
+}
+
+/// Red color palette to be used as primary or tertiary palette.
+$primary-palette: _apply-patches((
+  0: #000a10,
+  10: #001f30,
+  20: #003450,
+  25: #004970,
+  30: #005e8f,
+  35: #0073af,
+  40: #0088cf,
+  50: #009def,
+  60: #10adff,
+  70: #30b8ff,
+  80: #50c3ff,
+  90: #70ceff,
+  95: #8fd9ff,
+  98: #afe4ff,
+  99: #cfefff,
+  100: #effaff,
+  secondary: (
+    0: #000000,
+    10: #191a2c,
+    20: #2e2f42,
+    25: #393a4d,
+    30: #444559,
+    35: #505165,
+    40: #5c5d72,
+    50: #75758b,
+    60: #8f8fa6,
+    70: #a9a9c1,
+    80: #c5c4dd,
+    90: #e1e0f9,
+    95: #f1efff,
+    98: #fbf8ff,
+    99: #fffbff,
+    100: #ffffff,
+  ),
+  neutral: (
+    0: #000000,
+    10: #1b1b1f,
+    20: #303034,
+    25: #3c3b3f,
+    30: #47464a,
+    35: #535256,
+    40: #5f5e62,
+    50: #78767a,
+    60: #929094,
+    70: #adaaaf,
+    80: #c8c5ca,
+    90: #e5e1e6,
+    95: #f3eff4,
+    98: #fcf8fd,
+    99: #fffbff,
+    100: #ffffff,
+  ),
+  neutral-variant: (
+    0: #000000,
+    10: #1b1b23,
+    20: #303038,
+    25: #3b3b43,
+    30: #46464f,
+    35: #52515b,
+    40: #5e5d67,
+    50: #777680,
+    60: #91909a,
+    70: #acaab4,
+    80: #c7c5d0,
+    90: #e4e1ec,
+    95: #f2effa,
+    98: #fbf8ff,
+    99: #fffbff,
+    100: #ffffff,
+  ),
+));
+
+$tertiary-palette: _apply-patches((
+  0: #000010,
+  10: #000030,
+  20: #000050,
+  25: #000070,
+  30: #00008f,
+  35: #0000af,
+  40: #0000cf,
+  50: #0000ef,
+  60: #1010ff,
+  70: #3030ff,
+  80: #5050ff,
+  90: #7070ff,
+  95: #8f8fff,
+  98: #afafff,
+  99: #cfcfff,
+  100: #efefff,
+  secondary: (
+    0: #000000,
+    10: #191a2c,
+    20: #2e2f42,
+    25: #393a4d,
+    30: #444559,
+    35: #505165,
+    40: #5c5d72,
+    50: #75758b,
+    60: #8f8fa6,
+    70: #a9a9c1,
+    80: #c5c4dd,
+    90: #e1e0f9,
+    95: #f1efff,
+    98: #fbf8ff,
+    99: #fffbff,
+    100: #ffffff,
+  ),
+  neutral: (
+    0: #000000,
+    10: #1b1b1f,
+    20: #303034,
+    25: #3c3b3f,
+    30: #47464a,
+    35: #535256,
+    40: #5f5e62,
+    50: #78767a,
+    60: #929094,
+    70: #adaaaf,
+    80: #c8c5ca,
+    90: #e5e1e6,
+    95: #f3eff4,
+    98: #fcf8fd,
+    99: #fffbff,
+    100: #ffffff,
+  ),
+  neutral-variant: (
+    0: #000000,
+    10: #1b1b23,
+    20: #303038,
+    25: #3b3b43,
+    30: #46464f,
+    35: #52515b,
+    40: #5e5d67,
+    50: #777680,
+    60: #91909a,
+    70: #acaab4,
+    80: #c7c5d0,
+    90: #e4e1ec,
+    95: #f2effa,
+    98: #fbf8ff,
+    99: #fffbff,
+    100: #ffffff,
+  ),
+));
+
+$frontend-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: $primary-palette,
+    tertiary: mat.$blue-palette,
+  ),
+  density: (
+    scale: 0,
+  )
+));
+
+:root {
+  @include mat.all-component-themes($frontend-theme);
+}
+
+// Comment out the line below if you want to use the pre-defined typography utility classes.
+// For more information: https://material.angular.io/guide/typography#using-typography-styles-in-your-application.
+// @include mat.typography-hierarchy($frontend-theme);
+
+// Comment out the line below if you want to use the deprecated `color` inputs.
+// @include mat.color-variants-backwards-compatibility($frontend-theme);

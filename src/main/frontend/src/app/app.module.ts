@@ -60,8 +60,8 @@ import { SiteStudyLevelSelectService } from './site-study-level-select/site-stud
 import { AuditTrailManagementService } from './audit-trail-management/audit-trail-management.service';
 import { CategoryBarGraphSegmentedSiteService } from './category-bar-graph-segmented-site/category-bar-graph-segmented-site.service';
 import { ChartModule } from 'primeng/chart';
-import { CardModule } from 'primeng/card';
 import { DataUploadTabComponent } from "./data-upload-tab/data-upload-tab.component";
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 
 @NgModule({ declarations: [
@@ -109,7 +109,6 @@ import { DataUploadTabComponent } from "./data-upload-tab/data-upload-tab.compon
         CoreModule,
         SharedModule,
         ChartModule,
-        CardModule,
     ],
     providers: [
         UploadService,
@@ -130,5 +129,6 @@ import { DataUploadTabComponent } from "./data-upload-tab/data-upload-tab.compon
         AuditTrailManagementService,
         CategoryBarGraphSegmentedSiteService,
         provideHttpClient(withInterceptorsFromDi()),
+        provideAnimationsAsync(),
     ] })
 export class AppModule { }
