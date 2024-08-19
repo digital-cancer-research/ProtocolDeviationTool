@@ -266,7 +266,7 @@
 							<goal>exec</goal>
 						</goals>
 						<configuration>
-							<executable>ng_build.sh</executable>
+							<executable>ng_build.bat</executable>
 						</configuration>
 					</execution>
 				</executions>
