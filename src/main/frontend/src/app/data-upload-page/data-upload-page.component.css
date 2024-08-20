@@ -2,22 +2,13 @@
   flex: 1;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
+app-tab {
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
 }
 
-td {
-  vertical-align: top;
-  padding: 10px;
-}
-
-.app-upload,
-.app-file-list,
-.app-category-table {
-  margin-bottom: 20px;
-}
-
-.app-category-table {
-  clear: both;
+.content {
+  display: flex;
+  justify-content: space-around;
 }

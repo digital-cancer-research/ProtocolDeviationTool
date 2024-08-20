@@ -1,0 +1,9 @@
+:host {
+    height: 100%;
+}
+
+app-tab {
+    padding-top: 5px;
+    display: flex;
+    justify-content: center;
+}

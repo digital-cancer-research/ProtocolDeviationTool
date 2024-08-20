@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DataUploadTabComponent } from './data-upload-tab.component';
+import { DataUploadPageComponent } from './data-upload-page.component';
 
-describe('DataUploadTabComponent', () => {
-  let component: DataUploadTabComponent;
-  let fixture: ComponentFixture<DataUploadTabComponent>;
+describe('DataUploadPageComponent', () => {
+  let component: DataUploadPageComponent;
+  let fixture: ComponentFixture<DataUploadPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DataUploadTabComponent]
+      imports: [DataUploadPageComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DataUploadTabComponent);
+    fixture = TestBed.createComponent(DataUploadPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

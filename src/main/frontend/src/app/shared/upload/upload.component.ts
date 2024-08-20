@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UploadResponse } from './upload-response.model';
-import { UserService } from '../core/services/user.service';
+import { UserService } from '../../core/services/user.service';
 import { FileListService } from '../file-list/file-list.service';
-import { StudyListService } from '../study-list/study-list.service';
-import { StudyList } from '../study-list/study-list.model';
+import { StudyListService } from '../../study-list/study-list.service';
+import { StudyList } from '../../study-list/study-list.model';
 
 @Component({
   selector: 'app-upload',
