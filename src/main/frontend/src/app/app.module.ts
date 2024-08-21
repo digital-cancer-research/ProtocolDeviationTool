@@ -8,11 +8,9 @@ import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 
 import { AppComponent } from './app.component';
-import { UploadComponent } from './upload/upload.component';
 import { UserSelectionComponent } from './user/user-selection.component';
 import { UserManagementComponent } from './user-management/user-management.component';
 import { HomeComponent } from './home/home.component';
-import { FileListComponent } from './file-list/file-list.component';
 import { StudyListComponent } from './study-list/study-list.component';
 import { CategoryTableComponent } from './category-table/category-table.component';
 import { VisualisationComponent } from './visualisation/visualisation.component';
@@ -24,7 +22,6 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AdministratorPageComponent } from './administrator-page/administrator-page.component';
 import { SitePageComponent } from './site-page/site-page.component';
 import { SiteTeamDataSelectComponent } from './site-team-data-select/site-team-data-select.component';
-import { DataUploadPageComponent } from './data-upload-page/data-upload-page.component';
 import { DataVisualisationPageComponent } from './data-visualisation-page/data-visualisation-page.component';
 import { SiteTeamDataSelectMultiteamComponent } from './site-team-data-select-multiteam/site-team-data-select-multiteam.component';
 import { TeamManagementComponent } from './team-management/team-management.component';
@@ -42,11 +39,9 @@ import { SiteSponsSelectComponent } from './site-spons-select/site-spons-select.
 import { NavigationRibbonComponent } from './navigation-ribbon/navigation-ribbon.component';
 import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.component';
 
-import { UploadService } from './upload/upload.service';
 import { UserService } from './user/user.service';
-import { AuthService  } from './user/auth.service';
+import { AuthService } from './user/auth.service';
 import { UserManagementService } from './user-management/user-management.service';
-import { FileListService } from './file-list/file-list.service';
 import { StudyListService } from './study-list/study-list.service';
 import { VisualisationService } from './visualisation/visualisation.service';
 import { CategoryBarGraphService } from './category-bar-graph/category-bar-graph.service';
@@ -60,17 +55,16 @@ import { SiteStudyLevelSelectService } from './site-study-level-select/site-stud
 import { AuditTrailManagementService } from './audit-trail-management/audit-trail-management.service';
 import { CategoryBarGraphSegmentedSiteService } from './category-bar-graph-segmented-site/category-bar-graph-segmented-site.service';
 import { ChartModule } from 'primeng/chart';
-import { CardModule } from 'primeng/card';
-import { DataUploadTabComponent } from "./data-upload-tab/data-upload-tab.component";
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
-@NgModule({ declarations: [
+@NgModule({
+    declarations: [
         AppComponent,
-        UploadComponent,
         UserSelectionComponent,
         UserManagementComponent,
         HomeComponent,
-        FileListComponent,
         StudyListComponent,
         CategoryTableComponent,
         VisualisationComponent,
@@ -87,7 +81,6 @@ import { DataUploadTabComponent } from "./data-upload-tab/data-upload-tab.compon
         AdministratorPageComponent,
         SitePageComponent,
         SiteTeamDataSelectComponent,
-        DataUploadPageComponent,
         DataVisualisationPageComponent,
         SiteTeamDataSelectMultiteamComponent,
         TeamManagementComponent,
@@ -98,10 +91,9 @@ import { DataUploadTabComponent } from "./data-upload-tab/data-upload-tab.compon
         DataVisualisationDeviationsOverTimePageComponent,
         SiteStudyLevelSelectComponent,
         AuditTrailManagementComponent,
-        CategoryBarGraphSegmentedSiteComponent,
-        DataUploadTabComponent
+        CategoryBarGraphSegmentedSiteComponent
     ],
-    bootstrap: [AppComponent], 
+    bootstrap: [AppComponent],
     imports: [BrowserModule,
         AppRoutingModule,
         FormsModule,
@@ -109,14 +101,12 @@ import { DataUploadTabComponent } from "./data-upload-tab/data-upload-tab.compon
         CoreModule,
         SharedModule,
         ChartModule,
-        CardModule,
+        BrowserAnimationsModule
     ],
     providers: [
-        UploadService,
         UserService,
         AuthService,
         UserManagementService,
-        FileListService,
         StudyListService,
         VisualisationService,
         CategoryBarGraphService,
@@ -130,5 +120,7 @@ import { DataUploadTabComponent } from "./data-upload-tab/data-upload-tab.compon
         AuditTrailManagementService,
         CategoryBarGraphSegmentedSiteService,
         provideHttpClient(withInterceptorsFromDi()),
-    ] })
+        provideAnimationsAsync(),
+    ]
+})
 export class AppModule { }

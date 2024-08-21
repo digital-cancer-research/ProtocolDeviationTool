@@ -1,0 +1,15 @@
+<div class="container">
+    <div *ngFor="let tab of tabs">
+        <button [routerLink]="tab.link" 
+         mat-flat-button 
+        *ngIf="tab !== activeTab">
+            {{ tab.label }}
+        </button>
+
+        <button [routerLink]="tab.link" 
+         mat-raised-button 
+        *ngIf="tab === activeTab">
+            {{ tab.label }}
+        </button>
+    </div>
+</div>
