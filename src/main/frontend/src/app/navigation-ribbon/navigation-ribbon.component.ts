@@ -16,9 +16,10 @@ export class NavigationRibbonComponent implements OnInit, OnDestroy {
   authSubscription!: Subscription;
   userSubscription!: Subscription;
 
+  // Changing a label will require you to change the case in shouldDisplayButton method
   buttons: { label: string, route: string }[] = [
     { label: 'STUDY ID', route: '/data-visualisation' },
-    { label: 'ADMINISTRATION', route: '/admin' },
+    { label: 'ADMINISTRATION', route: '/administration-page' },
     { label: 'TEAM SELECTION', route: '/site' },
     { label: 'DATA', route: '/data-upload' },
     { label: 'VISUALISATION', route: '/data-visualisation' }
@@ -53,8 +54,7 @@ export class NavigationRibbonComponent implements OnInit, OnDestroy {
     switch (button.label) {
       case 'STUDY ID':
         return this.isStudySelected;
-      case 'ADMINISTRATOR':
-        return this.isAdmin;
+      case 'ADMINISTRATION':
       case 'TEAM SELECTION':
         return this.isPartOfMultipleTeams;
       case 'DATA':

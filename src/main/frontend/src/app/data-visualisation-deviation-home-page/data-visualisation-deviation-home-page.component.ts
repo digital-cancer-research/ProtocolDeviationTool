@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TeamManagementComponent } from '../team-management/team-management.component';
+import { TeamManagementComponent } from '../features/administration-page/team-management/team-management.component';
 
 @Component({
 	selector: 'app-data-visualisation-deviation-home-page',

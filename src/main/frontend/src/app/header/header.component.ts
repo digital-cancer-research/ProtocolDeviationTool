@@ -113,6 +113,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.pageTitle = "<TEAM LEVEL> VISUALISATIONS";
         break;
       }
+      case ('/admin'): {
+        this.pageTitle = "ADMINISTRATOR";
+        break;
+      }
       default: {
         this.pageTitle = "";
         break;

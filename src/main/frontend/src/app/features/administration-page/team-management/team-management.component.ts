@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TeamManagementService } from './team-management.service';
 import { Team } from './team.model';
-import { UserService } from '../user/user.service';
+import { UserService } from '../../../user/user.service';
 import { Observable } from 'rxjs';
 
 
