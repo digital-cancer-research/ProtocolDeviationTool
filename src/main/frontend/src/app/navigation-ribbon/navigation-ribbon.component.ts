@@ -19,7 +19,7 @@ export class NavigationRibbonComponent implements OnInit, OnDestroy {
   // Changing a label will require you to change the case in shouldDisplayButton method
   buttons: { label: string, route: string }[] = [
     { label: 'STUDY ID', route: '/data-visualisation' },
-    { label: 'ADMINISTRATION', route: '/administration-page' },
+    { label: 'ADMINISTRATION', route: '/administration-page/user-management' },
     { label: 'TEAM SELECTION', route: '/site' },
     { label: 'DATA', route: '/data-upload' },
     { label: 'VISUALISATION', route: '/data-visualisation' }

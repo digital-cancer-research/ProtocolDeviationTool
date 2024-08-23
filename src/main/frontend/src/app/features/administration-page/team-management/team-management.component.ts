@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { TeamManagementService } from './team-management.service';
-import { Team } from './team.model';
-import { UserService } from '../../../user/user.service';
-import { Observable } from 'rxjs';
+import { Component, inject, OnInit } from '@angular/core';
+import { UserService } from 'src/app/core/services/user.service';
+import { TeamService } from 'src/app/core/services/team.service';
+import { User } from 'src/app/core/models/user.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -13,14 +14,9 @@ import { Observable } from 'rxjs';
 
 export class TeamManagementComponent implements OnInit {
 	teams: any[] = [];
-
-	// check if the form was submitted
-	formNotSubmitted: boolean = true;
-
-	// Stores the new team name
 	newTeam: any = { teamName: '' };
-
 	isTeamCreated: boolean = false;
+	currentUser: User | null = null;;
 
 	// Pagination properties
 	itemsPerPage: number = 8;
@@ -30,29 +26,60 @@ export class TeamManagementComponent implements OnInit {
 	disabledPreviousButton: boolean = false;
 	disabledNextButton: boolean = false;
 	disabledLastButton: boolean = false;
+	private _snackBar = inject(MatSnackBar);
+	teamsSubscription!: Subscription;
+	currentUserSubscription!: Subscription
 
 	sortedColumn: string = 'teamName'; // Default sorting column
 	sortDirection: 'asc' | 'desc' = 'asc';
 
-	constructor(private teamManagementService: TeamManagementService, private userService: UserService) { }
+	constructor(
+		private userService: UserService,
+		private teamService: TeamService,
+	) { }
 
 	ngOnInit(): void {
-		this.getTeams();
-		this.updatePage();
+		this.teamsSubscription = this.teamService.teams$.subscribe({
+			next: (teams: any[]) => {
+				this.teams = teams;
+				console.log(teams);
+				this.updatePage();
+			},
+			error: (error) => {
+				console.error('Error fetching teams:', error);
+			}
+		});
+
+		this.currentUserSubscription = this.userService.currentUser$.subscribe({
+			next: (user) => {
+				this.currentUser = user;
+			},
+			error: (error) => {
+				console.error('Error fetching current user:', error)
+			}
+		});
 	}
 
-	initialiseComponent(): void {
-		this.getTeams();
-		this.updatePage();
+	ngOnDestroy() {
+		if (this.teamsSubscription) { this.teamsSubscription.unsubscribe() };
+		if (this.currentUserSubscription) { this.currentUserSubscription.unsubscribe() };
+	}
+
+	openSnackBar(message: string, action: string = "", duration: number = 3000) {
+		this._snackBar.open(message, action, {
+			duration: duration,
+		});
 	}
 
 	getTeams(): void {
-		// Make an API call to get teams
-		this.teamManagementService.getTeams().subscribe((data: any[]) => {
-			this.teams = data;
-			this.updatePage();
-		}, error => {
-			console.error('Error fetching teams:', error);
+		this.teamService.teams$.subscribe({
+			next: (data: any[]) => {
+				this.teams = data;
+				this.updatePage();
+			},
+			error: (error) => {
+				console.error('Error fetching teams:', error);
+			}
 		});
 	}
 
@@ -73,7 +100,6 @@ export class TeamManagementComponent implements OnInit {
 		this.disabledNextButton = this.currentPage === this.pages.length;
 		this.disabledLastButton = this.currentPage === this.pages.length;
 	}
-
 
 	get pages(): number[] {
 		return Array.from({ length: Math.ceil(this.teams.length / this.itemsPerPage) }, (_, i) => i + 1);
@@ -118,68 +144,60 @@ export class TeamManagementComponent implements OnInit {
 	}
 
 	submitTeamName(team: any): void {
-		const newTeamName = team.editedTeamName;
-		// Make an API call to change the team name
-		this.teamManagementService.changeTeamName(team.teamId, newTeamName).subscribe(() => {
-			// Update the team name locally after successful change
-			team.teamName = newTeamName;
-			// Disable editing mode
-			team.editing = false;
-		}, (error) => {
-			console.error('Error changing team name:', error);
-		});
+		if (team.teamName !== team.editedTeamName) {
+			const newTeamName = team.editedTeamName;
+			this.teamService.changeTeamName(team.teamId, newTeamName).subscribe({
+				next: () => {
+					this.openSnackBar(`${team.teamName} has been changed to ${newTeamName}.`)
+				},
+				complete: () => {
+					team.editing = false;
+					team.teamName = newTeamName;
+				},
+				error: (response) => {
+					console.error(response);
+					this.openSnackBar(`There was an error editing ${team.teamName}.`, "", 5000);
+				}
+			});
+		}
 	}
-
-
 
 	deleteTeam(teamIdToDelete: number): void {
-		// Make an API call to delete the team
-		this.teamManagementService.deleteTeam(teamIdToDelete).subscribe(() => {
-			// Remove the deleted team from the local list
-			this.teams = this.teams.filter((team) => team.teamId !== teamIdToDelete);
-			this.ngOnInit();
-		}, (error) => {
-			console.error('Error deleting team:', error);
+		let deletedTeam = this.teams.filter((team) => team.teamId === teamIdToDelete)[0];
+		this.teamService.deleteTeam(teamIdToDelete).subscribe({
+			next: () => {
+				this.openSnackBar(`${deletedTeam.teamName} has been deleted.`)
+			},
+			error: (response) => {
+				this.openSnackBar(`There was an error trying to delete ${deletedTeam.teamName}.`, "", 5000)
+			}
 		});
 	}
 
-	ChangeTeamName(): void {
+	changeTeamName(): void {
 		this.onAddTeamSubmit();
 		this.getTeams();
 		this.updatePage();
 	}
 
-
 	onAddTeamSubmit(): void {
-		// Get the current user's username from the service
-		const currentUser: string | null = this.userService.getCurrentUser();
-
-		// Check if currentUser is null or undefined
-		if (currentUser) {
-			// Assign the username to newTeam
-			this.newTeam.username = currentUser;
-
-			// Get the userId only if the currentUser is not null
-			this.userService.getUserIdByUsername(currentUser).subscribe((userId: number) => {
-				// Assign the retrieved userId to newTeam
-				this.newTeam.userId = userId;
-
-				// Call the service to add a new team
-				this.teamManagementService.addTeam(this.newTeam).subscribe(() => {
-					// Clear the form
-					this.newTeam = { teamName: '' };
-					// Refresh the team list after adding a new team
-					this.getTeams();
-					this.updatePage();
-					this.isTeamCreated = true;
-				}, (error) => {
-					console.error('Error adding new team:', error);
-				});
-			}, (error) => {
-				console.error('Failed to retrieve userId for the current user:', error);
+		if (this.currentUser) {
+			this.newTeam.username = this.currentUser.username;
+			this.newTeam.userId = this.currentUser.userId;
+			this.teamService.addTeam(this.newTeam);
+			this.teamService.addTeam(this.newTeam).subscribe({
+				next: (response) => {
+					this._snackBar.open(`${this.newTeam.teamName} created.`, "", {
+						duration: 3000
+					});
+				},
+				error: (response) => {
+					console.error(response);
+					this._snackBar.open(`There was an error creating ${this.newTeam.teamName}`, "", {
+						duration: 5000
+					});
+				}
 			});
-		} else {
-			console.error('No user is currently logged in.');
 		}
 	}
 
@@ -187,8 +205,5 @@ export class TeamManagementComponent implements OnInit {
 		// Method to close the popup and reset the isTeamCreated flag
 		this.isTeamCreated = false;
 	}
-
-
-
 
 }

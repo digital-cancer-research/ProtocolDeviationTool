@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
 })
 export class AdministrationPageComponent {
   tabs: { label: string, link: string }[] = [
-    { label: "User Management", link: "/administration-page" },
+    { label: "User Management", link: "user-management" },
     { label: "Team Management", link: "team-management" },
     { label: "Site Management", link: "site-management" },
     { label: "Audit Trail", link: "audit-trail" }

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AdministrationPageRoutingModule } from './administration-page-routing.module';
 import { AdministrationPageComponent } from './administration-page.component';
 import { SharedModule } from "../../shared/shared.module";
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { SharedModule } from "../../shared/shared.module";
   imports: [
     CommonModule,
     AdministrationPageRoutingModule,
-    SharedModule
+    SharedModule,
+    MatSnackBarModule
 ]
 })
 export class AdministrationPageModule { }
