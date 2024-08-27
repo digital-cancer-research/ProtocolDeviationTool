@@ -2,7 +2,7 @@
 	<div class="container">
 		<div class="add-user-form">
 			<h2>Create Team</h2>
-			<form (ngSubmit)="ChangeTeamName()">
+			<form (ngSubmit)="changeTeamName()">
 				<div class="form-row">
 					<div class="form-group">
 						<label for="teamName">Team Name:</label>
@@ -75,7 +75,7 @@
 
 		<div class="pagination">
 			<!-- First Button -->
-			<span (click)="setPage(1)" [class.page-button-disabled]="disabledFirstButton"></span>
+			<span (click)="setPage(1)" [class.page-button-disabled]="disabledFirstButton"> << </span>
 
 			<!-- Previous Button -->
 			<span (click)="setPage(currentPage - 1)"

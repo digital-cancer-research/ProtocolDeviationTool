@@ -56,3 +56,11 @@ app-root {
   height: 100%;
 }
 body { font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.cdk-overlay-container {
+  position: absolute;
+  left: 50%;
+  right: 50%;
+  top: calc(100% - 64px);
+  white-space: pre-wrap;
+}

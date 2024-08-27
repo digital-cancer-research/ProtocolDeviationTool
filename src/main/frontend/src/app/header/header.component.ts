@@ -36,7 +36,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     );
 
     this.urlPath$.subscribe((url => {
-      this.urlPathString = url;
+      this.urlPathString = url.split('/')[1];
       this.setPageTitle();
     }))
 
@@ -97,20 +97,24 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   setPageTitle() {
     switch (this.urlPathString) {
-      case ('/site'): {
+      case ('site'): {
         this.pageTitle = "SITE PAGE";
         break;
       }
-      case ('/data-upload'): {
+      case ('data-upload'): {
         this.pageTitle = "DATA UPLOAD";
         break;
       }
-      case ('/data-visualisation'): {
+      case ('data-visualisation'): {
         this.pageTitle = "TEAM SUMMARY DASHBOARD";
         break;
       }
-      case ('/data-visualisation-deviation-home'): {
+      case ('data-visualisation-deviation-home'): {
         this.pageTitle = "<TEAM LEVEL> VISUALISATIONS";
+        break;
+      }
+      case ('administration-page'): {
+        this.pageTitle = "ADMINISTRATOR";
         break;
       }
       default: {
