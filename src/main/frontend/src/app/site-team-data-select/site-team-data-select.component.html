@@ -1,16 +1,21 @@
-<div class="site-team-data-select-container">
-  <app-page-button
-    link="/data-upload"
-    icon = "assets/data-upload-icon.svg"
-    alt = "Data upload image" 
-    label ="DATA UPLOAD"
-    disabled="false">
-  </app-page-button>
-  <app-page-button
-    link="/data-visualisation"
-    icon = "assets/data-visualisation-icon.svg"
-    alt = "Data visualisation" 
-    label ="DATA VISUALISATION"
-    disabled="false">
-  </app-page-button>
-</div>
+<ng-template #selfie [ngTemplateOutlet]="selfie"
+    let-isTeamSelected="a" [ngTemplateOutletContext]="{ a: ((currentTeam$ | async) !== null) }">
+    <div class="site-team-data-select-container">
+      <app-page-button
+        link="/data-upload"
+        icon = "assets/data-upload-icon.svg"
+        alt = "Data upload image" 
+        label ="DATA UPLOAD"
+        [disabled]="!isTeamSelected"
+        [ngClass]="{'disabled': !isTeamSelected}">
+      </app-page-button>
+      <app-page-button
+        link="/data-visualisation"
+        icon = "assets/data-visualisation-icon.svg"
+        alt = "Data visualisation" 
+        label ="DATA VISUALISATION"
+        [disabled]="!isTeamSelected"
+        [ngClass]="{'disabled': !isTeamSelected}">>
+      </app-page-button>
+    </div>
+</ng-template>

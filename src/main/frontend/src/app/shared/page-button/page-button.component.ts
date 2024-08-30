@@ -1,5 +1,16 @@
 import { Component, Input } from '@angular/core';
 
+/**
+ * @class PageButtonComponent
+ * This component is used for large buttons. @property disabled = false by default
+ * @example <app-page-button
+        link="/home"
+        icon = "assets/my-icon.svg"
+        alt = "This is a button to take you to the home page" 
+        label ="Home"
+        [disabled]="false">
+      </app-page-button>
+ */
 @Component({
   selector: 'app-page-button',
   templateUrl: './page-button.component.html',
@@ -10,5 +21,5 @@ export class PageButtonComponent {
   @Input() label: string = "";
   @Input() alt: string = "";
   @Input() link: string = "";
-  @Input() disabled: string = "false";
+  @Input() disabled: boolean = false;
 }

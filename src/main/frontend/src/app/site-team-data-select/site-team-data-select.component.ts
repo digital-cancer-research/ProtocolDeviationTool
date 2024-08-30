@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { UserService } from '../core/services/user.service';
 
 @Component({
   selector: 'app-site-team-data-select',
@@ -7,4 +8,6 @@ import { Component, Input } from '@angular/core';
 })
 export class SiteTeamDataSelectComponent {
   @Input() team: any;
+  currentTeam$ = this.userService.currentUserSelectedTeam$;
+  constructor(private userService: UserService) { }
 }
