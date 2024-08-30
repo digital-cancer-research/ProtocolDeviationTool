@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AppComponent } from './app.component';
 import { UserSelectionComponent } from './user/user-selection.component';
@@ -101,7 +102,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         CoreModule,
         SharedModule,
         ChartModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        MatProgressSpinnerModule,
     ],
     providers: [
         UserService,

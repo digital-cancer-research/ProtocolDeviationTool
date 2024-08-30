@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, switchMap, throwError } from 'rxjs';
 import { UserService } from '../core/services/user.service';
+import { Team } from '../core/models/team.model';
 
 /**
  * Service to interact with the visualisation API.
@@ -11,7 +12,7 @@ import { UserService } from '../core/services/user.service';
   providedIn: 'root',
 })
 export class VisualisationService {
-  private apiUrl = '/api/visualisation';
+  private baseUrl = '/api/visualisation';
 
   constructor(
     private http: HttpClient,
@@ -26,7 +27,7 @@ export class VisualisationService {
   */
   getTotalRows(siteId?: string): Observable<number> {
     const params = siteId ? new HttpParams().set('siteId', siteId) : undefined;
-    return this.http.get<number>(`${this.apiUrl}/total-rows`, { params });
+    return this.http.get<number>(`${this.baseUrl}/total-rows`, { params });
   }
 
   /**
@@ -34,9 +35,9 @@ export class VisualisationService {
   * @param teamId - The ID of the team for which to retrieve the PD count.
   * @returns An Observable emitting the total number of PDs for the team.
   */
-  getPDsForTeam(teamId: number) {
+  getPDsForTeam(teamId: number): Observable<number> {
     const params = new HttpParams().set('teamId', teamId);
-    return this.http.get<number>(`${this.apiUrl}/total-pds`, { params });
+    return this.http.get<number>(`${this.baseUrl}/total-pds`, { params });
   }
 
   /**
@@ -44,14 +45,18 @@ export class VisualisationService {
   * Subscribes to the current user's selected team to determine the team ID from UserService.
   * @returns An Observable emitting the total number of PDs for the currently selected team.
   */
-  getPDsForCurrentTeam() {
-    let currentTeamId: number | undefined = undefined;
-    this.userService.currentUserSelectedTeam$.subscribe(
-      (team) => {
-        currentTeamId = team?.teamId;
-      }
-    )
-    const params = currentTeamId ? new HttpParams().set('teamId', currentTeamId) : undefined;
-    return this.http.get<number>(`${this.apiUrl}/total-pds`, { params });
+  getPDsForCurrentTeam(): Observable<number> {
+    return this.userService.currentUserSelectedTeam$.pipe(
+      switchMap((team: Team | null) => {
+        if (team) {
+          return this.getPDsForTeam(team.teamId).pipe(
+            catchError((error) => throwError(() => new Error(error)))
+          );
+        } else {
+          return throwError(() => new Error("No team selected for the current user."));
+        }
+      }),
+      catchError((error) => throwError(() => new Error(error)))
+    );
   }
 }

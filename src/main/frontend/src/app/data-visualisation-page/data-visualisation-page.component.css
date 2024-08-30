@@ -14,7 +14,6 @@ app-visualisation {
   --height: 50%;
   width: min(calc(var(--width)), calc(var(--height)));
   height: min(calc(var(--width)), calc(var(--height)));
-  display: block;
 }
 
 @media only screen and (min-width: 1451px) {

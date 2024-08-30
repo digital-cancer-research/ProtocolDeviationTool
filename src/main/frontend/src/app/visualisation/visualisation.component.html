@@ -1,9 +1,13 @@
-<div class="card">
-    <div class="container">
-        <div class="data" *ngIf="!error">
-            <h4>Total number of PDs at site for team</h4>
-            <p>{{ totalRows }}</p>
+<mat-spinner *ngIf="isLoading"></mat-spinner>
+
+<div *ngIf="!isLoading" class="container">
+    <h4>Total number of PDs at site for team</h4>
+    <div class="card">
+        <div>
+            <div class="data" *ngIf="!error">
+                <p>{{ teamPDs }}</p>
+            </div>
+            <h5 *ngIf="error">{{ errorMessage }}</h5>
         </div>
-        <h4 *ngIf="error">{{ errorMessage }}</h4>
     </div>
 </div>
