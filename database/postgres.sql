@@ -1,3 +1,12 @@
+CREATE sequence files_seq increment by 1 start with 1;
+CREATE sequence file_data_seq increment by 1 start with 1;
+CREATE sequence data_entry_seq increment by 1 start with 1;
+CREATE sequence dvspondes_seq increment by 1 start with 1;
+CREATE sequence user_account_seq increment by 1 start with 9;
+CREATE sequence category_edit_audit_seq increment by 1 start with 1;
+CREATE sequence user_team_seq increment by 1 start with 5;
+CREATE sequence audit_trail_seq increment by 1 start with 1;
+
 CREATE TABLE "role" (
   "role_id" SERIAL PRIMARY KEY,
   "role_name" VARCHAR NOT NULL
@@ -146,15 +155,6 @@ CREATE TABLE "dvterm_colour" (
   "dvterm" VARCHAR UNIQUE,
   "colour" VARCHAR(7)
 );
-
-CREATE sequence files_seq increment by 1 start with 1;
-CREATE sequence file_data_seq increment by 1 start with 1;
-CREATE sequence data_entry_seq increment by 1 start with 1;
-CREATE sequence dvspondes_seq increment by 1 start with 1;
-CREATE sequence user_account_seq increment by 1 start with 9;
-CREATE sequence category_edit_audit_seq increment by 1 start with 1;
-CREATE sequence user_team_seq increment by 1 start with 5;
-CREATE sequence audit_trail_seq increment by 1 start with 1;
 
 ALTER TABLE "team" ADD FOREIGN KEY ("user_id") REFERENCES "user_account" ("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
