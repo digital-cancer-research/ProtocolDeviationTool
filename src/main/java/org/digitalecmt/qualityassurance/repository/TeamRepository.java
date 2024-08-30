@@ -30,14 +30,23 @@ import org.digitalecmt.qualityassurance.dto.TeamWithUsernameDTO;
 import org.digitalecmt.qualityassurance.model.persistence.Team;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TeamRepository
-        extends JpaRepository<Team, Integer> {
+		extends JpaRepository<Team, Integer> {
 
-	@Query("SELECT new org.digitalecmt.qualityassurance.dto.TeamWithUsernameDTO(t.teamId, t.teamName, t.dateCreated, t.userId, u.username) " + 
-		       "FROM Team t " + 	
-		       "JOIN UserAccount u ON t.userId = u.userId")
-		List<TeamWithUsernameDTO> findTeamsWithUsername();
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.TeamWithUsernameDTO(t.teamId, t.teamName, t.dateCreated, t.userId, u.username) "
+			+
+			"FROM Team t " +
+			"JOIN UserAccount u ON t.userId = u.userId")
+	List<TeamWithUsernameDTO> findTeamsWithUsername();
+
+	@Query("SELECT COUNT(d) " +
+			"FROM DataEntry d " +
+			"JOIN TeamStudyAccess tsa ON d.studyId = tsa.studyId " +
+			"WHERE tsa.teamId = :teamId")
+	Long countByTeamId(@Param("teamId") Integer teamId);
+
 }

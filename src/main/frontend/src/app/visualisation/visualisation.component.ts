@@ -1,8 +1,5 @@
-import { Component, OnInit, ElementRef, AfterViewInit, HostListener } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { VisualisationService } from './visualisation.service';
-import { ShareSiteDataService } from '../site-select/share-site-data.service';
-import { DimensionService } from '../services/dimension-service.service';
-import * as d3 from 'd3';
 
 @Component({
 	selector: 'app-visualisation',
@@ -10,32 +7,39 @@ import * as d3 from 'd3';
 	styleUrls: ['./visualisation.component.css']
 })
 export class VisualisationComponent implements OnInit {
-	totalRows!: number;
-	selectedSiteId?: string;
+	teamPDs!: number;
+	isLoading: boolean = true;
 	error: boolean = false;
 	errorMessage: string = "Failed to load data for total count";
 
 	constructor(
 		private visualisationService: VisualisationService,
-		private shareSiteDataService: ShareSiteDataService
 	) { }
 
 	ngOnInit() {
-		this.shareSiteDataService.selectedSiteId$.subscribe((siteId: string | undefined) => {
-			this.selectedSiteId = siteId;
-			this.fetchTotalRows();
-		});
-	}
-
-	fetchTotalRows() {
-		this.visualisationService.getTotalRows(this.selectedSiteId).subscribe(
-			(data) => {
-				this.totalRows = data;
+		this.visualisationService.getPDsForCurrentTeam().subscribe({
+			next: (teamPDs) => {
+				this.isLoading = true;
+				setTimeout(() => {
+						if (teamPDs) {
+							this.teamPDs = teamPDs;
+							this.isLoading = false;
+						}
+						else {
+							this.teamPDs = 0;
+							this.isLoading = false;
+						}
+					}, 1000);
 			},
-			(error) => {
-				console.error('Error fetching total rows: ', error);
-				this.error = true;
+			error: (error) => {
+				setTimeout(
+					() => {
+						console.error("There was an error fetching the number of PDs");
+						console.error(error);
+						this.error = true;
+						this.isLoading = false;
+					}, 1000);
 			}
-		);
+		})
 	}
 }
