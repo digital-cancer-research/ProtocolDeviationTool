@@ -22,7 +22,6 @@ button {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease-in-out;
     text-align: center;
-    color: black;
     font-weight: bold;
 }
 
@@ -38,6 +37,7 @@ p {
     margin: 0;
     font-size: 1em;
     text-align: center;
+    color: black;
 }
 
 /* Style for Medium Screen */

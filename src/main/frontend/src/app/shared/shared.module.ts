@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 
 import { MatButton } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import {MatIconModule} from '@angular/material/icon';
 
 import { PageButtonComponent } from './page-button/page-button.component';
 import { UploadComponent } from './upload/upload.component';
@@ -21,9 +22,10 @@ import { FileListService } from './file-list/file-list.service';
   ],
   imports: [
     CommonModule,
+    RouterModule,
     MatButton,
     MatCardModule,
-    RouterModule
+    MatIconModule
   ],
   exports: [
     PageButtonComponent,
