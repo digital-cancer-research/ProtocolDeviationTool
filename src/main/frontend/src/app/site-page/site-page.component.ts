@@ -9,8 +9,6 @@ import { Subscription } from 'rxjs';
 	styleUrls: ['./site-page.component.css']
 })
 export class SitePageComponent implements OnInit, OnDestroy {
-	selectedTeam: Team | null = null;
-	selectedTeamSubscription!: Subscription;
 	userTeams: Team[] = [];
 	userTeamsSubscription!: Subscription;
 
@@ -19,16 +17,12 @@ export class SitePageComponent implements OnInit, OnDestroy {
 	  ) { }
 
 	ngOnInit(): void {
-		this.selectedTeamSubscription = this.userService.currentUserSelectedTeam$.subscribe(team => {
-			this.selectedTeam = team;
-		})
 		this.userTeamsSubscription = this.userService.getCurrentUserTeams().subscribe(teams => {
 			this.userTeams = teams;
 		}); 
 	}
 
 	ngOnDestroy(): void {
-		if (this.selectedTeamSubscription) this.selectedTeamSubscription.unsubscribe();
 		if (this.userTeamsSubscription) this.userTeamsSubscription.unsubscribe();
 	}
 }

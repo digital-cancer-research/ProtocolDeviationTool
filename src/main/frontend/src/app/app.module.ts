@@ -95,7 +95,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         CategoryBarGraphSegmentedSiteComponent
     ],
     bootstrap: [AppComponent],
-    imports: [BrowserModule,
+    imports: [
+        BrowserModule,
         AppRoutingModule,
         FormsModule,
         CommonModule,

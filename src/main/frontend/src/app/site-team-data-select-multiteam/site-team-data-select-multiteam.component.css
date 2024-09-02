@@ -141,7 +141,3 @@ button.confirm:active {
   transform: scale(0.98);
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
 }
-
-p.confirmationMessage {
-  color: green;
-}

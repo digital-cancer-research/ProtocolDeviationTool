@@ -1,0 +1,24 @@
+<mat-radio-group
+  class="radio-group"
+  [(ngModel)]="selectedItemStringify">
+
+  <mat-form-field class="search-field" *ngIf="search">
+    <mat-label> {{ searchPlaceholder }} </mat-label>
+    <input matInput type="text" [(ngModel)]="searchTerm">
+    @if (searchTerm) {
+        <button mat-icon-button matSuffix>
+            <mat-icon (click)="searchTerm=''">close</mat-icon>
+        </button>
+    }
+  </mat-form-field>
+
+    @for (item of getFilteredItems(); track item) {
+        <mat-radio-button class="radio-button" name="item" [value]="toString(item)">
+            {{ getFieldValue(item) }}
+        </mat-radio-button>
+    }
+</mat-radio-group>
+<button mat-raised-button [disabled]="selectedItemStringify === 'null'" (click)="onConfirm()">Confirm</button>
+<p *ngIf="isConfirmed" class="confirmationMessage">
+    {{ selectedItem ? (getFieldValue(selectedItem)) + " selected" : ""}}
+</p>
