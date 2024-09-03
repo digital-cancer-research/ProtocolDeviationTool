@@ -10,6 +10,7 @@ export class AdministrationPageComponent {
     { label: "User Management", link: "user-management" },
     { label: "Team Management", link: "team-management" },
     { label: "Site Management", link: "site-management" },
+    { label: "Study Management", link: "study-management" },
     { label: "Audit Trail", link: "audit-trail" }
   ];
 }

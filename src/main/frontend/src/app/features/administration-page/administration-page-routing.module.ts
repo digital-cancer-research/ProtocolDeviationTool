@@ -5,6 +5,7 @@ import { UserManagementComponent } from './user-management/user-management.compo
 import { TeamManagementComponent } from './team-management/team-management.component';
 import { SiteManagementComponent } from './site-management/site-management.component';
 import { AuditTrailManagementComponent } from './audit-trail-management/audit-trail-management.component'; 
+import { StudyManagementComponent } from './study-management/study-management.component';
 
 const routes: Routes = [{
   path: '',
@@ -13,6 +14,7 @@ const routes: Routes = [{
     { path: 'user-management', component: UserManagementComponent },
     { path: 'team-management', component: TeamManagementComponent },
     { path: 'site-management', component: SiteManagementComponent },
+    { path: 'study-management', component: StudyManagementComponent },
     { path: 'audit-trail', component: AuditTrailManagementComponent },
   ]
 }];

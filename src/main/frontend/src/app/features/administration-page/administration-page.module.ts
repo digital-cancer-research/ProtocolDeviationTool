@@ -6,10 +6,9 @@ import { AdministrationPageComponent } from './administration-page.component';
 import { SharedModule } from "../../shared/shared.module";
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 
-
 @NgModule({
   declarations: [
-    AdministrationPageComponent
+    AdministrationPageComponent,
   ],
   imports: [
     CommonModule,
