@@ -1,7 +1,8 @@
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Team } from '../models/team.model';
+import { TeamWithStudies } from '../models/team-with-studies.model';
 
 /**
  * Service for managing teams.
@@ -16,6 +17,7 @@ export class TeamService {
   private teamsSubject: BehaviorSubject<Team[]> = new BehaviorSubject<Team[]>([]);
   public teams$: Observable<Team[]> = this.teamsSubject.asObservable();
   private readonly baseUrl = 'api/users';
+  private readonly apiUrl = 'api/teams';
 
   constructor(private http: HttpClient) {
     this.getTeams();
@@ -23,11 +25,12 @@ export class TeamService {
 
   /**
    * Retrieves a list of teams.
-   * @returns An observable of the array of teams.
    */
   private getTeams(): void {
     this.http.get<Team[]>(`${this.baseUrl}/get-teams-with-username`)
-      .subscribe(teams => this.teamsSubject.next(teams));
+      .subscribe(teams => {
+        console.log(teams);
+        this.teamsSubject.next(teams)});
   }
 
   /**
@@ -71,5 +74,26 @@ export class TeamService {
         tap(() => {
           this.getTeams();
         }));
+  }
+
+  /**
+  * Retrieves team study access information for the given team IDs.
+  * 
+  * @param teamIds - Array of team IDs to fetch study access information for.
+  * @returns An Observable of an array of TeamWithStudies objects.
+  */
+  getTeamStudyAccess(teamIds: number[]): Observable<TeamWithStudies[]> {
+    let params = new HttpParams();
+    teamIds.forEach(id => params = params.append('teamIds', id.toString()));
+    return this.http.get<TeamWithStudies[]>(`${this.apiUrl}/team-study-access`, { params });
+  }
+
+  // updateTeamStudyAccess(teamWithStudiesArray: TeamWithStudies[]) {
+  //   console.log("Posting");
+  //   return this.http.get<void>(`${this.apiUrl}/team-study-access`, teamWithStudiesArray);
+  // }
+
+  updateTeamStudyAccess(teamWithStudiesArray: any): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/team-study-access`, teamWithStudiesArray);
   }
 }

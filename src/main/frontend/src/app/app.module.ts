@@ -10,7 +10,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AppComponent } from './app.component';
 import { UserSelectionComponent } from './user/user-selection.component';
-import { UserManagementComponent } from './features/administration-page/user-management/user-management.component';
 import { HomeComponent } from './home/home.component';
 import { StudyListComponent } from './study-list/study-list.component';
 import { CategoryTableComponent } from './category-table/category-table.component';
@@ -20,15 +19,11 @@ import { CategoryPieGraphComponent } from './category-pie-graph/category-pie-gra
 import { CategoryBarGraphSegmentedComponent } from './category-bar-graph-segmented/category-bar-graph-segmented.component';
 import { SiteSelectComponent } from './site-select/site-select.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { AdministratorPageComponent } from './administrator-page/administrator-page.component';
 import { DataVisualisationPageComponent } from './data-visualisation-page/data-visualisation-page.component';
-import { TeamManagementComponent } from './features/administration-page/team-management/team-management.component';
-import { SiteManagementComponent } from './features/administration-page/site-management/site-management.component';
 import { DataVisualisationDeviationHomePageComponent } from './data-visualisation-deviation-home-page/data-visualisation-deviation-home-page.component';
 import { DataVisualisationDeviationsPageComponent } from './data-visualisation-deviations-page/data-visualisation-deviations-page.component';
 import { DataVisualisationDeviationsOverTimePageComponent } from './data-visualisation-deviations-over-time-page/data-visualisation-deviations-over-time-page.component';
 import { SiteStudyLevelSelectComponent } from './site-study-level-select/site-study-level-select.component';
-import { AuditTrailManagementComponent } from './features/administration-page/audit-trail-management/audit-trail-management.component';
 import { CategoryBarGraphSegmentedSiteComponent } from './category-bar-graph-segmented-site/category-bar-graph-segmented-site.component';
 import { BorderComponent } from './border/border.component';
 import { HeaderComponent } from './header/header.component';
@@ -39,7 +34,6 @@ import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.
 
 import { UserService } from './user/user.service';
 import { AuthService } from './user/auth.service';
-import { UserManagementService } from './features/administration-page/user-management/user-management.service';
 import { StudyListService } from './study-list/study-list.service';
 import { VisualisationService } from './visualisation/visualisation.service';
 import { CategoryBarGraphService } from './category-bar-graph/category-bar-graph.service';
@@ -47,10 +41,7 @@ import { CategoryPieGraphService } from './category-pie-graph/category-pie-graph
 import { CategoryBarGraphSegmentedService } from './category-bar-graph-segmented/category-bar-graph-segmented.service';
 import { SiteSelectService } from './site-select/site-select.service';
 import { ShareSiteDataService } from './site-select/share-site-data.service';
-import { TeamManagementService } from './features/administration-page/team-management/team-management.service';
-import { SiteManagementService } from './features/administration-page/site-management/site-management.service';
 import { SiteStudyLevelSelectService } from './site-study-level-select/site-study-level-select.service';
-import { AuditTrailManagementService } from './features/administration-page/audit-trail-management/audit-trail-management.service';
 import { CategoryBarGraphSegmentedSiteService } from './category-bar-graph-segmented-site/category-bar-graph-segmented-site.service';
 import { ChartModule } from 'primeng/chart';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -61,7 +52,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     declarations: [
         AppComponent,
         UserSelectionComponent,
-        UserManagementComponent,
         HomeComponent,
         StudyListComponent,
         CategoryTableComponent,
@@ -76,16 +66,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         SiteSponsSelectComponent,
         NavigationRibbonComponent,
         SiteSponsorPageComponent,
-        AdministratorPageComponent,
         DataVisualisationPageComponent,
-        TeamManagementComponent,
         CategoryBarGraphSegmentedComponent,
-        SiteManagementComponent,
         DataVisualisationDeviationHomePageComponent,
         DataVisualisationDeviationsPageComponent,
         DataVisualisationDeviationsOverTimePageComponent,
         SiteStudyLevelSelectComponent,
-        AuditTrailManagementComponent,
         CategoryBarGraphSegmentedSiteComponent
     ],
     bootstrap: [AppComponent],
@@ -103,18 +89,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     providers: [
         UserService,
         AuthService,
-        UserManagementService,
         StudyListService,
         VisualisationService,
         CategoryBarGraphService,
         SiteSelectService,
         ShareSiteDataService,
         CategoryPieGraphService,
-        TeamManagementService,
         CategoryBarGraphSegmentedService,
-        SiteManagementService,
         SiteStudyLevelSelectService,
-        AuditTrailManagementService,
         CategoryBarGraphSegmentedSiteService,
         provideHttpClient(withInterceptorsFromDi()),
         provideAnimationsAsync(),

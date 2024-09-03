@@ -1,4 +1,3 @@
-
 /**
  * @interface
  * Represents a team in the application
