@@ -26,7 +26,6 @@ export class SiteStudyLevelSelectComponent implements OnInit {
 		this.selectedLevel = this.siteStudyLevelSelectService.getSelectedLevel();
 		this.selectedStudy = this.siteStudyLevelSelectService.getSelectedStudy();
 		this.elementHeight = this.el.nativeElement.offsetHeight;
-		console.log("Search term: " + this.searchTerm);
 	}
 
 	loadStudyIds(): void {

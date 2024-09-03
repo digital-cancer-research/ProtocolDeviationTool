@@ -5,6 +5,13 @@
     align-items: flex-start;
 }
 
+.container {
+    max-height: 60%;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+}
+
 .radio-button {
     margin: 5px;
 }

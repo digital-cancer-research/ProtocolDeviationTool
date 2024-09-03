@@ -19,11 +19,11 @@ import { SingleSelectComponent } from './single-select/single-select.component';
 
 @NgModule({
   declarations: [
+    FileListComponent,
     PageButtonComponent,
+    SingleSelectComponent,
     TabComponent,
     UploadComponent,
-    FileListComponent,
-    SingleSelectComponent
   ],
   imports: [
     CommonModule,
@@ -36,11 +36,11 @@ import { SingleSelectComponent } from './single-select/single-select.component';
     MatRadioModule
   ],
   exports: [
+    FileListComponent,
     PageButtonComponent,
+    SingleSelectComponent,
     TabComponent,
     UploadComponent,
-    FileListComponent,
-    SingleSelectComponent
   ],
   providers: [
     UploadService,

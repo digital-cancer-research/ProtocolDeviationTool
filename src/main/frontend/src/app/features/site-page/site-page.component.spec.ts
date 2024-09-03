@@ -6,10 +6,12 @@ describe('SitePageComponent', () => {
   let component: SitePageComponent;
   let fixture: ComponentFixture<SitePageComponent>;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       declarations: [SitePageComponent]
-    });
+    })
+    .compileComponents();
+
     fixture = TestBed.createComponent(SitePageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

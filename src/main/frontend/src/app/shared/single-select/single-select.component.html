@@ -11,12 +11,13 @@
         </button>
     }
   </mat-form-field>
-
+  <div class="container">
     @for (item of getFilteredItems(); track item) {
         <mat-radio-button class="radio-button" name="item" [value]="toString(item)">
             {{ getFieldValue(item) }}
         </mat-radio-button>
     }
+    </div>
 </mat-radio-group>
 <button mat-raised-button [disabled]="selectedItemStringify === 'null'" (click)="onConfirm()">Confirm</button>
 <p *ngIf="isConfirmed" class="confirmationMessage">

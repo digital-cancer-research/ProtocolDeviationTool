@@ -1,5 +1,8 @@
-<button mat-flat-button [routerLink]="link"
+<button mat-fab extended [routerLink]="link"
     [disabled]="disabled">
-    <img [src]="icon" [alt]="alt">
-    <p>{{ label }}</p>
+    <img [src]="icon" [alt]="alt" *ngIf="icon">
+    <mat-icon *ngIf="MatIcon"> {{ MatIcon }} </mat-icon>
+    <p>
+        {{ label }}
+    </p>
 </button>

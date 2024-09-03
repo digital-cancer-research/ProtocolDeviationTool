@@ -1,0 +1,8 @@
+<app-single-select
+  [items]="teams"
+  keyField="teamName"
+  [search]="true"
+  searchPlaceholder="Search teams"
+  [defaultValue]="selectedTeam"
+  (confirmedItem)="setTeam($event)">
+</app-single-select>

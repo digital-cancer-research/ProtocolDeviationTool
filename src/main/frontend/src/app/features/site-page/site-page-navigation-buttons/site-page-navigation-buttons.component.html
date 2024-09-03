@@ -1,6 +1,5 @@
 <ng-template #selfie [ngTemplateOutlet]="selfie"
     let-isTeamSelected="a" [ngTemplateOutletContext]="{ a: ((currentTeam$ | async) !== null) }">
-    <div class="site-team-data-select-container">
       <app-page-button
         link="/data-upload"
         icon = "assets/data-upload-icon.svg"
@@ -17,5 +16,4 @@
         [disabled]="!isTeamSelected"
         [ngClass]="{'disabled': !isTeamSelected}">>
       </app-page-button>
-    </div>
 </ng-template>

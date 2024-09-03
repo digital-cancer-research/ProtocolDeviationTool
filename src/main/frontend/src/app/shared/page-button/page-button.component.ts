@@ -22,4 +22,5 @@ export class PageButtonComponent {
   @Input() alt: string = "";
   @Input() link: string = "";
   @Input() disabled: boolean = false;
+  @Input() MatIcon: string = "";
 }
