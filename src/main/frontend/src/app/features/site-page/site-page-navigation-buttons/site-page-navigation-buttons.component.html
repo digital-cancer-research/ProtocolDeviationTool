@@ -1,0 +1,19 @@
+<ng-template #selfie [ngTemplateOutlet]="selfie"
+    let-isTeamSelected="a" [ngTemplateOutletContext]="{ a: ((currentTeam$ | async) !== null) }">
+      <app-page-button
+        link="/data-upload"
+        icon = "assets/data-upload-icon.svg"
+        alt = "Data upload image" 
+        label ="DATA UPLOAD"
+        [disabled]="!isTeamSelected"
+        [ngClass]="{'disabled': !isTeamSelected}">
+      </app-page-button>
+      <app-page-button
+        link="/data-visualisation"
+        icon = "assets/data-visualisation-icon.svg"
+        alt = "Data visualisation" 
+        label ="DATA VISUALISATION"
+        [disabled]="!isTeamSelected"
+        [ngClass]="{'disabled': !isTeamSelected}">>
+      </app-page-button>
+</ng-template>

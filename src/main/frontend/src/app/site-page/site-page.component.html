@@ -1,8 +1,0 @@
-<main>
-  <ng-container *ngIf="userTeams && userTeams.length <= 1">
-    <app-site-team-data-select [team]="userTeams[0]"></app-site-team-data-select>
-  </ng-container>
-  <ng-container *ngIf="userTeams && userTeams.length > 1">
-    <app-site-team-data-select-multiteam [teams]="userTeams"></app-site-team-data-select-multiteam>
-  </ng-container>
-</main>

@@ -21,10 +21,7 @@ import { CategoryBarGraphSegmentedComponent } from './category-bar-graph-segment
 import { SiteSelectComponent } from './site-select/site-select.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AdministratorPageComponent } from './administrator-page/administrator-page.component';
-import { SitePageComponent } from './site-page/site-page.component';
-import { SiteTeamDataSelectComponent } from './site-team-data-select/site-team-data-select.component';
 import { DataVisualisationPageComponent } from './data-visualisation-page/data-visualisation-page.component';
-import { SiteTeamDataSelectMultiteamComponent } from './site-team-data-select-multiteam/site-team-data-select-multiteam.component';
 import { TeamManagementComponent } from './features/administration-page/team-management/team-management.component';
 import { SiteManagementComponent } from './features/administration-page/site-management/site-management.component';
 import { DataVisualisationDeviationHomePageComponent } from './data-visualisation-deviation-home-page/data-visualisation-deviation-home-page.component';
@@ -80,10 +77,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         NavigationRibbonComponent,
         SiteSponsorPageComponent,
         AdministratorPageComponent,
-        SitePageComponent,
-        SiteTeamDataSelectComponent,
         DataVisualisationPageComponent,
-        SiteTeamDataSelectMultiteamComponent,
         TeamManagementComponent,
         CategoryBarGraphSegmentedComponent,
         SiteManagementComponent,
@@ -95,7 +89,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         CategoryBarGraphSegmentedSiteComponent
     ],
     bootstrap: [AppComponent],
-    imports: [BrowserModule,
+    imports: [
+        BrowserModule,
         AppRoutingModule,
         FormsModule,
         CommonModule,

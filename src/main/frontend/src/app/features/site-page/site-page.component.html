@@ -1,0 +1,6 @@
+<main>
+    <ng-container *ngIf="userTeams && userTeams.length > 1">
+        <app-site-page-team-select [teams]="userTeams"></app-site-page-team-select>
+    </ng-container>
+    <app-site-page-navigation-buttons></app-site-page-navigation-buttons>
+</main>

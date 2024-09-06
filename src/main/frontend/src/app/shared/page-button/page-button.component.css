@@ -3,7 +3,6 @@ img {
     max-width: 180px;
     height: auto;
     border-radius: 8px;
-    margin-bottom: 1em;
     transition: transform 0.3s ease-in-out;
 }
 
@@ -17,13 +16,15 @@ button {
     background-color: #009cee;
     padding: 1.5em 3em;
     cursor: pointer;
-    margin-bottom: 2em;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease-in-out;
     text-align: center;
-    color: black;
     font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 button:hover {
@@ -32,12 +33,6 @@ button:hover {
 
 button:hover img {
     transform: scale(1.1);
-}
-
-p {
-    margin: 0;
-    font-size: 1em;
-    text-align: center;
 }
 
 /* Style for Medium Screen */
