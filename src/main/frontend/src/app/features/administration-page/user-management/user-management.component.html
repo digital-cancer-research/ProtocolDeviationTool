@@ -1,116 +1,58 @@
-<div class="container">
-	<div class="add-user-form">
-		<h2>Create User and Assign Team</h2>
-		<form (ngSubmit)="onAddUserSubmit()">
-			<div class="form-row">
-				<div class="form-group">
-					<label for="email">Email Address (Username):</label>
-					<input type="text" id="email" name="email" [(ngModel)]="newUser.username" required
-						pattern="^(?!.*\.{2})[A-Za-z0-9._%+-]+(?:[.'][A-Za-z0-9._%+-]+)*@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$"
-						#email="ngModel">
-				</div>
-				<div class="form-group">
-					<label for="role">Role:</label>
-					<select id="role" name="role" [(ngModel)]="newUser.roleId" required>
-						<option *ngFor="let role of roles" [ngValue]="role.roleId">{{ role.roleName }}</option>
-					</select>
-				</div>
-				<div class="form-group">
-					<label for="teams">Study Teams:</label>
-					<div class="team-search-container">
-						<input type="text" id="teamSearch" name="teamSearch" [(ngModel)]="teamSearchTerm"
-							(ngModelChange)="filterTeams()" placeholder="Search teams...">
-						<div class="team-form-checkboxes">
-							<div *ngFor="let team of filteredTeams">
-								<input type="checkbox" id="team-{{team.teamId}}" name="teams"
-									[checked]="newUser.teamId.includes(team.teamId)"
-									(change)="onTeamSelectionChange($event, team.teamId)">
-								<label for="team-{{team.teamId}}">{{ team.teamName }}</label>
-							</div>
-						</div>
-					</div>
-				</div>
-				<button type="submit" [disabled]="email.invalid" class="add-user-button">ADD USER</button>
-				<div class="error-message">
-					<div *ngIf="formNotSubmitted && email.invalid && (email.dirty || email.touched)">
-						<div *ngIf="email.hasError('required')">ERROR: USERNAME IS REQUIRED.</div>
-						<div *ngIf="email.hasError('pattern')">ERROR: INVALID EMAIL ADDRESS.</div>
-					</div>
-				</div>
-			</div>
-		</form>
-	</div>
-
-
-
-
-	<div class="user-management">
-		<table>
-			<thead>
-				<tr>
-					<th (click)="sortTable('username')">Username <span
-							*ngIf="sortedColumn === 'username' && sortDirection === 'asc'">&#x25B2;</span><span
-							*ngIf="sortedColumn === 'username' && sortDirection === 'desc'">&#x25BC;</span></th>
-					<th (click)="sortTable('dateCreated')">Creation Date <span
-							*ngIf="sortedColumn === 'dateCreated' && sortDirection === 'asc'">&#x25B2;</span><span
-							*ngIf="sortedColumn === 'dateCreated' && sortDirection === 'desc'">&#x25BC;</span></th>
-					<th (click)="sortTable('roleName')">Role <span
-							*ngIf="sortedColumn === 'roleName' && sortDirection === 'asc'">&#x25B2;</span><span
-							*ngIf="sortedColumn === 'roleName' && sortDirection === 'desc'">&#x25BC;</span></th>
-					<th>Study Teams</th>
-					<th>Action</th>
-				</tr>
-			</thead>
-
-			<tbody>
-				<tr *ngFor="let user of pagedUsers">
-					<td>{{ user.username }}</td>
-					<td>{{ user.dateCreated }}</td>
-					<td>
-						<select [(ngModel)]="user.roleName">
-							<option *ngFor="let role of roles" [ngValue]="role.roleName"
-								[selected]="role.roleName === user.roleName">{{ role.roleName }}</option>
-						</select>
-					</td>
-					<td>
-						<div class="team-checkboxes">
-							<input type="text" id="teamSearch{{user.userId}}" name="teamSearch{{user.userId}}"
-								[(ngModel)]="userTeamSearchTerms[user.userId]"
-								(ngModelChange)="filterUserTeams(user.userId)" placeholder="Search teams...">
-							<div>
-								<div *ngFor="let team of filteredUserTeams[user.userId]" class="team-checkbox-list">
-									<input type="checkbox" [checked]="isTeamSelected(user.userId, team.teamId)"
-										(change)="toggleTeamSelection(user.userId, team.teamId)">
-									{{ team.teamName }}
-								</div>
-							</div>
-						</div>
-					</td>
-					<td>
-						<button
-							(click)="updateUser(user.userId, user.roleName, selectedUserTeams[user.userId])">CONFIRM</button>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-
-		<div class="pagination">
-			<!-- First Button -->
-			<span (click)="setPage(1)" [class.page-button-disabled]="disabledFirstButton"></span>
-
-			<!-- Previous Button -->
-			<span (click)="setPage(currentPage - 1)"
-				[class.page-button-disabled]="disabledPreviousButton">Previous</span>
-
-			<!-- Page Numbers -->
-			<span *ngFor="let page of pages" (click)="setPage(page)"
-				[class.page-button-active]="currentPage === page">{{ page }}</span>
-
-			<!-- Next Button -->
-			<span (click)="setPage(currentPage + 1)" [class.page-button-disabled]="disabledNextButton">Next</span>
-
-			<!-- Last Button -->
-			<span (click)="setPage(pages.length)" [class.page-button-disabled]="disabledLastButton">>></span>
-		</div>
-	</div>
-</div>
+<mat-card appearance="outlined">
+    <mat-card-content>
+            <table mat-table [dataSource]="dataSource">
+                <ng-container matColumnDef="username">
+                    <th mat-header-cell *matHeaderCellDef> Username </th>
+                    <td mat-cell *matCellDef="let user"> {{user.username}} </td>
+                </ng-container>
+                
+                <ng-container matColumnDef="date">
+                    <th mat-header-cell *matHeaderCellDef> Date Created </th>
+                    <td mat-cell *matCellDef="let user"> {{user.dateCreated}} </td>
+                </ng-container>
+                
+                <ng-container matColumnDef="role">
+                    <th mat-header-cell *matHeaderCellDef> Role </th>
+                    <td mat-cell *matCellDef="let user"> 
+                        <mat-select [(ngModel)]="user.roleName">
+                            <mat-option *ngFor="let roleName of roleNames$ | async"
+                            [value]="roleName"
+                            (onSelectionChange)="changeRole(roleName, $event, user)"                            >
+                                {{roleName}}
+                            </mat-option>
+                        </mat-select>
+                    </td>
+                </ng-container>
+                
+                <ng-container matColumnDef="teams">
+                    <th mat-header-cell *matHeaderCellDef> Teams </th>
+                    <td mat-cell *matCellDef="let user">
+                        <div class=checkbox>
+                            <mat-checkbox *ngFor="let team of teams$ | async"
+                                [checked]="isUserPartOfTeam(team.teamName, user)"
+                                (change)="changeTeam(team, $event, user)">
+                                {{ team.teamName }}
+                            </mat-checkbox>
+                        </div>
+                    </td>
+                </ng-container>
+                
+                <ng-container matColumnDef="confirm">
+                    <th mat-header-cell *matHeaderCellDef> </th>
+                    <td mat-cell *matCellDef="let user"> 
+                        <button [disabled]="!user.isEdited" mat-button>
+                            Confirm
+                        </button>
+                    </td>
+                    </ng-container>
+                
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        
+            <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+                showFirstLastButtons
+                aria-label="Select page of users">
+            </mat-paginator>
+    </mat-card-content>
+</mat-card>
