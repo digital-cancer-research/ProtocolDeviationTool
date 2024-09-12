@@ -1,4 +1,5 @@
 import { Input, Output, EventEmitter, Component } from "@angular/core";
+import { MatFormFieldAppearance } from "@angular/material/form-field";
 
 @Component({
     selector: 'app-select',
@@ -32,6 +33,8 @@ export class Select<T> {
      * @type {string}
      */
     @Input() searchPlaceholder: string = "";
+
+    @Input() appearance: MatFormFieldAppearance = "fill";
 
     protected searchTerm: string = "";
 

@@ -1,12 +1,8 @@
-import { Component, OnInit, OnDestroy, ViewChild, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UserManagementService } from './user-management.service';
 import { map, Observable, of, Subscription } from 'rxjs';
 import { UserManagementData } from './models/user-management-data.model';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
 import { Team } from 'src/app/core/models/team.model';
-import { MatOptionSelectionChange } from '@angular/material/core';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 
 @Component({
 	selector: 'app-user-management',
@@ -28,17 +24,19 @@ export class UserManagementComponent implements OnInit {
 		})
 	);
 	teams: Team[] = [];
-
-	private _snackBar = inject(MatSnackBar);
-	snackBarConfig = {
-		duration: 5000
-	} as MatSnackBarConfig
+	teamsSubscription!: Subscription;
 
 	constructor(
 		private userManagementService: UserManagementService
 	) { }
 
 	ngOnInit(): void {
-		this.teams$.subscribe(((teams) => this.teams = teams));
+		this.teamsSubscription = this.teams$.subscribe(((teams) => this.teams = teams));
+	}
+
+	ngOnDestroy(): void {
+		if (this.teamsSubscription) {
+			this.teamsSubscription.unsubscribe();
+		}
 	}
 }

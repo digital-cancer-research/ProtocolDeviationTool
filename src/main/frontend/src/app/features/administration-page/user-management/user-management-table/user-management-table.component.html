@@ -1,8 +1,8 @@
 <mat-card appearance="outlined">
     <mat-card-content>
-            <table mat-table [dataSource]="dataSource">
+            <table mat-table [dataSource]="dataSource" matSort>
                 <ng-container matColumnDef="username">
-                    <th mat-header-cell *matHeaderCellDef> Username </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Username </th>
                     <td mat-cell *matCellDef="let user"> {{user.username}} </td>
                 </ng-container>
                 
@@ -28,12 +28,12 @@
                     <th mat-header-cell *matHeaderCellDef> Teams </th>
                     <td mat-cell *matCellDef="let user">
                         <div class=checkbox>
-
                             <app-multi-select [items]="teams"
                                 [keyField]="'teamName'" [search]="true"
                                 [searchPlaceholder]="'Search teams'"
                                 (confirmedItems)="setTeams($event, user)"
-                                [defaultValues]="user.teams"></app-multi-select>
+                                [defaultValues]="user.teams">
+                            </app-multi-select>
                         </div>
                     </td>
                 </ng-container>

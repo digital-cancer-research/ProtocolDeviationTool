@@ -10,7 +10,6 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 export class MultiSelectComponent<T> extends Select<T> implements OnInit {
   selectedItems: T[] = [];
   @Input() defaultValues: T[] = [];
-
   @Output() confirmedItems: EventEmitter<T[]> = new EventEmitter();
 
   ngOnInit(): void {

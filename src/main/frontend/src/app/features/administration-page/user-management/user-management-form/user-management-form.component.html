@@ -1,0 +1,30 @@
+<mat-card appearance="outlined">
+    <mat-card-header>
+        Create user
+    </mat-card-header>
+    <mat-card-content>
+        <mat-form-field class="email" appearance="outline">
+            <mat-label>Enter your email</mat-label>
+            <input matInput placeholder=" john.smith@example.com" [formControl]="email" (blur)="updateErrorMessage()"
+                required />
+            @if (email.invalid) {
+            <mat-error>{{ emailErrorMessage() }}</mat-error>
+            }
+        </mat-form-field>
+        <mat-form-field class="role" appearance="outline">
+            <mat-label>Role</mat-label>
+            <mat-select [formControl]="role" (closed)="updateRoleErrorMessage()" required>
+                <mat-option *ngFor="let roleName of roleNames$ | async" [value]="roleName">
+                    {{ roleName }}
+                </mat-option>
+            </mat-select>
+            <mat-error>{{ roleErrorMessage() }}</mat-error>
+        </mat-form-field>
+        <app-multi-select class="teams" [items]="teams" [keyField]="'teamName'" 
+            [search]="true" [searchPlaceholder]="'Search teams'"
+            (confirmedItems)="setTeams(teams)"
+            appearance="outline">
+        </app-multi-select>
+        <button mat-raised-button [disabled]="email.errors || role.errors">Create</button>
+    </mat-card-content>
+</mat-card>

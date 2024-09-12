@@ -1,12 +1,13 @@
-import { Component, OnInit, OnDestroy, ViewChild, inject, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, inject, Input } from '@angular/core';
 import { UserManagementService } from '../user-management.service';
-import { map, Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { UserManagementData } from '../models/user-management-data.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { Team } from 'src/app/core/models/team.model';
 import { MatOptionSelectionChange } from '@angular/material/core';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-user-management-table',
@@ -16,11 +17,11 @@ import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 export class UserManagementTableComponent implements OnInit {
   @Input() roleNames$: Observable<string[]> = new Observable();
   @Input() data$: Observable<UserManagementData[]> = new Observable();
-  @Input() teams$: Observable<Team[]> = new Observable();
-  teams: Team[] = [];
+  @Input() teams: Team[] = [];
   dataSource = new MatTableDataSource<UserManagementData>();
   displayedColumns: string[] = ['username', 'date', 'role', 'teams', 'confirm'];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   private _snackBar = inject(MatSnackBar);
   snackBarConfig = {
@@ -35,9 +36,8 @@ export class UserManagementTableComponent implements OnInit {
     this.data$.subscribe((data) => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
     });
-
-    this.teams$.subscribe(((teams) => this.teams = teams));
   }
 
   isUserPartOfTeam(teamName: string, user: UserManagementData) {
