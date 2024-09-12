@@ -5,7 +5,8 @@ import { Team } from 'src/app/core/models/team.model';
 import { UserWithRoles } from './models/user-with-roles.model';
 import { Role } from './models/role.model';
 import { UserManagementData } from './models/user-management-data.model';
-import { UserTeam } from 'src/app/core/models/user-team.model';
+import { UserTeam as CoreUserTeam} from 'src/app/core/models/user-team.model';
+import { UserTeam } from './user-team.model';
 
 @Injectable({
   providedIn: 'root',
@@ -20,9 +21,9 @@ export class UserManagementService {
     return this.http.get<UserWithRoles[]>(`${this.baseUrl}/get-users-with-roles`);
   }
 
-  get userTeams$(): Observable<UserTeam[]> {
+  get userTeams$(): Observable<CoreUserTeam[]> {
     // Make an HTTP GET request to fetch user with teams
-    return this.http.get<UserTeam[]>(`${this.baseUrl}/get-user-teams`);
+    return this.http.get<CoreUserTeam[]>(`${this.baseUrl}/get-user-teams`);
   }
 
   get teams$(): Observable<Team[]> {
@@ -65,7 +66,8 @@ export class UserManagementService {
           return {
             ...user,
             teams: teams,
-            isEdited: false
+            isEdited: false,
+            isLoading: false,
           } as UserManagementData;
         });
       })

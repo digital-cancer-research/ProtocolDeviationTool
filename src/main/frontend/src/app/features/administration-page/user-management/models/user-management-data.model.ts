@@ -8,4 +8,5 @@ export interface UserManagementData {
   roleName: string;
   teams: Team[]
   isEdited: boolean;
+  isLoading: boolean;
 }

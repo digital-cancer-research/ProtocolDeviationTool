@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
@@ -23,6 +24,7 @@ import { AuditTrailManagementService } from './audit-trail-management/audit-trai
 import { SiteManagementService } from './site-management/site-management.service';
 import { TeamManagementService } from './team-management/team-management.service';
 import { UserManagementService } from './user-management/user-management.service';
+import { UserManagementTableComponent } from './user-management/user-management-table/user-management-table.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +33,8 @@ import { UserManagementService } from './user-management/user-management.service
     SiteManagementComponent,
     StudyManagementComponent,
     TeamManagementComponent,
-    UserManagementComponent
+    UserManagementComponent,
+    UserManagementTableComponent
   ],
   imports: [
     CommonModule,
@@ -42,6 +45,7 @@ import { UserManagementService } from './user-management/user-management.service
     MatCardModule,
     MatCheckboxModule,
     MatPaginatorModule,
+    MatProgressSpinnerModule,
     MatSelectModule,
     MatSnackBarModule,
     MatTableModule,

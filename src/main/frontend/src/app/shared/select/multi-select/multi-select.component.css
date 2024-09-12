@@ -1,0 +1,8 @@
+div {
+    display: flex;
+    flex-direction: column;
+}
+
+div, mat-checkbox {
+    width: fit-content;
+}
