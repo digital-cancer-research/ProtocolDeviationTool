@@ -20,11 +20,23 @@
             </mat-select>
             <mat-error>{{ roleErrorMessage() }}</mat-error>
         </mat-form-field>
-        <app-multi-select class="teams" [items]="teams" [keyField]="'teamName'" 
+        <app-multi-select class="teams" #multiSelect [items]="teams" [keyField]="'teamName'" 
             [search]="true" [searchPlaceholder]="'Search teams'"
-            (confirmedItems)="setTeams(teams)"
+            (confirmedItems)="setTeams($event)"
             appearance="outline">
         </app-multi-select>
-        <button mat-raised-button [disabled]="email.errors || role.errors">Create</button>
+        <div class="confirm">
+            <button mat-raised-button 
+            [disabled]="email.errors || role.errors"
+            (click)="onConfirm()">
+                Create
+            </button>
+            <div class="spinner">
+                <mat-progress-spinner *ngIf="inProgress"
+                    mode="indeterminate" 
+                    diameter="20"> 
+                </mat-progress-spinner>
+            </div>
+        </div>
     </mat-card-content>
 </mat-card>

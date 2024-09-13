@@ -9,3 +9,14 @@ mat-card-content {
     gap: 20px;
     align-items: baseline;
 }
+
+.confirm {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+}

@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChildren } from '@angular/core';
 import { Select } from '../select';
-import { MatCheckboxChange } from '@angular/material/checkbox';
+import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-multi-select',
@@ -11,7 +11,7 @@ export class MultiSelectComponent<T> extends Select<T> implements OnInit {
   selectedItems: T[] = [];
   @Input() defaultValues: T[] = [];
   @Output() confirmedItems: EventEmitter<T[]> = new EventEmitter();
-
+  @ViewChildren(MatCheckbox) checkboxes: MatCheckbox[] = [];
   ngOnInit(): void {
     this.defaultValues.forEach((item) => {
       this.selectedItems.push(item);
@@ -34,5 +34,15 @@ export class MultiSelectComponent<T> extends Select<T> implements OnInit {
 
   isChecked(item: T) {
     return this.defaultValues.some(value => this.compare(item, value));
+  }
+
+  reset() {
+    this.selectedItems = [];
+    this.checkboxes.forEach((checbox) => {
+      checbox.checked = false;
+    })
+    this.defaultValues.forEach((item) => {
+      this.selectedItems.push(item);
+    });
   }
 }
