@@ -17,7 +17,7 @@
                         <mat-select [(ngModel)]="user.roleName">
                             <mat-option *ngFor="let roleName of roleNames$ | async"
                             [value]="roleName"
-                            (onSelectionChange)="changeRole(roleName, $event, user)">
+                            (onSelectionChange)="setRole(roleName, $event, user)">
                                 {{roleName}}
                             </mat-option>
                         </mat-select>

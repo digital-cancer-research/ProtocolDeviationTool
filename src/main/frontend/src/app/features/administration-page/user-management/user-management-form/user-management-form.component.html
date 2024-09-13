@@ -5,7 +5,7 @@
     <mat-card-content>
         <mat-form-field class="email" appearance="outline">
             <mat-label>Enter your email</mat-label>
-            <input matInput placeholder=" john.smith@example.com" [formControl]="email" (blur)="updateErrorMessage()"
+            <input matInput placeholder=" john.smith@example.com" [formControl]="email" (blur)="updateEmailErrorMessage()"
                 required />
             @if (email.invalid) {
             <mat-error>{{ emailErrorMessage() }}</mat-error>

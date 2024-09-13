@@ -6,7 +6,7 @@ import { UserWithRoles } from './models/user-with-roles.model';
 import { Role } from './models/role.model';
 import { UserManagementData } from './models/user-management-data.model';
 import { UserTeam as CoreUserTeam } from 'src/app/core/models/user-team.model';
-import { UserTeam } from './user-team.model';
+import { UserTeam } from './models/user-team.model';
 
 @Injectable({
   providedIn: 'root',
@@ -77,6 +77,19 @@ export class UserManagementService {
 
   get roleNames$(): Observable<string[]> {
     return of(['Admin', 'User', 'Inactive']);
+  }
+
+/**
+ * Gets the ID for the selected role.
+ * 
+ * @returns The ID corresponding to the selected role.
+ */
+  public getRoleId(roleName: string): number {
+    switch (roleName) {
+      case 'Admin': return 1;
+      case 'User': return 2;
+      default: return 3;
+    }
   }
 }
 

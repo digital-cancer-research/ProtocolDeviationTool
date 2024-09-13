@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, map, Observable, switchMap, tap } from 'rxjs';
 import { User } from './user.model';
-import { UserTeam } from '../features/administration-page/user-management/user-team.model';
+import { UserTeam } from '../features/administration-page/user-management/models/user-team.model';
 
 @Injectable({
   providedIn: 'root',
