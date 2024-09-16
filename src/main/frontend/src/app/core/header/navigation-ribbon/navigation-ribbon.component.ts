@@ -17,13 +17,15 @@ export class NavigationRibbonComponent implements OnInit, OnDestroy {
   userSubscription!: Subscription;
 
   // Changing a label will require you to change the case in shouldDisplayButton method
-  buttons: { label: string, route: string }[] = [
-    { label: 'STUDY ID', route: '/data-visualisation' },
-    { label: 'ADMINISTRATION', route: '/administration-page/user-management' },
-    { label: 'TEAM SELECTION', route: '/site' },
-    { label: 'DATA', route: '/data-upload' },
-    { label: 'VISUALISATION', route: '/data-visualisation' }
+  links: Link[] = [
+    { label: '', route: '', visible: true },
+    { label: 'ADMINISTRATION', route: '/administration-page/user-management', visible: true },
+    { label: 'TEAM SELECTION', route: '/site', visible: true },
+    { label: 'DATA', route: '/data-upload', visible: true },
+    { label: 'VISUALISATION', route: '/data-visualisation', visible: true }
   ];
+  activeLink = this.links[0];
+  disabled: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -31,16 +33,27 @@ export class NavigationRibbonComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.authSubscription = this.authService.isAdmin$.subscribe((isAdmin) => {
-      this.isAdmin = isAdmin;
-    });
     this.userService.currentUser$.subscribe(
       (user) => {
-        if (user?.userId) {
+        if (user) {
+          this.authService.checkAdminRole(user.username).subscribe(
+            (isAdmin) => {
+              isAdmin ?
+                this.links[0].visible = true :
+                this.links[0].visible = false;
+            }
+          );
           this.userService.getUserTeamsByUserId(user.userId).subscribe(
             (team) => {
-              this.isPartOfMultipleTeams = team.length > 1;
-            })
+              team.length > 1 ?
+                this.links[1].visible = true :
+                this.links[1].visible = false;
+            });
+          if (user.roleId === 3) {
+            this.disabled = true;
+          } else {
+            this.disabled = false;
+          }
         }
       })
   }
@@ -50,18 +63,13 @@ export class NavigationRibbonComponent implements OnInit, OnDestroy {
     if (this.userSubscription) this.userSubscription.unsubscribe();
   }
 
-  shouldDisplayButton(button: any): boolean {
-    switch (button.label) {
-      case 'STUDY ID':
-        return this.isStudySelected;
-      case 'ADMINISTRATION':
-      case 'TEAM SELECTION':
-        return this.isPartOfMultipleTeams;
-      case 'DATA':
-      case 'VISUALISATION':
-        return true;
-      default:
-        return false;
-    }
+  get filteredLinks() {
+    return this.links.filter(link => link.visible);
   }
+}
+
+interface Link {
+  label: string
+  route: string
+  visible: boolean
 }

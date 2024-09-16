@@ -11,6 +11,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ChartModule } from 'primeng/chart';
 import { SharedModule } from '../shared/shared.module';
 import { NavigationRibbonComponent } from './header/navigation-ribbon/navigation-ribbon.component';
+import { MatTabsModule } from '@angular/material/tabs';
+
 /**
  * @module CoreModule
  * The `CoreModule` is responsible for providing singleton services and
@@ -32,6 +34,7 @@ import { NavigationRibbonComponent } from './header/navigation-ribbon/navigation
     SharedModule,
     ChartModule,
     BrowserAnimationsModule,
+    MatTabsModule
   ],
   providers: [
     UserService,
