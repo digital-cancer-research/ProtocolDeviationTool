@@ -16,7 +16,6 @@ export class NavigationRibbonComponent implements OnInit, OnDestroy {
   authSubscription!: Subscription;
   userSubscription!: Subscription;
 
-  // Changing a label will require you to change the case in shouldDisplayButton method
   links: Link[] = [
     { label: '', route: '', visible: true },
     { label: 'ADMINISTRATION', route: '/administration-page/user-management', visible: true },
