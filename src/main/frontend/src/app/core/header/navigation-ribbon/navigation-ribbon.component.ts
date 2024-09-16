@@ -8,50 +8,44 @@ import { UserService } from '../../services/user.service';
   templateUrl: './navigation-ribbon.component.html',
   styleUrls: ['./navigation-ribbon.component.css']
 })
-export class NavigationRibbonComponent implements OnInit, OnDestroy {
+export class NavigationRibbonComponent implements OnDestroy {
   isAdmin: boolean = false;
   isPartOfMultipleTeams: boolean = false;
   isStudySelected: boolean = false;
-  studyId: string = "";
   authSubscription!: Subscription;
   userSubscription!: Subscription;
 
   links: Link[] = [
     { label: '', route: '', visible: true },
-    { label: 'ADMINISTRATION', route: '/administration-page/user-management', visible: true },
-    { label: 'TEAM SELECTION', route: '/site', visible: true },
+    { label: 'ADMINISTRATION', route: '/administration-page/user-management', visible: () => this.isAdmin },
+    { label: 'TEAM SELECTION', route: '/site', visible: () => this.isPartOfMultipleTeams },
     { label: 'DATA', route: '/data-upload', visible: true },
     { label: 'VISUALISATION', route: '/data-visualisation', visible: true }
   ];
   activeLink = this.links[0];
-  disabled: boolean = false;
+  isUserDeactivated: boolean = false;
 
   constructor(
     private authService: AuthService,
     private userService: UserService,
-  ) { }
-
-  ngOnInit(): void {
+  ) {
     this.userService.currentUser$.subscribe(
       (user) => {
         if (user) {
           this.authService.checkAdminRole(user.username).subscribe(
             (isAdmin) => {
-              isAdmin ?
-                this.links[0].visible = true :
-                this.links[0].visible = false;
+              this.isAdmin = isAdmin;
             }
           );
           this.userService.getUserTeamsByUserId(user.userId).subscribe(
             (team) => {
-              team.length > 1 ?
-                this.links[1].visible = true :
-                this.links[1].visible = false;
+              this.isPartOfMultipleTeams = team.length > 1;
             });
+
           if (user.roleId === 3) {
-            this.disabled = true;
+            this.isUserDeactivated = true;
           } else {
-            this.disabled = false;
+            this.isUserDeactivated = false;
           }
         }
       })
@@ -63,12 +57,13 @@ export class NavigationRibbonComponent implements OnInit, OnDestroy {
   }
 
   get filteredLinks() {
-    return this.links.filter(link => link.visible);
+    return this.links.filter(link => typeof link.visible === 'function' ? 
+      link.visible() : link.visible);
   }
 }
 
 interface Link {
   label: string
   route: string
-  visible: boolean
+  visible: boolean | (() => boolean)
 }

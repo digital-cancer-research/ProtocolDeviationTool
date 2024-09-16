@@ -12,6 +12,9 @@ import { ChartModule } from 'primeng/chart';
 import { SharedModule } from '../shared/shared.module';
 import { NavigationRibbonComponent } from './header/navigation-ribbon/navigation-ribbon.component';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+
 
 /**
  * @module CoreModule
@@ -34,7 +37,9 @@ import { MatTabsModule } from '@angular/material/tabs';
     SharedModule,
     ChartModule,
     BrowserAnimationsModule,
-    MatTabsModule
+    MatIconModule,
+    MatSelectModule,
+    MatTabsModule,
   ],
   providers: [
     UserService,

@@ -1,26 +1,30 @@
-<div class="header-container">
-  <div class="header-left-container">
-    <div class="header-left">
-      <div [routerLink]="''" class="header-title">PROTOCOL DEVIATION MONITORING</div>
-      <img [routerLink]="''" src="assets/clipboard-icon.png" alt="Icon" class="header-icon">
+<header>
+
+  <div class="flex left">
+    <div [routerLink]="''">
+      PROTOCOL DEVIATION MONITORING
     </div>
+    <mat-icon fontIcon="assignment" alt="Icon" [inline]="true"></mat-icon>
   </div>
-  <div class="header-middle-container">
-    <div class="header-middle">{{ pageTitle }}</div>
+
+  <div>
+    <h3>
+      {{ pageTitle }}
+    </h3>
   </div>
-  <div class="header-right-container">
-    <div class="header-right">
-      <div class="user-dropdown">
-        <select [(ngModel)]="usernameSelected" #select (change)="onSelectUser(select.value)">
-          <option value="">Select a user</option>
-          <option *ngFor="let user of users" [value]="user.username">{{ user.username }}</option>
-        </select>
-        <div *ngIf="selectedUser" class="selected-user">
-          <p>{{ selectedUser.username }}</p>
-          <p>{{ selectedTeam?.teamName || "NO TEAM SELECTED" }}</p>
-        </div>
-      </div>
-    </div>
+
+  <div class="flex user">
+    <mat-form-field appearance="outline">
+      <mat-select [(ngModel)]="usernameSelected" (valueChange)="onSelectUser($event)">
+        <mat-label>Select a user</mat-label>
+        <mat-option *ngFor="let user of users" [value]="user.username">
+          {{ user.username }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <p>{{ selectedTeam?.teamName || "NO TEAM SELECTED" }}</p>
   </div>
-</div>
+
+</header>
+
 <app-navigation-ribbon *ngIf="urlPathString !== ''"></app-navigation-ribbon>

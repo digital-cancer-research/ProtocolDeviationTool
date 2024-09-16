@@ -62,6 +62,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onSelectUser(username: string): void {
+    console.log(username);
     if (username === "") {
       this.selectedUser = null;
       this.userService.setCurrentUser(null);

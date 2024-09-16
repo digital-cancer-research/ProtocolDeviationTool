@@ -4,7 +4,7 @@
       (click)="activeLink = link"
       [active]="activeLink == link"
       [routerLink]="link.route"
-      [disabled]="disabled"> {{link.label}} </a>
+      [disabled]="isUserDeactivated"> {{link.label}} </a>
   }
 </nav>
 <mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
