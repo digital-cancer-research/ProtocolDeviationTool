@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { AuthService } from '../user/auth.service';
-import { UserService } from '../core/services/user.service';
+import { AuthService } from '../../../user/auth.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-navigation-ribbon',
