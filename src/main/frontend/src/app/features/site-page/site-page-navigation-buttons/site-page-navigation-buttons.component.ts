@@ -19,6 +19,12 @@ import { UserService } from '../../../core/services/user.service';
 export class SitePageNavigationButtonsComponent {
   
   /**
+   * Boolean flag indicating whether the user is deactivated.
+   * @type {boolean}
+   */
+  isUserDeactivated: boolean = false;
+
+  /**
    * Observable of the currently selected team from the `UserService`.
    * 
    * @type {Observable<Team | null>}
@@ -30,5 +36,9 @@ export class SitePageNavigationButtonsComponent {
    * 
    * @param {UserService} userService - The service for managing user-related data and actions.
    */
-  constructor(private userService: UserService) { }
+   constructor(private userService: UserService) {
+    userService.currentUser$.subscribe((user) => {
+      this.isUserDeactivated = user?.roleId === 3;
+    })
+  }
 }

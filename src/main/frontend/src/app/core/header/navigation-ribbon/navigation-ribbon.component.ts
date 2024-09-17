@@ -16,11 +16,11 @@ export class NavigationRibbonComponent implements OnDestroy {
   userSubscription!: Subscription;
 
   links: Link[] = [
-    { label: '', route: '', visible: true },
-    { label: 'ADMINISTRATION', route: '/administration-page/user-management', visible: () => this.isAdmin },
-    { label: 'TEAM SELECTION', route: '/site', visible: () => this.isPartOfMultipleTeams },
-    { label: 'DATA', route: '/data-upload', visible: true },
-    { label: 'VISUALISATION', route: '/data-visualisation', visible: true }
+    { label: '', route: '', visible: true, disabled: false },
+    { label: 'ADMINISTRATION', route: '/administration-page/user-management', visible: () => this.isAdmin, disabled: false },
+    { label: 'TEAM SELECTION', route: '/site', visible: () => this.isPartOfMultipleTeams, disabled: false },
+    { label: 'DATA', route: '/data-upload', visible: true, disabled: false },
+    { label: 'VISUALISATION', route: '/data-visualisation', visible: true, disabled: false }
   ];
   activeLink = this.links[0];
   isUserDeactivated: boolean = false;
@@ -40,8 +40,17 @@ export class NavigationRibbonComponent implements OnDestroy {
           this.userService.getUserTeamsByUserId(user.userId).subscribe(
             (team) => {
               this.isPartOfMultipleTeams = team.length > 1;
+              this.activeLink = this.links[2];
             });
-
+          this.userService.currentUserSelectedTeam$.subscribe(
+            (team) => {
+              if (team !== null) {
+                this.links[4].disabled = false;
+              } else {
+                this.links[4].disabled = true;
+              }
+            }
+          )
           if (user.roleId === 3) {
             this.isUserDeactivated = true;
           } else {
@@ -66,4 +75,5 @@ interface Link {
   label: string
   route: string
   visible: boolean | (() => boolean)
+  disabled: boolean
 }

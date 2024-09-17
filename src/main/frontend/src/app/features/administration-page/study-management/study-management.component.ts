@@ -27,7 +27,6 @@ export class StudyManagementComponent implements OnInit {
   
     this.teams$ = this.administrationDataService.teamsWithStudies$.pipe(
       map(teams => {
-        console.log(teams);
         return teams.map((team: TeamWithStudies) => ({
           ...team,
           isEdited: false

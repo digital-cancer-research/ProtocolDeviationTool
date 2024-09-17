@@ -23,8 +23,6 @@ export class AppComponent {
     combineLatest([navigationEnd$, userService.currentUser$])
       .subscribe(([event, currentUser]) => {
         event = event as NavigationEnd;
-        console.log(event.url);
-        console.log(currentUser?.roleId);
         if (event.url !== '' && event.url !== '/site' && currentUser?.roleId === 3) {
           this.router.navigateByUrl('');
         }
