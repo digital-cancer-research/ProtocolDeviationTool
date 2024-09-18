@@ -10,16 +10,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AppComponent } from './app.component';
 import { UserSelectionComponent } from './user/user-selection.component';
-import { HomeComponent } from './home/home.component';
 import { StudyListComponent } from './study-list/study-list.component';
 import { CategoryTableComponent } from './category-table/category-table.component';
-import { VisualisationComponent } from './visualisation/visualisation.component';
 import { CategoryBarGraphComponent } from './category-bar-graph/category-bar-graph.component';
 import { CategoryPieGraphComponent } from './category-pie-graph/category-pie-graph.component';
 import { CategoryBarGraphSegmentedComponent } from './category-bar-graph-segmented/category-bar-graph-segmented.component';
 import { SiteSelectComponent } from './site-select/site-select.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { DataVisualisationPageComponent } from './data-visualisation-page/data-visualisation-page.component';
 import { DataVisualisationDeviationHomePageComponent } from './data-visualisation-deviation-home-page/data-visualisation-deviation-home-page.component';
 import { DataVisualisationDeviationsPageComponent } from './data-visualisation-deviations-page/data-visualisation-deviations-page.component';
 import { DataVisualisationDeviationsOverTimePageComponent } from './data-visualisation-deviations-over-time-page/data-visualisation-deviations-over-time-page.component';
@@ -32,7 +29,6 @@ import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.
 import { UserService } from './user/user.service';
 import { AuthService } from './user/auth.service';
 import { StudyListService } from './study-list/study-list.service';
-import { VisualisationService } from './visualisation/visualisation.service';
 import { CategoryBarGraphService } from './category-bar-graph/category-bar-graph.service';
 import { CategoryPieGraphService } from './category-pie-graph/category-pie-graph.service';
 import { CategoryBarGraphSegmentedService } from './category-bar-graph-segmented/category-bar-graph-segmented.service';
@@ -49,10 +45,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     declarations: [
         AppComponent,
         UserSelectionComponent,
-        HomeComponent,
         StudyListComponent,
         CategoryTableComponent,
-        VisualisationComponent,
         CategoryBarGraphComponent,
         SiteSelectComponent,
         CategoryPieGraphComponent,
@@ -60,7 +54,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         BorderComponent,
         SiteSponsSelectComponent,
         SiteSponsorPageComponent,
-        DataVisualisationPageComponent,
         CategoryBarGraphSegmentedComponent,
         DataVisualisationDeviationHomePageComponent,
         DataVisualisationDeviationsPageComponent,
@@ -84,7 +77,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         UserService,
         AuthService,
         StudyListService,
-        VisualisationService,
         CategoryBarGraphService,
         SiteSelectService,
         ShareSiteDataService,

@@ -5,17 +5,39 @@ import { DataVisualisationPageRoutingModule } from './data-visualisation-page-ro
 import { DataVisualisationPageComponent } from './data-visualisation-page.component';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { DataVisualisationComponent } from './data-visualisation/data-visualisation.component';
+import { VisualisationComponent } from './data-visualisation/visualisation/visualisation.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TeamStudySelectComponent } from './data-visualisation/team-study-select/team-study-select.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatOptionModule } from '@angular/material/core';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+
 
 
 @NgModule({
   declarations: [
     DataVisualisationPageComponent,
-    DataVisualisationComponent
+    DataVisualisationComponent,
+    TeamStudySelectComponent,
+    VisualisationComponent
   ],
   imports: [
     CommonModule,
     DataVisualisationPageRoutingModule,
-    MatGridListModule
+    FormsModule,
+    MatGridListModule,
+    MatAutocompleteModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatOptionModule,
+    MatProgressSpinnerModule,
+    ReactiveFormsModule,
   ]
 })
 export class DataVisualisationPageModule { }

@@ -1,16 +1,17 @@
-import { AfterViewInit, Component, HostListener, OnInit } from '@angular/core';
+import { AfterViewInit, Component, HostListener, OnInit, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'app-data-visualisation',
   templateUrl: './data-visualisation.component.html',
-  styleUrl: './data-visualisation.component.css'
+  styleUrl: './data-visualisation.component.css',
+  encapsulation: ViewEncapsulation.None
 })
 export class DataVisualisationComponent implements AfterViewInit {
   tiles: Tile[] = [
-    { text: 'One', colspan: 3, rowspan: 1 },
-    { text: 'Two', colspan: 1, rowspan: 2 },
-    { text: 'Three', colspan: 1, rowspan: 1 },
-    { text: 'Four', colspan: 2, rowspan: 1 },
+    { colspan: 3, rowspan: 1 },
+    { colspan: 1, rowspan: 2 },
+    { colspan: 1, rowspan: 1 },
+    { colspan: 2, rowspan: 1 },
   ];
   cols: number = 6
   rowHeight: string = '50%'
@@ -19,11 +20,11 @@ export class DataVisualisationComponent implements AfterViewInit {
     this.cols = 5
     this.rowHeight = '50%'
     return [
-      { text: 'One', colspan: 1, rowspan: 2 },
-      { text: 'Two', colspan: 2, rowspan: 1 },
-      { text: 'Three', colspan: 2, rowspan: 1 },
-      { text: 'Four', colspan: 2, rowspan: 1 },
-      { text: 'Five', colspan: 2, rowspan: 1 },
+      { colspan: 1, rowspan: 2 },
+      { colspan: 2, rowspan: 1 },
+      { colspan: 2, rowspan: 1 },
+      { colspan: 2, rowspan: 1 },
+      { colspan: 2, rowspan: 1 },
     ];
   }
 
@@ -31,11 +32,11 @@ export class DataVisualisationComponent implements AfterViewInit {
     this.cols = 4
     this.rowHeight = '20%'
     return [
-      { text: 'One', colspan: 4, rowspan: 1 },
-      { text: 'Two', colspan: 2, rowspan: 2 },
-      { text: 'Three', colspan: 2, rowspan: 2 },
-      { text: 'Four', colspan: 2, rowspan: 2 },
-      { text: 'Five', colspan: 2, rowspan: 2 },
+      { colspan: 4, rowspan: 1 },
+      { colspan: 2, rowspan: 2 },
+      { colspan: 2, rowspan: 2 },
+      { colspan: 2, rowspan: 2 },
+      { colspan: 2, rowspan: 2 },
     ];
   }
 
@@ -43,11 +44,11 @@ export class DataVisualisationComponent implements AfterViewInit {
     this.cols = 1;
     this.rowHeight = '11%';
     return [
-      { text: 'One', colspan: 1, rowspan: 1 },
-      { text: 'Two', colspan: 1, rowspan: 2 },
-      { text: 'Three', colspan: 1, rowspan: 2 },
-      { text: 'Four', colspan: 1, rowspan: 2 },
-      { text: 'Five', colspan: 1, rowspan: 2 },
+      { colspan: 1, rowspan: 1 },
+      { colspan: 1, rowspan: 2 },
+      { colspan: 1, rowspan: 2 },
+      { colspan: 1, rowspan: 2 },
+      { colspan: 1, rowspan: 2 },
     ];
   }
   
@@ -72,6 +73,23 @@ export class DataVisualisationComponent implements AfterViewInit {
       this.tiles = this.LAYOUT_SMALL;
     }
   }
+
+  getVisualisationClass(index: number): string {
+    switch(index) {
+      case (0):
+        return "select";
+      case (1):
+        return "count";
+      case (2):
+        return "barGraph";
+      case (3):
+        return "pieChart";
+      case (4):
+        return "studyBarGraph";
+      default:
+        return "";
+    }
+  }
 }
 
 
@@ -79,5 +97,4 @@ export class DataVisualisationComponent implements AfterViewInit {
 export interface Tile {
   colspan: number;
   rowspan: number;
-  text?: string;
 }

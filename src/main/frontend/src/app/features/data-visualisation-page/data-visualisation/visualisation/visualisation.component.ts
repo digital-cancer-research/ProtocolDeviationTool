@@ -38,7 +38,7 @@ export class VisualisationComponent implements OnInit {
 						console.error(error);
 						this.error = true;
 						this.isLoading = false;
-					}, 1000);
+					});
 			}
 		})
 	}

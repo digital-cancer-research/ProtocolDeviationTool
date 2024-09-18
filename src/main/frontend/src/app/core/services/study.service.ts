@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -11,6 +11,10 @@ export class StudyService {
   constructor(private http: HttpClient) { }
 
   getStudies(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.baseUrl}/study-ids`,);
+    return this.http.get<string[]>(`${this.baseUrl}/study-ids`);
+  }
+
+  getStudiesForTeam(teamId: number): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/study-ids/${teamId}`);
   }
 }

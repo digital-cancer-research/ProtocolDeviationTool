@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, Observable, switchMap, throwError } from 'rxjs';
-import { UserService } from '../core/services/user.service';
-import { Team } from '../core/models/team.model';
+import { UserService } from 'src/app/core/services/user.service';
+import { Team } from 'src/app/core/models/team.model';
 
 /**
  * Service to interact with the visualisation API.
