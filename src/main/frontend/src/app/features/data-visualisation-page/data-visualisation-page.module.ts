@@ -15,6 +15,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { CategoryBarGraphComponent } from './data-visualisation/category-bar-graph/category-bar-graph.component';
 
 
 
@@ -23,6 +24,7 @@ import { MatButtonModule } from '@angular/material/button';
     DataVisualisationPageComponent,
     DataVisualisationComponent,
     TeamStudySelectComponent,
+    CategoryBarGraphComponent,
     VisualisationComponent
   ],
   imports: [

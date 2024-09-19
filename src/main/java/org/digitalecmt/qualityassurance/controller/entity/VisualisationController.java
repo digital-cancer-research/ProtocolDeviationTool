@@ -32,21 +32,14 @@ import org.digitalecmt.qualityassurance.dto.CountPerStudyDTO;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryDTO;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryPerStudyDTO;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerSubcategoryPerCategoryDTO;
-import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
-import org.digitalecmt.qualityassurance.model.persistence.PdCategory;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.repository.PdCategoryRepository;
 import org.digitalecmt.qualityassurance.repository.TeamRepository;
-import org.digitalecmt.qualityassurance.repository.TeamStudyAccessRepository;
-import org.digitalecmt.qualityassurance.service.DataEntryService;
+import org.digitalecmt.qualityassurance.service.VisualisationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -63,6 +56,9 @@ public class VisualisationController {
 
     @Autowired
     private TeamRepository teamRepository;
+
+    @Autowired
+    private VisualisationService visualisationService;
 
     private Logger log = Logger.getLogger(VisualisationController.class.getName());
 
@@ -188,4 +184,9 @@ public class VisualisationController {
         }
     }
 
+    @GetMapping("category-colours")
+    public ResponseEntity<List<String>> getCategoryColours() {
+        List<String> colours = visualisationService.findCategoryColours();
+        return new ResponseEntity<>(colours, HttpStatus.OK);
+    }
 }
