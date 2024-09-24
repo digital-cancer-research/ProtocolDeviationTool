@@ -1,4 +1,6 @@
 import { AfterViewInit, Component, HostListener, OnInit, ViewEncapsulation } from '@angular/core';
+import { Team } from 'src/app/core/models/team.model';
+import { UserService } from 'src/app/core/services/user.service';
 
 @Component({
   selector: 'app-data-visualisation',
@@ -7,15 +9,10 @@ import { AfterViewInit, Component, HostListener, OnInit, ViewEncapsulation } fro
   encapsulation: ViewEncapsulation.None
 })
 export class DataVisualisationComponent implements AfterViewInit {
-  tiles: Tile[] = [
-    { colspan: 3, rowspan: 1 },
-    { colspan: 1, rowspan: 2 },
-    { colspan: 1, rowspan: 1 },
-    { colspan: 2, rowspan: 1 },
-  ];
-  cols: number = 6
-  rowHeight: string = '50%'
-
+  tiles: Tile[] = [];
+  cols: number = 0;
+  rowHeight: string = '';
+  
   get LAYOUT_LARGE(): Tile[] {
     this.cols = 6
     this.rowHeight = '50%'
@@ -51,7 +48,7 @@ export class DataVisualisationComponent implements AfterViewInit {
       { colspan: 1, rowspan: 2 },
     ];
   }
-  
+
   ngAfterViewInit(): void {
     this.onResize();
   }

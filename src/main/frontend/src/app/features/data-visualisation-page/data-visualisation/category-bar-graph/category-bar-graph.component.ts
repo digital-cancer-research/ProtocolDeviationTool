@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
 import { DataVisualisationService } from '../../data-visualisation.service';
-import { CategoryBarGraphService } from 'src/app/category-bar-graph/category-bar-graph.service';
-import { EntryCountPerCategoryDTO } from 'src/app/category-bar-graph/category-bar-graph.model';
+import { CategoryBarGraphData } from '../../models/category-bar-graph-data.model';
+import { UserService } from 'src/app/core/services/user.service';
 
 @Component({
   selector: 'app-category-bar-graph',
@@ -11,22 +11,18 @@ import { EntryCountPerCategoryDTO } from 'src/app/category-bar-graph/category-ba
 })
 export class CategoryBarGraphComponent implements OnInit {
   chart!: Chart;
-  colours: string[] = [];
-  data$ = this.categoryBarGraphService.getEntryCountPerCategory().pipe();
-  data: EntryCountPerCategoryDTO[] = [];
+  data: CategoryBarGraphData[] = [];
 
   ngOnInit(): void {
-    this.data$.subscribe(
-      {
-        next: (data) => {
-          this.data = data;
-          this.dataVisualisationService.categoryColours$.subscribe((colours) => {
-            this.colours = colours
+    this.userService.currentUserSelectedTeam$.subscribe((team) => {
+      if (team !== null) {
+        this.dataVisualisationService.getCategoryBarGraphData$(team.teamId)
+          .subscribe(data => {
+            this.data = data
             this.createChart();
           });
-        },
       }
-    )
+    })
   }
 
   createChart(): Chart {
@@ -41,9 +37,9 @@ export class CategoryBarGraphComponent implements OnInit {
         datasets: [
           {
             label: 'DVCAT',
-            data: this.data.map(category => category.entryCount),
+            data: this.data.map(category => category.count),
             borderWidth: 1,
-            backgroundColor: this.colours
+            backgroundColor: this.data.map(category => category.colour)
           },
         ],
       },
@@ -75,8 +71,9 @@ export class CategoryBarGraphComponent implements OnInit {
     });
   }
 
-  constructor(
-    private dataVisualisationService: DataVisualisationService,
-    private categoryBarGraphService: CategoryBarGraphService
-  ) { }
+  constructor
+    (
+      private dataVisualisationService: DataVisualisationService,
+      private userService: UserService
+    ) { }
 }
