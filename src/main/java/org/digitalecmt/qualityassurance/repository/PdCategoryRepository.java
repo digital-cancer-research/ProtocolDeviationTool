@@ -27,6 +27,7 @@ package org.digitalecmt.qualityassurance.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.digitalecmt.qualityassurance.dto.Visualisation.PdCategoryGraphDataDTO;
 import org.digitalecmt.qualityassurance.model.persistence.PdCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -35,10 +36,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PdCategoryRepository
-        extends JpaRepository<PdCategory, Integer> {
+		extends JpaRepository<PdCategory, Integer> {
 
 	Optional<PdCategory> findByDvterm(String dvterm);
-	
+
 	@Query("SELECT DISTINCT dvcat FROM PdCategory")
 	List<String> findDistinctDVCat();
 
@@ -48,9 +49,29 @@ public interface PdCategoryRepository
 
 	List<PdCategory> findByDvdecodIn(List<String> dvdecods);
 
-//	@Query("SELECT DISTINCT pc.dvcat FROM PdCategory pc " +
-//	           "JOIN DataEntry de ON pc.category_id = de.category_id " +
-//	           "WHERE de.site_id = :siteId")
-//    List<String> findDistinctDVCatBySiteId(@Param("siteId") String siteId);
-
+	/**
+	 * Retrieves a list of `PdCategoryGraphDataDTO` objects representing category
+	 * data
+	 * for visualisations. The data includes the category name (`dvcat`), the
+	 * associated
+	 * color, and the count of related entries for a given team.
+	 * @param teamId the ID of the team for which to retrieve the category data.
+	 * @return a list of `PdCategoryGraphDataDTO` containing the category name
+	 *         (`dvcat`),
+	 *         the associated color, and the count of related entries for that
+	 *         category.
+	 */
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.Visualisation.PdCategoryGraphDataDTO" +
+			"(pc.dvcat, dc.colour, COUNT(dec)) " +
+			"FROM PdCategory pc " +
+			"JOIN DvcatColour dc ON dc.dvcat = pc.dvcat " +
+			"JOIN DataEntryCategory dec ON dec.categoryId = pc.categoryId " +
+			"JOIN DataEntry de ON de.entryId = dec.entryId " +
+			"WHERE de.studyId IN (" +
+			"    SELECT tsa.studyId " +
+			"    FROM TeamStudyAccess tsa " +
+			"    WHERE tsa.teamId = :teamId" +
+			") " +
+			"GROUP BY pc.dvcat, dc.colour")
+	List<PdCategoryGraphDataDTO> findPdCategoryGraphData(@Param("teamId") Integer teamId);
 }
