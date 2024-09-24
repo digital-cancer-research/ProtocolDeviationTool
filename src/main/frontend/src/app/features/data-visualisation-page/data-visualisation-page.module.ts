@@ -16,6 +16,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { CategoryBarGraphComponent } from './data-visualisation/category-bar-graph/category-bar-graph.component';
+import { TeamPdPieChartComponent } from "./data-visualisation/team-pd-pie-chart/team-pd-pie-chart.component";
+import { TeamStudyBarGraphComponent } from "./data-visualisation/team-study-bar-graph/team-study-bar-graph.component";
+import { DataVisualisationDeviationHomePageComponent } from './data-visualisation-deviation-home-page/data-visualisation-deviation-home-page.component';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { CategoryBarGraphSegmentedSiteComponent } from './data-visualisation-deviation-home-page/category-bar-graph-segmented-site/category-bar-graph-segmented-site.component';
 
 
 
@@ -23,23 +28,32 @@ import { CategoryBarGraphComponent } from './data-visualisation/category-bar-gra
   declarations: [
     DataVisualisationPageComponent,
     DataVisualisationComponent,
+    DataVisualisationDeviationHomePageComponent,
     TeamStudySelectComponent,
     CategoryBarGraphComponent,
-    VisualisationComponent
+    CategoryBarGraphSegmentedSiteComponent,
+    TeamPdPieChartComponent,
+    TeamStudyBarGraphComponent,
+    VisualisationComponent,
   ],
   imports: [
     CommonModule,
     DataVisualisationPageRoutingModule,
     FormsModule,
-    MatGridListModule,
     MatAutocompleteModule,
     MatButtonModule,
     MatFormFieldModule,
+    MatGridListModule,
     MatIconModule,
     MatInputModule,
     MatOptionModule,
     MatProgressSpinnerModule,
     ReactiveFormsModule,
-  ]
+    SharedModule
+  ],
+  exports:
+    [
+      CategoryBarGraphSegmentedSiteComponent
+    ]
 })
 export class DataVisualisationPageModule { }

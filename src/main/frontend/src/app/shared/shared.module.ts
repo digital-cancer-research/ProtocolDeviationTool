@@ -18,10 +18,12 @@ import { MultiSelectComponent } from './select/multi-select/multi-select.compone
 import { UploadService } from './upload/upload.service';
 import { FileListService } from './file-list/file-list.service';
 import { SingleSelectComponent } from './select/single-select/single-select.component';
+import { CategoryTableComponent } from './category-table/category-table.component';
 
 @NgModule({
   declarations: [
     FileListComponent,
+    CategoryTableComponent,
     MultiSelectComponent,
     PageButtonComponent,
     SingleSelectComponent,
@@ -41,6 +43,7 @@ import { SingleSelectComponent } from './select/single-select/single-select.comp
   ],
   exports: [
     FileListComponent,
+    CategoryTableComponent,
     MultiSelectComponent,
     PageButtonComponent,
     SingleSelectComponent,

@@ -17,14 +17,14 @@ export class DataVisualisationComponent implements AfterViewInit {
   rowHeight: string = '50%'
 
   get LAYOUT_LARGE(): Tile[] {
-    this.cols = 5
+    this.cols = 6
     this.rowHeight = '50%'
     return [
       { colspan: 1, rowspan: 2 },
+      { colspan: 1, rowspan: 1 },
+      { colspan: 4, rowspan: 1 },
       { colspan: 2, rowspan: 1 },
-      { colspan: 2, rowspan: 1 },
-      { colspan: 2, rowspan: 1 },
-      { colspan: 2, rowspan: 1 },
+      { colspan: 3, rowspan: 1 },
     ];
   }
 

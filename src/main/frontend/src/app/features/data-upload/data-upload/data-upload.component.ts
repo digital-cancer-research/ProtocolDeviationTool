@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { FileListComponent } from '../../../shared/file-list/file-list.component';
-import { CategoryTableComponent } from '../../../category-table/category-table.component';
+import { CategoryTableComponent } from 'src/app/shared/category-table/category-table.component';
 
 @Component({
   selector: 'app-data-upload',

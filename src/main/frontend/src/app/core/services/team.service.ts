@@ -29,7 +29,6 @@ export class TeamService {
   private getTeams(): void {
     this.http.get<Team[]>(`${this.baseUrl}/get-teams-with-username`)
       .subscribe(teams => {
-        console.log(teams);
         this.teamsSubject.next(teams)});
   }
 

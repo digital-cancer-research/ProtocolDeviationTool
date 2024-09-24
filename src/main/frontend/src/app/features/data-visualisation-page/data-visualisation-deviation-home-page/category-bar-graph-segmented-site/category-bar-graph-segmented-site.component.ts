@@ -2,8 +2,7 @@ import { Component, OnInit, ElementRef, EventEmitter, Output } from '@angular/co
 import { CategoryBarGraphSegmentedSiteService } from './category-bar-graph-segmented-site.service';
 import { EntryCountPerSubcategoryPerCategoryDTO } from './category-bar-graph-segmented-site.model';
 import * as d3 from 'd3';
-import { scaleLinear, scaleBand } from 'd3';
-import { ShareSiteDataService } from '../site-select/share-site-data.service';
+import { ShareSiteDataService } from 'src/app/site-select/share-site-data.service';
 
 @Component({
   selector: 'app-category-bar-graph-segmented-site',

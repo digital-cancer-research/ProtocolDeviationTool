@@ -4,15 +4,15 @@ import { Observable } from 'rxjs';
 import { EntryCountPerCategoryDTO } from './category-bar-graph.model';
 
 @Injectable({
-  providedIn: 'root',
+	providedIn: 'root',
 })
 export class CategoryBarGraphService {
-	  private apiUrl = '/api/visualisation';
+	private apiUrl = '/api/visualisation';
 
-	  constructor(private http: HttpClient) {}
+	constructor(private http: HttpClient) { }
 
-	  getEntryCountPerCategory(siteId?: string): Observable<EntryCountPerCategoryDTO[]> {
-		  const params = siteId ? new HttpParams().set('siteId', siteId) : undefined;
-	    return this.http.get<EntryCountPerCategoryDTO[]>(`${this.apiUrl}/entry-counts-per-category`, { params });
-	  }
+	getEntryCountPerCategory(siteId?: string): Observable<EntryCountPerCategoryDTO[]> {
+		const params = siteId ? new HttpParams().set('siteId', siteId) : undefined;
+		return this.http.get<EntryCountPerCategoryDTO[]>(`${this.apiUrl}/entry-counts-per-category`, { params });
 	}
+}

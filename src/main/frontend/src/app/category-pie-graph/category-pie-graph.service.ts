@@ -4,15 +4,15 @@ import { Observable } from 'rxjs';
 import { EntryCountPerStudyDTO } from './category-pie-graph.model';
 
 @Injectable({
-  providedIn: 'root',
+	providedIn: 'root',
 })
 export class CategoryPieGraphService {
-	  private apiUrl = '/api/visualisation';
+	private apiUrl = '/api/visualisation';
 
-	  constructor(private http: HttpClient) {}
+	constructor(private http: HttpClient) { }
 
-	  getEntryCountPerStudy(siteId?: string): Observable<EntryCountPerStudyDTO[]> {
-		  const params = siteId ? new HttpParams().set('siteId', siteId) : undefined;
-	    return this.http.get<EntryCountPerStudyDTO[]>(`${this.apiUrl}/count-per-study`, { params });
-	  }
+	getEntryCountPerStudy(siteId?: string): Observable<EntryCountPerStudyDTO[]> {
+		const params = siteId ? new HttpParams().set('siteId', siteId) : undefined;
+		return this.http.get<EntryCountPerStudyDTO[]>(`${this.apiUrl}/count-per-study`, { params });
 	}
+}

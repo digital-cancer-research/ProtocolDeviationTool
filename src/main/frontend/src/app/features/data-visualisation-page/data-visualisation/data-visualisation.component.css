@@ -24,3 +24,8 @@
         height: 200%;
     }
 }
+
+.histogram {
+    flex: 1;
+    width: 100%;
+}

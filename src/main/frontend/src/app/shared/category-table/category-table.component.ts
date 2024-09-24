@@ -1,11 +1,9 @@
 import { Component, OnInit, OnChanges, SimpleChanges, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { DataEntryDTO } from './category-table.model';
 import { DvTermCategoryDTO } from './pd-category.model';
-import { UpdateCategoryDTO } from './update-category.model';
-import { UserService } from '../user/user.service';
 import { CategoryEditAuditDTO } from './category-audit.model';
 import { CategoryTableDataDTO } from './category-table-data.model';
+import { UserService } from 'src/app/user/user.service';
 
 @Component({
   selector: 'app-category-table',
