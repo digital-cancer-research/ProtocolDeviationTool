@@ -16,11 +16,25 @@ export class CategoryBarGraphComponent implements OnInit {
   data: EntryCountPerCategoryDTO[] = [];
 
   ngOnInit(): void {
-    this.chart = this.createChart()
+    this.data$.subscribe(
+      {
+        next: (data) => {
+          this.data = data;
+          this.dataVisualisationService.categoryColours$.subscribe((colours) => {
+            this.colours = colours
+            this.createChart();
+          });
+        },
+      }
+    )
   }
 
   createChart(): Chart {
-    return new Chart('canvas', {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
+    return new Chart('categoryBarGraphCanvas', {
       type: 'bar',
       data: {
         labels: this.data.map(category => category.dvcat),
@@ -34,18 +48,19 @@ export class CategoryBarGraphComponent implements OnInit {
         ],
       },
       options: {
+        maintainAspectRatio: false,
         scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Total number of PDs per category',
-            }
-          },
           y: {
             beginAtZero: true,
             title: {
               display: true,
-              text: 'Category for Protocol Deviation'
+              text: 'Category for Protocol Deviation',
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Total number of PDs per category',
             }
           },
         },
@@ -63,12 +78,5 @@ export class CategoryBarGraphComponent implements OnInit {
   constructor(
     private dataVisualisationService: DataVisualisationService,
     private categoryBarGraphService: CategoryBarGraphService
-  ) {
-    this.data$.subscribe((data) => {
-      this.data = data;
-    })
-    this.dataVisualisationService.categoryColours$.subscribe((colours) => {
-      this.colours = colours
-    });
-  }
+  ) { }
 }
