@@ -21,7 +21,7 @@ export class CategoryBarGraphComponent implements OnInit {
         this.team = team;
         this.dataVisualisationService.getCategoryBarGraphData$(team.teamId)
           .subscribe(data => {
-            this.data = data;
+            this.data = data.sort((a,b) => a.count - b.count);
             this.createChart();
           });
       }
@@ -65,6 +65,9 @@ export class CategoryBarGraphComponent implements OnInit {
         },
         indexAxis: 'y',
         plugins: {
+          legend: {
+            display: false
+          },
           title: {
             display: true,
             text: `Total number of PDs per category (DVCAT) for ${this.team?.teamName ?? "team"}`,
