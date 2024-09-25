@@ -18,6 +18,7 @@ export class CategoryBarGraphComponent implements OnInit {
       if (team !== null) {
         this.dataVisualisationService.getCategoryBarGraphData$(team.teamId)
           .subscribe(data => {
+            console.log(data);
             this.data = data
             this.createChart();
           });

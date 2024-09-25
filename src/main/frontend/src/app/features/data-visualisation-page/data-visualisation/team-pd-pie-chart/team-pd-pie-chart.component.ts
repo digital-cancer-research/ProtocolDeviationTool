@@ -19,7 +19,6 @@ export class TeamPdPieChartComponent implements OnInit {
       this.data = data;
       this.chart = this.createChart();
     });
-
   }
 
   createChart(): Chart<'pie', number[], string> {

@@ -1,10 +1,10 @@
 <mat-grid-list [cols]="cols" [rowHeight]="rowHeight">
-    @for (tile of tiles; track tile; let i = $index) {
+    @for (tile of tiles; track tile) {
         <mat-grid-tile 
         [colspan]="tile.colspan"
         [rowspan]="tile.rowspan"
-        [ngClass]="getVisualisationClass(i)">
-        <div [ngSwitch]="i" class="container">
+        [ngClass]="getVisualisationFromOrder(tile.order)">
+        <div [ngSwitch]="tile.order" class="container">
             <ng-container *ngSwitchCase="0">
                 <app-team-study-select></app-team-study-select>
             </ng-container>

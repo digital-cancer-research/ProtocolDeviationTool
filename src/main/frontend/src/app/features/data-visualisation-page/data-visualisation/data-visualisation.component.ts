@@ -1,6 +1,4 @@
 import { AfterViewInit, Component, HostListener, OnInit, ViewEncapsulation } from '@angular/core';
-import { Team } from 'src/app/core/models/team.model';
-import { UserService } from 'src/app/core/services/user.service';
 
 @Component({
   selector: 'app-data-visualisation',
@@ -17,35 +15,35 @@ export class DataVisualisationComponent implements AfterViewInit {
     this.cols = 6
     this.rowHeight = '50%'
     return [
-      { colspan: 1, rowspan: 2 },
-      { colspan: 1, rowspan: 1 },
-      { colspan: 4, rowspan: 1 },
-      { colspan: 2, rowspan: 1 },
-      { colspan: 3, rowspan: 1 },
+      { colspan: 1, rowspan: 2, order: 0 },
+      { colspan: 1, rowspan: 1, order: 1 },
+      { colspan: 4, rowspan: 1, order: 2 },
+      { colspan: 2, rowspan: 1, order: 3 },
+      { colspan: 3, rowspan: 1, order: 4 },
     ];
   }
 
   get LAYOUT_MEDIUM(): Tile[] {
-    this.cols = 4
-    this.rowHeight = '20%'
+    this.cols = 5
+    this.rowHeight = '16.6%'
     return [
-      { colspan: 4, rowspan: 1 },
-      { colspan: 2, rowspan: 2 },
-      { colspan: 2, rowspan: 2 },
-      { colspan: 2, rowspan: 2 },
-      { colspan: 2, rowspan: 2 },
+      { colspan: 1, rowspan: 1, order: 0 },
+      { colspan: 4, rowspan: 3, order: 2 },
+      { colspan: 1, rowspan: 2, order: 1 },
+      { colspan: 1, rowspan: 3, order: 3 },
+      { colspan: 4, rowspan: 3, order: 4 },
     ];
   }
 
   get LAYOUT_SMALL(): Tile[] {
     this.cols = 1;
-    this.rowHeight = '11%';
+    this.rowHeight = '10%';
     return [
-      { colspan: 1, rowspan: 1 },
-      { colspan: 1, rowspan: 2 },
-      { colspan: 1, rowspan: 2 },
-      { colspan: 1, rowspan: 2 },
-      { colspan: 1, rowspan: 2 },
+      { colspan: 1, rowspan: 1, order: 0 },
+      { colspan: 1, rowspan: 1, order: 1 },
+      { colspan: 1, rowspan: 3, order: 2 },
+      { colspan: 1, rowspan: 2, order: 3 },
+      { colspan: 1, rowspan: 3, order: 4 },
     ];
   }
 
@@ -58,20 +56,16 @@ export class DataVisualisationComponent implements AfterViewInit {
     const width: number = window.innerWidth;
     const height: number = window.innerHeight;
 
-    if (width > 1366) {
+    if (width > 1400) {
       this.tiles = this.LAYOUT_LARGE;
-    } else if (width > 1024) {
+    } else if (width > 650) {
       this.tiles = this.LAYOUT_MEDIUM;
     } else {
       this.tiles = this.LAYOUT_SMALL;
     }
-
-    if (height < 768 ) {
-      this.tiles = this.LAYOUT_SMALL;
-    }
   }
 
-  getVisualisationClass(index: number): string {
+  getVisualisationFromOrder(index: number): string {
     switch(index) {
       case (0):
         return "select";
@@ -94,4 +88,5 @@ export class DataVisualisationComponent implements AfterViewInit {
 export interface Tile {
   colspan: number;
   rowspan: number;
+  order: number;
 }
