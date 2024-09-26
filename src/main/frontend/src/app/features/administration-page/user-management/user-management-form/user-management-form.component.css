@@ -1,0 +1,22 @@
+mat-card {
+    width: fit-content;
+    margin: 5px;
+}
+
+mat-card-content {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: baseline;
+}
+
+.confirm {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+}

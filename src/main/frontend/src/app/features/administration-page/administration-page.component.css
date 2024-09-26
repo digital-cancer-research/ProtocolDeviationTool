@@ -1,5 +1,6 @@
 :host {
     flex: 1;
+    overflow-y: auto;
 }
 
 app-tab {

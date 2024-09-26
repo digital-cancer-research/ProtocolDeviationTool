@@ -1,0 +1,17 @@
+<mat-form-field class="search-field" *ngIf="search" [appearance]="appearance">
+    <mat-label> {{ searchPlaceholder }} </mat-label>
+    <input matInput type="text" [(ngModel)]="searchTerm">
+    @if (searchTerm) {
+    <button mat-icon-button matSuffix>
+        <mat-icon (click)="searchTerm=''">close</mat-icon>
+    </button>
+    }
+</mat-form-field>
+<div>
+    @for (item of getFilteredItems(); track item) {
+    <mat-checkbox class="checkbox" name="item" [value]="toString(item)"
+    (change)="onChange(item, $event)" [checked]="isChecked(item)">
+        {{ getFieldValue(item) }}
+    </mat-checkbox>
+    }
+</div>

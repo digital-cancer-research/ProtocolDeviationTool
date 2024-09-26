@@ -1,3 +1,5 @@
+@import "../node_modules/@angular/material/prebuilt-themes/azure-blue.css";
+
 html,
 body {
   height: calc(100% - 18px);
@@ -55,12 +57,7 @@ app-root {
   flex-direction: column;
   height: 100%;
 }
-body { font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-.cdk-overlay-container {
-  position: absolute;
-  left: 50%;
-  right: 50%;
-  top: calc(100% - 64px);
-  white-space: pre-wrap;
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
