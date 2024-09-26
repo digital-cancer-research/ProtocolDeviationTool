@@ -1,0 +1,26 @@
+<mat-grid-list [cols]="cols" [rowHeight]="rowHeight">
+    @for (tile of tiles; track tile) {
+        <mat-grid-tile 
+        [colspan]="tile.colspan"
+        [rowspan]="tile.rowspan"
+        [ngClass]="getVisualisationFromOrder(tile.order)">
+        <div [ngSwitch]="tile.order" class="container">
+            <ng-container *ngSwitchCase="0">
+                <app-team-study-select></app-team-study-select>
+            </ng-container>
+            <ng-container *ngSwitchCase="1">
+                <app-visualisation></app-visualisation>
+            </ng-container>
+            <ng-container *ngSwitchCase="2">
+                <app-category-bar-graph></app-category-bar-graph>
+            </ng-container>
+            <ng-container *ngSwitchCase="3">
+                <app-team-pd-pie-chart></app-team-pd-pie-chart>
+            </ng-container>
+            <ng-container *ngSwitchCase="4">
+                <app-team-study-bar-graph></app-team-study-bar-graph>
+            </ng-container>
+        </div>
+        </mat-grid-tile>
+    }
+</mat-grid-list>

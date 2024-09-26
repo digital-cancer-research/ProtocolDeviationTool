@@ -42,7 +42,6 @@ export class TeamManagementComponent implements OnInit {
 		this.teamsSubscription = this.teamService.teams$.subscribe({
 			next: (teams: any[]) => {
 				this.teams = teams;
-				console.log(teams);
 				this.updatePage();
 			},
 			error: (error) => {

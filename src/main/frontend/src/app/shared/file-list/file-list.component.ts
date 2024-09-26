@@ -1,5 +1,4 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { FileListService } from './file-list.service';
 
 
@@ -16,7 +15,6 @@ export class FileListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadFiles();
-    console.log(this.files);
   }
 
   loadFiles(): void {

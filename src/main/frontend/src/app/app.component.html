@@ -1,3 +1,7 @@
 <app-header></app-header>
 <router-outlet></router-outlet>
-<app-footer [footerImage]="'assets/footer-logo.png'"></app-footer>
+<ng-container>
+    <app-footer *ngIf="isFooterVisible" 
+    [footerImage]="'assets/footer-logo.png'">
+    </app-footer>
+</ng-container>

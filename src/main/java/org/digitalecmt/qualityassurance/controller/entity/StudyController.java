@@ -28,9 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
-import org.digitalecmt.qualityassurance.model.persistence.Study;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
-import org.digitalecmt.qualityassurance.repository.StudyRepository;
+import org.digitalecmt.qualityassurance.service.StudyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,8 +38,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/studies")
 public class StudyController {
+
     @Autowired
     private DataEntryRepository dataEntryRepository;
+
+    @Autowired
+    private StudyService studyService;
 
     @GetMapping
     public ResponseEntity<List<DataEntry>> getAllStudies() {
@@ -66,6 +69,12 @@ public class StudyController {
     @GetMapping("/study-ids")
     public ResponseEntity<List<String>> getAllStudyIds() {
         List<String> studyIds = dataEntryRepository.findDistinctStudyIds();
+        return new ResponseEntity<>(studyIds, HttpStatus.OK);
+    }
+
+    @GetMapping("/study-ids/{teamId}")
+    public ResponseEntity<List<String>> getAllStudyIdsByTeam(@PathVariable(value = "teamId") Integer teamId) {
+        List<String> studyIds = studyService.getAllStudyIdsByTeam(teamId);
         return new ResponseEntity<>(studyIds, HttpStatus.OK);
     }
 }

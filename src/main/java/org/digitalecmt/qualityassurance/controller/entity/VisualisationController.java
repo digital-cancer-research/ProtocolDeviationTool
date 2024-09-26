@@ -32,21 +32,15 @@ import org.digitalecmt.qualityassurance.dto.CountPerStudyDTO;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryDTO;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryPerStudyDTO;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerSubcategoryPerCategoryDTO;
-import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
-import org.digitalecmt.qualityassurance.model.persistence.PdCategory;
+import org.digitalecmt.qualityassurance.dto.Visualisation.PdCategoryGraphDataDTO;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.repository.PdCategoryRepository;
 import org.digitalecmt.qualityassurance.repository.TeamRepository;
-import org.digitalecmt.qualityassurance.repository.TeamStudyAccessRepository;
-import org.digitalecmt.qualityassurance.service.DataEntryService;
+import org.digitalecmt.qualityassurance.service.VisualisationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -63,6 +57,9 @@ public class VisualisationController {
 
     @Autowired
     private TeamRepository teamRepository;
+
+    @Autowired
+    private VisualisationService visualisationService;
 
     private Logger log = Logger.getLogger(VisualisationController.class.getName());
 
@@ -188,4 +185,34 @@ public class VisualisationController {
         }
     }
 
+    /**
+     * Retrieves a list of category (dvcat) colors.
+     * 
+     * @return a `ResponseEntity` containing a list of category colors and an HTTP
+     *         status of 200 (OK).
+     */
+    @GetMapping("/category-colours")
+    public ResponseEntity<List<String>> getCategoryColours() {
+        List<String> colours = visualisationService.findCategoryColours();
+        return new ResponseEntity<>(colours, HttpStatus.OK);
+    }
+
+    /**
+     * Retrieves PD category data for a specific team.
+     * 
+     * This method calls the `visualisationService` to fetch the PD category
+     * data associated with a specific team. The data returned includes the
+     * category name, the associated color, and the count of related data entries
+     * for the given team. The team ID is provided as a request parameter.
+     * </p>
+     * 
+     * @param teamId the ID of the team for which to retrieve PD category data.
+     * @return a `ResponseEntity` containing a list of `PdCategoryGraphDataDTO`
+     *         objects and an HTTP status of 200 (OK).
+     */
+    @GetMapping("/team-pd-categories")
+    public ResponseEntity<List<PdCategoryGraphDataDTO>> getPdCategoryData(@RequestParam("teamId") Integer teamId) {
+        List<PdCategoryGraphDataDTO> data = visualisationService.findPdCategoryGraphData(teamId);
+        return new ResponseEntity<>(data, HttpStatus.OK);
+    }
 }
