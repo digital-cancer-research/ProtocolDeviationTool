@@ -1,9 +1,0 @@
-<nav>
-  <ul>
-    <ng-container *ngFor="let button of buttons">
-      <li *ngIf="shouldDisplayButton(button)">
-        <a [routerLink]="button.route">{{ button.label }}</a>
-      </li>
-    </ng-container>
-  </ul>
-</nav>

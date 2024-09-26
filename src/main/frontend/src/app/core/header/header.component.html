@@ -1,0 +1,30 @@
+<header>
+
+  <div class="flex left">
+    <div [routerLink]="''">
+      PROTOCOL DEVIATION MONITORING
+    </div>
+    <mat-icon fontIcon="assignment" alt="Icon" [inline]="true"></mat-icon>
+  </div>
+
+  <div>
+    <h3>
+      {{ pageTitle }}
+    </h3>
+  </div>
+
+  <div class="flex user">
+    <mat-form-field appearance="outline">
+      <mat-select [(ngModel)]="usernameSelected" (valueChange)="onSelectUser($event)">
+        <mat-label>Select a user</mat-label>
+        <mat-option *ngFor="let user of users" [value]="user.username">
+          {{ user.username }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <p>{{ selectedTeam?.teamName || "NO TEAM SELECTED" }}</p>
+  </div>
+
+</header>
+
+<app-navigation-ribbon *ngIf="urlPathString !== ''"></app-navigation-ribbon>

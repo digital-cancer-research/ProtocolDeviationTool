@@ -26,10 +26,7 @@ import { DataVisualisationDeviationsOverTimePageComponent } from './data-visuali
 import { SiteStudyLevelSelectComponent } from './site-study-level-select/site-study-level-select.component';
 import { CategoryBarGraphSegmentedSiteComponent } from './category-bar-graph-segmented-site/category-bar-graph-segmented-site.component';
 import { BorderComponent } from './border/border.component';
-import { HeaderComponent } from './header/header.component';
-import { FooterComponent } from './footer/footer.component';
 import { SiteSponsSelectComponent } from './site-spons-select/site-spons-select.component';
-import { NavigationRibbonComponent } from './navigation-ribbon/navigation-ribbon.component';
 import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.component';
 
 import { UserService } from './user/user.service';
@@ -61,10 +58,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         CategoryPieGraphComponent,
         DashboardComponent,
         BorderComponent,
-        HeaderComponent,
-        FooterComponent,
         SiteSponsSelectComponent,
-        NavigationRibbonComponent,
         SiteSponsorPageComponent,
         DataVisualisationPageComponent,
         CategoryBarGraphSegmentedComponent,

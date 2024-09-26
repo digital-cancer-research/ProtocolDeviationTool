@@ -1,0 +1,10 @@
+<nav mat-tab-nav-bar [tabPanel]="tabPanel">
+  @for (link of filteredLinks; track link) {
+    <a mat-tab-link
+      (click)="activeLink = link"
+      [active]="activeLink == link"
+      [routerLink]="link.route"
+      [disabled]="isUserDeactivated || link.disabled"> {{link.label}} </a>
+  }
+</nav>
+<mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>

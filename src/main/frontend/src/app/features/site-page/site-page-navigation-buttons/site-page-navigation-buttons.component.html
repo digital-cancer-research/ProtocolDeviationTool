@@ -5,15 +5,15 @@
         icon = "assets/data-upload-icon.svg"
         alt = "Data upload image" 
         label ="DATA UPLOAD"
-        [disabled]="!isTeamSelected"
-        [ngClass]="{'disabled': !isTeamSelected}">
+        [disabled]="isUserDeactivated"
+        [ngClass]="{'disabled': isUserDeactivated}">
       </app-page-button>
       <app-page-button
         link="/data-visualisation"
         icon = "assets/data-visualisation-icon.svg"
         alt = "Data visualisation" 
         label ="DATA VISUALISATION"
-        [disabled]="!isTeamSelected"
-        [ngClass]="{'disabled': !isTeamSelected}">>
+        [disabled]="isUserDeactivated || (!isUserDeactivated && !isTeamSelected)"
+        [ngClass]="{'disabled': isUserDeactivated || (!isUserDeactivated && !isTeamSelected)}">>
       </app-page-button>
 </ng-template>

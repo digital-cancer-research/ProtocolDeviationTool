@@ -1,9 +1,9 @@
 import { Component, Input, EventEmitter, Output, OnInit, OnDestroy } from '@angular/core';
-import { UserService } from '../core/services/user.service';
-import { AuthService } from '../user/auth.service';
-import { User } from '../core/models/user.model';
+import { UserService } from '../services/user.service';
+import { AuthService } from '../../user/auth.service';
+import { User } from '../models/user.model';
 import { filter, map, Observable, Subscription } from 'rxjs';
-import { Team } from '../core/models/team.model';
+import { Team } from '../models/team.model';
 import { NavigationEnd, Router } from '@angular/router';
 
 @Component({

@@ -1,0 +1,42 @@
+header {
+  background-color: #009cee;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 20px;
+  line-height: 40px;
+}
+
+.flex {
+  flex: 1;
+}
+
+mat-icon {
+  font-size: 40px !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+mat-select {
+  text-align: end;
+}
+
+.user {
+  text-align: end;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+}
+
+mat-form-field {
+  width: fit-content;
+}
