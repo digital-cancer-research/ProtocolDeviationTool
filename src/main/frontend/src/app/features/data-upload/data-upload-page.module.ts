@@ -23,6 +23,6 @@ import { DataUploadPageComponent } from './data-upload-page.component';
     CommonModule,
     DataUploadRoutingModule,
     SharedModule
-  ]
+  ],
 })
 export class DataUploadModule { }

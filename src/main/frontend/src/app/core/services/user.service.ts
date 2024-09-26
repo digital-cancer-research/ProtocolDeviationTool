@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, of } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { User } from '../models/user.model';
 import { Team } from '../models/team.model';
-import { UserTeam } from '../models/user-team';
+import { UserTeam } from '../models/user-team.model';
 
 /**
  * Service for managing user data.
