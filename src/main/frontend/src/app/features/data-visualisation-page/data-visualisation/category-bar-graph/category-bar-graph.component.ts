@@ -3,6 +3,7 @@ import { Chart } from 'chart.js';
 import { DataVisualisationService } from '../../data-visualisation.service';
 import { CategoryBarGraphData } from '../../models/category-bar-graph-data.model';
 import { UserService } from 'src/app/core/services/user.service';
+import { Team } from 'src/app/core/models/team.model';
 
 @Component({
   selector: 'app-category-bar-graph',
@@ -12,14 +13,15 @@ import { UserService } from 'src/app/core/services/user.service';
 export class CategoryBarGraphComponent implements OnInit {
   chart!: Chart;
   data: CategoryBarGraphData[] = [];
+  team: Team | null = null;
 
   ngOnInit(): void {
     this.userService.currentUserSelectedTeam$.subscribe((team) => {
       if (team !== null) {
+        this.team = team;
         this.dataVisualisationService.getCategoryBarGraphData$(team.teamId)
           .subscribe(data => {
-            console.log(data);
-            this.data = data
+            this.data = data.sort((a,b) => a.count - b.count);
             this.createChart();
           });
       }
@@ -63,9 +65,12 @@ export class CategoryBarGraphComponent implements OnInit {
         },
         indexAxis: 'y',
         plugins: {
+          legend: {
+            display: false
+          },
           title: {
             display: true,
-            text: 'Total number of PDs per category (DVCAT) for team',
+            text: `Total number of PDs per category (DVCAT) for ${this.team?.teamName ?? "team"}`,
           },
         }
       },
