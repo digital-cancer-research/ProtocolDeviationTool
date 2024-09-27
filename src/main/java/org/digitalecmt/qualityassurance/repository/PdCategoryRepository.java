@@ -27,6 +27,7 @@ package org.digitalecmt.qualityassurance.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.digitalecmt.qualityassurance.dto.Visualisation.DvcatDvdecodRepositoryDataDTO;
 import org.digitalecmt.qualityassurance.dto.Visualisation.PdCategoryGraphDataDTO;
 import org.digitalecmt.qualityassurance.model.persistence.PdCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -55,6 +56,7 @@ public interface PdCategoryRepository
 	 * for visualisations. The data includes the category name (`dvcat`), the
 	 * associated
 	 * color, and the count of related entries for a given team.
+	 * 
 	 * @param teamId the ID of the team for which to retrieve the category data.
 	 * @return a list of `PdCategoryGraphDataDTO` containing the category name
 	 *         (`dvcat`),
@@ -73,5 +75,31 @@ public interface PdCategoryRepository
 			"    WHERE tsa.teamId = :teamId" +
 			") " +
 			"GROUP BY pc.dvcat, dc.colour")
-	List<PdCategoryGraphDataDTO> findPdCategoryGraphData(@Param("teamId") Integer teamId);
+	List<PdCategoryGraphDataDTO> findPdCategoryGraphDataByTeamId(@Param("teamId") Integer teamId);
+
+	// @Query("SELECT new org.digitalecmt.qualityassurance.dto.Visualisation.PdCategoryDvdecodBreakdownDTO" +
+	// 		"(pc.dvcat, pc.dvdecod, COUNT(dec), dc.colour) " +
+	// 		"FROM DataEntry de " +
+	// 		"JOIN DataEntryCategory dec ON dec.entryId = de.entryId " +
+	// 		"JOIN PdCategory pc ON pc.categoryId = dec.categoryId" +
+	// 		"JOIN DvdecodColour dc on dc.dvdecod = pc.dvdecod " +
+	// 		"WHERE de.studyId IN (" +
+	// 		"  SELECT tsa.studyId " +
+	// 		"  FROM TeamStudyAccess tsa " +
+	// 		"  WHERE tsa.teamId = :teamId" +
+	// 		") " +
+	// 		"GROUP BY pc.dvcat, pc.dvdecod, dc.colour")
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.Visualisation.DvcatDvdecodRepositoryDataDTO" +
+			"(pc.dvcat, pc.dvdecod, COUNT(dec), dc.colour) " +
+			"FROM DataEntry de " +
+			"JOIN DataEntryCategory dec ON dec.entryId = de.entryId " +
+			"JOIN PdCategory pc ON pc.categoryId = dec.categoryId " +
+			"JOIN DvdecodColour dc ON dc.dvdecod = pc.dvdecod " +
+			"WHERE de.studyId IN (" +
+			"  SELECT tsa.studyId " +
+			"  FROM TeamStudyAccess tsa " +
+			"  WHERE tsa.teamId = :teamId" +
+			") " +
+			"GROUP BY pc.dvcat, pc.dvdecod, dc.colour")
+	List<DvcatDvdecodRepositoryDataDTO> findPdCategoryBreakdownDataByTeamId(@Param("teamId") Integer teamId);
 }

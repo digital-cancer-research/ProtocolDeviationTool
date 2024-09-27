@@ -4,6 +4,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.digitalecmt.qualityassurance.dto.Visualisation.DvcatDvdecodDTO;
+import org.digitalecmt.qualityassurance.dto.Visualisation.DvcatDvdecodGraphDataDTO;
+import org.digitalecmt.qualityassurance.dto.Visualisation.DvcatDvdecodRepositoryDataDTO;
 import org.digitalecmt.qualityassurance.dto.Visualisation.PdCategoryGraphDataDTO;
 import org.digitalecmt.qualityassurance.model.persistence.DvcatColour;
 import org.digitalecmt.qualityassurance.repository.DvcatColourRepository;
@@ -63,7 +66,8 @@ public class VisualisationService {
      *         data for the specified team.
      */
     public List<PdCategoryGraphDataDTO> findPdCategoryGraphData(Integer teamId) {
-        List<PdCategoryGraphDataDTO> existingCategoryData = pdCategoryRepository.findPdCategoryGraphData(teamId);
+        List<PdCategoryGraphDataDTO> existingCategoryData = pdCategoryRepository
+                .findPdCategoryGraphDataByTeamId(teamId);
         return fillInMissingPdCategoryGraphData(existingCategoryData);
     }
 
@@ -97,5 +101,88 @@ public class VisualisationService {
             }
         }
         return existingData;
+    }
+
+    /**
+     * Retrieves protocol deviation category breakdown graph data for a given team.
+     * This is data formatted for a stacked bar graph in chart.js.
+     *
+     * @param teamId the ID of the team for which the data is retrieved.
+     * @return DvcatDvdecodGraphDataDTO containing the list of DVCATs and the
+     *         breakdown data for each.
+     */
+    public DvcatDvdecodGraphDataDTO findPdCategoryBreakdownGraphData(Integer teamId) {
+        List<PdCategoryGraphDataDTO> pdCategories = getSortedPdCategories(teamId);
+        List<String> dvcats = extractDvcats(pdCategories);
+        Integer numberOfDvcats = dvcats.size();
+
+        List<DvcatDvdecodRepositoryDataDTO> pdData = pdCategoryRepository.findPdCategoryBreakdownDataByTeamId(teamId);
+        List<DvcatDvdecodDTO> dvcatDvdecodData = mapPdDataToDvcatDvdecodDTO(pdData, dvcats, numberOfDvcats);
+
+        dvcatDvdecodData.sort(Comparator.comparing(DvcatDvdecodDTO::getTotalCount).reversed());
+        return new DvcatDvdecodGraphDataDTO(dvcats, dvcatDvdecodData);
+    }
+
+    /**
+     * Retrieves and sorts protocol deviation categories by count for a given team.
+     *
+     * @param teamId the ID of the team for which to retrieve categories.
+     * @return a sorted list of PdCategoryGraphDataDTO.
+     */
+    private List<PdCategoryGraphDataDTO> getSortedPdCategories(Integer teamId) {
+        List<PdCategoryGraphDataDTO> pdCategories = findPdCategoryGraphData(teamId);
+        pdCategories.sort(Comparator.comparing(PdCategoryGraphDataDTO::getCount));
+        return pdCategories;
+    }
+
+    /**
+     * Extracts the list of DVCATs from the provided list of protocol deviation
+     * categories.
+     *
+     * @param pdCategories the list of protocol deviation categories.
+     * @return a list of DVCAT strings.
+     */
+    private List<String> extractDvcats(List<PdCategoryGraphDataDTO> pdCategories) {
+        return pdCategories.stream()
+                .map(PdCategoryGraphDataDTO::getDvcat)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Maps protocol deviation repository data to a list of DvcatDvdecodDTO objects.
+     *
+     * @param pdData         the protocol deviation repository data.
+     * @param dvcats         the list of DVCATs.
+     * @param numberOfDvcats the total number of DVCATs.
+     * @return a list of DvcatDvdecodDTO objects.
+     */
+    private List<DvcatDvdecodDTO> mapPdDataToDvcatDvdecodDTO(List<DvcatDvdecodRepositoryDataDTO> pdData,
+            List<String> dvcats, Integer numberOfDvcats) {
+        return pdData.stream().map(data -> {
+            Long[] count = initialiseCountArray(dvcats, data.getDvcat(), data.getCount(), numberOfDvcats);
+            return new DvcatDvdecodDTO(data.getDvcat(), data.getDvdecod(), count, data.getColour());
+        }).collect(Collectors.toList());
+    }
+
+    /**
+     * Initialises the count array for a DVCAT by placing the entry count in the
+     * correct position.
+     * The count for other DVCATs is set to zero.
+     *
+     * @param dvcats         the list of all DVCATs.
+     * @param dvcat          the current DVCAT for the data entry.
+     * @param entryCount     the count of the current DVCAT.
+     * @param numberOfDvcats the total number of DVCATs.
+     * @return an array of counts, with the count for the current DVCAT and zeroes
+     *         for others.
+     */
+    private Long[] initialiseCountArray(List<String> dvcats, String dvcat, Long entryCount, Integer numberOfDvcats) {
+        Long[] count = new Long[numberOfDvcats];
+        Integer index = dvcats.indexOf(dvcat);
+
+        for (int i = 0; i < numberOfDvcats; i++) {
+            count[i] = (i == index) ? entryCount : 0L;
+        }
+        return count;
     }
 }
