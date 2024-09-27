@@ -37,3 +37,6 @@ tmp/**/*
 local.properties
 /src/main/resources/rebel.xml
 .springBeans
+package-lock.json
+frontend/package-lock.json
+/src/main/resources/static/main.*
