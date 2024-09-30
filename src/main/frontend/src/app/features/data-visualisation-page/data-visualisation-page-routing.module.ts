@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DataVisualisationPageComponent } from './data-visualisation-page.component';
 import { DataVisualisationComponent } from './data-visualisation/data-visualisation.component';
+import { TeamLevelDashboardComponent } from './team-level-dashboard/team-level-dashboard.component';
 import { DataVisualisationDeviationHomePageComponent } from './data-visualisation-deviation-home-page/data-visualisation-deviation-home-page.component';
 
 const routes: Routes = [{
@@ -9,7 +10,8 @@ const routes: Routes = [{
   component: DataVisualisationPageComponent,
   children: [
     { path: '', component: DataVisualisationComponent },
-    { path: 'data-visualisation-deviation-home', component: DataVisualisationDeviationHomePageComponent}
+    { path: 'team-level-dashboard', component: TeamLevelDashboardComponent},
+    // { path: 'team-level-dashboard', component: DataVisualisationDeviationHomePageComponent},
   ]
 }];
 

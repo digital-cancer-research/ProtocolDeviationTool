@@ -21,6 +21,10 @@ import { TeamStudyBarGraphComponent } from "./data-visualisation/team-study-bar-
 import { DataVisualisationDeviationHomePageComponent } from './data-visualisation-deviation-home-page/data-visualisation-deviation-home-page.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CategoryBarGraphSegmentedSiteComponent } from './data-visualisation-deviation-home-page/category-bar-graph-segmented-site/category-bar-graph-segmented-site.component';
+import { TeamLevelDashboardComponent } from './team-level-dashboard/team-level-dashboard.component';
+import { TeamPdDvdecodGraphComponent } from "./team-level-dashboard/team-pd-dvdecod-graph/team-pd-dvdecod-graph.component";
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 
 
@@ -28,6 +32,8 @@ import { CategoryBarGraphSegmentedSiteComponent } from './data-visualisation-dev
   declarations: [
     DataVisualisationPageComponent,
     DataVisualisationComponent,
+    TeamLevelDashboardComponent,
+    TeamPdDvdecodGraphComponent,
     DataVisualisationDeviationHomePageComponent,
     TeamStudySelectComponent,
     CategoryBarGraphComponent,
@@ -42,6 +48,8 @@ import { CategoryBarGraphSegmentedSiteComponent } from './data-visualisation-dev
     FormsModule,
     MatAutocompleteModule,
     MatButtonModule,
+    MatCardModule,
+    MatCheckboxModule,
     MatFormFieldModule,
     MatGridListModule,
     MatIconModule,
@@ -49,8 +57,8 @@ import { CategoryBarGraphSegmentedSiteComponent } from './data-visualisation-dev
     MatOptionModule,
     MatProgressSpinnerModule,
     ReactiveFormsModule,
-    SharedModule
-  ],
+    SharedModule,
+],
   exports:
     [
       CategoryBarGraphSegmentedSiteComponent

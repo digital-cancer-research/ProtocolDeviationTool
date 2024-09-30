@@ -1,0 +1,20 @@
+<mat-card>
+    <mat-card-content>
+        <div style="position: relative">
+            <canvas id="teamPdDvdecodGraph">{{chart}}</canvas>
+        </div>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-raised-button
+        (click)="toggleLegend()">
+            Toggle Legend
+        </button>
+        <app-multi-select
+        [items]="labels"
+        [defaultValues]="labels"
+        [height]="320"
+        (confirmedItems)="updateChart($event)"
+        >
+    </app-multi-select>
+    </mat-card-actions>
+</mat-card>

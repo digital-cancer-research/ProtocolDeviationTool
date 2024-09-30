@@ -1,0 +1,32 @@
+:host,
+mat-card,
+div {
+    height: 100%;
+}
+
+mat-card {
+    display: flex;
+    flex-direction: row;
+}
+
+mat-card-content {
+    height: 90%;
+    flex: 4;
+}
+
+mat-card-actions {
+    flex: 1;
+    align-items: start;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
