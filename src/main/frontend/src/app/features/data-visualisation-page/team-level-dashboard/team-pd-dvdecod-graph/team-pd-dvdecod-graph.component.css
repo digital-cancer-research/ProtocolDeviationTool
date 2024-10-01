@@ -30,3 +30,26 @@ div {
     justify-content: center;
     align-items: center;
 }
+
+ngx-skeleton-loader {
+    height: 100%;
+    width: 100%;
+}
+
+#teamPdDvdecodSkeletonGraph {
+    cursor: wait;
+    user-select: none;
+}
+
+.container {
+    height: 200px;
+}
+
+.refresh {
+    transform: scale(5);
+}
+
+.snackbar {
+    background: #1fcd98;
+    white-space: pre-line !important;
+}

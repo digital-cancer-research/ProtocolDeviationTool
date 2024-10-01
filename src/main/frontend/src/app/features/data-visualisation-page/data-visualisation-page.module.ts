@@ -25,8 +25,7 @@ import { TeamLevelDashboardComponent } from './team-level-dashboard/team-level-d
 import { TeamPdDvdecodGraphComponent } from "./team-level-dashboard/team-pd-dvdecod-graph/team-pd-dvdecod-graph.component";
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-
-
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @NgModule({
   declarations: [
@@ -56,6 +55,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatInputModule,
     MatOptionModule,
     MatProgressSpinnerModule,
+    NgxSkeletonLoaderModule,
     ReactiveFormsModule,
     SharedModule,
 ],

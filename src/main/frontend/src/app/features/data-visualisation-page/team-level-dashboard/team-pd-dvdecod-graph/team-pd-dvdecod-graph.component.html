@@ -1,20 +1,39 @@
-<mat-card>
-    <mat-card-content>
-        <div style="position: relative">
-            <canvas id="teamPdDvdecodGraph">{{chart}}</canvas>
-        </div>
-    </mat-card-content>
-    <mat-card-actions>
-        <button mat-raised-button
-        (click)="toggleLegend()">
-            Toggle Legend
+<ng-template *ngIf="!errorMessage;else reload">
+    <mat-card>
+        <mat-card-content *ngIf="isDataLoading;else graph">
+            <canvas id="teamPdDvdecodSkeletonGraph">{{chart}}</canvas>
+        </mat-card-content>
+
+        <ng-template #graph>
+            <mat-card-content #graph>
+                <div style="position: relative">
+                    <canvas id="teamPdDvdecodGraph">{{chart}}</canvas>
+                </div>
+            </mat-card-content>
+        </ng-template>
+
+        <mat-card-actions *ngIf="isDataLoading;else filter">
+            <ngx-skeleton-loader count="10" appearance="line"></ngx-skeleton-loader>
+        </mat-card-actions>
+
+        <ng-template #filter>
+            <mat-card-actions *ngIf="!isDataLoading">
+                <button mat-raised-button (click)="toggleLegend()">
+                    Toggle Legend
+                </button>
+                <app-multi-select [items]="labels" [defaultValues]="labels" [height]="320"
+                    (confirmedItems)="updateChart($event)">
+                </app-multi-select>
+            </mat-card-actions>
+        </ng-template>
+    </mat-card>
+</ng-template>
+
+<ng-template #reload>
+    <div class="container">
+        <button mat-icon-button class="refresh"
+        (click)="ngAfterViewInit()">
+            <mat-icon>refresh</mat-icon>
         </button>
-        <app-multi-select
-        [items]="labels"
-        [defaultValues]="labels"
-        [height]="320"
-        (confirmedItems)="updateChart($event)"
-        >
-    </app-multi-select>
-    </mat-card-actions>
-</mat-card>
+    </div>
+</ng-template>
