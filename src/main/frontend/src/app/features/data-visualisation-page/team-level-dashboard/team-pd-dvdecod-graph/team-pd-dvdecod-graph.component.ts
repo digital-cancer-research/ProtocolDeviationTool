@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, inject, OnDestroy } from '@angular/core';
-import { Chart, ChartOptions } from 'chart.js';
+import { ActiveElement, CategoryScale, Chart, ChartOptions } from 'chart.js';
 import { DataVisualisationService } from '../../data-visualisation.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { PdDvdecod } from '../../models/team-pd-dvdecod-bar-graph-data.model';
@@ -12,14 +12,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrl: './team-pd-dvdecod-graph.component.css',
 })
 export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
-  
+
   private _snackBar = inject(MatSnackBar);
   duration = 5000;
 
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, {
       duration: this.duration,
-      panelClass: ["test"]
+      panelClass: ["test"],
     });
   }
 
@@ -28,11 +28,13 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
   private filteredData: PdDvdecod[] = [];
   private userSubscription!: Subscription;
   private visSubscription!: Subscription;
+  private colours: string[] = this.dataVisualisationService.dvdecodColours
   public labels: string[] = this.dataVisualisationService.PdCategories;
   public selectedLabels: string[] = this.labels;
   public isLegendVisible: boolean = false;
-  public isDataLoading: boolean = true;
+  public isDataLoading: boolean = false;
   public errorMessage: string = "";
+  public isColourModeDefault: boolean = true;
 
   constructor(
     private userService: UserService,
@@ -57,13 +59,15 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
         if (team) {
           this.loadBarGraphData(team.teamId);
         } else {
-          this.errorMessage = `No team selected. \n Please select a team.`;
+          this.errorMessage = `An error occurred while trying to load the data - no team selected. 
+          Please select a team and try again.`;
           this.openSnackBar(this.errorMessage, "");
         }
       },
       error: (error) => {
         this.isDataLoading = false;
-        this.errorMessage = error.message || "An error occurred while trying to load the data. \n Please try again later."; 
+        this.errorMessage = error.message || `An error occurred while trying to load the data. 
+        Please try again later.`;
         this.openSnackBar(this.errorMessage, "");
       }
     });
@@ -81,7 +85,8 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
         },
         error: (error) => {
           this.isDataLoading = false;
-          this.errorMessage = error.message || "An error occurred while trying to load the data. \n Please try again later."; 
+          this.errorMessage = error.message || `An error occurred while trying to load the data. 
+          Please try again later.`;
           this.openSnackBar(this.errorMessage, "");
         }
       });
@@ -92,14 +97,28 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
       this.chart.destroy();
     }
 
-    this.chart = new Chart('teamPdDvdecodGraph', {
-      type: 'bar',
-      data: {
-        labels: this.selectedLabels,
-        datasets: this.formatData(data)
-      },
-      options: this.chartOptions,
-    });
+    let datasets = this.formatData(data);
+    if (this.isColourModeDefault) {
+      this.chart = new Chart('teamPdDvdecodGraph', {
+        type: 'bar',
+        data: {
+          labels: this.selectedLabels,
+          datasets: datasets
+        },
+        options: this.getChartOptionsWithGradientColours(datasets.map(
+          dataEntry => dataEntry.backgroundColor
+        )),
+      });
+    } else {
+      this.chart = new Chart('teamPdDvdecodGraph', {
+        type: 'bar',
+        data: {
+          labels: this.selectedLabels,
+          datasets: datasets
+        },
+        options: this.chartOptions,
+      });
+    }
   }
 
   private createSkeletonChart(): void {
@@ -113,16 +132,12 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
         labels: this.labels,
         datasets: this.labels.map((label, index) => {
           let count: number[] = new Array(10).fill(0);
-          count[index] = Math.random() + index;
+          count[index] = index + 1;
           return {
             label: label,
             data: count,
             backgroundColor: '#EFF1f6'
           };
-        }).sort((a, b) => {
-          const maxValueA = Math.max(...a.data);
-          const maxValueB = Math.max(...b.data);
-          return maxValueB - maxValueA;
         })
       },
       options: this.skeletonChartOptions,
@@ -131,11 +146,46 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
 
 
   private formatData(data: PdDvdecod[]): any[] {
-    return data.map((dataEntry) => ({
-      label: dataEntry.dvdecod,
-      data: dataEntry.count,
-      backgroundColor: dataEntry.colour
-    }));
+    if (!this.isColourModeDefault) {
+      return data.map((dataEntry) => ({
+        label: dataEntry.dvdecod,
+        data: dataEntry.count,
+        backgroundColor: dataEntry.colour
+      }));
+    } else {
+      const groupedData: { [dvcat: string]: PdDvdecod[] } = data.reduce((acc, dataEntry) => {
+        if (!acc[dataEntry.dvcat]) {
+          acc[dataEntry.dvcat] = [];
+        }
+        acc[dataEntry.dvcat].push(dataEntry);
+        return acc;
+      }, {} as { [dvcat: string]: PdDvdecod[] });
+
+      for (const dvcat in groupedData) {
+        groupedData[dvcat].sort((a, b) => {
+          const countA = a.count.find(val => val !== 0) || 0;
+          const countB = b.count.find(val => val !== 0) || 0;
+          return countB - countA;
+        });
+      }
+
+      const updatedData: {label:string, data: number[], backgroundColor: string}[] = [];
+      for (const dvcat in groupedData) {
+        let colourIndex = 0;
+
+        groupedData[dvcat].forEach((dataEntry) => {
+          const updatedColour = this.colours[colourIndex % this.colours.length];
+          colourIndex++;
+
+          updatedData.push({
+            label: dataEntry.dvdecod,
+            data: dataEntry.count,
+            backgroundColor: updatedColour
+          });
+        });
+      }
+      return updatedData;
+    }
   }
 
   private get skeletonChartOptions(): ChartOptions {
@@ -225,6 +275,31 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
     };
   }
 
+  private getChartOptionsWithGradientColours(colours: string[]): ChartOptions {
+    const usedColors = Array.from(new Set(colours));
+
+    return {
+      ...this.chartOptions,
+      plugins: {
+        legend: {
+          display: this.isLegendVisible,
+          labels: {
+            generateLabels: (chart) => {
+              return usedColors.map(color => ({
+                text: '',
+                fillStyle: color,
+                strokeStyle: color,
+                hidden: false,
+                lineCap: 'round',
+              }));
+            }
+          }
+        }
+      }
+    };
+  }
+
+
   public updateChart(selectedDvcats: string[]): void {
     this.selectedLabels = this.labels.filter(dvcat => selectedDvcats.includes(dvcat));
     const selectedLabelsIndices = this.selectedLabels.map(dvcat => this.labels.indexOf(dvcat));
@@ -246,5 +321,53 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
   public toggleLegend(): void {
     this.isLegendVisible = !this.isLegendVisible;
     this.createChart(this.filteredData);
+  }
+
+  public toggleColourMode(): void {
+    this.createChart(this.filteredData);
+  }
+
+  public onClick(event: any): void {
+    let click = event as PointerEvent;
+    let x = click.layerX;
+    let y = click.layerY;
+    let yAxis = (this.chart.scales['y'] as CategoryScale);
+    let labelPositions = yAxis.getLabelItems().map((label) => {
+      let pos = label.options.translation?.[1];
+      return {
+        label: label,
+        y: pos ? pos : 0
+      }
+    });
+    console.log(labelPositions);
+    let xThreshold = yAxis.getLabelItems()[0].options.translation?.[0];
+    console.log('xThreshold');
+    console.log(xThreshold);
+    if (xThreshold !== undefined && x < xThreshold) {
+      let selectedLabelPosition = this.getClosestNumber(labelPositions.map(label => label.y), y);
+      console.log('selectedLabelPosition');
+      console.log(selectedLabelPosition);
+      console.log('x');
+      console.log(x);
+      if (selectedLabelPosition !== null) {
+        console.log(labelPositions[labelPositions.map(label => label.y).indexOf(selectedLabelPosition)].label.label);
+      }
+    }
+
+  }
+
+  private getClosestNumber(array: number[], target: number): number | null {
+    if (array.length === 0) {
+      return null;
+    }
+    if (array.length === 1) {
+      return array[0];
+    }
+    let pivot = Math.floor(array.length / 2);
+    if (array[pivot] > target) {
+      return this.getClosestNumber(array.slice(0, pivot), target);
+    } else {
+      return this.getClosestNumber(array.slice(pivot, array.length), target);
+    }
   }
 }

@@ -25,7 +25,8 @@ mat-card-actions {
     gap: 10px;
 }
 
-div {
+div.container,
+div.canvas {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -52,4 +53,11 @@ ngx-skeleton-loader {
 .snackbar {
     background: #1fcd98;
     white-space: pre-line !important;
+}
+
+div.toggleWithIcon {
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }

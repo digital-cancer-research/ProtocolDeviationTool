@@ -33,6 +33,16 @@ export class DataVisualisationService {
     ]
   }
 
+  get dvdecodColours(): string[] {
+    return [
+      '#5C0001', '#760001', '#900002', '#A80003', '#B90010',
+      '#D20012', '#E40515', '#E6200F', '#F94902', '#FA4903',
+      '#F95C02', '#F6790B', '#F47908', '#F19903', '#E7B503',
+      '#D0C102', '#D5CE04', '#BBE453', '#A5F06A', '#A2F49B',
+      '#C6F7D6', '#CEFFFF'
+    ]     
+  }
+
   getCategoryBarGraphData$(teamId: number): Observable<CategoryBarGraphData[]> {
     return this.http.get<CategoryBarGraphData[]>(`${this.baseUrl}/team-pd-categories?teamId=${teamId}`);
   }

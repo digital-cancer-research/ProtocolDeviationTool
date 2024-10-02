@@ -26,6 +26,9 @@ import { TeamPdDvdecodGraphComponent } from "./team-level-dashboard/team-pd-dvde
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 
 @NgModule({
   declarations: [
@@ -55,10 +58,12 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
     MatInputModule,
     MatOptionModule,
     MatProgressSpinnerModule,
+    MatSlideToggleModule,
+    MatTooltipModule,
     NgxSkeletonLoaderModule,
     ReactiveFormsModule,
     SharedModule,
-],
+  ],
   exports:
     [
       CategoryBarGraphSegmentedSiteComponent

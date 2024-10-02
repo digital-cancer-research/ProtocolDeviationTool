@@ -11,7 +11,6 @@ const routes: Routes = [{
   children: [
     { path: '', component: DataVisualisationComponent },
     { path: 'team-level-dashboard', component: TeamLevelDashboardComponent},
-    // { path: 'team-level-dashboard', component: DataVisualisationDeviationHomePageComponent},
   ]
 }];
 
