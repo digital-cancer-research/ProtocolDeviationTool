@@ -50,11 +50,6 @@ ngx-skeleton-loader {
     transform: scale(5);
 }
 
-.snackbar {
-    background: #1fcd98;
-    white-space: pre-line !important;
-}
-
 div.toggleWithIcon {
     height: fit-content;
     display: flex;

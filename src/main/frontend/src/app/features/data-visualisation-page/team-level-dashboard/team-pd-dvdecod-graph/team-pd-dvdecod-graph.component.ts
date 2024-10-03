@@ -100,7 +100,6 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
   }
 
   private createChart(data: PdDvdecod[]): void {
-    console.log("Create chart")
     if (this.chart) {
       this.chart.destroy();
     }

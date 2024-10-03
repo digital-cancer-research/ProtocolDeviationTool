@@ -1,26 +1,54 @@
 import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { dvdecodData } from '../models/team-pd-dvdecod-bar-graph-data.model';
 
+/**
+ * TeamLevelDashboardComponent manages the display and behavior of
+ * the team-level dashboard, including color mode and dvdecod data visualization.
+ */
 @Component({
   selector: 'app-team-level-dashboard',
   templateUrl: './team-level-dashboard.component.html',
-  styleUrl: './team-level-dashboard.component.css'
+  styleUrls: ['./team-level-dashboard.component.css']
 })
 export class TeamLevelDashboardComponent {
-  data: dvdecodData[] = [];
+  /** Array holding dvdecod data for the graph. */
+  graphData: dvdecodData[] = [];
+
+  /** Indicates whether the default color mode is active. */
   isColourModeDefault: boolean = true;
-  @ViewChild("dvdecodBarGraphCard") dvdecodBarGraphCard!: ElementRef;
 
-  constructor(private cdr: ChangeDetectorRef) { }
+  /** Reference to the dvdecod bar graph card DOM element. */
+  @ViewChild('dvdecodBarGraphCard') dvdecodBarGraphCard!: ElementRef;
 
-  setColourMode(isColourModeDefault: boolean) {
+  constructor(private cdr: ChangeDetectorRef) {}
+
+  /**
+   * Upadates the colour mode for the graph.
+   * 
+   * @param isColourModeDefault - Boolean indicating whether the default color mode is active.
+   */
+  updateColourMode(isColourModeDefault: boolean): void {
     this.isColourModeDefault = isColourModeDefault;
   }
 
-  setDvdecodGraphData(data: dvdecodData[]) {
-    this.data = data
+  /**
+   * Updates the dvdecod graph data and triggers a smooth scroll to the graph.
+   * 
+   * @param newData - Array of dvdecod data to be set.
+   */
+  updateDvdecodGraphData(newData: dvdecodData[]): void {
+    this.graphData = newData;
     this.cdr.detectChanges();
-    const el = document.getElementsByClassName("scroll")[0];
-    el.scrollIntoView({ block: 'end', behavior: 'smooth' });
+    this.scrollToGraph();
+  }
+
+  /**
+   * Scrolls smoothly to the dvdecod graph card element.
+   */
+  private scrollToGraph(): void {
+    const scrollElement = document.querySelector('.scroll');
+    if (scrollElement) {
+      scrollElement.scrollIntoView({ block: 'end', behavior: 'smooth' });
+    }
   }
 }
