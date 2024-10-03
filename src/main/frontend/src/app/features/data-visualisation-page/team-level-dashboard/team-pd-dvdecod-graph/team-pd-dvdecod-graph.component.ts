@@ -5,6 +5,7 @@ import { UserService } from 'src/app/core/services/user.service';
 import { dvdecodData, PdDvdecod } from '../../models/team-pd-dvdecod-bar-graph-data.model';
 import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TeamPdDvdecodGraphService } from './team-pd-dvdecod-graph.service';
 
 @Component({
   selector: 'app-team-pd-dvdecod-graph',
@@ -39,7 +40,8 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     private userService: UserService,
-    private dataVisualisationService: DataVisualisationService
+    private dataVisualisationService: DataVisualisationService,
+    private teamPdDvdecodGraphService: TeamPdDvdecodGraphService
   ) { }
 
   ngAfterViewInit(): void {
@@ -81,7 +83,7 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
           this.selectedLabels = this.labels;
           this.data = response.data;
           this.filteredData = this.data;
-          this.createChart(this.data);
+          this.createChart();
         },
         error: (error) => {
           this.errorMessage = error.message || `An error occurred while trying to load the data. 
@@ -94,222 +96,33 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
   private handleError(): void {
     this.isDataLoading = false;
     setTimeout(() => {
-      this.createChart([]);
+      this.createChart();
     }, 0)
     this.openSnackBar(this.errorMessage, "");
   }
 
-  private createChart(data: PdDvdecod[]): void {
+  private createChart(): void {
     if (this.chart) {
       this.chart.destroy();
     }
-
-    let datasets = this.formatData(data);
-    if (this.isColourModeDefault) {
-      this.chart = new Chart('teamPdDvdecodGraph', {
-        type: 'bar',
-        data: {
-          labels: this.selectedLabels,
-          datasets: datasets
-        },
-        options: this.getChartOptionsWithGradientColours(datasets.map(
-          dataEntry => dataEntry.backgroundColor
-        )),
-      });
-    } else {
-      this.chart = new Chart('teamPdDvdecodGraph', {
-        type: 'bar',
-        data: {
-          labels: this.selectedLabels,
-          datasets: datasets
-        },
-        options: this.chartOptions,
-      });
-    }
+    let datasets = this.teamPdDvdecodGraphService.formatData(
+      this.filteredData,
+      this.isColourModeDefault
+    );
+    this.chart = this.teamPdDvdecodGraphService.createChart(
+      datasets,
+      this.selectedLabels,
+      this.isColourModeDefault,
+      this.isLegendVisible
+    )
   }
 
   private createSkeletonChart(): void {
     if (this.chart) {
       this.chart.destroy();
     }
-
-    this.chart = new Chart('teamPdDvdecodSkeletonGraph', {
-      type: 'bar',
-      data: {
-        labels: this.labels,
-        datasets: this.labels.map((label, index) => {
-          let count: number[] = new Array(10).fill(0);
-          count[index] = index + 1;
-          return {
-            label: label,
-            data: count,
-            backgroundColor: '#EFF1f6'
-          };
-        })
-      },
-      options: this.skeletonChartOptions,
-    });
+    this.chart = this.teamPdDvdecodGraphService.createSkeletonChart(this.labels);
   }
-
-
-  private formatData(data: PdDvdecod[]): any[] {
-    if (!this.isColourModeDefault) {
-      return data.map((dataEntry) => ({
-        label: dataEntry.dvdecod,
-        data: dataEntry.count,
-        backgroundColor: dataEntry.colour
-      }));
-    } else {
-      const groupedData: { [dvcat: string]: PdDvdecod[] } = data.reduce((acc, dataEntry) => {
-        if (!acc[dataEntry.dvcat]) {
-          acc[dataEntry.dvcat] = [];
-        }
-        acc[dataEntry.dvcat].push(dataEntry);
-        return acc;
-      }, {} as { [dvcat: string]: PdDvdecod[] });
-
-      for (const dvcat in groupedData) {
-        groupedData[dvcat].sort((a, b) => {
-          const countA = a.count.find(val => val !== 0) || 0;
-          const countB = b.count.find(val => val !== 0) || 0;
-          return countB - countA;
-        });
-      }
-
-      const updatedData: { label: string, data: number[], backgroundColor: string }[] = [];
-      for (const dvcat in groupedData) {
-        let colourIndex = 0;
-
-        groupedData[dvcat].forEach((dataEntry) => {
-          const updatedColour = this.colours[colourIndex % this.colours.length];
-          colourIndex++;
-
-          updatedData.push({
-            label: dataEntry.dvdecod,
-            data: dataEntry.count,
-            backgroundColor: updatedColour
-          });
-        });
-      }
-      return updatedData;
-    }
-  }
-
-  private get skeletonChartOptions(): ChartOptions {
-    const colour = '#EFF1f6';
-    return {
-      ...this.chartOptions,
-      scales: {
-        y: {
-          beginAtZero: true,
-          stacked: true,
-          title: {
-            display: true,
-            text: 'DVCAT',
-            color: colour
-          },
-          ticks: {
-            color: colour,
-          },
-        },
-        x: {
-          stacked: true,
-          title: {
-            display: true,
-            text: 'Total number of PDs per DVCAT',
-            color: colour
-          },
-          ticks: {
-            color: colour,
-          },
-        },
-      },
-      animation: {
-        easing: 'easeInOutCubic',
-        duration: 4000,
-        loop: true,
-      },
-      plugins: {
-        ...this.chartOptions.plugins,
-        tooltip: {
-          enabled: false,
-        },
-        title: {
-          display: true,
-          text: 'Total number of protocol deviations within each category for protocol deviation (DVCAT)',
-          color: colour
-        }
-      },
-    };
-  }
-
-  private get chartOptions(): any {
-    return {
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: true,
-          stacked: true,
-          title: {
-            display: true,
-            text: 'DVCAT',
-          },
-          ticks: {
-            color: 'rgb(100,100,100)',
-          },
-        },
-        x: {
-          stacked: true,
-          title: {
-            display: true,
-            text: 'Total number of PDs per DVCAT',
-          },
-          ticks: {
-            color: 'rgb(100,100,100)',
-          },
-        },
-      },
-      indexAxis: 'y',
-      plugins: {
-        legend: {
-          display: this.isLegendVisible
-        },
-        title: {
-          display: true,
-          text: 'Total number of protocol deviations within each category for protocol deviation (DVCAT)'
-        },
-      }
-    };
-  }
-
-  private getChartOptionsWithGradientColours(colours: string[]): ChartOptions {
-    const usedColors = Array.from(new Set(colours));
-
-    return {
-      ...this.chartOptions,
-      plugins: {
-        legend: {
-          display: this.isLegendVisible,
-          labels: {
-            generateLabels: (chart) => {
-              return usedColors.map(color => ({
-                text: '',
-                fillStyle: color,
-                strokeStyle: color,
-                hidden: false,
-                lineCap: 'round',
-              }));
-            }
-          }
-        },
-        title: {
-          display: true,
-          text: 'Total number of protocol deviations within each category for protocol deviation (DVCAT)'
-        }
-      }
-    };
-  }
-
 
   public updateChart(selectedDvcats: string[]): void {
     this.selectedLabels = this.labels.filter(dvcat => selectedDvcats.includes(dvcat));
@@ -321,8 +134,7 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
         count: this.getFilteredCount(dataEntry.count, selectedLabelsIndices)
       }))
       .filter(dataEntry => !dataEntry.count.every(count => count === 0));
-
-    this.createChart(this.filteredData);
+    this.createChart();
   }
 
   private getFilteredCount(countArray: number[], indices: number[]): number[] {
@@ -331,11 +143,11 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
 
   public toggleLegend(): void {
     this.isLegendVisible = !this.isLegendVisible;
-    this.createChart(this.filteredData);
+    this.createChart();
   }
 
   public toggleColourMode(): void {
-    this.createChart(this.filteredData);
+    this.createChart();
   }
 
   public onClick(event: any): void {
@@ -343,6 +155,7 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
     let x = click.layerX;
     let y = click.layerY;
     let yAxis = (this.chart.scales['y'] as CategoryScale);
+
     let labelPositions = yAxis.getLabelItems().map((label) => {
       let pos = label.options.translation?.[1];
       return {
@@ -350,6 +163,7 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
         y: pos ? pos : 0
       }
     });
+
     let xThreshold = yAxis.getLabelItems()[0].options.translation?.[0];
     if (xThreshold !== undefined && x < xThreshold) {
       let selectedLabelPosition = this.getClosestNumber(labelPositions.map(label => label.y), y);

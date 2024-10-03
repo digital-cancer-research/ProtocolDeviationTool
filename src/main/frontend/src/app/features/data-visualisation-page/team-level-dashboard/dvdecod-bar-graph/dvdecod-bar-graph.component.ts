@@ -14,13 +14,13 @@ export class DvdecodBarGraphComponent implements OnChanges {
   /** Input data for the graph, an array of dvdecodData objects. */
   @Input() data: dvdecodData[] = [];
 
-  /** Boolean indicating if the default color mode is enabled. */
+  /** Boolean indicating if the default colour mode is enabled.  */
   @Input() isColourModeDefault: boolean = true;
 
   /** The Chart.js instance representing the bar graph. */
   chart!: Chart;
 
-  /** Color palette used for default color mode. */
+  /** Colour palette used for default color mode. */
   colours: string[] = this.dataVisualisationService.dvdecodColours;
 
   /**
@@ -34,6 +34,7 @@ export class DvdecodBarGraphComponent implements OnChanges {
 
   /**
    * Lifecycle hook triggered when input properties change.
+   * Creates a graph if valid data is received.
    * @param changes Object containing changes to input-bound properties.
    */
   ngOnChanges(changes: SimpleChanges): void {
