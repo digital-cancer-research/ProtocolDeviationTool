@@ -4,8 +4,15 @@ export interface PdDvdecodBarGraphData {
 }
 
 export interface PdDvdecod {
-    dvcat: string
+    dvcat: string;
     dvdecod: string;
     count: number[];
     colour: string;
+}
+
+export interface dvdecodData {
+    dvcat: string;
+    dvdecod: string;
+    count: number;
+    backgroundColor: string
 }

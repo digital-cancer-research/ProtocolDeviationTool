@@ -28,6 +28,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { DvdecodBarGraphComponent } from "./team-level-dashboard/dvdecod-bar-graph/dvdecod-bar-graph.component";
 
 
 @NgModule({
@@ -43,6 +44,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     TeamPdPieChartComponent,
     TeamStudyBarGraphComponent,
     VisualisationComponent,
+    DvdecodBarGraphComponent
   ],
   imports: [
     CommonModule,
@@ -63,7 +65,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     NgxSkeletonLoaderModule,
     ReactiveFormsModule,
     SharedModule,
-  ],
+],
   exports:
     [
       CategoryBarGraphSegmentedSiteComponent

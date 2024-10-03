@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, inject, OnDestroy } from '@angular/core';
-import { ActiveElement, CategoryScale, Chart, ChartOptions } from 'chart.js';
+import { AfterViewInit, Component, EventEmitter, inject, OnDestroy, Output } from '@angular/core';
+import { CategoryScale, Chart, ChartOptions } from 'chart.js';
 import { DataVisualisationService } from '../../data-visualisation.service';
 import { UserService } from 'src/app/core/services/user.service';
-import { PdDvdecod } from '../../models/team-pd-dvdecod-bar-graph-data.model';
+import { dvdecodData, PdDvdecod } from '../../models/team-pd-dvdecod-bar-graph-data.model';
 import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -18,8 +18,7 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
 
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, {
-      duration: this.duration,
-      panelClass: ["test"],
+      duration: this.duration
     });
   }
 
@@ -32,9 +31,11 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
   public labels: string[] = this.dataVisualisationService.PdCategories;
   public selectedLabels: string[] = this.labels;
   public isLegendVisible: boolean = false;
-  public isDataLoading: boolean = false;
+  public isDataLoading: boolean = true;
   public errorMessage: string = "";
   public isColourModeDefault: boolean = true;
+  @Output() dvdecodGraphData: EventEmitter<dvdecodData[]> = new EventEmitter();
+  @Output() colourMode: EventEmitter<boolean> = new EventEmitter(true);
 
   constructor(
     private userService: UserService,
@@ -61,14 +62,13 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
         } else {
           this.errorMessage = `An error occurred while trying to load the data - no team selected. 
           Please select a team and try again.`;
-          this.openSnackBar(this.errorMessage, "");
+          this.handleError();
         }
       },
       error: (error) => {
-        this.isDataLoading = false;
         this.errorMessage = error.message || `An error occurred while trying to load the data. 
         Please try again later.`;
-        this.openSnackBar(this.errorMessage, "");
+        this.handleError();
       }
     });
   }
@@ -84,15 +84,23 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
           this.createChart(this.data);
         },
         error: (error) => {
-          this.isDataLoading = false;
           this.errorMessage = error.message || `An error occurred while trying to load the data. 
           Please try again later.`;
-          this.openSnackBar(this.errorMessage, "");
+          this.handleError();
         }
       });
   }
 
+  private handleError(): void {
+    this.isDataLoading = false;
+    setTimeout(() => {
+      this.createChart([]);
+    }, 0)
+    this.openSnackBar(this.errorMessage, "");
+  }
+
   private createChart(data: PdDvdecod[]): void {
+    console.log("Create chart")
     if (this.chart) {
       this.chart.destroy();
     }
@@ -169,7 +177,7 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
         });
       }
 
-      const updatedData: {label:string, data: number[], backgroundColor: string}[] = [];
+      const updatedData: { label: string, data: number[], backgroundColor: string }[] = [];
       for (const dvcat in groupedData) {
         let colourIndex = 0;
 
@@ -294,6 +302,10 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
               }));
             }
           }
+        },
+        title: {
+          display: true,
+          text: 'Total number of protocol deviations within each category for protocol deviation (DVCAT)'
         }
       }
     };
@@ -339,35 +351,54 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
         y: pos ? pos : 0
       }
     });
-    console.log(labelPositions);
     let xThreshold = yAxis.getLabelItems()[0].options.translation?.[0];
-    console.log('xThreshold');
-    console.log(xThreshold);
     if (xThreshold !== undefined && x < xThreshold) {
       let selectedLabelPosition = this.getClosestNumber(labelPositions.map(label => label.y), y);
-      console.log('selectedLabelPosition');
-      console.log(selectedLabelPosition);
-      console.log('x');
-      console.log(x);
       if (selectedLabelPosition !== null) {
-        console.log(labelPositions[labelPositions.map(label => label.y).indexOf(selectedLabelPosition)].label.label);
+        let selectedLabel = labelPositions[labelPositions.map(label => label.y).indexOf(selectedLabelPosition)].label.label;
+        let dvdecodData = this.data.filter(dataEntry => dataEntry.dvcat === selectedLabel)
+          .map((data) => {
+            return {
+              dvcat: data.dvcat,
+              dvdecod: data.dvdecod,
+              count: Math.max(...data.count),
+              backgroundColor: data.colour
+            } as dvdecodData;
+          });
+        this.colourMode.emit(this.isColourModeDefault);
+        this.dvdecodGraphData.emit(dvdecodData);
       }
     }
 
   }
 
   private getClosestNumber(array: number[], target: number): number | null {
-    if (array.length === 0) {
-      return null;
-    }
-    if (array.length === 1) {
+    let size = array.length;
+    if (size == 1) {
       return array[0];
     }
-    let pivot = Math.floor(array.length / 2);
-    if (array[pivot] > target) {
-      return this.getClosestNumber(array.slice(0, pivot), target);
+    if (size == 2) {
+      if (target < array[0]) {
+        return array[0];
+      } else if (target > array[1]) {
+        return array[1];
+      } else {
+        let diffLow = target - array[0];
+        let diffHigh = array[1] - target;
+        if (diffLow < diffHigh) {
+          return array[0];
+        } else {
+          return array[1];
+        }
+      }
+    }
+
+    let pivot = Math.floor(size / 2);
+    let pivotValue = array[pivot];
+    if (target > pivotValue) {
+      return this.getClosestNumber(array.slice(pivot), target)
     } else {
-      return this.getClosestNumber(array.slice(pivot, array.length), target);
+      return this.getClosestNumber(array.slice(0, pivot + 1), target)
     }
   }
 }

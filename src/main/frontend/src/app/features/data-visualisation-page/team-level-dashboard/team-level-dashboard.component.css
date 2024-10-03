@@ -18,3 +18,16 @@
     color: white;
     margin-right: 10px;
 }
+
+:host, 
+mat-card{
+    height: 100%;
+}
+
+mat-card {
+    margin-top: 10px;
+}
+
+.dvdecodBarGraph {
+    height: 100%;
+}

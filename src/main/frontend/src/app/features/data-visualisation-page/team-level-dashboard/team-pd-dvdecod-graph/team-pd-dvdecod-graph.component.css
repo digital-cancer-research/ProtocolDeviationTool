@@ -1,13 +1,13 @@
 :host,
-mat-card,
 div {
     height: 100%;
 }
 
-mat-card {
+:host {
     display: flex;
     flex-direction: row;
 }
+
 
 mat-card-content {
     height: 90%;
@@ -60,4 +60,8 @@ div.toggleWithIcon {
     display: flex;
     align-items: center;
     gap: 5px;
+}
+
+.help {
+    color: #009cee;
 }
