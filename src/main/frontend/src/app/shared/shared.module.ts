@@ -19,6 +19,11 @@ import { UploadService } from './upload/upload.service';
 import { FileListService } from './file-list/file-list.service';
 import { SingleSelectComponent } from './select/single-select/single-select.component';
 import { CategoryTableComponent } from './category-table/category-table.component';
+import { StudyDataTableComponent } from './study-data-table/study-data-table.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
 
 @NgModule({
   declarations: [
@@ -29,6 +34,7 @@ import { CategoryTableComponent } from './category-table/category-table.componen
     SingleSelectComponent,
     TabComponent,
     UploadComponent,
+    StudyDataTableComponent
   ],
   imports: [
     CommonModule,
@@ -39,7 +45,11 @@ import { CategoryTableComponent } from './category-table/category-table.componen
     MatCheckboxModule,
     MatIconModule,
     MatInputModule,
-    MatRadioModule
+    MatRadioModule, 
+    MatFormFieldModule,
+    MatTableModule,
+    MatSortModule, 
+    MatPaginatorModule
   ],
   exports: [
     FileListComponent,
@@ -49,6 +59,7 @@ import { CategoryTableComponent } from './category-table/category-table.componen
     SingleSelectComponent,
     TabComponent,
     UploadComponent,
+    StudyDataTableComponent
   ],
   providers: [
     UploadService,

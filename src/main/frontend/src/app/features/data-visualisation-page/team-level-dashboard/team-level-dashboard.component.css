@@ -31,3 +31,7 @@ mat-card {
 .dvdecodBarGraph {
     height: 100%;
 }
+
+.table {
+    height: fit-content;
+}
