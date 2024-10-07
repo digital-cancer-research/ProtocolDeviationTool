@@ -11,6 +11,10 @@ import { dvdecodData } from '../models/team-pd-dvdecod-bar-graph-data.model';
   styleUrls: ['./team-level-dashboard.component.css']
 })
 export class TeamLevelDashboardComponent {
+  /** Strnig literal reference to canvas ID */
+  private static readonly canvasId: string = 'dvdecodBarGraphCard';
+
+
   /** Array holding dvdecod data for the graph. */
   graphData: dvdecodData[] = [];
 
@@ -18,9 +22,9 @@ export class TeamLevelDashboardComponent {
   isColourModeDefault: boolean = true;
 
   /** Reference to the dvdecod bar graph card DOM element. */
-  @ViewChild('dvdecodBarGraphCard') dvdecodBarGraphCard!: ElementRef;
+  @ViewChild(TeamLevelDashboardComponent.canvasId) dvdecodBarGraphCard!: ElementRef;
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef) { }
 
   /**
    * Upadates the colour mode for the graph.

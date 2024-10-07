@@ -9,6 +9,8 @@ export class DvdecodBarGraphService {
 
   constructor() { }
 
+  private static readonly canvasId: string = 'dvdecodGraph';
+
   /**
   * Creates a Chart.js bar chart based on the input dvdecodData.
   * Destroys the previous chart instance if it exists.
@@ -18,7 +20,7 @@ export class DvdecodBarGraphService {
     const labels = data.map(dataEntry => dataEntry.dvdecod);
     const dataFormatted = data.map(dataEntry => dataEntry.count);
 
-    return new Chart('dvdecodGraph', {
+    return new Chart(DvdecodBarGraphService.canvasId, {
       type: 'bar',
       data: {
         labels: labels,
