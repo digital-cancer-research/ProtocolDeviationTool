@@ -9,6 +9,7 @@ import org.digitalecmt.qualityassurance.dto.Visualisation.DvcatDvdecodGraphDataD
 import org.digitalecmt.qualityassurance.dto.Visualisation.DvcatDvdecodRepositoryDataDTO;
 import org.digitalecmt.qualityassurance.dto.Visualisation.PdCategoryGraphDataDTO;
 import org.digitalecmt.qualityassurance.model.persistence.DvcatColour;
+import org.digitalecmt.qualityassurance.repository.BarChartColoursRepository;
 import org.digitalecmt.qualityassurance.repository.DvcatColourRepository;
 import org.digitalecmt.qualityassurance.repository.PdCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class VisualisationService {
 
     @Autowired
     private DvcatColourRepository dvcatColourRepository;
+
+    @Autowired
+    private BarChartColoursRepository barChartColoursRepository;
 
     /**
      * Retrieves a sorted list of category colors.
@@ -184,5 +188,17 @@ public class VisualisationService {
             count[i] = (i == index) ? entryCount : 0L;
         }
         return count;
+    }
+
+    public List<String> getBarChartColours() {
+        return barChartColoursRepository
+                .findAll()
+                .stream()
+                .map(colour -> colour.getColour())
+                .toList();
+    }
+
+    public List<String> getPdCategories() {
+        return pdCategoryRepository.findDistinctDVCat();
     }
 }

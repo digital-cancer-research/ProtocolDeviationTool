@@ -7,7 +7,7 @@ import { Chart, ChartDataset, ChartOptions } from 'chart.js';
   providedIn: 'root'
 })
 export class TeamPdDvdecodGraphService {
-  private colours: string[] = this.dataVisualisationService.dvdecodColours
+  private colours: string[] = this.dataVisualisationService.barChartColours
 
   constructor(
     private dataVisualisationService: DataVisualisationService

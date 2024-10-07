@@ -264,4 +264,14 @@ public class VisualisationController {
         DvcatDvdecodGraphDataDTO graphData = visualisationService.findPdCategoryBreakdownGraphData(teamId);
         return new ResponseEntity<>(graphData, HttpStatus.OK);
     }
+
+    @GetMapping("/bar-chart-colours")
+    public ResponseEntity<List<String>> getBarChartColours() {
+        return new ResponseEntity<>(visualisationService.getBarChartColours(), HttpStatus.OK);
+    }
+
+    @GetMapping("/pd-categories")
+    public ResponseEntity<List<String>> getPdCategories() {
+        return new ResponseEntity<>(visualisationService.getPdCategories(), HttpStatus.OK);
+    }
 }

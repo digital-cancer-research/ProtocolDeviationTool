@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { dvdecodData } from '../../models/team-pd-dvdecod-bar-graph-data.model';
 import { Chart, ChartOptions } from 'chart.js';
 import { DataVisualisationService } from '../../data-visualisation.service';
@@ -21,7 +21,7 @@ export class DvdecodBarGraphComponent implements OnChanges {
   chart!: Chart;
 
   /** Colour palette used for default color mode. */
-  colours: string[] = this.dataVisualisationService.dvdecodColours;
+  colours: string[] = this.dataVisualisationService.barChartColours;
 
   /**
    * Constructor to inject necessary services.
@@ -44,12 +44,12 @@ export class DvdecodBarGraphComponent implements OnChanges {
       }
 
       if (this.isColourModeDefault) {
-        this.colours = this.dataVisualisationService.dvdecodColours;
+        this.dataVisualisationService.barChartColours;
       } else {
         this.colours = this.data.map(dataEntry => dataEntry.backgroundColor);
       }
 
       this.chart = this.dvdecodBarGraphService.createChart(this.data, this.colours);
     }
-  }  
+  }
 }

@@ -28,8 +28,7 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
   private filteredData: PdDvdecod[] = [];
   private userSubscription!: Subscription;
   private visSubscription!: Subscription;
-  private colours: string[] = this.dataVisualisationService.dvdecodColours
-  public labels: string[] = this.dataVisualisationService.PdCategories;
+  public labels: string[] = this.dataVisualisationService.pdCategories;
   public selectedLabels: string[] = this.labels;
   public isLegendVisible: boolean = false;
   public isDataLoading: boolean = true;
