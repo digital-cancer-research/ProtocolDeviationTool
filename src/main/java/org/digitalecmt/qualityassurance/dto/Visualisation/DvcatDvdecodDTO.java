@@ -3,6 +3,7 @@ package org.digitalecmt.qualityassurance.dto.Visualisation;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nimbusds.jose.shaded.gson.Gson;
 
 public class DvcatDvdecodDTO {
     String dvcat;
@@ -73,12 +74,8 @@ public class DvcatDvdecodDTO {
 
     @Override
     public String toString() {
-        return "{" +
-                " dvcat='" + getDvcat() + "'" +
-                ", dvdecod='" + getDvdecod() + "'" +
-                ", count='" + getCount() + "'" +
-                ", colour='" + getColour() + "'" +
-                "}";
+        Gson gson = new Gson();
+        return gson.toJson(this, DvcatDvdecodDTO.class);
     }
 
     @JsonIgnore

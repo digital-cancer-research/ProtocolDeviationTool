@@ -195,7 +195,7 @@ public class VisualisationService {
                 .findAll()
                 .stream()
                 .map(colour -> colour.getColour())
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public List<String> getPdCategories() {

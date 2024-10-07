@@ -3,6 +3,8 @@ package org.digitalecmt.qualityassurance.dto.Visualisation;
 import java.util.List;
 import java.util.Objects;
 
+import com.nimbusds.jose.shaded.gson.Gson;
+
 public class DvcatDvdecodGraphDataDTO {
     List<String> dvcats;
     List<DvcatDvdecodDTO> data;
@@ -46,9 +48,7 @@ public class DvcatDvdecodGraphDataDTO {
 
     @Override
     public String toString() {
-        return "{" +
-                " dvcats='" + getDvcats() + "'" +
-                ", data='" + getData() + "'" +
-                "}";
+        Gson gson = new Gson();
+        return gson.toJson(this, DvcatDvdecodGraphDataDTO.class);
     }
 }

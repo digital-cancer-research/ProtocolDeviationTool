@@ -1,12 +1,14 @@
 package org.digitalecmt.qualityassurance.dto.Visualisation;
+
 import java.util.Objects;
+
+import com.nimbusds.jose.shaded.gson.Gson;
 
 public class DvcatDvdecodRepositoryDataDTO {
     String dvcat;
     String dvdecod;
     Long count;
     String colour;
-
 
     public DvcatDvdecodRepositoryDataDTO() {
     }
@@ -58,7 +60,10 @@ public class DvcatDvdecodRepositoryDataDTO {
             return false;
         }
         DvcatDvdecodRepositoryDataDTO dvcatDvdecodRepositoryDataDTO = (DvcatDvdecodRepositoryDataDTO) o;
-        return Objects.equals(dvcat, dvcatDvdecodRepositoryDataDTO.dvcat) && Objects.equals(dvdecod, dvcatDvdecodRepositoryDataDTO.dvdecod) && Objects.equals(count, dvcatDvdecodRepositoryDataDTO.count) && Objects.equals(colour, dvcatDvdecodRepositoryDataDTO.colour);
+        return Objects.equals(dvcat, dvcatDvdecodRepositoryDataDTO.dvcat)
+                && Objects.equals(dvdecod, dvcatDvdecodRepositoryDataDTO.dvdecod)
+                && Objects.equals(count, dvcatDvdecodRepositoryDataDTO.count)
+                && Objects.equals(colour, dvcatDvdecodRepositoryDataDTO.colour);
     }
 
     @Override
@@ -68,11 +73,7 @@ public class DvcatDvdecodRepositoryDataDTO {
 
     @Override
     public String toString() {
-        return "{" +
-            " dvcat='" + getDvcat() + "'" +
-            ", dvdecod='" + getDvdecod() + "'" +
-            ", count='" + getCount() + "'" +
-            ", colour='" + getColour() + "'" +
-            "}";
-    }    
+        Gson gson = new Gson();
+        return gson.toJson(this, DvcatDvdecodRepositoryDataDTO.class);
+    }
 }
