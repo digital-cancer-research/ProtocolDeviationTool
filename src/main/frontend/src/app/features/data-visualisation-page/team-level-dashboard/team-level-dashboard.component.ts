@@ -11,9 +11,9 @@ import { dvdecodData } from '../models/team-pd-dvdecod-bar-graph-data.model';
   styleUrls: ['./team-level-dashboard.component.css']
 })
 export class TeamLevelDashboardComponent {
-  /** Strnig literal reference to canvas ID */
-  private static readonly canvasId: string = 'dvdecodBarGraphCard';
+  private static readonly dvdecodGraphId: string = '#dvdecodGraph'
 
+  private static readonly tableClass: string = '.table'
 
   /** Array holding dvdecod data for the graph. */
   graphData: dvdecodData[] = [];
@@ -21,8 +21,8 @@ export class TeamLevelDashboardComponent {
   /** Indicates whether the default color mode is active. */
   isColourModeDefault: boolean = true;
 
-  /** Reference to the dvdecod bar graph card DOM element. */
-  @ViewChild(TeamLevelDashboardComponent.canvasId) dvdecodBarGraphCard!: ElementRef;
+  /** The selected dvdecod from dvdecod-bar-graph*/
+  selectedDvdecod: string = "";
 
   constructor(private cdr: ChangeDetectorRef) { }
 
@@ -37,22 +37,39 @@ export class TeamLevelDashboardComponent {
 
   /**
    * Updates the dvdecod graph data and triggers a smooth scroll to the graph.
+   * Sets selectedDvdecod to "" to unrender table component
    * 
    * @param newData - Array of dvdecod data to be set.
    */
   updateDvdecodGraphData(newData: dvdecodData[]): void {
     this.graphData = newData;
-    this.cdr.detectChanges();
-    this.scrollToGraph();
+    this.selectedDvdecod = "";
+    this.scroll(TeamLevelDashboardComponent.dvdecodGraphId);
+  }
+
+  /** 
+   * Sets the selected dvdecod.
+   * Triggers a smooth scroll to table component.
+   * 
+   * @param dvdecod 
+   */
+  updateSelectedDvdecod(dvdecod: string): void {
+    this.selectedDvdecod = dvdecod;
+    this.scroll(TeamLevelDashboardComponent.tableClass);
   }
 
   /**
-   * Scrolls smoothly to the dvdecod graph card element.
-   */
-  private scrollToGraph(): void {
-    const scrollElement = document.querySelector('.scroll');
-    if (scrollElement) {
-      scrollElement.scrollIntoView({ block: 'end', behavior: 'smooth' });
+   * Scrolls smoothly to element found in query.
+   * 
+   * @param targetId Id or class of element
+   * Scrolls to first element found
+  */
+  private scroll(targetId: string): void {
+    this.cdr.detectChanges();
+    const element = document.querySelector(targetId);
+    if (element) {
+      element.scrollIntoView({ block: 'end', behavior: 'smooth' });
     }
   }
+
 }

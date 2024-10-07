@@ -1,7 +1,7 @@
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
-import {MatPaginator} from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
-import {MatTableDataSource} from '@angular/material/table';
+import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { StudyData } from './study-data';
 import { StudyDataService } from './study-data.service';
 
@@ -13,14 +13,14 @@ import { StudyDataService } from './study-data.service';
 export class StudyDataTableComponent implements AfterViewInit {
   displayedColumns: string[] = ['studyId', 'dvspondes', 'dvcat', 'dvdecod'];
   dataSource: MatTableDataSource<StudyData>;
-
+  @Input(({ required: true })) dvdecod: string = "";
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     studyDataService: StudyDataService
   ) {
-    const data = studyDataService.getData(); 
+    const data = studyDataService.getData();
     this.dataSource = new MatTableDataSource(data);
   }
 

@@ -6,6 +6,7 @@ import { dvdecodData, PdDvdecod } from '../../models/team-pd-dvdecod-bar-graph-d
 import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TeamPdDvdecodGraphService } from './team-pd-dvdecod-graph.service';
+import { UtilsService } from 'src/app/core/services/utils.service';
 
 @Component({
   selector: 'app-team-pd-dvdecod-graph',
@@ -44,8 +45,16 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
   ) { }
 
   ngAfterViewInit(): void {
-    this.createSkeletonChart();
-    this.subscribeToSelectedTeam();
+    // this.createSkeletonChart();
+    // this.subscribeToSelectedTeam();
+    this.isDataLoading = false;
+    this.data = mockData.data;
+    this.filteredData = mockData.data;
+    this.labels = mockData.dvcats
+    this.selectedLabels = mockData.dvcats
+    setTimeout(() => {
+      this.createChart();
+    })
   }
 
   ngOnDestroy(): void {
@@ -165,8 +174,8 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
 
     let xThreshold = yAxis.getLabelItems()[0].options.translation?.[0];
     if (xThreshold !== undefined && x < xThreshold) {
-      let selectedLabelPosition = this.getClosestNumber(labelPositions.map(label => label.y), y);
-      if (selectedLabelPosition !== null) {
+      let selectedLabelPosition = UtilsService.findClosestNumberInSortedNumberArray(labelPositions.map(label => label.y), y);
+      if (selectedLabelPosition) {
         let selectedLabel = labelPositions[labelPositions.map(label => label.y).indexOf(selectedLabelPosition)].label.label;
         let dvdecodData = this.data.filter(dataEntry => dataEntry.dvcat === selectedLabel)
           .map((data) => {
@@ -181,36 +190,7 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
         this.dvdecodGraphData.emit(dvdecodData);
       }
     }
-
-  }
-
-  private getClosestNumber(array: number[], target: number): number | null {
-    let size = array.length;
-    if (size == 1) {
-      return array[0];
-    }
-    if (size == 2) {
-      if (target < array[0]) {
-        return array[0];
-      } else if (target > array[1]) {
-        return array[1];
-      } else {
-        let diffLow = target - array[0];
-        let diffHigh = array[1] - target;
-        if (diffLow < diffHigh) {
-          return array[0];
-        } else {
-          return array[1];
-        }
-      }
-    }
-
-    let pivot = Math.floor(size / 2);
-    let pivotValue = array[pivot];
-    if (target > pivotValue) {
-      return this.getClosestNumber(array.slice(pivot), target)
-    } else {
-      return this.getClosestNumber(array.slice(0, pivot + 1), target)
-    }
   }
 }
+
+const mockData = { "dvcats": ["ELIGIBILITY CRITERIA NOT MET", "EXCLUDED MEDICATION, VACCINE OR DEVICE", "INFORMED CONSENT", "NOT WITHDRAWN AFTER DEVELOPING WITHDRAWAL CRITERIA", "SITE LEVEL ERROR", "FAILURE TO REPORT SAFETY EVENTS PER PROTOCOL", "WRONG STUDY TREATMENT/ADMINISTRATION/DOSE", "STUDY PROCEDURE", "VISIT COMPLETION", "ASSESSMENT OR TIME POINT COMPLETION"], "data": [{ "dvcat": "VISIT COMPLETION", "dvdecod": "MISSED VISIT/PHONE CONTACT", "count": [0, 0, 0, 0, 0, 0, 0, 0, 9, 0], "colour": "#FF9800" }, { "dvcat": "STUDY PROCEDURE", "dvdecod": "BIOLOGICAL SAMPLE SPECIMEN PROCEDURE", "count": [0, 0, 0, 0, 0, 0, 0, 6, 0, 0], "colour": "#673AB7" }, { "dvcat": "ASSESSMENT OR TIME POINT COMPLETION", "dvdecod": "MISSED ASSESMENT- VITAL SIGNS", "count": [0, 0, 0, 0, 0, 0, 0, 0, 0, 5], "colour": "#8BC34A" }, { "dvcat": "ASSESSMENT OR TIME POINT COMPLETION", "dvdecod": "OUT OF WINDOW - VITAL SIGNS", "count": [0, 0, 0, 0, 0, 0, 0, 0, 0, 5], "colour": "#E91E63" }, { "dvcat": "ASSESSMENT OR TIME POINT COMPLETION", "dvdecod": "OUT OF WINDOW - OTHER", "count": [0, 0, 0, 0, 0, 0, 0, 0, 0, 5], "colour": "#3F51B5" }, { "dvcat": "ASSESSMENT OR TIME POINT COMPLETION", "dvdecod": "MISSED ASSESMENT - BLOODS LOCAL", "count": [0, 0, 0, 0, 0, 0, 0, 0, 0, 5], "colour": "#CDDC39" }, { "dvcat": "ASSESSMENT OR TIME POINT COMPLETION", "dvdecod": "OUT OF WINDOW - TREATMENT ADMINISTRATION", "count": [0, 0, 0, 0, 0, 0, 0, 0, 0, 3], "colour": "#0F9D58" }, { "dvcat": "ASSESSMENT OR TIME POINT COMPLETION", "dvdecod": "MISSED ASSESMENT - PK COLLECTION", "count": [0, 0, 0, 0, 0, 0, 0, 0, 0, 3], "colour": "#2196F3" }, { "dvcat": "FAILURE TO REPORT SAFETY EVENTS PER PROTOCOL", "dvdecod": "SAE NOT REPORTED WITHIN THE EXPECTED TIME FRAME", "count": [0, 0, 0, 0, 0, 2, 0, 0, 0, 0], "colour": "#2196F3" }, { "dvcat": "WRONG STUDY TREATMENT/ADMINISTRATION/DOSE", "dvdecod": "STUDY TREATMENT NOT ADMINISTERED PER PROTOCOL", "count": [0, 0, 0, 0, 0, 0, 2, 0, 0, 0], "colour": "#E91E63" }, { "dvcat": "ASSESSMENT OR TIME POINT COMPLETION", "dvdecod": "OUT OF WINDOW - EFFICACY ASSESSMENT", "count": [0, 0, 0, 0, 0, 0, 0, 0, 0, 1], "colour": "#DB4437" }, { "dvcat": "ASSESSMENT OR TIME POINT COMPLETION", "dvdecod": "MISSED ASSESMENT - EFFICACY ASSESSMENT", "count": [0, 0, 0, 0, 0, 0, 0, 0, 0, 1], "colour": "#009688" }, { "dvcat": "WRONG STUDY TREATMENT/ADMINISTRATION/DOSE", "dvdecod": "STUDY TREATMENT NOT PREPARED AS PER PROTOCOL (E.G. RECONSTITUTION)", "count": [0, 0, 0, 0, 0, 0, 1, 0, 0, 0], "colour": "#673AB7" }, { "dvcat": "ASSESSMENT OR TIME POINT COMPLETION", "dvdecod": "OUT OF WINDOW - ECG", "count": [0, 0, 0, 0, 0, 0, 0, 0, 0, 1], "colour": "#3F51B5" }] };
