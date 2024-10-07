@@ -37,19 +37,46 @@ export class DvdecodBarGraphComponent implements OnChanges {
    * Creates a graph if valid data is received.
    * @param changes Object containing changes to input-bound properties.
    */
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
+    this.setColours();
     if (this.data && this.data.length > 0) {
       if (this.chart) {
-        this.chart.destroy();
-      }
-
-      if (this.isColourModeDefault) {
-        this.dataVisualisationService.barChartColours;
+        this.updateChart();
       } else {
-        this.colours = this.data.map(dataEntry => dataEntry.backgroundColor);
+        this.createChart();
       }
-
-      this.chart = this.dvdecodBarGraphService.createChart(this.data, this.colours);
     }
+  }
+
+  /**
+   * Sets the colours for the bar chart depending on the colour mode, or given input.
+   * @param customColours Optional set of colours 
+   * @returns {void} 
+   */
+  setColours(customColours?: string[]): void {
+    if (customColours) {
+      this.colours = customColours;
+    }
+    if (this.isColourModeDefault) {
+      this.colours = this.dataVisualisationService.barChartColours;
+    } else {
+      this.colours = this.data.map(dataEntry => dataEntry.backgroundColor);
+    }
+  }
+
+  /**
+   * Creates a new chart
+   */
+  createChart() {
+    this.chart = this.dvdecodBarGraphService.createChart(this.data, this.colours);
+  }
+
+  /**
+   * Updates an already existing graph
+   */
+  updateChart() {
+    this.chart.data.datasets = this.dvdecodBarGraphService.formatDataForUpdating(this.data, this.colours);
+    this.chart.data.labels = this.data.map(dataEntry => dataEntry.dvcat);
+    this.chart.update();
   }
 }

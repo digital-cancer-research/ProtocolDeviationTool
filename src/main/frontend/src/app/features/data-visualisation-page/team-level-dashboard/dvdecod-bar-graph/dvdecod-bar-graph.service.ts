@@ -19,7 +19,7 @@ export class DvdecodBarGraphService {
   createChart(data: dvdecodData[], colours: string[]): Chart {
     const labels = data.map(dataEntry => dataEntry.dvdecod);
     const dataFormatted = data.map(dataEntry => dataEntry.count);
-
+    
     return new Chart(DvdecodBarGraphService.canvasId, {
       type: 'bar',
       data: {
@@ -31,6 +31,22 @@ export class DvdecodBarGraphService {
       },
       options: this.getChartOptions(data),
     });
+  }
+  
+
+  /**
+   * Returns data needed for updated a chart.js graph.
+   * @param data Data to use instead.
+   * @param colours Colours to use instead.
+   * @returns 
+   */
+  formatDataForUpdating(data: dvdecodData[], colours: string[]) {
+    const dataFormatted = data.map(dataEntry => dataEntry.count);
+    const dataset = [{
+      data: dataFormatted,
+      backgroundColor: colours
+    }]
+    return dataset
   }
 
   /**
