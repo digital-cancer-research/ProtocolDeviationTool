@@ -1,5 +1,8 @@
 <mat-card-content *ngIf="isDataLoading">
-    <canvas id="teamPdDvdecodSkeletonGraph">{{chart}}</canvas>
+    <canvas id="teamPdDvdecodSkeletonGraph"
+    aria-label="Bar chart for dvcats with dvdecod is loading">
+        {{chart}}
+    </canvas>
 </mat-card-content>
 
 
@@ -9,7 +12,11 @@
 
 <mat-card-content *ngIf="!isDataLoading">
     <div class="canvas" style="position: relative">
-        <canvas id="teamPdDvdecodGraph" (click)="onClick($event)">{{chart}}</canvas>
+        <canvas id="teamPdDvdecodGraph" 
+        (click)="onClick($event)"
+        aria-label="Bar chart for dvcats with dvdecod is loading">
+        {{chart}}
+    </canvas>
     </div>
     <mat-card-footer *ngIf="!isDataLoading">
         <mat-icon class="help" matTooltip="Click a dvcat to generate a graph">
