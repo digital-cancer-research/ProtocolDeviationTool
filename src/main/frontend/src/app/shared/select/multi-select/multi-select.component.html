@@ -7,7 +7,7 @@
     </button>
     }
 </mat-form-field>
-<div>
+<div [style]="'height: ' + height + 'px;'">
     @for (item of getFilteredItems(); track item) {
     <mat-checkbox class="checkbox" name="item" [value]="toString(item)"
     (change)="onChange(item, $event)" [checked]="isChecked(item)">

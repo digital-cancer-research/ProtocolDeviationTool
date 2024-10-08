@@ -1,0 +1,1 @@
+CREATE TABLE category_edit_audit_seq (next_val INTEGER);

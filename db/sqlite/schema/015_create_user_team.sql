@@ -1,0 +1,7 @@
+CREATE TABLE user_team (
+    user_team_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    team_id INTEGER,
+    FOREIGN KEY (user_id) REFERENCES user_account (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (team_id) REFERENCES team (team_id) ON DELETE CASCADE ON UPDATE CASCADE
+);

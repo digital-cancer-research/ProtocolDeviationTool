@@ -1,0 +1,14 @@
+<div class="nav-container">
+    <div class="nav-button">Total protocol deviations</div>
+    <div class="nav-button">Total protocol deviations over time</div>
+</div>
+
+<mat-card>
+    <app-team-pd-dvdecod-graph (dvdecodGraphData)="updateDvdecodGraphData($event)" (colourMode)="updateColourMode($event)"></app-team-pd-dvdecod-graph>
+</mat-card>
+
+<mat-card *ngIf="graphData.length !== 0" class="dvdecodBarGraph scroll">
+    <mat-card-content class="dvdecodBarGraph">
+        <app-dvdecod-bar-graph [data]="graphData" [isColourModeDefault]="isColourModeDefault"></app-dvdecod-bar-graph>
+    </mat-card-content>
+</mat-card>

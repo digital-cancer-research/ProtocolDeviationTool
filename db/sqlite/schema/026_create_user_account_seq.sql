@@ -1,0 +1,1 @@
+CREATE TABLE user_account_seq (next_val INTEGER);

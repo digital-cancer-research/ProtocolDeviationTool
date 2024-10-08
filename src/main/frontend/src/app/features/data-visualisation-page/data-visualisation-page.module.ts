@@ -21,13 +21,22 @@ import { TeamStudyBarGraphComponent } from "./data-visualisation/team-study-bar-
 import { DataVisualisationDeviationHomePageComponent } from './data-visualisation-deviation-home-page/data-visualisation-deviation-home-page.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CategoryBarGraphSegmentedSiteComponent } from './data-visualisation-deviation-home-page/category-bar-graph-segmented-site/category-bar-graph-segmented-site.component';
-
+import { TeamLevelDashboardComponent } from './team-level-dashboard/team-level-dashboard.component';
+import { TeamPdDvdecodGraphComponent } from "./team-level-dashboard/team-pd-dvdecod-graph/team-pd-dvdecod-graph.component";
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { DvdecodBarGraphComponent } from "./team-level-dashboard/dvdecod-bar-graph/dvdecod-bar-graph.component";
 
 
 @NgModule({
   declarations: [
     DataVisualisationPageComponent,
     DataVisualisationComponent,
+    TeamLevelDashboardComponent,
+    TeamPdDvdecodGraphComponent,
     DataVisualisationDeviationHomePageComponent,
     TeamStudySelectComponent,
     CategoryBarGraphComponent,
@@ -35,6 +44,7 @@ import { CategoryBarGraphSegmentedSiteComponent } from './data-visualisation-dev
     TeamPdPieChartComponent,
     TeamStudyBarGraphComponent,
     VisualisationComponent,
+    DvdecodBarGraphComponent
   ],
   imports: [
     CommonModule,
@@ -42,15 +52,20 @@ import { CategoryBarGraphSegmentedSiteComponent } from './data-visualisation-dev
     FormsModule,
     MatAutocompleteModule,
     MatButtonModule,
+    MatCardModule,
+    MatCheckboxModule,
     MatFormFieldModule,
     MatGridListModule,
     MatIconModule,
     MatInputModule,
     MatOptionModule,
     MatProgressSpinnerModule,
+    MatSlideToggleModule,
+    MatTooltipModule,
+    NgxSkeletonLoaderModule,
     ReactiveFormsModule,
-    SharedModule
-  ],
+    SharedModule,
+],
   exports:
     [
       CategoryBarGraphSegmentedSiteComponent

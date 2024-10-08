@@ -32,6 +32,7 @@ import org.digitalecmt.qualityassurance.dto.CountPerStudyDTO;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryDTO;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryPerStudyDTO;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerSubcategoryPerCategoryDTO;
+import org.digitalecmt.qualityassurance.dto.Visualisation.DvcatDvdecodGraphDataDTO;
 import org.digitalecmt.qualityassurance.dto.Visualisation.PdCategoryGraphDataDTO;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.repository.PdCategoryRepository;
@@ -74,18 +75,6 @@ public class VisualisationController {
             }
             return new ResponseEntity<>(totalRows, HttpStatus.OK);
         } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping("/total-pds")
-    public ResponseEntity<Long> getTotalPDsForTeam(@RequestParam(required = true) Integer teamId) {
-        try {
-            Long totalTeamPDs = teamRepository.countByTeamId(teamId);
-            return new ResponseEntity<>(totalTeamPDs, HttpStatus.OK);
-        } catch (Exception ex) {
-            log.severe("Error fetching total PDs for team: " + ex.getMessage());
-            ex.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -186,6 +175,40 @@ public class VisualisationController {
     }
 
     /**
+     * Retrieves the total number of protocol deviations (PDs) for a specific team.
+     *
+     * <p>
+     * This method interacts with the {@code TeamRepository} to count the total PDs
+     * associated
+     * with the provided team ID. It returns the total count as a
+     * {@code ResponseEntity} containing
+     * a {@code Long} value representing the total PDs. In case of an error during
+     * data retrieval,
+     * an HTTP status of 500 (Internal Server Error) is returned.
+     * </p>
+     *
+     * @param teamId the ID of the team for which to retrieve the total number of
+     *               PDs.
+     * @return a {@code ResponseEntity} containing the total number of PDs for the
+     *         specified team
+     *         and an HTTP status of 200 (OK) if the operation is successful, or an
+     *         HTTP status
+     *         of 500 (Internal Server Error) if an exception occurs during the
+     *         retrieval process.
+     */
+    @GetMapping("/total-pds")
+    public ResponseEntity<Long> getTotalPDsForTeam(@RequestParam(required = true) Integer teamId) {
+        try {
+            Long totalTeamPDs = teamRepository.countByTeamId(teamId);
+            return new ResponseEntity<>(totalTeamPDs, HttpStatus.OK);
+        } catch (Exception ex) {
+            log.severe("Error fetching total PDs for team: " + ex.getMessage());
+            ex.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
      * Retrieves a list of category (dvcat) colors.
      * 
      * @return a `ResponseEntity` containing a list of category colors and an HTTP
@@ -207,12 +230,48 @@ public class VisualisationController {
      * </p>
      * 
      * @param teamId the ID of the team for which to retrieve PD category data.
-     * @return a `ResponseEntity` containing a list of `PdCategoryGraphDataDTO`
+     * @return a {@code ResponseEntity} containing a list of
+     *         {@code PdCategoryGraphDataDTO}
      *         objects and an HTTP status of 200 (OK).
      */
     @GetMapping("/team-pd-categories")
     public ResponseEntity<List<PdCategoryGraphDataDTO>> getPdCategoryData(@RequestParam("teamId") Integer teamId) {
         List<PdCategoryGraphDataDTO> data = visualisationService.findPdCategoryGraphData(teamId);
         return new ResponseEntity<>(data, HttpStatus.OK);
+    }
+
+    /**
+     * Retrieves PD category data broken down into dvdecods for a specific team.
+     *
+     * <p>
+     * This method returns data for a stacked bar chart in chart.js.
+     * It returns a list of dvcats, ordered by their count in descending order.
+     * It also returns the data for each dvcat as an array of
+     * {@code DvcatDvdecodGraphDataDTO} values,
+     * ordered by the size of the dvdecod in descending order, so that the bar chart
+     * is in descending order,
+     * with the largest dvdecods to the left, for each dvcat.
+     * </p>
+     *
+     * @param teamId the ID of the team for which to retrieve PD category data.
+     * @return a {@code ResponseEntity} containing a
+     *         {@code DvcatDvdecodGraphDataDTO}
+     *         object and an HTTP status of 200 (OK).
+     */
+
+    @GetMapping("/team-pd-categories/dvdecod-breakdown")
+    public ResponseEntity<DvcatDvdecodGraphDataDTO> getPdCategoryBreakdownData(@RequestParam("teamId") Integer teamId) {
+        DvcatDvdecodGraphDataDTO graphData = visualisationService.findPdCategoryBreakdownGraphData(teamId);
+        return new ResponseEntity<>(graphData, HttpStatus.OK);
+    }
+
+    @GetMapping("/bar-chart-colours")
+    public ResponseEntity<List<String>> getBarChartColours() {
+        return new ResponseEntity<>(visualisationService.getBarChartColours(), HttpStatus.OK);
+    }
+
+    @GetMapping("/pd-categories")
+    public ResponseEntity<List<String>> getPdCategories() {
+        return new ResponseEntity<>(visualisationService.getPdCategories(), HttpStatus.OK);
     }
 }

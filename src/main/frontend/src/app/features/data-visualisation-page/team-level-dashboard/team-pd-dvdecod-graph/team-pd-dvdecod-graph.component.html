@@ -1,0 +1,53 @@
+<mat-card-content *ngIf="isDataLoading">
+    <canvas id="teamPdDvdecodSkeletonGraph"
+    aria-label="Bar chart for dvcats with dvdecod is loading">
+        {{chart}}
+    </canvas>
+</mat-card-content>
+
+
+<mat-card-actions *ngIf="isDataLoading">
+    <ngx-skeleton-loader count="10" appearance="line"></ngx-skeleton-loader>
+</mat-card-actions>
+
+<mat-card-content *ngIf="!isDataLoading">
+    <div class="canvas" style="position: relative">
+        <canvas id="teamPdDvdecodGraph" 
+        (click)="onClick($event)"
+        aria-label="Bar chart for dvcats with dvdecod is loading">
+        {{chart}}
+    </canvas>
+    </div>
+    <mat-card-footer *ngIf="!isDataLoading">
+        <mat-icon class="help" matTooltip="Click a dvcat to generate a graph">
+            help
+        </mat-icon>
+    </mat-card-footer>
+</mat-card-content>
+
+
+<mat-card-actions *ngIf="!isDataLoading">
+    <div class="toggleWithIcon">
+        <mat-slide-toggle [(ngModel)]="isColourModeDefault" (ngModelChange)="toggleColourMode()">
+            Colour mode
+        </mat-slide-toggle>
+        <mat-icon matTooltip="Switch between colour modes.
+            Active state will match dvdecod colours to order of frequency with respect to their dvcat.
+            Inactive state will give each dvdecod a different colour.">
+            info
+        </mat-icon>
+    </div>
+
+    <div class="toggleWithIcon">
+        <mat-slide-toggle (toggleChange)="toggleLegend()">
+            Toggle Legend
+        </mat-slide-toggle>
+        <mat-icon matTooltip="Enable and disable the legend. 
+            The legend is ordered by frequency in descending order,
+            from left to right and top to bottom.">
+            info
+        </mat-icon>
+    </div>
+    <app-multi-select [items]="labels" [defaultValues]="labels" [height]="320" (confirmedItems)="updateChart($event)">
+    </app-multi-select>
+</mat-card-actions>

@@ -2,6 +2,8 @@ package org.digitalecmt.qualityassurance.dto.Visualisation;
 
 import java.util.Objects;
 
+import com.nimbusds.jose.shaded.gson.Gson;
+
 public class PdCategoryGraphDataDTO {
     String dvcat;
     String colour;
@@ -74,10 +76,7 @@ public class PdCategoryGraphDataDTO {
 
     @Override
     public String toString() {
-        return "{" +
-                " dvcat='" + getDvcat() + "'" +
-                ", colour='" + getColour() + "'" +
-                ", count='" + getCount() + "'" +
-                "}";
+        Gson gson = new Gson();
+        return gson.toJson(this, PdCategoryGraphDataDTO.class);
     }
 }

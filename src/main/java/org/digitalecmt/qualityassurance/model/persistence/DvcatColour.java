@@ -8,8 +8,16 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "dvcat_colour")
 public class DvcatColour {
-	
-	@Id
+
+    public DvcatColour() {
+    }
+
+    public DvcatColour(String dvcat, String colour) {
+        this.dvcat = dvcat;
+        this.colour = colour;
+    }
+
+    @Id
     @Column(name = "dvcat")
     private String dvcat;
 

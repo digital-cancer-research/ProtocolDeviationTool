@@ -1,0 +1,62 @@
+:host,
+div {
+    height: 100%;
+}
+
+:host {
+    display: flex;
+    flex-direction: row;
+}
+
+
+mat-card-content {
+    height: 90%;
+    flex: 4;
+}
+
+mat-card-actions {
+    flex: 1;
+    align-items: start;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+div.container,
+div.canvas {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+ngx-skeleton-loader {
+    height: 100%;
+    width: 100%;
+}
+
+#teamPdDvdecodSkeletonGraph {
+    cursor: wait;
+    user-select: none;
+}
+
+.container {
+    height: 200px;
+}
+
+.refresh {
+    transform: scale(5);
+}
+
+div.toggleWithIcon {
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.help {
+    color: #009cee;
+}
