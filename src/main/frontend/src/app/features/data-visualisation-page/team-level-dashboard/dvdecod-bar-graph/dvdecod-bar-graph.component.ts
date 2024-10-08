@@ -14,7 +14,7 @@ export class DvdecodBarGraphComponent implements OnChanges {
 
   /** Input data for the graph, an array of dvdecodData objects. */
   @Input() data: dvdecodData[] = [];
-  
+
   /** Boolean indicating if the default colour mode is enabled.  */
   @Input() isColourModeDefault: boolean = true;
 
@@ -46,8 +46,10 @@ export class DvdecodBarGraphComponent implements OnChanges {
     this.setColours();
     if (this.data && this.data.length > 0) {
       if (this.chart) {
+        console.log("Updating chart");
         this.updateChart();
       } else {
+        console.log("Creating chart");
         this.createChart();
       }
     }
@@ -80,8 +82,12 @@ export class DvdecodBarGraphComponent implements OnChanges {
    * Updates an already existing graph
    */
   updateChart() {
+    let newLabels: string[] = this.data.map(dataEntry => dataEntry.dvdecod);
     this.chart.data.datasets = this.dvdecodBarGraphService.formatDataForUpdating(this.data, this.colours);
-    this.chart.data.labels = this.data.map(dataEntry => dataEntry.dvcat);
+    this.chart.data.labels = newLabels;
+    if (this.chart.options.plugins && this.chart.options.plugins.title) {
+      this.chart.options.plugins.title.text = `Total number of PD coded terms (DVDECOD) for ${this.data[0].dvcat} at site`;
+    } 
     this.chart.update();
   }
 
@@ -103,14 +109,14 @@ export class DvdecodBarGraphComponent implements OnChanges {
       if (Array.isArray(labelStr)) {
         labelStr = labelStr.join(', ');
       } else {
-        labelStr = labelStr.toString();  
+        labelStr = labelStr.toString();
       }
       return {
         label: labelStr,
         xCoordinate: xPosition ? xPosition : 0
       }
     })
-    
+
     let yThreshold = this.chart.chartArea.bottom;
     if (y > yThreshold) {
       let labelsPosition = labels.map(label => label.xCoordinate);

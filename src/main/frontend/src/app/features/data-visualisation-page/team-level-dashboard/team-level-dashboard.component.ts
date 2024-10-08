@@ -86,13 +86,17 @@ export class TeamLevelDashboardComponent {
     console.log(this.selectedTeam);
     if (this.selectedTeam) {
       this.studyDataService.getDataByTeamId$(this.selectedTeam.teamId)
-        .subscribe(
-          {
-            next: (data) => {
-              this.selectedDvdecod = dvdecod;
-              this.tableData = data
-                .filter(dataEntry => dataEntry.dvdecod === this.selectedDvdecod);
-              this.scroll(TeamLevelDashboardComponent.tableClass);
+      .subscribe(
+        {
+          next: (data) => {
+            this.selectedDvdecod = dvdecod;
+            console.log('data');
+            console.log(data);
+            this.tableData = data
+            .filter(dataEntry => dataEntry.dvdecod === this.selectedDvdecod);
+            this.scroll(TeamLevelDashboardComponent.tableClass);
+            console.log('this.tableData');
+            console.log(this.tableData);
             },
             error: (error) => {
               this.openSnackBar(`There was an error loading the data. ${error}`, "");
