@@ -29,6 +29,10 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DvdecodBarGraphComponent } from "./team-level-dashboard/dvdecod-bar-graph/dvdecod-bar-graph.component";
+import { SelectDialogComponent } from './data-visualisation/team-study-select/select-dialog/select-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatRadioModule } from '@angular/material/radio';
+
 
 
 @NgModule({
@@ -44,7 +48,8 @@ import { DvdecodBarGraphComponent } from "./team-level-dashboard/dvdecod-bar-gra
     TeamPdPieChartComponent,
     TeamStudyBarGraphComponent,
     VisualisationComponent,
-    DvdecodBarGraphComponent
+    DvdecodBarGraphComponent,
+    SelectDialogComponent
   ],
   imports: [
     CommonModule,
@@ -65,7 +70,9 @@ import { DvdecodBarGraphComponent } from "./team-level-dashboard/dvdecod-bar-gra
     NgxSkeletonLoaderModule,
     ReactiveFormsModule,
     SharedModule,
-],
+    MatDialogModule,
+    MatRadioModule
+  ],
   exports:
     [
       CategoryBarGraphSegmentedSiteComponent
