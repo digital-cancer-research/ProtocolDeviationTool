@@ -3,16 +3,30 @@ import { PdDvdecod } from '../../models/team-pd-dvdecod-bar-graph-data.model';
 import { DataVisualisationService } from '../../data-visualisation.service';
 import { Chart, ChartDataset, ChartOptions } from 'chart.js';
 
+/**
+ * Service for managing protocol deviation data visualisation in bar graphs.
+ * It handles the formatting of PD data, the creation of charts, and the generation of chart options.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class TeamPdDvdecodGraphService {
   private colours: string[] = this.dataVisualisationService.barChartColours
 
+  /**
+   * Creates an instance of TeamPdDvdecodGraphService.
+   * @param {DataVisualisationService} dataVisualisationService - Service for data visualisation that provides an iridescent colour scheme.
+   */
   constructor(
     private dataVisualisationService: DataVisualisationService
   ) { }
 
+  /**
+   * Formats the given PD data based on the color mode setting.
+   * @param {PdDvdecod[]} data - The PD data to be formatted.
+   * @param {boolean} isColourModeDefault - Indicates if the default color mode is used.
+   * @returns {any[]} An array of formatted data for chart representation.
+   */
   formatData(data: PdDvdecod[], isColourModeDefault: boolean): any[] {
     if (!isColourModeDefault) {
       return data.map((dataEntry) => ({
@@ -56,6 +70,14 @@ export class TeamPdDvdecodGraphService {
     }
   }
 
+  /**
+   * Creates a bar chart using the given datasets and options.
+   * @param {any} datasets - The datasets to be included in the chart.
+   * @param {string[]} labels - The labels for the chart axes.
+   * @param {boolean} isColourModeDefault - Indicates if the default color mode is used.
+   * @param {boolean} isLegendVisible - Indicates if the legend should be displayed.
+   * @returns {Chart} The created Chart instance.
+   */
   createChart(datasets: any, labels: string[], isColourModeDefault: boolean, isLegendVisible: boolean): Chart {
     return new Chart('teamPdDvdecodGraph', {
       type: 'bar',
@@ -68,6 +90,11 @@ export class TeamPdDvdecodGraphService {
     });
   }
 
+  /**
+   * Creates a skeleton chart for loading visualization.
+   * @param {string[]} labels - The labels for the skeleton chart.
+   * @returns {Chart} The created skeleton Chart instance.
+   */
   createSkeletonChart(labels: string[]): Chart {
     return new Chart('teamPdDvdecodSkeletonGraph', {
       type: 'bar',
@@ -87,6 +114,11 @@ export class TeamPdDvdecodGraphService {
     });
   }
 
+  /**
+   * Retrieves the chart options based on the legend visibility setting.
+   * @param {boolean} isLegendVisible - Indicates if the legend should be visible.
+   * @returns {any} The chart options.
+   */
   getChartOptions(isLegendVisible: boolean): any {
     return {
       maintainAspectRatio: false,
@@ -126,6 +158,12 @@ export class TeamPdDvdecodGraphService {
     };
   }
 
+  /**
+   * Retrieves the chart options when gradient colors are used.
+   * @param {string[]} colours - The colors to be used for the chart.
+   * @param {boolean} isLegendVisible - Indicates if the legend should be visible.
+   * @returns {any} The chart options including gradient colors.
+   */
   getChartOptionsWithGradientColours(colours: string[], isLegendVisible: boolean): any {
     const usedColors = Array.from(new Set(colours));
     return {
@@ -177,6 +215,11 @@ export class TeamPdDvdecodGraphService {
     };
   }
 
+  /**
+   * Retrieves the options for the skeleton chart.
+   * @param {boolean} isLegendVisible - Indicates if the legend should be visible.
+   * @returns {ChartOptions} The skeleton chart options.
+   */
   getSkeletonChartOptions(isLegendVisible: boolean): ChartOptions {
     const colour = '#EFF1f6';
     const defaultChartOptions = this.getChartOptions(false);

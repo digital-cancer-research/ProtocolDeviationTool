@@ -85,6 +85,12 @@ export class DvdecodBarGraphComponent implements OnChanges {
     this.chart.update();
   }
 
+  /**
+   * Handles click event on chart, to generate table, if conditions match.
+   * Only generates if the click below the x-axis.
+   * Generates a table associated with the closest dvdecod on the graph.
+   * @param event 
+   */
   public onClick(event: any): void {
     let click = event as PointerEvent;
     let x = click.layerX;
@@ -110,7 +116,6 @@ export class DvdecodBarGraphComponent implements OnChanges {
       let labelsPosition = labels.map(label => label.xCoordinate);
       let selectedLabelPosition = UtilsService.findClosestNumberInSortedNumberArray(labelsPosition, x);
       let selectedLabel = labels.filter(label => label.xCoordinate === selectedLabelPosition)[0].label;
-      console.log(selectedLabel);
       this.selectedDvdecod.emit(selectedLabel);
     }
   }

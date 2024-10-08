@@ -1,38 +1,45 @@
 import { Injectable } from '@angular/core';
 import { StudyData } from './study-data';
-import { of } from 'rxjs';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
+/**
+ * Service for managing study data retrieval from the API.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class StudyDataService {
 
-  private data: StudyData[] = [];
+  /** Array to hold the study data. */
+  public data: StudyData[] = [];
 
-  constructor() {
-    this.getStudyData$().subscribe(
-      data => this.data = data
-    );
+  /** Base URL for the study data API. */
+  private readonly baseUrl: string = "/api/data";
+
+  /**
+   * Creates an instance of StudyDataService and injects the HttpClient.
+   * 
+   * @param http - An instance of HttpClient for making HTTP requests.
+   */
+  constructor(private http: HttpClient) { }
+
+  /**
+   * Retrieves all study data from the API.
+   * 
+   * @returns An observable containing an array of StudyData objects.
+   */
+  getData$(): Observable<StudyData[]> {
+    return this.http.get<StudyData[]>(`${this.baseUrl}`);
   }
 
-  getData() {
-    return this.data;
-  }
-
-  getStudyData$() {
-    return of(mockData);
+  /**
+   * Retrieves study data filtered by team ID from the API.
+   * 
+   * @param teamId - The ID of the team to filter the study data.
+   * @returns An observable containing an array of StudyData objects related to the specified team.
+   */
+  getDataByTeamId$(teamId: number): Observable<StudyData[]> {
+    return this.http.get<StudyData[]>(`${this.baseUrl}/${teamId}`);
   }
 }
-
-const mockData: StudyData[] = [
-  { studyId: 'ST001', dvspondes: 'Sponsor1', dvcat: 'Category1', dvdecod: 'Deviation1' },
-  { studyId: 'ST002', dvspondes: 'Sponsor2', dvcat: 'Category2', dvdecod: 'Deviation2' },
-  { studyId: 'ST003', dvspondes: 'Sponsor3', dvcat: 'Category1', dvdecod: 'Deviation3' },
-  { studyId: 'ST004', dvspondes: 'Sponsor4', dvcat: 'Category3', dvdecod: 'Deviation4' },
-  { studyId: 'ST005', dvspondes: 'Sponsor1', dvcat: 'Category2', dvdecod: 'Deviation1' },
-  { studyId: 'ST006', dvspondes: 'Sponsor5', dvcat: 'Category4', dvdecod: 'Deviation5' },
-  { studyId: 'ST007', dvspondes: 'Sponsor6', dvcat: 'Category3', dvdecod: 'Deviation2' },
-  { studyId: 'ST008', dvspondes: 'Sponsor2', dvcat: 'Category4', dvdecod: 'Deviation3' },
-  { studyId: 'ST009', dvspondes: 'Sponsor4', dvcat: 'Category5', dvdecod: 'Deviation6' },
-  { studyId: 'ST010', dvspondes: 'Sponsor3', dvcat: 'Category5', dvdecod: 'Deviation4' }
-];

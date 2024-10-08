@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, EventEmitter, inject, OnDestroy, Output } from '@angular/core';
-import { CategoryScale, Chart, ChartOptions } from 'chart.js';
+import { CategoryScale, Chart } from 'chart.js';
 import { DataVisualisationService } from '../../data-visualisation.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { dvdecodData, PdDvdecod } from '../../models/team-pd-dvdecod-bar-graph-data.model';
@@ -8,6 +8,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { TeamPdDvdecodGraphService } from './team-pd-dvdecod-graph.service';
 import { UtilsService } from 'src/app/core/services/utils.service';
 
+/**
+ * Component for rendering a bar graph visualisation of protocol deviation (Pd) data 
+ * based on user-selected teams and categories.
+ */
 @Component({
   selector: 'app-team-pd-dvdecod-graph',
   templateUrl: './team-pd-dvdecod-graph.component.html',
@@ -18,51 +22,88 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
   private _snackBar = inject(MatSnackBar);
   duration = 5000;
 
+  /** Opens a snackbar notification with the provided message and action. */
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, {
       duration: this.duration
     });
   }
 
+  /** The chart instance for the visualisation. */
   chart!: Chart;
+
+  /** Array of protocol deviation data. */
   private data: PdDvdecod[] = [];
+
+  /** Array of filtered protocol deviation data based on user selection. */
   private filteredData: PdDvdecod[] = [];
+
+  /** Subscription for user service to track selected team changes. */
   private userSubscription!: Subscription;
+
+  /** Subscription for visualisation service to track data changes. */
   private visSubscription!: Subscription;
+
+  /** The labels for the chart categories. */
   public labels: string[] = this.dataVisualisationService.pdCategories;
+
+  /** The currently selected labels for the chart. */
   public selectedLabels: string[] = this.labels;
+
+  /** Flag to control the visibility of the chart legend. */
   public isLegendVisible: boolean = false;
+
+  /** Flag to indicate if data is currently loading. */
   public isDataLoading: boolean = true;
+
+  /** Error message to display when data loading fails. */
   public errorMessage: string = "";
+
+  /** Flag to indicate if the color mode is default. */
   public isColourModeDefault: boolean = true;
+
+  /** Output event emitter for sending graph data to parent components. */
   @Output() dvdecodGraphData: EventEmitter<dvdecodData[]> = new EventEmitter();
+
+  /** Output event emitter for toggling color mode. */
   @Output() colourMode: EventEmitter<boolean> = new EventEmitter(true);
 
+  /**
+   * Initialises the component and injects the required services.
+   * 
+   * @param userService - used to fetch team Id for the users selected team for further API requests.
+   * @param dataVisualisationService - Service for managing data visualisation-related requests.
+   * @param teamPdDvdecodGraphService - Service for handling graph-related data formatting and creation.
+   */
   constructor(
     private userService: UserService,
     private dataVisualisationService: DataVisualisationService,
     private teamPdDvdecodGraphService: TeamPdDvdecodGraphService
   ) { }
 
+  /**
+   * Lifecycle hook that is called after the component's view has been fully initialised.
+   * Creates a skeleton chart while the user waits and subscribes to the currently selected team to fetch relevant data.
+   */
   ngAfterViewInit(): void {
-    // this.createSkeletonChart();
-    // this.subscribeToSelectedTeam();
-    this.isDataLoading = false;
-    this.data = mockData.data;
-    this.filteredData = mockData.data;
-    this.labels = mockData.dvcats
-    this.selectedLabels = mockData.dvcats
-    setTimeout(() => {
-      this.createChart();
-    })
+    this.createSkeletonChart();
+    this.subscribeToSelectedTeam();
   }
 
+  /**
+   * Lifecycle hook that is called when the component is destroyed.
+   * Unsubscribes from active subscriptions and destroys the chart.
+   */
   ngOnDestroy(): void {
     if (this.userSubscription) this.userSubscription.unsubscribe();
     if (this.visSubscription) this.visSubscription.unsubscribe();
     if (this.chart) this.chart.destroy();
   }
 
+  /**
+   * Subscribes to the currently selected team from the user service.
+   * Loads bar graph data if a team is selected, otherwise handles errors.
+   */
   private subscribeToSelectedTeam(): void {
     this.userSubscription = this.userService.currentUserSelectedTeam$.subscribe({
       next: (team) => {
@@ -83,6 +124,11 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  /**
+   * Loads the bar graph data for the specified team ID from the visualisation service.
+   * 
+   * @param teamId - The ID of the team for which to load the data.
+   */
   private loadBarGraphData(teamId: number): void {
     this.visSubscription = this.dataVisualisationService.getPdDvdecodBarGraphData$(teamId)
       .subscribe({
@@ -101,6 +147,9 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
       });
   }
 
+  /**
+  * Handles error scenarios by displaying an error message and resetting the loading state.
+  */
   private handleError(): void {
     this.isDataLoading = false;
     setTimeout(() => {
@@ -109,6 +158,9 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
     this.openSnackBar(this.errorMessage, "");
   }
 
+  /**
+   * Creates or updates the chart with the current filtered data and selected labels.
+   */
   private createChart(): void {
     if (this.chart) {
       this.chart.destroy();
@@ -125,6 +177,9 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
     )
   }
 
+  /**
+   * Creates a skeleton chart to display while data is loading.
+   */
   private createSkeletonChart(): void {
     if (this.chart) {
       this.chart.destroy();
@@ -132,6 +187,11 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
     this.chart = this.teamPdDvdecodGraphService.createSkeletonChart(this.labels);
   }
 
+  /**
+   * Updates the chart based on the selected categories.
+   * 
+   * @param selectedDvcats - An array of selected category names to filter the chart data.
+   */
   public updateChart(selectedDvcats: string[]): void {
     this.selectedLabels = this.labels.filter(dvcat => selectedDvcats.includes(dvcat));
     const selectedLabelsIndices = this.selectedLabels.map(dvcat => this.labels.indexOf(dvcat));
@@ -145,19 +205,38 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
     this.createChart();
   }
 
+  /**
+   * Retrieves the counts from the count array based on the selected indices.
+   * 
+   * @param countArray - An array of counts corresponding to the categories.
+   * @param indices - An array of indices to filter the count array.
+   * @returns An array of filtered counts corresponding to the selected indices.
+   */
   private getFilteredCount(countArray: number[], indices: number[]): number[] {
     return indices.map(index => countArray[index]);
   }
 
+  /**
+   * Toggles the visibility of the chart legend and updates the chart.
+   */
   public toggleLegend(): void {
     this.isLegendVisible = !this.isLegendVisible;
     this.createChart();
   }
 
+  /**
+   * Toggles the color mode of the chart and updates the chart.
+   */
   public toggleColourMode(): void {
     this.createChart();
   }
 
+  /**
+   * Handles click events on the chart to retrieve and emit the relevant data.
+   * Emits colour mode and graph data associated with dvcat clicked.
+   * 
+   * @param event - The click event containing information about the click position.
+   */
   public onClick(event: any): void {
     let click = event as PointerEvent;
     let x = click.layerX;
@@ -192,5 +271,3 @@ export class TeamPdDvdecodGraphComponent implements AfterViewInit, OnDestroy {
     }
   }
 }
-
-const mockData = { "dvcats": ["ELIGIBILITY CRITERIA NOT MET", "EXCLUDED MEDICATION, VACCINE OR DEVICE", "INFORMED CONSENT", "NOT WITHDRAWN AFTER DEVELOPING WITHDRAWAL CRITERIA", "SITE LEVEL ERROR", "FAILURE TO REPORT SAFETY EVENTS PER PROTOCOL", "WRONG STUDY TREATMENT/ADMINISTRATION/DOSE", "STUDY PROCEDURE", "VISIT COMPLETION", "ASSESSMENT OR TIME POINT COMPLETION"], "data": [{ "dvcat": "VISIT COMPLETION", "dvdecod": "MISSED VISIT/PHONE CONTACT", "count": [0, 0, 0, 0, 0, 0, 0, 0, 9, 0], "colour": "#FF9800" }, { "dvcat": "STUDY PROCEDURE", "dvdecod": "BIOLOGICAL SAMPLE SPECIMEN PROCEDURE", "count": [0, 0, 0, 0, 0, 0, 0, 6, 0, 0], "colour": "#673AB7" }, { "dvcat": "ASSESSMENT OR TIME POINT COMPLETION", "dvdecod": "MISSED ASSESMENT- VITAL SIGNS", "count": [0, 0, 0, 0, 0, 0, 0, 0, 0, 5], "colour": "#8BC34A" }, { "dvcat": "ASSESSMENT OR TIME POINT COMPLETION", "dvdecod": "OUT OF WINDOW - VITAL SIGNS", "count": [0, 0, 0, 0, 0, 0, 0, 0, 0, 5], "colour": "#E91E63" }, { "dvcat": "ASSESSMENT OR TIME POINT COMPLETION", "dvdecod": "OUT OF WINDOW - OTHER", "count": [0, 0, 0, 0, 0, 0, 0, 0, 0, 5], "colour": "#3F51B5" }, { "dvcat": "ASSESSMENT OR TIME POINT COMPLETION", "dvdecod": "MISSED ASSESMENT - BLOODS LOCAL", "count": [0, 0, 0, 0, 0, 0, 0, 0, 0, 5], "colour": "#CDDC39" }, { "dvcat": "ASSESSMENT OR TIME POINT COMPLETION", "dvdecod": "OUT OF WINDOW - TREATMENT ADMINISTRATION", "count": [0, 0, 0, 0, 0, 0, 0, 0, 0, 3], "colour": "#0F9D58" }, { "dvcat": "ASSESSMENT OR TIME POINT COMPLETION", "dvdecod": "MISSED ASSESMENT - PK COLLECTION", "count": [0, 0, 0, 0, 0, 0, 0, 0, 0, 3], "colour": "#2196F3" }, { "dvcat": "FAILURE TO REPORT SAFETY EVENTS PER PROTOCOL", "dvdecod": "SAE NOT REPORTED WITHIN THE EXPECTED TIME FRAME", "count": [0, 0, 0, 0, 0, 2, 0, 0, 0, 0], "colour": "#2196F3" }, { "dvcat": "WRONG STUDY TREATMENT/ADMINISTRATION/DOSE", "dvdecod": "STUDY TREATMENT NOT ADMINISTERED PER PROTOCOL", "count": [0, 0, 0, 0, 0, 0, 2, 0, 0, 0], "colour": "#E91E63" }, { "dvcat": "ASSESSMENT OR TIME POINT COMPLETION", "dvdecod": "OUT OF WINDOW - EFFICACY ASSESSMENT", "count": [0, 0, 0, 0, 0, 0, 0, 0, 0, 1], "colour": "#DB4437" }, { "dvcat": "ASSESSMENT OR TIME POINT COMPLETION", "dvdecod": "MISSED ASSESMENT - EFFICACY ASSESSMENT", "count": [0, 0, 0, 0, 0, 0, 0, 0, 0, 1], "colour": "#009688" }, { "dvcat": "WRONG STUDY TREATMENT/ADMINISTRATION/DOSE", "dvdecod": "STUDY TREATMENT NOT PREPARED AS PER PROTOCOL (E.G. RECONSTITUTION)", "count": [0, 0, 0, 0, 0, 0, 1, 0, 0, 0], "colour": "#673AB7" }, { "dvcat": "ASSESSMENT OR TIME POINT COMPLETION", "dvdecod": "OUT OF WINDOW - ECG", "count": [0, 0, 0, 0, 0, 0, 0, 0, 0, 1], "colour": "#3F51B5" }] };

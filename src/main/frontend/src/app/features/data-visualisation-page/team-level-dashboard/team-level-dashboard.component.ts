@@ -1,5 +1,10 @@
-import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { dvdecodData } from '../models/team-pd-dvdecod-bar-graph-data.model';
+import { StudyDataService } from 'src/app/shared/study-data-table/study-data.service';
+import { UserService } from 'src/app/core/services/user.service';
+import { Team } from 'src/app/core/models/team.model';
+import { StudyData } from 'src/app/shared/study-data-table/study-data';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 /**
  * TeamLevelDashboardComponent manages the display and behavior of
@@ -11,6 +16,18 @@ import { dvdecodData } from '../models/team-pd-dvdecod-bar-graph-data.model';
   styleUrls: ['./team-level-dashboard.component.css']
 })
 export class TeamLevelDashboardComponent {
+
+  /** Snackbar to display visual feedback */
+  private _snackBar = inject(MatSnackBar);
+  duration = 5000;
+
+  /** Displays snackbar */
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, {
+      duration: this.duration
+    });
+  }
+
   private static readonly dvdecodGraphId: string = '#dvdecodGraph'
 
   private static readonly tableClass: string = '.table'
@@ -21,10 +38,21 @@ export class TeamLevelDashboardComponent {
   /** Indicates whether the default color mode is active. */
   isColourModeDefault: boolean = true;
 
-  /** The selected dvdecod from dvdecod-bar-graph*/
+  /** The selected dvdecod from dvdecod-bar-graph. */
   selectedDvdecod: string = "";
 
-  constructor(private cdr: ChangeDetectorRef) { }
+  /** The user's selected team. */
+  selectedTeam: Team | null = null;
+
+  tableData: StudyData[] = [];
+
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private studyDataService: StudyDataService,
+    private userService: UserService
+  ) {
+    userService.currentUserSelectedTeam$.subscribe(team => this.selectedTeam = team);
+  }
 
   /**
    * Upadates the colour mode for the graph.
@@ -54,8 +82,23 @@ export class TeamLevelDashboardComponent {
    * @param dvdecod 
    */
   updateSelectedDvdecod(dvdecod: string): void {
-    this.selectedDvdecod = dvdecod;
-    this.scroll(TeamLevelDashboardComponent.tableClass);
+    console.log("this.selectedTeam");
+    console.log(this.selectedTeam);
+    if (this.selectedTeam) {
+      this.studyDataService.getDataByTeamId$(this.selectedTeam.teamId)
+        .subscribe(
+          {
+            next: (data) => {
+              this.selectedDvdecod = dvdecod;
+              this.tableData = data
+                .filter(dataEntry => dataEntry.dvdecod === this.selectedDvdecod);
+              this.scroll(TeamLevelDashboardComponent.tableClass);
+            },
+            error: (error) => {
+              this.openSnackBar(`There was an error loading the data. ${error}`, "");
+            }
+          });
+    }
   }
 
   /**
