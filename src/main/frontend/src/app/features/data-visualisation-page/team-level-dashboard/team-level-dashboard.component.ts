@@ -90,13 +90,9 @@ export class TeamLevelDashboardComponent {
         {
           next: (data) => {
             this.selectedDvdecod = dvdecod;
-            console.log('data');
-            console.log(data);
             this.tableData = data
             .filter(dataEntry => dataEntry.dvdecod === this.selectedDvdecod);
             this.scroll(TeamLevelDashboardComponent.tableClass);
-            console.log('this.tableData');
-            console.log(this.tableData);
             },
             error: (error) => {
               this.openSnackBar(`There was an error loading the data. ${error}`, "");

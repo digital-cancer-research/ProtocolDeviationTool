@@ -46,10 +46,8 @@ export class DvdecodBarGraphComponent implements OnChanges {
     this.setColours();
     if (this.data && this.data.length > 0) {
       if (this.chart) {
-        console.log("Updating chart");
         this.updateChart();
       } else {
-        console.log("Creating chart");
         this.createChart();
       }
     }

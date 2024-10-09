@@ -17,6 +17,11 @@
         (selectedDvdecod)="updateSelectedDvdecod($event)">
     </app-dvdecod-bar-graph>
     </mat-card-content>
+    <mat-card-footer>
+        <mat-icon class="help" matTooltip="Click below a bar to generate a table">
+            help
+        </mat-icon>
+    </mat-card-footer>
 </mat-card>
 
 <mat-card *ngIf="selectedDvdecod" class="table">
