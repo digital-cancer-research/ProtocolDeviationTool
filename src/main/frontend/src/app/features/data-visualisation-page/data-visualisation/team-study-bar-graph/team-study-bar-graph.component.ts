@@ -65,6 +65,9 @@ export class TeamStudyBarGraphComponent implements OnInit {
           y: {
             beginAtZero: true,
             stacked: true,
+            ticks: {
+              autoSkip: false
+            },
             title: {
               display: true,
               text: 'Study ID',
