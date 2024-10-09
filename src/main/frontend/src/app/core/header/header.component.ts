@@ -1,43 +1,79 @@
-import { Component, Input, EventEmitter, Output, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { UserService } from '../services/user.service';
 import { AuthService } from '../../user/auth.service';
 import { User } from '../models/user.model';
 import { filter, map, Observable, Subscription } from 'rxjs';
 import { Team } from '../models/team.model';
 import { NavigationEnd, Router } from '@angular/router';
+import { DataVisualisationPageModule } from 'src/app/features/data-visualisation-page/data-visualisation-page.module';
 
+/**
+ * HeaderComponent is responsible for managing the header UI element of the application,
+ * including displaying the page title.
+ */
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-  @Input() pageTitle: string = 'DEFAULT PAGE TITLE';
 
+  /** List of users fetched from the user service */
   users: User[] = [];
-  selectedUser: User | null = null;
-  selectedTeam: Team | null = null;
-  usersSubscription!: Subscription;
-  selectedTeamSubscription!: Subscription;
-  usernameSelected: string = "";
-  urlPath$: Observable<string> = new Observable<string>();
-  urlPathString: string = "";
 
+  /** The currently selected user */
+  selectedUser: User | null = null;
+
+  /** The currently selected team */
+  selectedTeam: Team | null = null;
+
+  /** Subscription for the user list updates */
+  usersSubscription!: Subscription;
+
+  /** Subscription for the selected team updates */
+  selectedTeamSubscription!: Subscription;
+
+  /** The username of the currently selected user */
+  usernameSelected: string = "";
+
+  /** Observable that tracks the current URL path */
+  urlPath$: Observable<string> = this.router.events.pipe(
+    filter((event: any) => event instanceof NavigationEnd),
+    map((event: NavigationEnd) => event.url)
+  );
+
+  /** The root part of the current URL */
+  urlRoot: string = "";
+
+  /** The final path part of the current URL */
+  urlFinalPath: string = ""
+
+  /**
+   * Constructor for the HeaderComponent.
+   * 
+   * @param userService - Service used to retrieve user data
+   * @param authService - Service used for authentication and authorisation
+   * @param router - Router for tracking navigation events
+   */
   constructor(
     private userService: UserService,
     private authService: AuthService,
     private router: Router
   ) { }
 
+  /**
+   * Initialises the component, sets up subscriptions for users, teams, and URL path,
+   * and updates the page title based on the URL.
+   */
   ngOnInit(): void {
-    this.urlPath$ = this.router.events.pipe(
-      filter((event: any) => event instanceof NavigationEnd),
-      map((event: NavigationEnd) => event.url)
-    );
-
     this.urlPath$.subscribe((url => {
-      this.urlPathString = url.split('/')[1];
-      this.setPageTitle();
+      let urlLinks: string[] = url.split('/');
+      this.urlRoot = urlLinks[1];
+
+      const urlFinalPath = urlLinks.pop();
+      if (urlFinalPath !== undefined) {
+        this.urlFinalPath = urlFinalPath;
+      }
     }))
 
     this.usersSubscription = this.userService.getUsers().subscribe((users) => {
@@ -56,11 +92,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Cleans up the subscriptions when the component is destroyed.
+   */
   ngOnDestroy(): void {
     if (this.usersSubscription) this.usersSubscription.unsubscribe();
     if (this.selectedTeamSubscription) this.selectedTeamSubscription.unsubscribe();
   }
 
+  /**
+   * Handles the selection of a user by their username.
+   * 
+   * @param username - The username of the user to select
+   */
   onSelectUser(username: string): void {
     if (username === "") {
       this.selectedUser = null;
@@ -91,35 +135,34 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Checks if the current user has admin privileges.
+   * 
+   * @returns True if the user is an admin, false otherwise
+   */
   get isAdmin(): boolean {
     return this.authService.isAdmin;
   }
 
-  setPageTitle() {
-    switch (this.urlPathString) {
+  /**
+   * Gets the page title based on the current URL.
+   */
+  get pageTitle(): string {
+    switch (this.urlRoot) {
       case ('site'): {
-        this.pageTitle = "SITE PAGE";
-        break;
+        return "SITE PAGE";
       }
       case ('data-upload'): {
-        this.pageTitle = "DATA UPLOAD";
-        break;
+        return "DATA UPLOAD";
       }
       case ('data-visualisation'): {
-        this.pageTitle = "TEAM SUMMARY DASHBOARD";
-        break;
-      }
-      case ('data-visualisation-deviation-home'): {
-        this.pageTitle = "<TEAM LEVEL> VISUALISATIONS";
-        break;
+        return DataVisualisationPageModule.getTitle(this.urlFinalPath);
       }
       case ('administration-page'): {
-        this.pageTitle = "ADMINISTRATOR";
-        break;
+        return "ADMINISTRATOR";
       }
       default: {
-        this.pageTitle = "";
-        break;
+        return "";
       }
     }
   }

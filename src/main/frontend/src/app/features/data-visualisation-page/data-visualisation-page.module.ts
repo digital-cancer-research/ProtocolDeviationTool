@@ -32,6 +32,8 @@ import { DvdecodBarGraphComponent } from "./team-level-dashboard/dvdecod-bar-gra
 import { SelectDialogComponent } from './data-visualisation/team-study-select/select-dialog/select-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatRadioModule } from '@angular/material/radio';
+import { UserService } from 'src/app/core/services/user.service';
+import { Team } from 'src/app/core/models/team.model';
 
 
 
@@ -78,4 +80,27 @@ import { MatRadioModule } from '@angular/material/radio';
       CategoryBarGraphSegmentedSiteComponent
     ]
 })
-export class DataVisualisationPageModule { }
+export class DataVisualisationPageModule {
+
+  constructor() { }
+
+  /**
+   * Returns the page title of the visualisation pages based on the provided URL.
+   * 
+   * @param url - The URL path used to determine the title.
+   * @returns The title for the corresponding page.
+   */
+  public static getTitle(url: string) {
+    switch (url) {
+      case ("data-visualisation"): {
+        return "TEAM SUMMARY DASHBOARD";
+      }
+      case ('data-visualisation-deviation-home'): {
+        return "TEAM PROTOCOL DEVIATIONS";
+      }
+      default: {
+        return "";
+      }
+    }
+  }
+}
