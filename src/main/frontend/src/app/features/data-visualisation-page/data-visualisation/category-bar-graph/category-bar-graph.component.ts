@@ -54,6 +54,9 @@ export class CategoryBarGraphComponent implements OnInit {
             title: {
               display: true,
               text: 'Category for Protocol Deviation',
+            },
+            ticks: {
+              autoSkip: false
             }
           },
           x: {
