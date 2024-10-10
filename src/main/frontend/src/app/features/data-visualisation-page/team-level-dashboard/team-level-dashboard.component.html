@@ -4,11 +4,34 @@
 </div>
 
 <mat-card>
-    <app-team-pd-dvdecod-graph (dvdecodGraphData)="updateDvdecodGraphData($event)" (colourMode)="updateColourMode($event)"></app-team-pd-dvdecod-graph>
+    <app-team-pd-dvdecod-graph 
+    (dvdecodGraphData)="updateDvdecodGraphData($event)" 
+    (colourMode)="updateColourMode($event)">
+    </app-team-pd-dvdecod-graph>
 </mat-card>
 
-<mat-card *ngIf="graphData.length !== 0" class="dvdecodBarGraph scroll">
+<mat-card *ngIf="graphData.length !== 0" class="dvdecodBarGraph" #dvdecodGraph>
     <mat-card-content class="dvdecodBarGraph">
-        <app-dvdecod-bar-graph [data]="graphData" [isColourModeDefault]="isColourModeDefault"></app-dvdecod-bar-graph>
+        <app-dvdecod-bar-graph [data]="graphData" 
+        [isColourModeDefault]="isColourModeDefault"
+        (selectedDvdecod)="updateSelectedDvdecod($event)">
+    </app-dvdecod-bar-graph>
+    </mat-card-content>
+    <mat-card-footer>
+        <mat-icon class="help" matTooltip="Click below a bar to generate a table">
+            help
+        </mat-icon>
+    </mat-card-footer>
+</mat-card>
+
+<mat-card *ngIf="selectedDvdecod" class="table">
+    <mat-card-header>
+        {{ selectedDvdecod | titlecase }}
+    </mat-card-header>
+    <mat-card-content>
+        <app-study-data-table
+        [data]="tableData"
+        [dvdecod]="selectedDvdecod">
+        </app-study-data-table>
     </mat-card-content>
 </mat-card>

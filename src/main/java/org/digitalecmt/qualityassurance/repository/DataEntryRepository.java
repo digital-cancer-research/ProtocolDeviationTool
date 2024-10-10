@@ -29,6 +29,7 @@ import java.util.Optional;
 
 import org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryPerStudyDTO;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerSubcategoryPerCategoryDTO;
+import org.digitalecmt.qualityassurance.dto.Data.DataDTO;
 import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -37,21 +38,22 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DataEntryRepository
-        extends JpaRepository<DataEntry, Integer> {
-	
+		extends JpaRepository<DataEntry, Integer> {
+
 	Optional<DataEntry> findByStudyId(String studyId);
-	
+
 	List<DataEntry> findAllByStudyId(String studyId);
 
 	List<DataEntry> findBySiteId(String siteId);
-	
-	@Query("SELECT new org.digitalecmt.qualityassurance.dto.DataEntryDTO(d.entryId, d.studyId, ds.dvspondesValue, c.categoryId, c.dvterm, c.dvdecod, c.dvcat) " +
-	           "FROM DataEntry d " +
-	           "JOIN Dvspondes ds ON d.dvspondesId = ds.dvspondesId " +
-	           "JOIN DataEntryCategory dec ON d.entryId = dec.entryId " +
-	           "JOIN PdCategory c ON dec.categoryId = c.categoryId")
+
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.DataEntryDTO(d.entryId, d.studyId, ds.dvspondesValue, c.categoryId, c.dvterm, c.dvdecod, c.dvcat) "
+			+
+			"FROM DataEntry d " +
+			"JOIN Dvspondes ds ON d.dvspondesId = ds.dvspondesId " +
+			"JOIN DataEntryCategory dec ON d.entryId = dec.entryId " +
+			"JOIN PdCategory c ON dec.categoryId = c.categoryId")
 	List<Object[]> getJoinedData();
-	
+
 	@Query("select count(*) from DataEntry d JOIN DataEntryCategory dec ON d.entryId = dec.entryId left join PdCategory c on dec.categoryId=c.categoryId where c.dvcat like ?1")
 	Long countByCategory(String category);
 
@@ -66,29 +68,49 @@ public interface DataEntryRepository
 	Long countByStudyId(String study);
 
 	Long countByStudyIdAndSiteId(String study, String siteId);
-	
+
 	@Query("SELECT DISTINCT studyId FROM DataEntry")
 	List<String> findDistinctStudyIds();
-	
-	@Query("SELECT new org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryPerStudyDTO(c.dvcat, COUNT(d), d.studyId) " +
-		       "FROM DataEntry d " +
-		       "JOIN DataEntryCategory dec ON d.entryId = dec.entryId " +
-		       "JOIN PdCategory c ON dec.categoryId = c.categoryId " +
-		       "WHERE (:siteId IS NULL OR d.siteId = :siteId) " +
-		       "GROUP BY c.dvcat, d.studyId")
-		List<EntryCountPerCategoryPerStudyDTO> countByCategoryAndStudy(@Param("siteId") String siteId);
-	
-	@Query("SELECT new org.digitalecmt.qualityassurance.dto.EntryCountPerSubcategoryPerCategoryDTO(c.dvcat, c.dvdecod, COUNT(d)) " +
-		       "FROM DataEntry d " +
-		       "JOIN DataEntryCategory dec ON d.entryId = dec.entryId " +
-		       "JOIN PdCategory c ON dec.categoryId = c.categoryId " +
-		       "WHERE (:siteId IS NULL OR d.siteId = :siteId) " +
-		       "GROUP BY c.dvcat, c.dvdecod")
-		List<EntryCountPerSubcategoryPerCategoryDTO> countBySubcategoryAndCategory(@Param("siteId") String siteId);
+
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryPerStudyDTO(c.dvcat, COUNT(d), d.studyId) "
+			+
+			"FROM DataEntry d " +
+			"JOIN DataEntryCategory dec ON d.entryId = dec.entryId " +
+			"JOIN PdCategory c ON dec.categoryId = c.categoryId " +
+			"WHERE (:siteId IS NULL OR d.siteId = :siteId) " +
+			"GROUP BY c.dvcat, d.studyId")
+	List<EntryCountPerCategoryPerStudyDTO> countByCategoryAndStudy(@Param("siteId") String siteId);
+
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.EntryCountPerSubcategoryPerCategoryDTO(c.dvcat, c.dvdecod, COUNT(d)) "
+			+
+			"FROM DataEntry d " +
+			"JOIN DataEntryCategory dec ON d.entryId = dec.entryId " +
+			"JOIN PdCategory c ON dec.categoryId = c.categoryId " +
+			"WHERE (:siteId IS NULL OR d.siteId = :siteId) " +
+			"GROUP BY c.dvcat, c.dvdecod")
+	List<EntryCountPerSubcategoryPerCategoryDTO> countBySubcategoryAndCategory(@Param("siteId") String siteId);
 
 	Optional<DataEntry> findByEntryId(Long entryId);
 
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.Data.DataDTO(de.studyId, d.dvspondesValue, pc.dvcat, pc.dvdecod, pc.dvterm) "
+			+
+			"FROM DataEntry de " +
+			"JOIN Dvspondes d ON d.dvspondesId = de.dvspondesId " +
+			"JOIN DataEntryCategory dec ON dec.entryId = de.entryId " +
+			"JOIN PdCategory pc ON pc.categoryId = dec.categoryId ")
+	List<DataDTO> findPdData();
 
-
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.Data.DataDTO(de.studyId, d.dvspondesValue, pc.dvcat, pc.dvdecod, pc.dvterm) "
+			+
+			"FROM DataEntry de " +
+			"JOIN Dvspondes d ON d.dvspondesId = de.dvspondesId " +
+			"JOIN DataEntryCategory dec ON dec.entryId = de.entryId " +
+			"JOIN PdCategory pc ON pc.categoryId = dec.categoryId " +
+			"WHERE de.studyId IN (" +
+			"   SELECT tsa.studyId " +
+			"   FROM TeamStudyAccess tsa " +
+			"   WHERE tsa.teamId = :teamId" +
+			")")
+	List<DataDTO> findPdDataByTeamId(@Param("teamId") Long teamId);
 
 }
