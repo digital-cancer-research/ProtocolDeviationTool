@@ -67,4 +67,6 @@ import { UserManagementTableComponent } from './user-management/user-management-
     UserManagementService
   ]
 })
-export class AdministrationPageModule { }
+export class AdministrationPageModule { 
+  public static URL = "administration-page" ;
+}

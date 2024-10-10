@@ -2,6 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../user/auth.service';
 import { UserService } from '../../services/user.service';
+import { RouterService } from '../../services/router.service';
+import { AdministrationPageModule } from 'src/app/features/administration-page/administration-page.module';
+import { DataUploadModule } from 'src/app/features/data-upload/data-upload-page.module';
+import { DataVisualisationPageModule } from 'src/app/features/data-visualisation-page/data-visualisation-page.module';
 
 @Component({
   selector: 'app-navigation-ribbon',
@@ -16,11 +20,11 @@ export class NavigationRibbonComponent implements OnDestroy {
   userSubscription!: Subscription;
 
   links: Link[] = [
-    { label: '', route: '', visible: true, disabled: false },
-    { label: 'ADMINISTRATION', route: '/administration-page/user-management', visible: () => this.isAdmin, disabled: false },
+    { label: '', route: '/', visible: true, disabled: false },
+    { label: 'ADMINISTRATION', route: `/${AdministrationPageModule.URL}/user-management`, visible: () => this.isAdmin, disabled: false },
     { label: 'TEAM SELECTION', route: '/site', visible: () => this.isPartOfMultipleTeams, disabled: false },
-    { label: 'DATA', route: '/data-upload', visible: true, disabled: false },
-    { label: 'VISUALISATION', route: '/data-visualisation', visible: true, disabled: false }
+    { label: 'DATA', route: `/${DataUploadModule.URL}`, visible: true, disabled: false },
+    { label: 'VISUALISATION', route: `/${DataVisualisationPageModule.URL}`, visible: true, disabled: false }
   ];
   activeLink = this.links[0];
   isUserDeactivated: boolean = false;
@@ -28,7 +32,15 @@ export class NavigationRibbonComponent implements OnDestroy {
   constructor(
     private authService: AuthService,
     private userService: UserService,
+    private routerService: RouterService
   ) {
+
+    routerService.urlRoot$.subscribe(
+      (url) => {
+        this.updateActiveLink(url);
+      }
+    )
+
     this.userService.currentUser$.subscribe(
       (user) => {
         if (user) {
@@ -66,10 +78,20 @@ export class NavigationRibbonComponent implements OnDestroy {
   }
 
   get filteredLinks() {
-    return this.links.filter(link => typeof link.visible === 'function' ? 
+    return this.links.filter(link => typeof link.visible === 'function' ?
       link.visible() : link.visible);
   }
+
+  updateActiveLink(url: string): void {
+    url = '/' + url;
+    const URLS = this.links
+      .map(link => link.route);
+    const index = URLS.indexOf(url);
+    this.activeLink = this.links[index];
+  }
 }
+
+
 
 interface Link {
   label: string

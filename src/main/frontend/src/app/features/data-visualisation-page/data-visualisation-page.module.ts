@@ -71,4 +71,6 @@ import { DvdecodBarGraphComponent } from "./team-level-dashboard/dvdecod-bar-gra
       CategoryBarGraphSegmentedSiteComponent
     ]
 })
-export class DataVisualisationPageModule { }
+export class DataVisualisationPageModule {
+  public static URL = "data-visualisation";
+ }
