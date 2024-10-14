@@ -29,6 +29,12 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DvdecodBarGraphComponent } from "./team-level-dashboard/dvdecod-bar-graph/dvdecod-bar-graph.component";
+import { SelectDialogComponent } from './data-visualisation/team-study-select/select-dialog/select-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatRadioModule } from '@angular/material/radio';
+import { UserService } from 'src/app/core/services/user.service';
+import { Team } from 'src/app/core/models/team.model';
+
 
 
 @NgModule({
@@ -44,7 +50,8 @@ import { DvdecodBarGraphComponent } from "./team-level-dashboard/dvdecod-bar-gra
     TeamPdPieChartComponent,
     TeamStudyBarGraphComponent,
     VisualisationComponent,
-    DvdecodBarGraphComponent
+    DvdecodBarGraphComponent,
+    SelectDialogComponent
   ],
   imports: [
     CommonModule,
@@ -65,12 +72,39 @@ import { DvdecodBarGraphComponent } from "./team-level-dashboard/dvdecod-bar-gra
     NgxSkeletonLoaderModule,
     ReactiveFormsModule,
     SharedModule,
-],
+    MatDialogModule,
+    MatRadioModule
+  ],
   exports:
     [
       CategoryBarGraphSegmentedSiteComponent
     ]
 })
+
 export class DataVisualisationPageModule {
   public static URL = "data-visualisation";
  }
+
+  constructor() { }
+
+  /**
+   * Returns the page title of the visualisation pages based on the provided URL.
+   * 
+   * @param url - The URL path used to determine the title.
+   * @returns The title for the corresponding page.
+   */
+  public static getTitle(url: string) {
+    switch (url) {
+      case ("data-visualisation"): {
+        return "TEAM SUMMARY DASHBOARD";
+      }
+      case ('data-visualisation-deviation-home'): {
+        return "TEAM PROTOCOL DEVIATIONS";
+      }
+      default: {
+        return "";
+      }
+    }
+  }
+}
+
