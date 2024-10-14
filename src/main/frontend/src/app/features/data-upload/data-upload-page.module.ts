@@ -25,4 +25,6 @@ import { DataUploadPageComponent } from './data-upload-page.component';
     SharedModule
   ],
 })
-export class DataUploadModule { }
+export class DataUploadModule { 
+  public static URL = "data-upload";
+}

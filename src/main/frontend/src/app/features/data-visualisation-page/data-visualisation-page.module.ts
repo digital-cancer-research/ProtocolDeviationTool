@@ -80,7 +80,10 @@ import { Team } from 'src/app/core/models/team.model';
       CategoryBarGraphSegmentedSiteComponent
     ]
 })
+
 export class DataVisualisationPageModule {
+  public static URL = "data-visualisation";
+ }
 
   constructor() { }
 
@@ -104,3 +107,4 @@ export class DataVisualisationPageModule {
     }
   }
 }
+
