@@ -1,23 +1,9 @@
-<form>
-  <mat-form-field>
-    <mat-label>Team/Study</mat-label>
-    <input type="text"
-    matInput 
-    [formControl]="myControl"
-    [matAutocomplete]="auto"
-    >
-    <button mat-icon-button matSuffix
-    [disabled]="myControl.hasError('optionNotExists')">
-      <mat-icon routerLink="team-level-dashboard">arrow_forward</mat-icon>
-    </button>
-  </mat-form-field>
-  <mat-autocomplete #auto="matAutocomplete"
-  [autoSelectActiveOption]="true">
-  @for (option of filteredOptions$ | async; track option) {
-    <mat-option [value]="option">{{option}}</mat-option>
-  }
-</mat-autocomplete>
-<mat-error *ngIf="myControl.hasError('optionNotExists') && myControl.touched">
-  Please select a valid option.
-</mat-error>
-</form>
+<button mat-stroked-button
+  routerLink="team-level-dashboard">
+  Team Visualisations
+</button>
+
+<button mat-stroked-button
+  (click)="openDialog()">
+  Study Visualisations
+</button>
