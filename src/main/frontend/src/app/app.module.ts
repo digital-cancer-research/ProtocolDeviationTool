@@ -11,20 +11,16 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AppComponent } from './app.component';
 import { UserSelectionComponent } from './user/user-selection.component';
 import { StudyListComponent } from './study-list/study-list.component';
-import { CategoryBarGraphComponent } from './category-bar-graph/category-bar-graph.component';
 import { CategoryPieGraphComponent } from './category-pie-graph/category-pie-graph.component';
 import { CategoryBarGraphSegmentedComponent } from './category-bar-graph-segmented/category-bar-graph-segmented.component';
 import { SiteSelectComponent } from './site-select/site-select.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
 import { SiteStudyLevelSelectComponent } from './site-study-level-select/site-study-level-select.component';
-import { BorderComponent } from './border/border.component';
 import { SiteSponsSelectComponent } from './site-spons-select/site-spons-select.component';
 import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.component';
 
 import { UserService } from './user/user.service';
 import { AuthService } from './user/auth.service';
 import { StudyListService } from './study-list/study-list.service';
-import { CategoryBarGraphService } from './category-bar-graph/category-bar-graph.service';
 import { CategoryPieGraphService } from './category-pie-graph/category-pie-graph.service';
 import { CategoryBarGraphSegmentedService } from './category-bar-graph-segmented/category-bar-graph-segmented.service';
 import { SiteSelectService } from './site-select/site-select.service';
@@ -40,11 +36,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         AppComponent,
         UserSelectionComponent,
         StudyListComponent,
-        CategoryBarGraphComponent,
         SiteSelectComponent,
         CategoryPieGraphComponent,
-        DashboardComponent,
-        BorderComponent,
         SiteSponsSelectComponent,
         SiteSponsorPageComponent,
         CategoryBarGraphSegmentedComponent,
@@ -66,7 +59,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         UserService,
         AuthService,
         StudyListService,
-        CategoryBarGraphService,
         SiteSelectService,
         ShareSiteDataService,
         CategoryPieGraphService,
