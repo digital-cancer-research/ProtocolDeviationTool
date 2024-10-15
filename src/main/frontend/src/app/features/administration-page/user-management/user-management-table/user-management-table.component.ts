@@ -10,7 +10,6 @@ import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { UserService } from 'src/app/core/services/user.service';
 import { User } from 'src/app/core/models/user.model';
-import { UserTeam } from '../models/user-team.model';
 
 @Component({
   selector: 'app-user-management-table',
@@ -173,7 +172,7 @@ export class UserManagementTableComponent implements OnInit, OnDestroy, AfterVie
   */
   changeRole(user: UserManagementData) {
     this.userManagementService.changeUserRole(user.userId, user.roleId)
-    .subscribe();
+      .subscribe();
   }
 
   /**
@@ -181,6 +180,12 @@ export class UserManagementTableComponent implements OnInit, OnDestroy, AfterVie
    * @param user - User management data to confirm changes for.
    */
   onConfirm(user: UserManagementData): void {
+    if (user.roleId === 3 && user
+      .userId === this.currentUser.userId
+    ) {
+      this.showSnackBar('Error', 'You cannot deactivate your own account');
+      return
+    }
     user.isLoading = true;
     this.changeTeam(user);
     this.changeRole(user);
