@@ -18,9 +18,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { CategoryBarGraphComponent } from './data-visualisation/category-bar-graph/category-bar-graph.component';
 import { TeamPdPieChartComponent } from "./data-visualisation/team-pd-pie-chart/team-pd-pie-chart.component";
 import { TeamStudyBarGraphComponent } from "./data-visualisation/team-study-bar-graph/team-study-bar-graph.component";
-import { DataVisualisationDeviationHomePageComponent } from './data-visualisation-deviation-home-page/data-visualisation-deviation-home-page.component';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { CategoryBarGraphSegmentedSiteComponent } from './data-visualisation-deviation-home-page/category-bar-graph-segmented-site/category-bar-graph-segmented-site.component';
 import { TeamLevelDashboardComponent } from './team-level-dashboard/team-level-dashboard.component';
 import { TeamPdDvdecodGraphComponent } from "./team-level-dashboard/team-pd-dvdecod-graph/team-pd-dvdecod-graph.component";
 import { MatCardModule } from '@angular/material/card';
@@ -32,9 +30,6 @@ import { DvdecodBarGraphComponent } from "./team-level-dashboard/dvdecod-bar-gra
 import { SelectDialogComponent } from './data-visualisation/team-study-select/select-dialog/select-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatRadioModule } from '@angular/material/radio';
-import { UserService } from 'src/app/core/services/user.service';
-import { Team } from 'src/app/core/models/team.model';
-
 
 
 @NgModule({
@@ -43,10 +38,8 @@ import { Team } from 'src/app/core/models/team.model';
     DataVisualisationComponent,
     TeamLevelDashboardComponent,
     TeamPdDvdecodGraphComponent,
-    DataVisualisationDeviationHomePageComponent,
     TeamStudySelectComponent,
     CategoryBarGraphComponent,
-    CategoryBarGraphSegmentedSiteComponent,
     TeamPdPieChartComponent,
     TeamStudyBarGraphComponent,
     VisualisationComponent,
@@ -75,15 +68,10 @@ import { Team } from 'src/app/core/models/team.model';
     MatDialogModule,
     MatRadioModule
   ],
-  exports:
-    [
-      CategoryBarGraphSegmentedSiteComponent
-    ]
 })
 
 export class DataVisualisationPageModule {
   public static URL = "data-visualisation";
- }
 
   constructor() { }
 
@@ -98,7 +86,7 @@ export class DataVisualisationPageModule {
       case ("data-visualisation"): {
         return "TEAM SUMMARY DASHBOARD";
       }
-      case ('data-visualisation-deviation-home'): {
+      case ('team-level-dashboard'): {
         return "TEAM PROTOCOL DEVIATIONS";
       }
       default: {
@@ -106,5 +94,6 @@ export class DataVisualisationPageModule {
       }
     }
   }
+
 }
 
