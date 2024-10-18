@@ -1,0 +1,45 @@
+<h2 mat-dialog-title>Edit Entry</h2>
+<mat-dialog-content class="mat-typography">
+    <form [formGroup]="dataForm">
+        <mat-form-field appearance="outline">
+            <mat-label>STUDY ID</mat-label>
+            <input matInput formControlName="studyId">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>DVSPONDES</mat-label>
+            <input matInput formControlName="dvspondes">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>DVCAT</mat-label>
+            <mat-select formControlName="dvcat">
+                <mat-option *ngFor="let dvcat of dvcats$ | async" [value]="dvcat">
+                    {{dvcat}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>DVDECOD</mat-label>
+            <mat-select formControlName="dvdecod">
+                <mat-option *ngFor="let dvdecod of dvdecods$ | async" [value]="dvdecod">
+                    {{dvdecod}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>DVTERM</mat-label>
+            <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" [disabled]="true"
+                cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" [value]="dvterm$ | async">
+            </textarea>
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close color="warn"
+    (click)="onSubmit('cancel')">
+        Cancel
+    </button>
+    <button mat-button mat-dialog-close [disabled]="!dataForm.valid" 
+    (click)="onSubmit('confirm')">
+        Confirm
+    </button>
+</mat-dialog-actions>

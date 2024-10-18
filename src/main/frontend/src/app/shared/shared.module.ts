@@ -28,6 +28,9 @@ import { SentenceCasePipe } from './pipes/sentence-case.pipe';
 import { DataTableComponent } from './table/data-table/data-table.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatDialogModule } from '@angular/material/dialog';
+import { EditDataDialogueComponent } from './table/edit-data/edit-data-dialogue.component';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -40,7 +43,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     UploadComponent,
     StudyDataTableComponent,
     SentenceCasePipe,
-    DataTableComponent
+    DataTableComponent,
+    EditDataDialogueComponent
   ],
   imports: [
     CommonModule,
@@ -51,15 +55,17 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     MatCheckboxModule,
     MatIconModule,
     MatInputModule,
-    MatRadioModule, 
+    MatRadioModule,
     MatFormFieldModule,
     MatTableModule,
-    MatSortModule, 
+    MatSortModule,
     MatPaginatorModule,
     MatMenuModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
     AsyncPipe,
+    MatDialogModule,
+    MatSelectModule
   ],
   exports: [
     FileListComponent,

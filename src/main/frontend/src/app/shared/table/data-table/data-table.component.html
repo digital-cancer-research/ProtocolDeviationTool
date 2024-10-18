@@ -7,28 +7,28 @@
 
     <ng-container matColumnDef="studyId">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Study ID' | uppercase}} </th>
-        <td mat-cell *matCellDef="let row; let i = index" #studyIdInput>
+        <td mat-cell *matCellDef="let row" #studyIdInput>
             {{row.studyId}}
         </td>
     </ng-container>
 
     <ng-container matColumnDef="dvspondes">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Dvspondes' | uppercase}} </th>
-        <td mat-cell *matCellDef="let row; let i = index" #dvspondesInput>
+        <td mat-cell *matCellDef="let row" #dvspondesInput>
             {{row.dvspondes}}
         </td>
     </ng-container>
 
     <ng-container matColumnDef="dvcat">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Dvcat' | uppercase}} </th>
-        <td mat-cell *matCellDef="let row; let i = index" #dvcatInput>
+        <td mat-cell *matCellDef="let row" #dvcatInput>
             {{row.dvcat}}
         </td>
     </ng-container>
 
     <ng-container matColumnDef="dvdecod">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Dvdecod' | uppercase}} </th>
-        <td mat-cell *matCellDef="let row; let i = index" #dvdecodInput>
+        <td mat-cell *matCellDef="let row" #dvdecodInput>
             {{row.dvdecod}}
         </td>
     </ng-container>
@@ -39,24 +39,20 @@
                 <mat-icon>more_horiz</mat-icon>
             </button>
         </th>
-        <td mat-cell *matCellDef="let row; let i = index">
-            <div style="width: 112px;">
-                <button mat-icon-button (click)="onEdit(row, i)" *ngIf="!row.isEdited;else rowActions">
+        <td mat-cell *matCellDef="let row">
+            <div class="actionContainer">
+                <button mat-icon-button (click)="onEdit(row)">
                     <mat-icon color="accent">
                         edit
                     </mat-icon>
                 </button>
+                <button mat-icon-button color="warn" (click)="onCancel(row)" *ngIf="row.isEdited">
+                    <mat-icon>close</mat-icon>
+                </button>
+                <button mat-icon-button class="tick" (click)="onConfirm(row)" *ngIf="row.isEdited">
+                    <mat-icon>check</mat-icon>
+                </button>
             </div>
-            <ng-template #rowActions>
-                <div class="actionContainer">
-                    <button mat-icon-button class="tick" (click)="onConfirm(row)">
-                        <mat-icon>check</mat-icon>
-                    </button>
-                    <button mat-icon-button color="warn" (click)="onCancel(row)">
-                        <mat-icon>close</mat-icon>
-                    </button>
-                </div>
-            </ng-template>
         </td>
     </ng-container>
 

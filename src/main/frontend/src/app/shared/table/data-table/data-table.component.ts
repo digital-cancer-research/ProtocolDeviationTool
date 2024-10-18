@@ -1,9 +1,12 @@
-import { AfterViewInit, Component, ElementRef, Input, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, Input, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { DataTableEntry } from 'src/app/core/models/data/data-table-entry.model';
 import { DataTableService } from './data-table.service';
+import { MatDialog } from '@angular/material/dialog';
+import { EditDataDialogueComponent } from '../edit-data/edit-data-dialogue.component';
+import { EditDataModel, EditType } from '../models/edit-data-model';
 
 @Component({
   selector: 'app-data-table',
@@ -13,7 +16,25 @@ import { DataTableService } from './data-table.service';
 })
 export class DataTableComponent implements OnInit, AfterViewInit {
 
-  @Input() data: DataTableEntry[] = mockData;
+  readonly editDialog = inject(MatDialog);
+
+  openEditDialog(enterAnimationDuration: string, exitAnimationDuration: string, entry: DataTableEntry): void {
+    this.editDialog.open(EditDataDialogueComponent, {
+      width: '450px',
+      enterAnimationDuration,
+      exitAnimationDuration,
+      data: {
+        entry: entry
+      }
+    })
+      .afterClosed()
+      .subscribe((editedData: EditDataModel) => {
+        this.handleEdit(editedData, entry);
+      })
+  }
+
+  @Input() fetchedData: DataTableEntry[] = mockData;
+  tableData: DataTableEntry[] = [];
   dataSource!: MatTableDataSource<DataTableEntry>;
   displayedColumns: string[] = ['studyId', 'dvspondes', 'dvcat', 'dvdecod', 'actions'];
 
@@ -25,13 +46,13 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   @ViewChildren(DataTableService.dvdecodInputCellIdentifier) dvdecodInputFields!: QueryList<ElementRef>;
 
   ngOnInit() {
-    this.dataSource = new MatTableDataSource(this.data);
+    this.tableData = structuredClone(this.fetchedData);
+    this.dataSource = new MatTableDataSource(this.tableData);
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-
   }
 
   applyFilter(event: Event) {
@@ -44,16 +65,16 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   }
 
   public get hasActiveEdits() {
-    return !this.data.some(entry => entry.isEdited === true);
+    return !this.tableData.some(entry => entry.isEdited === true);
   }
 
-  onEdit(entry: DataTableEntry, rowIndex: number) {
+  onEdit(entry: DataTableEntry) {
     entry.isEdited = true;
-
+    this.openEditDialog('1000', '1000', entry);
   }
 
   onConfirmAll() {
-    this.data.forEach((entry) => {
+    this.tableData.forEach((entry) => {
       if (entry.isEdited === true) {
         this.onConfirm(entry);
       }
@@ -61,12 +82,11 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   }
 
   onConfirm(entry: DataTableEntry) {
-    entry.isEdited = false;
+    console.log(entry);
   }
 
-
   onCancelAll() {
-    this.data.forEach((entry) => {
+    this.tableData.forEach((entry) => {
       if (entry.isEdited === true) {
         this.onCancel(entry);
       }
@@ -74,32 +94,31 @@ export class DataTableComponent implements OnInit, AfterViewInit {
   }
 
   onCancel(entry: DataTableEntry) {
-    entry.isEdited = false;
+    const index = this.tableData.indexOf(entry);
+    const oldData = this.fetchedData[index]
+    oldData.isEdited = false;
+    this.tableData[index] = oldData;
+    this.dataSource.data = this.tableData;
   }
 
-  private getRowElements(rowIndex: number) {
-    return [
-      this.getStudyIdField(rowIndex),
-      this.getDvspondesField(rowIndex),
-      this.getDvcatField(rowIndex),
-      this.getDvdecodField(rowIndex),
-    ]
-  }
-
-  private getStudyIdField(rowIndex: number): ElementRef<HTMLInputElement> {
-    return this.studyIdInputFields.toArray()[rowIndex];
-  }
-
-  private getDvspondesField(rowIndex: number): ElementRef<HTMLInputElement> {
-    return this.dvspondesInputFields.toArray()[rowIndex];
-  }
-
-  private getDvcatField(rowIndex: number): ElementRef<HTMLInputElement> {
-    return this.dvcatInputFields.toArray()[rowIndex];
-  }
-
-  private getDvdecodField(rowIndex: number): ElementRef<HTMLInputElement> {
-    return this.dvdecodInputFields.toArray()[rowIndex];
+  handleEdit(editedData: EditDataModel, entry: DataTableEntry) {
+    console.log(editedData);
+    switch (editedData.type) {
+      case EditType.CANCEL: {
+        this.onCancel(entry);
+        break;
+      }
+      case EditType.CLOSE: {
+        const index = this.tableData.indexOf(entry);
+        this.tableData[index] = editedData.data;
+        this.dataSource.data = this.tableData;
+        break;
+      }
+      case EditType.CONFIRM: {
+        this.onConfirm(editedData.data);
+        break;
+      }
+    }
   }
 }
 
