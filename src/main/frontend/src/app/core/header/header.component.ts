@@ -150,7 +150,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   get pageTitle(): string {
     switch (this.urlRoot) {
       case ('site'): {
-        return "SITE PAGE";
+        return "SITE";
       }
       case ('data-upload'): {
         return "DATA UPLOAD";
