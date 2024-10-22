@@ -5,6 +5,9 @@ import { UserService } from 'src/app/core/services/user.service';
 import { Team } from 'src/app/core/models/team.model';
 import { StudyData } from 'src/app/shared/study-data-table/study-data';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DataTableService } from 'src/app/shared/table/data-table/data-table.service';
+import { DataTableEntry } from 'src/app/core/models/data/data-table-entry.model';
+import { filter, map, Observable } from 'rxjs';
 
 /**
  * TeamLevelDashboardComponent manages the display and behavior of
@@ -32,6 +35,8 @@ export class TeamLevelDashboardComponent {
 
   private static readonly tableClass: string = '.table'
 
+  apiRequest: Observable<DataTableEntry[]> = new Observable();
+
   /** Array holding dvdecod data for the graph. */
   graphData: dvdecodData[] = [];
 
@@ -44,12 +49,13 @@ export class TeamLevelDashboardComponent {
   /** The user's selected team. */
   selectedTeam: Team | null = null;
 
-  tableData: StudyData[] = [];
+  tableData: DataTableEntry[] = [];
 
   constructor(
     private cdr: ChangeDetectorRef,
     private studyDataService: StudyDataService,
-    private userService: UserService
+    private userService: UserService,
+    private dataTableService: DataTableService
   ) {
     userService.currentUserSelectedTeam$.subscribe(team => this.selectedTeam = team);
   }
@@ -82,17 +88,19 @@ export class TeamLevelDashboardComponent {
    * @param dvdecod 
    */
   updateSelectedDvdecod(dvdecod: string): void {
-    console.log("this.selectedTeam");
-    console.log(this.selectedTeam);
     if (this.selectedTeam) {
-      this.studyDataService.getDataByTeamId$(this.selectedTeam.teamId)
-      .subscribe(
-        {
-          next: (data) => {
-            this.selectedDvdecod = dvdecod;
-            this.tableData = data
-            .filter(dataEntry => dataEntry.dvdecod === this.selectedDvdecod);
-            this.scroll(TeamLevelDashboardComponent.tableClass);
+      this.apiRequest = this.dataTableService.getDataByTeamId$(this.selectedTeam.teamId)
+        .pipe(
+          map((data) => data.filter(entry => entry.dvdecod === dvdecod)
+          )
+        );
+      this.apiRequest
+        .subscribe(
+          {
+            next: (data) => {
+              this.selectedDvdecod = dvdecod;
+              this.tableData = data;
+              this.scroll(TeamLevelDashboardComponent.tableClass);
             },
             error: (error) => {
               this.openSnackBar(`There was an error loading the data. ${error}`, "");

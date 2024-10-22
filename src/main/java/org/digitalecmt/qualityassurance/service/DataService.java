@@ -1,9 +1,16 @@
 package org.digitalecmt.qualityassurance.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.digitalecmt.qualityassurance.dto.Data.DataDTO;
+import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
+import org.digitalecmt.qualityassurance.model.persistence.DataEntryCategory;
+import org.digitalecmt.qualityassurance.model.persistence.PdCategory;
+import org.digitalecmt.qualityassurance.repository.DataEntryCategoryRepository;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
+import org.digitalecmt.qualityassurance.repository.DvspondesRepository;
+import org.digitalecmt.qualityassurance.repository.PdCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +42,15 @@ public class DataService {
 
     @Autowired
     DataEntryRepository dataEntryRepository;
+
+    @Autowired
+    DvspondesRepository dvspondesRepository;
+
+    @Autowired
+    DataEntryCategoryRepository dataEntryCategoryRepository;
+
+    @Autowired
+    PdCategoryRepository pdCategoryRepository;
 
     /**
      * Retrieves a list of all protocol deviation data.
@@ -72,6 +88,30 @@ public class DataService {
      */
     public List<DataDTO> getPdDataByTeamId(Long teamId) {
         return dataEntryRepository.findPdDataByTeamId(teamId);
+    }
+    
+    public List<DataDTO> getPdDataByStudyId(String studyId) {
+        return dataEntryRepository.findPdDataByStudyId(studyId);
+    }
+
+    public void updateEntry(DataDTO data) {
+        Optional<DataEntry> dataEntryRequest = dataEntryRepository.findByEntryId(Long.valueOf(data.entryId));
+        if (dataEntryRequest.isPresent()) {
+            DataEntry dataEntry = dataEntryRequest.get();
+
+            dataEntry.setSiteId(data.siteId);
+            dataEntry.setStudyId(data.studyId);
+            dataEntryRepository.save(dataEntry);
+
+            Integer dvspondesId = dataEntry.getDvspondesId();
+            dvspondesRepository.findById(dvspondesId)
+                    .get().setDvspondesValue(data.dvspondes);
+
+            PdCategory pdCategory = pdCategoryRepository.findByDvdecod(data.dvdecod).get();
+            DataEntryCategory dataEntryCategory = dataEntryCategoryRepository.findAllByEntryId(dataEntry.getEntryId()).get(0);
+            dataEntryCategory.setCategoryId(pdCategory.getCategoryId());
+            dataEntryCategoryRepository.save(dataEntryCategory);
+        }
     }
 
 }

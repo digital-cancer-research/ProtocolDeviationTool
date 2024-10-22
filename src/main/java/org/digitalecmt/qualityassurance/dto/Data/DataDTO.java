@@ -50,6 +50,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DataDTO {
     public Integer entryId;
+    public String siteId;
     public String studyId;
     public String dvspondes;
     public String dvcat;

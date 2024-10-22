@@ -5,10 +5,13 @@ import java.util.List;
 import org.digitalecmt.qualityassurance.dto.Data.DataDTO;
 import org.digitalecmt.qualityassurance.service.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -55,9 +58,19 @@ public class DataController {
      *         {@code HttpStatus.OK} on a
      *         successful request.
      */
-    @GetMapping("/{teamId}")
-    public ResponseEntity<List<DataDTO>> getData(@PathVariable Long teamId) {
+    @GetMapping(params = "teamId")
+    public ResponseEntity<List<DataDTO>> getDataByTeam(@RequestParam Long teamId) {
         return ResponseEntity.ok(dataService.getPdDataByTeamId(teamId));
     }
+    
+    @GetMapping(params = "studyId")
+    public ResponseEntity<List<DataDTO>> getDataByStudy(@RequestParam String studyId) {
+        return ResponseEntity.ok(dataService.getPdDataByStudyId(studyId));
+    }
 
+    @PutMapping("/update-entry")
+    public ResponseEntity<Void> updateEntry(@RequestBody DataDTO entry) {
+        dataService.updateEntry(entry);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
