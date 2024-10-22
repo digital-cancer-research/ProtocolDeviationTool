@@ -82,12 +82,13 @@ export class TeamLevelDashboardComponent {
   }
 
   /** 
-   * Sets the selected dvdecod.
+   * Updates the selected dvdecod and api request for the table.
    * Triggers a smooth scroll to table component.
    * 
    * @param dvdecod 
    */
-  updateSelectedDvdecod(dvdecod: string): void {
+  updateTable(dvdecod: string): void {
+    this.selectedDvdecod = dvdecod;
     if (this.selectedTeam) {
       this.apiRequest = this.dataTableService.getDataByTeamId$(this.selectedTeam.teamId)
         .pipe(
@@ -98,7 +99,6 @@ export class TeamLevelDashboardComponent {
         .subscribe(
           {
             next: (data) => {
-              this.selectedDvdecod = dvdecod;
               this.tableData = data;
               this.scroll(TeamLevelDashboardComponent.tableClass);
             },

@@ -62,6 +62,10 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
     this.updateData(this.fetchedData);
   }
 
+  /**
+   * Updates the data if the data has been changed.
+   * @param changes 
+   */
   ngOnChanges(changes: SimpleChanges): void {
     if (this.fetchedData) {
       this.updateData(this.fetchedData);
@@ -121,12 +125,22 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   }
 
   /**
-   * Marks a data entry as being edited and opens the edit dialog.
-   * @param entry - The data entry to edit.
+   * Handles refresh event.
+   * Fetches data from the database and 
+   * sets appropriate variables as a result.
    */
-  onEdit(entry: DataTableEntry) {
-    entry.isEdited = true;
-    this.openEditDialog('1000', '1000', entry);
+  onRefresh() {
+    this.fetchData.subscribe(
+      {
+        next: (data) => {
+          console.log(data);
+          this.updateData(data);
+        },
+        error: (error) => {
+          this.openSnackBar("There was an error when trying to fetch the data", error.message);
+        }
+      }
+    );
   }
 
   /**
@@ -142,6 +156,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
 
   /**
    * Confirms a specific data entry.
+   * Makes an api request to update the entry and 
+   * displays status of request in snackbar.
    * @param entry - The data entry to confirm.
    */
   onConfirm(entry: DataTableEntry) {
@@ -184,6 +200,15 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
     oldData.isEdited = false;
     this.tableData[index] = oldData;
     this.dataSource.data = this.tableData;
+  }
+
+  /**
+   * Marks a data entry as being edited and opens the edit dialog.
+   * @param entry - The data entry to edit.
+   */
+  onEdit(entry: DataTableEntry) {
+    entry.isEdited = true;
+    this.openEditDialog('1000', '1000', entry);
   }
 
   /**
@@ -233,21 +258,5 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
       this.tableData[index] = editedData.data;
       this.dataSource.data = this.tableData;
     }
-  }
-
-  onRefresh() {
-    console.log("refresh");
-    console.log(this.fetchData);
-    this.fetchData.subscribe(
-      {
-        next: (data) => {
-          console.log(data);
-          this.updateData(data);
-        },
-        error: (error) => {
-          this.openSnackBar("There was an error when trying to fetch the data", error.message);
-        }
-      }
-    );
   }
 }
