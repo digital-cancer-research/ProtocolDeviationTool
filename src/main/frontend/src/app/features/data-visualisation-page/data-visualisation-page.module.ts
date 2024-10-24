@@ -30,6 +30,8 @@ import { DvdecodBarGraphComponent } from "./team-level-dashboard/dvdecod-bar-gra
 import { SelectDialogComponent } from './data-visualisation/team-study-select/select-dialog/select-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatRadioModule } from '@angular/material/radio';
+import { UserService } from 'src/app/core/services/user.service';
+import { Team } from 'src/app/core/models/team.model';
 
 
 @NgModule({
@@ -72,8 +74,11 @@ import { MatRadioModule } from '@angular/material/radio';
 
 export class DataVisualisationPageModule {
   public static URL = "data-visualisation";
-
-  constructor() { }
+  private static currentTeam: Team | null = null;
+  
+  constructor(userService: UserService) {
+    userService.currentUserSelectedTeam$.subscribe(team => DataVisualisationPageModule.currentTeam = team);
+   }
 
   /**
    * Returns the page title of the visualisation pages based on the provided URL.
@@ -87,7 +92,7 @@ export class DataVisualisationPageModule {
         return "TEAM SUMMARY DASHBOARD";
       }
       case ('team-level-dashboard'): {
-        return "TEAM PROTOCOL DEVIATIONS";
+        return `${this.currentTeam ? this.currentTeam.teamName : "TEAM"} PROTOCOL DEVIATIONS`;
       }
       default: {
         return "";
