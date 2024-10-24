@@ -2,14 +2,14 @@
 
   <div class="flex left">
     <div [routerLink]="''">
-      PROTOCOL DEVIATION MONITORING
+      {{ 'PROTOCOL DEVIATION MONITORING' | titlecase }}
     </div>
     <mat-icon fontIcon="assignment" alt="Icon" [inline]="true"></mat-icon>
   </div>
 
   <div>
     <h3>
-      {{ pageTitle }}
+      {{ pageTitle | titlecase }}
     </h3>
   </div>
 
@@ -18,11 +18,11 @@
       <mat-select [(ngModel)]="usernameSelected" (valueChange)="onSelectUser($event)">
         <mat-label>Select a user</mat-label>
         <mat-option *ngFor="let user of users" [value]="user.username">
-          {{ user.username }}
+          {{ user.username | lowercase }}
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <p>{{ selectedTeam?.teamName || "NO TEAM SELECTED" }}</p>
+    <p>{{ (selectedTeam?.teamName | titlecase) || ("NO TEAM SELECTED" | sentenceCase) }}</p>
   </div>
 
 </header>

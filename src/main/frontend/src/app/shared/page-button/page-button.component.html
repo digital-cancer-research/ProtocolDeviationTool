@@ -3,6 +3,6 @@
     <img [src]="icon" [alt]="alt" *ngIf="icon">
     <mat-icon *ngIf="MatIcon"> {{ MatIcon }} </mat-icon>
     <p>
-        {{ label }}
+        {{ label | titlecase }}
     </p>
 </button>

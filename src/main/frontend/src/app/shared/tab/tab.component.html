@@ -3,13 +3,13 @@
         <button [routerLink]="tab.link" 
          mat-flat-button 
         *ngIf="tab !== activeTab">
-            {{ tab.label }}
+            {{ tab.label | titlecase }}
         </button>
 
         <button [routerLink]="tab.link" 
          mat-raised-button 
         *ngIf="tab === activeTab">
-            {{ tab.label }}
+            {{ tab.label | titlecase }}
         </button>
     </div>
 </div>

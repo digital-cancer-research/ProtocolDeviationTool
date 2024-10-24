@@ -24,6 +24,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+import { SentenceCasePipe } from './pipes/sentence-case.pipe';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { MatSortModule } from '@angular/material/sort';
     SingleSelectComponent,
     TabComponent,
     UploadComponent,
-    StudyDataTableComponent
+    StudyDataTableComponent,
+    SentenceCasePipe
   ],
   imports: [
     CommonModule,
@@ -59,7 +61,8 @@ import { MatSortModule } from '@angular/material/sort';
     SingleSelectComponent,
     TabComponent,
     UploadComponent,
-    StudyDataTableComponent
+    StudyDataTableComponent,
+    SentenceCasePipe
   ],
   providers: [
     UploadService,
