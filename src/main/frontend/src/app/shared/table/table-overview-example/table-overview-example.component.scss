@@ -1,0 +1,30 @@
+table {
+    width: 100%;
+}
+
+.mat-mdc-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+td,
+th {
+    width: 25%;
+}
+
+.table-field {
+    .mat-mdc-text-field-wrapper {
+        background-color: transparent !important;
+        padding: 0px;
+    }
+
+    .mdc-line-ripple {
+        visibility: hidden !important;
+    }
+}
+
+button.tick {
+    mat-icon {
+        color: green !important;
+    }
+}

@@ -1,0 +1,111 @@
+<mat-form-field>
+    <mat-label>Filter</mat-label>
+    <input matInput (keyup)="applyFilter($event)" #input>
+</mat-form-field>
+
+<table mat-table [dataSource]="dataSource" matSort>
+
+    <ng-container matColumnDef="studyId">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header (click)="onSort()"> Study ID </th>
+        <td mat-cell *matCellDef="let row; let i = index">
+            <mat-form-field color="primary" class="table-field" subscriptSizing="dynamic">
+                <input matInput placeholder="John Doe" [value]="row.studyId" #studyIdInput
+                    (input)="onFieldChange(row, i)">
+            </mat-form-field>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="dvspondes">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header (click)="onSort()"> Dvspondes </th>
+        <td mat-cell *matCellDef="let row; let i = index">
+            <mat-form-field color="primary" class="table-field" subscriptSizing="dynamic">
+                <input matInput placeholder="John Doe" [value]="row.dvspondes" #dvspondesInput
+                    (input)="onFieldChange(row, i)">
+            </mat-form-field>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="dvcat">
+        <th mat-header-cell *matHeaderCellDef> Dvcat </th>
+        <td mat-cell *matCellDef="let row; let i = index">
+            {{ row.dvcat }}
+            <mat-form-field color="primary" class="table-field" subscriptSizing="dynamic">
+                <input type="text" placeholder="Select a dvcat" aria-label="Deviation Category" matInput
+                    [formControl]="getDvcatControl(i)" [matAutocomplete]="dvcatAuto"
+                    (ngModelChange)="onFieldChange(row, i)" #dvcatInput>
+                <mat-autocomplete #dvcatAuto="matAutocomplete">
+                    <mat-option *ngFor="let dvcat of filteredDvcatOptions$[i] | async" [value]="dvcat">
+                        {{ dvcat }}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="dvdecod">
+        <th mat-header-cell *matHeaderCellDef> Dvdecod </th>
+        <td mat-cell *matCellDef="let row; let i = index">
+            <mat-form-field color="primary" class="table-field" subscriptSizing="dynamic">
+                <input type="text" placeholder="Select a dvdecod" aria-label="Deviation Decoding" matInput
+                    [formControl]="getDvdecodControl(i)" [matAutocomplete]="dvdecodAuto"
+                    (ngModelChange)="onFieldChange(row, i)" #dvdecodInput>
+                <mat-autocomplete #dvdecodAuto="matAutocomplete">
+                    <mat-option *ngFor="let dvcat of filteredDvdecodOptions$[i] | async" [value]="dvcat">
+                        {{ dvcat }}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>more_horiz</mat-icon>
+            </button>
+        </th>
+        <td mat-cell *matCellDef="let row; let i = index">
+            <div style="width: 112px;">
+                <button mat-icon-button (click)="onEdit(row, i)" *ngIf="!row.isEdited;else rowActions">
+                    <mat-icon color="accent">
+                        edit
+                    </mat-icon>
+                </button>
+            </div>
+            <ng-template #rowActions>
+                <div class="actionContainer">
+                    <button mat-icon-button class="tick" (click)="onConfirm(row, i)">
+                        <mat-icon>check</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" (click)="onCancel(row, i)">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+            </ng-template>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+    </tr>
+</table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+
+<mat-menu #menu="matMenu">
+    <button mat-menu-item class="tick" [disabled]="hasActiveEdits" (click)="onConfirmAll()">
+        <mat-icon>done_all</mat-icon>
+        <span>Confirm all</span>
+    </button>
+    <button mat-menu-item [disabled]="hasActiveEdits" (click)="onCancelAll()">
+        <mat-icon color="warn">cancel</mat-icon>
+        <span>Cancel all</span>
+    </button>
+    <button mat-menu-item>
+        <mat-icon color="accent">refresh</mat-icon>
+        <span>Refresh</span>
+    </button>
+</mat-menu>

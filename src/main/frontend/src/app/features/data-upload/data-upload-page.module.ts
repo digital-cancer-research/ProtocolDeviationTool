@@ -9,6 +9,7 @@ import { DataCategorisationComponent } from './data-categorisation/data-categori
 import { DataTrailComponent } from './data-trail/data-trail.component';
 import { DataUploadSummaryComponent } from './data-upload-summary/data-upload-summary.component';
 import { DataUploadPageComponent } from './data-upload-page.component';
+import { TableOverviewExample } from "../../shared/table/table-overview-example/table-overview-example.component";
 
 @NgModule({
   declarations: [
@@ -22,8 +23,9 @@ import { DataUploadPageComponent } from './data-upload-page.component';
   imports: [
     CommonModule,
     DataUploadRoutingModule,
-    SharedModule
-  ],
+    SharedModule,
+    TableOverviewExample,
+],
 })
 export class DataUploadModule { 
   public static URL = "data-upload";

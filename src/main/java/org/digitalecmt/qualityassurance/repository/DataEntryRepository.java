@@ -92,7 +92,7 @@ public interface DataEntryRepository
 
 	Optional<DataEntry> findByEntryId(Long entryId);
 
-	@Query("SELECT new org.digitalecmt.qualityassurance.dto.Data.DataDTO(de.studyId, d.dvspondesValue, pc.dvcat, pc.dvdecod, pc.dvterm) "
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.Data.DataDTO(de.entryId, de.studyId, d.dvspondesValue, pc.dvcat, pc.dvdecod, pc.dvterm) "
 			+
 			"FROM DataEntry de " +
 			"JOIN Dvspondes d ON d.dvspondesId = de.dvspondesId " +
@@ -100,7 +100,7 @@ public interface DataEntryRepository
 			"JOIN PdCategory pc ON pc.categoryId = dec.categoryId ")
 	List<DataDTO> findPdData();
 
-	@Query("SELECT new org.digitalecmt.qualityassurance.dto.Data.DataDTO(de.studyId, d.dvspondesValue, pc.dvcat, pc.dvdecod, pc.dvterm) "
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.Data.DataDTO(de.entryId, de.studyId, d.dvspondesValue, pc.dvcat, pc.dvdecod, pc.dvterm) "
 			+
 			"FROM DataEntry de " +
 			"JOIN Dvspondes d ON d.dvspondesId = de.dvspondesId " +

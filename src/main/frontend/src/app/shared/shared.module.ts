@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -25,6 +25,9 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { SentenceCasePipe } from './pipes/sentence-case.pipe';
+import { DataTableComponent } from './table/data-table/data-table.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [
@@ -36,7 +39,8 @@ import { SentenceCasePipe } from './pipes/sentence-case.pipe';
     TabComponent,
     UploadComponent,
     StudyDataTableComponent,
-    SentenceCasePipe
+    SentenceCasePipe,
+    DataTableComponent
   ],
   imports: [
     CommonModule,
@@ -51,7 +55,11 @@ import { SentenceCasePipe } from './pipes/sentence-case.pipe';
     MatFormFieldModule,
     MatTableModule,
     MatSortModule, 
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatMenuModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
+    AsyncPipe,
   ],
   exports: [
     FileListComponent,
@@ -62,7 +70,8 @@ import { SentenceCasePipe } from './pipes/sentence-case.pipe';
     TabComponent,
     UploadComponent,
     StudyDataTableComponent,
-    SentenceCasePipe
+    SentenceCasePipe,
+    DataTableComponent
   ],
   providers: [
     UploadService,
