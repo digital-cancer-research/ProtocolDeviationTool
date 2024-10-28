@@ -1,9 +1,0 @@
-<div class="nav-container">
-  <div class="nav-button">Total protocol deviations</div>
-  <div class="nav-button">Total protocol deviations over time</div>
-</div>
-<div class="content-container">
-  <app-category-bar-graph-segmented-site
-    (barClicked)="showCategoryTable($event)"></app-category-bar-graph-segmented-site>
-  <app-category-table *ngIf="isCategoryTableVisible" [filterValue]="selectedDvdecod"></app-category-table>
-</div>

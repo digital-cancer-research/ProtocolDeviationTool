@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DataVisualisationPageComponent } from './data-visualisation-page.component';
-import { DataVisualisationComponent } from './data-visualisation/data-visualisation.component';
-import { TeamLevelDashboardComponent } from './team-level-dashboard/team-level-dashboard.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { DetailedViewComponent } from './detailed-view/detailed-view.component';
 
 const routes: Routes = [{
   path: '',
   component: DataVisualisationPageComponent,
   children: [
-    { path: '', component: DataVisualisationComponent },
-    { path: 'team-level-dashboard', component: TeamLevelDashboardComponent},
+    { path: '', component: DashboardComponent },
+    { path: 'detailed-view', component: DetailedViewComponent},
   ]
 }];
 

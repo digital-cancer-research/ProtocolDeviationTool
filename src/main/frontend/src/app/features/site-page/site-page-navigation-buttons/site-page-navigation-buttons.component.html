@@ -1,7 +1,7 @@
 <ng-template #selfie [ngTemplateOutlet]="selfie"
     let-isTeamSelected="a" [ngTemplateOutletContext]="{ a: ((currentTeam$ | async) !== null) }">
       <app-page-button
-        link="/data-upload"
+        [link]="links[0]"
         icon = "assets/data-upload-icon.svg"
         alt = "Data upload image" 
         label ="DATA UPLOAD"
@@ -9,7 +9,7 @@
         [ngClass]="{'disabled': isUserDeactivated}">
       </app-page-button>
       <app-page-button
-        link="/data-visualisation"
+        [link]="links[1]"
         icon = "assets/data-visualisation-icon.svg"
         alt = "Data visualisation" 
         label ="DATA VISUALISATION"
