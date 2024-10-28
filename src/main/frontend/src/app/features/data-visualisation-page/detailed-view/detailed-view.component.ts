@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrl: './detailed-view.component.css'
 })
 export class DetailedViewComponent {
-
+  public static readonly URL = 'detailed-view';
 }
