@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Tab } from './tab';
-import { NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, NavigationExtras, QueryParamsHandling, Router } from '@angular/router';
 import { filter } from 'rxjs';
 
 /**
@@ -24,9 +24,12 @@ import { filter } from 'rxjs';
 })
 export class TabComponent {
   @Input() tabs: Tab[] = [];
+  @Input() queryParamsHandling: QueryParamsHandling = 'merge';
   activeTab: Tab = new Tab();
-
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute
+  ) { }
 
   /**
    * Sets activeTab based on URL when component is created.
@@ -49,8 +52,20 @@ export class TabComponent {
    * @private
    */
   private updateActiveTab() {
-    const currentRoute = this.router.url.split('/').pop(); // Get the last part of the URL
-    this.activeTab = this.tabs.find((tab) => tab.link === currentRoute) || this.tabs[0]; // Handle root case
+    const currentRoute = this.router.url.split('/').pop();
+    this.activeTab = this.tabs.find((tab) => currentRoute?.includes(tab.link)) || this.tabs[0];
   }
 
+  /**
+   * Handles navigation when clicking a tab 
+   * @param tab Tab clicked
+   */
+  protected navigateToTab(tab: Tab) {
+    const navigationExtras: NavigationExtras = {
+      queryParamsHandling: this.queryParamsHandling, 
+      relativeTo: this.route,
+      skipLocationChange: true
+    };
+    this.router.navigate([tab.link], navigationExtras);
+  }
 }

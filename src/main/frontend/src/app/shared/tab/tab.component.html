@@ -1,14 +1,16 @@
 <div class="container">
     <div *ngFor="let tab of tabs">
-        <button [routerLink]="tab.link" 
+        <button 
          mat-flat-button 
-        *ngIf="tab !== activeTab">
+        *ngIf="tab !== activeTab"
+        (click)="navigateToTab(tab)">
             {{ tab.label | titlecase }}
         </button>
 
         <button [routerLink]="tab.link" 
          mat-raised-button 
-        *ngIf="tab === activeTab">
+        *ngIf="tab === activeTab"
+        (click)="navigateToTab(tab)">
             {{ tab.label | titlecase }}
         </button>
     </div>
