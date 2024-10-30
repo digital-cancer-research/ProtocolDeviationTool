@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { AbstractControl, FormControl, ValidationErrors } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { Observable, map, combineLatest, startWith, of, switchMap } from 'rxjs';
+import { Component, inject } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
 import { Team } from 'src/app/core/models/team.model';
 import { StudyService } from 'src/app/core/services/study.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { SelectDialogComponent } from './select-dialog/select-dialog.component';
+import { DetailedViewComponent } from '../detailed-view/detailed-view.component';
+import { TotalPdsComponent } from '../detailed-view/total-pds/total-pds.component';
 
 /**
  * Component for selecting the user's team or
@@ -20,6 +20,8 @@ import { SelectDialogComponent } from './select-dialog/select-dialog.component';
   styleUrl: './team-study-select.component.css'
 })
 export class TeamStudySelectComponent {
+
+  protected readonly teamURL = `${DetailedViewComponent.URL}/${TotalPdsComponent.URL}`;
 
   readonly dialog = inject(MatDialog);
 

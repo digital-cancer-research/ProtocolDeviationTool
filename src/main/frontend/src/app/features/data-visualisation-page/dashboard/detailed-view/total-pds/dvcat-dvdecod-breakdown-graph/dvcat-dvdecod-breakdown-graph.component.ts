@@ -4,9 +4,9 @@ import { Chart, CategoryScale } from 'chart.js';
 import { Subscription } from 'rxjs';
 import { UtilsService } from 'src/app/core/services/utils.service';
 import { UserService } from 'src/app/core/services/user.service'; 
-import { DataVisualisationService } from '../../../data-visualisation.service';
-import { PdDvdecod, dvdecodData } from '../../../models/team-pd-dvdecod-bar-graph-data.model';
 import { DvcatDvdecodBreakdownGraphService } from './dvcat-dvdecod-breakdown-graph.service';
+import { DataVisualisationService } from 'src/app/features/data-visualisation-page/data-visualisation.service';
+import { PdDvdecod, DvdecodData } from 'src/app/features/data-visualisation-page/models/team-pd-dvdecod-bar-graph-data.model';
 
 @Component({
   selector: 'app-dvcat-dvdecod-breakdown-graph',
@@ -59,7 +59,7 @@ export class DvcatDvdecodBreakdownGraphComponent {
   public isColourModeDefault: boolean = true;
 
   /** Output event emitter for sending graph data to parent components. */
-  @Output() dvdecodGraphData: EventEmitter<dvdecodData[]> = new EventEmitter();
+  @Output() dvdecodGraphData: EventEmitter<DvdecodData[]> = new EventEmitter();
 
   /** Output event emitter for toggling color mode. */
   @Output() colourMode: EventEmitter<boolean> = new EventEmitter(true);
@@ -259,7 +259,7 @@ export class DvcatDvdecodBreakdownGraphComponent {
               dvdecod: data.dvdecod,
               count: Math.max(...data.count),
               backgroundColor: data.colour
-            } as dvdecodData;
+            } as DvdecodData;
           });
         this.colourMode.emit(this.isColourModeDefault);
         this.dvdecodGraphData.emit(dvdecodData);

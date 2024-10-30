@@ -3,8 +3,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Team } from 'src/app/core/models/team.model';
 import { StudyData } from 'src/app/shared/study-data-table/study-data';
 import { StudyDataService } from 'src/app/shared/study-data-table/study-data.service';
-import { dvdecodData } from '../../models/team-pd-dvdecod-bar-graph-data.model';
 import { UserService } from 'src/app/core/services/user.service';
+import { DvdecodData } from '../../../models/team-pd-dvdecod-bar-graph-data.model';
 
 @Component({
   selector: 'app-total-pds',
@@ -12,6 +12,7 @@ import { UserService } from 'src/app/core/services/user.service';
   styleUrl: './total-pds.component.css'
 })
 export class TotalPdsComponent {
+  public static readonly URL = "total-pds";
   /** Snackbar to display visual feedback */
   private _snackBar = inject(MatSnackBar);
   duration = 5000;
@@ -28,7 +29,7 @@ export class TotalPdsComponent {
   private static readonly tableClass: string = '.table'
 
   /** Array holding dvdecod data for the graph. */
-  graphData: dvdecodData[] = [];
+  graphData: DvdecodData[] = [];
 
   /** Indicates whether the default color mode is active. */
   isColourModeDefault: boolean = true;
@@ -64,7 +65,7 @@ export class TotalPdsComponent {
    * 
    * @param newData - Array of dvdecod data to be set.
    */
-  updateDvdecodGraphData(newData: dvdecodData[]): void {
+  updateDvdecodGraphData(newData: DvdecodData[]): void {
     this.graphData = newData;
     this.selectedDvdecod = "";
     this.scroll(TotalPdsComponent.dvdecodGraphId);

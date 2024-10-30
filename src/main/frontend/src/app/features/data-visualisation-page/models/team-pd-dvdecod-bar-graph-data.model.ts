@@ -10,7 +10,7 @@ export interface PdDvdecod {
     colour: string;
 }
 
-export interface dvdecodData {
+export interface DvdecodData {
     dvcat: string;
     dvdecod: string;
     count: number;

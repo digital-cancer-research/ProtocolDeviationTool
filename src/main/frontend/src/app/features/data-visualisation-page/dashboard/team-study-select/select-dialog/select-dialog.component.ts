@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
-import { DetailedViewComponent } from '../../../detailed-view/detailed-view.component';
+import { Router } from '@angular/router';
 import { DataVisualisationPageModule } from '../../../data-visualisation-page.module';
+import { DetailedViewComponent } from '../../detailed-view/detailed-view.component';
 
 @Component({
   selector: 'app-select-dialog',
@@ -15,7 +15,6 @@ export class SelectDialogComponent {
 
   constructor(
     private router: Router,
-    private route: ActivatedRoute
   ) { }
 
   navigate() {

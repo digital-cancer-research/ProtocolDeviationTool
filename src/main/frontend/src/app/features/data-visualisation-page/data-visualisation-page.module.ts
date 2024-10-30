@@ -23,18 +23,17 @@ import { MatRadioModule } from '@angular/material/radio';
 import { UserService } from 'src/app/core/services/user.service';
 import { Team } from 'src/app/core/models/team.model';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { DetailedViewComponent } from './detailed-view/detailed-view.component';
-import { TotalPdsComponent } from './detailed-view/total-pds/total-pds.component';
-import { TotalPdsOverTimeComponent } from './detailed-view/total-pds-over-time/total-pds-over-time.component';
 import { CategoryBarGraphComponent } from './dashboard/category-bar-graph/category-bar-graph.component';
 import { TeamPdPieChartComponent } from './dashboard/team-pd-pie-chart/team-pd-pie-chart.component';
 import { TeamStudyBarGraphComponent } from './dashboard/team-study-bar-graph/team-study-bar-graph.component';
 import { SelectDialogComponent } from './dashboard/team-study-select/select-dialog/select-dialog.component';
 import { TeamStudySelectComponent } from './dashboard/team-study-select/team-study-select.component';
 import { VisualisationComponent } from './dashboard/visualisation/visualisation.component';
-import { DvcatDvdecodBreakdownGraphComponent } from './detailed-view/total-pds/dvcat-dvdecod-breakdown-graph/dvcat-dvdecod-breakdown-graph.component';
-import { DvdecodGraphComponent } from './detailed-view/total-pds/dvdecod-graph/dvdecod-graph.component';
-
+import { DetailedViewComponent } from './dashboard/detailed-view/detailed-view.component';
+import { TotalPdsComponent } from './dashboard/detailed-view/total-pds/total-pds.component';
+import { TotalPdsOverTimeComponent } from './dashboard/detailed-view/total-pds-over-time/total-pds-over-time.component';
+import { DvcatDvdecodBreakdownGraphComponent } from './dashboard/detailed-view/total-pds/dvcat-dvdecod-breakdown-graph/dvcat-dvdecod-breakdown-graph.component';
+import { DvdecodGraphComponent } from './dashboard/detailed-view/total-pds/dvdecod-graph/dvdecod-graph.component';
 
 @NgModule({
   declarations: [
@@ -48,9 +47,9 @@ import { DvdecodGraphComponent } from './detailed-view/total-pds/dvdecod-graph/d
     DashboardComponent,
     DetailedViewComponent,
     TotalPdsComponent,
-    TotalPdsOverTimeComponent,
     DvcatDvdecodBreakdownGraphComponent,
-    DvdecodGraphComponent
+    DvdecodGraphComponent,
+    TotalPdsOverTimeComponent
   ],
   imports: [
     CommonModule,
@@ -72,7 +71,7 @@ import { DvdecodGraphComponent } from './detailed-view/total-pds/dvdecod-graph/d
     ReactiveFormsModule,
     SharedModule,
     MatDialogModule,
-    MatRadioModule
+    MatRadioModule,
   ],
 })
 

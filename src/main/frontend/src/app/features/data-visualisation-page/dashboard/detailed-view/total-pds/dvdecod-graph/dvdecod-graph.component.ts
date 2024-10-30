@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Chart, CategoryScale } from 'chart.js';
 import { UtilsService } from 'src/app/core/services/utils.service';
-import { DataVisualisationService } from '../../../data-visualisation.service';
-import { dvdecodData } from '../../../models/team-pd-dvdecod-bar-graph-data.model';
 import { DvdecodGraphService } from './dvdecod-graph.service';
+import { DataVisualisationService } from 'src/app/features/data-visualisation-page/data-visualisation.service';
+import { DvdecodData } from 'src/app/features/data-visualisation-page/models/team-pd-dvdecod-bar-graph-data.model';
 
 @Component({
   selector: 'app-dvdecod-graph',
@@ -13,7 +13,7 @@ import { DvdecodGraphService } from './dvdecod-graph.service';
 export class DvdecodGraphComponent {
 
   /** Input data for the graph, an array of dvdecodData objects. */
-  @Input() data: dvdecodData[] = [];
+  @Input() data: DvdecodData[] = [];
 
   /** Boolean indicating if the default colour mode is enabled.  */
   @Input() isColourModeDefault: boolean = true;

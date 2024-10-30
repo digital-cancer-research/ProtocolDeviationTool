@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Chart, ChartOptions } from 'chart.js';
-import { DataVisualisationService } from '../../../data-visualisation.service';
-import { PdDvdecod } from '../../../models/team-pd-dvdecod-bar-graph-data.model';
+import { DataVisualisationService } from 'src/app/features/data-visualisation-page/data-visualisation.service';
+import { PdDvdecod } from 'src/app/features/data-visualisation-page/models/team-pd-dvdecod-bar-graph-data.model';
 
 @Injectable({
   providedIn: 'root'

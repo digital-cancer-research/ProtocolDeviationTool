@@ -6,5 +6,6 @@ import { Component } from '@angular/core';
   styleUrl: './total-pds-over-time.component.css'
 })
 export class TotalPdsOverTimeComponent {
+  public static readonly URL = 'total-pds-over-time';
 
 }

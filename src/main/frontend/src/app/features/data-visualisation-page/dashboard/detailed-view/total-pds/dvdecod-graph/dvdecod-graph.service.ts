@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Chart, ChartOptions } from 'chart.js';
-import { dvdecodData } from '../../../models/team-pd-dvdecod-bar-graph-data.model';
+import { DvdecodData } from 'src/app/features/data-visualisation-page/models/team-pd-dvdecod-bar-graph-data.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class DvdecodGraphService {
   * Destroys the previous chart instance if it exists.
   * @param data The dvdecodData array to visualize.
   */
-  createChart(data: dvdecodData[], colours: string[]): Chart {
+  createChart(data: DvdecodData[], colours: string[]): Chart {
     const labels = data.map(dataEntry => dataEntry.dvdecod);
     const dataFormatted = data.map(dataEntry => dataEntry.count);
     
@@ -40,7 +40,7 @@ export class DvdecodGraphService {
    * @param colours Colours to use instead.
    * @returns 
    */
-  formatDataForUpdating(data: dvdecodData[], colours: string[]) {
+  formatDataForUpdating(data: DvdecodData[], colours: string[]) {
     const dataFormatted = data.map(dataEntry => dataEntry.count);
     const dataset = [{
       data: dataFormatted,
@@ -53,7 +53,7 @@ export class DvdecodGraphService {
   * Returns the Chart.js options for the bar chart.
   * Dynamically generates titles and axis labels based on the first data entry's `dvcat`.
   */
-  getChartOptions(data: dvdecodData[]): ChartOptions {
+  getChartOptions(data: DvdecodData[]): ChartOptions {
     const dvcat = data[0]?.dvcat || '';
     return {
       maintainAspectRatio: false,
