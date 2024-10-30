@@ -81,57 +81,57 @@ export class NavigationRibbonComponent implements OnDestroy {
       })
   }
 
-  
+
   /**
  * Updates the `isAdmin` property based on whether the given user has admin privileges.
  * Subscribes to the `authService.checkAdminRole` observable to determine the user's role.
  * 
  * @param username - The username of the user to check for admin privileges.
  */
-updateAdminAccess(username: string): void {
-  this.authService.checkAdminRole(username).subscribe(
-    (isAdmin) => {
-      this.isAdmin = isAdmin;
-    }
-  );
-}
+  updateAdminAccess(username: string): void {
+    this.authService.checkAdminRole(username).subscribe(
+      (isAdmin) => {
+        this.isAdmin = isAdmin;
+      }
+    );
+  }
 
-/**
- * Updates the `isPartOfMultipleTeams` property to indicate if the user is part of more than one team.
- * Sets the `activeLink` to the "TEAM SELECTION" link if the user is part of multiple teams.
- * 
- * @param userId - The ID of the user whose teams are to be retrieved.
- */
-updateMultipleTeamSelectionAccess(userId: number): void {
-  this.userService.getUserTeamsByUserId(userId).subscribe(
-    (team) => {
-      this.isPartOfMultipleTeams = team.length > 1;
-      this.activeLink = this.links[2];
-    }
-  );
-}
+  /**
+   * Updates the `isPartOfMultipleTeams` property to indicate if the user is part of more than one team.
+   * Sets the `activeLink` to the "TEAM SELECTION" link if the user is part of multiple teams.
+   * 
+   * @param userId - The ID of the user whose teams are to be retrieved.
+   */
+  updateMultipleTeamSelectionAccess(userId: number): void {
+    this.userService.getUserTeamsByUserId(userId).subscribe(
+      (team) => {
+        this.isPartOfMultipleTeams = team.length > 1;
+        this.activeLink = this.links[2];
+      }
+    );
+  }
 
-/**
- * Updates the visibility and accessibility of the "VISUALISATION" link based on team selection.
- * Subscribes to the `currentUserSelectedTeam$` observable to check if a team is selected.
- */
-updateVisualisationAccess(): void {
-  this.userService.currentUserSelectedTeam$.subscribe(
-    (team) => {
-      this.links[4].disabled = (team === null);
-    }
-  );
-}
+  /**
+   * Updates the visibility and accessibility of the "VISUALISATION" link based on team selection.
+   * Subscribes to the `currentUserSelectedTeam$` observable to check if a team is selected.
+   */
+  updateVisualisationAccess(): void {
+    this.userService.currentUserSelectedTeam$.subscribe(
+      (team) => {
+        this.links[4].disabled = (team === null);
+      }
+    );
+  }
 
-/**
- * Updates the `isUserDeactivated` property based on the user's role.
- * Sets the property to `true` if the user has a role ID of 3 (indicating deactivation).
- * 
- * @param user - The user object to check for deactivation status.
- */
-updateIsUserDeactivated(user: User): void {
-  this.isUserDeactivated = user.roleId === 3;
-}
+  /**
+   * Updates the `isUserDeactivated` property based on the user's role.
+   * Sets the property to `true` if the user has a role ID of 3 (indicating deactivation).
+   * 
+   * @param user - The user object to check for deactivation status.
+   */
+  updateIsUserDeactivated(user: User): void {
+    this.isUserDeactivated = user.roleId === 3;
+  }
 
 
   /**
@@ -160,9 +160,9 @@ updateIsUserDeactivated(user: User): void {
    */
   updateActiveLink(url: string): void {
     url = '/' + url;
-    const URLS = this.links
-      .map(link => link.route);
-    const index = URLS.indexOf(url);
+    const search = this.links.map(
+      links => url.includes(links.route));
+    const index = search.lastIndexOf(true);
     this.activeLink = this.links[index];
   }
 }
