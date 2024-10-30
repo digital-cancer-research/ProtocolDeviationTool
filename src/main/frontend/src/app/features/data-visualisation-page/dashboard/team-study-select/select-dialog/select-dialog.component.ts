@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { DataVisualisationPageModule } from '../../../data-visualisation-page.module';
 import { DetailedViewComponent } from '../../detailed-view/detailed-view.component';
+import { TotalPdsComponent } from '../../detailed-view/total-pds/total-pds.component';
 
 @Component({
   selector: 'app-select-dialog',
@@ -18,7 +19,7 @@ export class SelectDialogComponent {
   ) { }
 
   navigate() {
-    this.router.navigate([`${DataVisualisationPageModule.URL}/${DetailedViewComponent.URL}`],
+    this.router.navigate([`${DataVisualisationPageModule.URL}/${DetailedViewComponent.URL}/${TotalPdsComponent.URL}`],
       {
         queryParams: {
           studyId: this.selectedStudy ? this.selectedStudy : null

@@ -7,6 +7,7 @@ import { AdministrationPageModule } from 'src/app/features/administration-page/a
 import { DataUploadModule } from 'src/app/features/data-upload/data-upload-page.module';
 import { DataVisualisationPageModule } from 'src/app/features/data-visualisation-page/data-visualisation-page.module';
 import { User } from 'src/app/user/user.model';
+import { Params } from '@angular/router';
 
 /**
  * Component that represents the ribbon in the navigation.
@@ -44,6 +45,10 @@ export class NavigationRibbonComponent implements OnDestroy {
   /** Boolean to track if the user is deactivated. */
   isUserDeactivated: boolean = false;
 
+  /** Query parameter to remove the studyId when ribbon tab is changed */
+  queryParams: Params = {
+    studyId: null
+  }
 
   /**
    * Constructor to initialise services and subscriptions.
