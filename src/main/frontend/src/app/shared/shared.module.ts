@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -25,6 +25,12 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { SentenceCasePipe } from './pipes/sentence-case.pipe';
+import { DataTableComponent } from './table/data-table/data-table.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatDialogModule } from '@angular/material/dialog';
+import { EditDataDialogueComponent } from './table/edit-data/edit-data-dialogue.component';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -36,7 +42,9 @@ import { SentenceCasePipe } from './pipes/sentence-case.pipe';
     TabComponent,
     UploadComponent,
     StudyDataTableComponent,
-    SentenceCasePipe
+    SentenceCasePipe,
+    DataTableComponent,
+    EditDataDialogueComponent
   ],
   imports: [
     CommonModule,
@@ -47,11 +55,17 @@ import { SentenceCasePipe } from './pipes/sentence-case.pipe';
     MatCheckboxModule,
     MatIconModule,
     MatInputModule,
-    MatRadioModule, 
+    MatRadioModule,
     MatFormFieldModule,
     MatTableModule,
-    MatSortModule, 
-    MatPaginatorModule
+    MatSortModule,
+    MatPaginatorModule,
+    MatMenuModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
+    AsyncPipe,
+    MatDialogModule,
+    MatSelectModule
   ],
   exports: [
     FileListComponent,
@@ -62,7 +76,8 @@ import { SentenceCasePipe } from './pipes/sentence-case.pipe';
     TabComponent,
     UploadComponent,
     StudyDataTableComponent,
-    SentenceCasePipe
+    SentenceCasePipe,
+    DataTableComponent
   ],
   providers: [
     UploadService,

@@ -77,18 +77,6 @@ public interface PdCategoryRepository
 			"GROUP BY pc.dvcat, dc.colour")
 	List<PdCategoryGraphDataDTO> findPdCategoryGraphDataByTeamId(@Param("teamId") Integer teamId);
 
-	// @Query("SELECT new org.digitalecmt.qualityassurance.dto.Visualisation.PdCategoryDvdecodBreakdownDTO" +
-	// 		"(pc.dvcat, pc.dvdecod, COUNT(dec), dc.colour) " +
-	// 		"FROM DataEntry de " +
-	// 		"JOIN DataEntryCategory dec ON dec.entryId = de.entryId " +
-	// 		"JOIN PdCategory pc ON pc.categoryId = dec.categoryId" +
-	// 		"JOIN DvdecodColour dc on dc.dvdecod = pc.dvdecod " +
-	// 		"WHERE de.studyId IN (" +
-	// 		"  SELECT tsa.studyId " +
-	// 		"  FROM TeamStudyAccess tsa " +
-	// 		"  WHERE tsa.teamId = :teamId" +
-	// 		") " +
-	// 		"GROUP BY pc.dvcat, pc.dvdecod, dc.colour")
 	@Query("SELECT new org.digitalecmt.qualityassurance.dto.Visualisation.DvcatDvdecodRepositoryDataDTO" +
 			"(pc.dvcat, pc.dvdecod, COUNT(dec), dc.colour) " +
 			"FROM DataEntry de " +
@@ -102,4 +90,22 @@ public interface PdCategoryRepository
 			") " +
 			"GROUP BY pc.dvcat, pc.dvdecod, dc.colour")
 	List<DvcatDvdecodRepositoryDataDTO> findPdCategoryBreakdownDataByTeamId(@Param("teamId") Integer teamId);
+
+	@Query("SELECT pc.dvdecod " +
+	"FROM PdCategory pc")
+	List<String> findDvdecods();
+
+	@Query("SELECT pc.dvdecod " +
+	"FROM PdCategory pc " +
+	"WHERE pc.dvcat = :dvcat")
+	List<String> findDvdecodsByDvcat(@Param("dvcat") String dvcat);
+	
+	@Query("SELECT pc.dvterm " +
+	"FROM PdCategory pc")
+	List<String> findDvterms();
+
+	@Query("SELECT pc.dvterm " +
+	"FROM PdCategory pc " +
+	"WHERE pc.dvdecod = :dvdecod")
+	String findDvtermByDvdecod(@Param("dvdecod") String dvdecod);
 }

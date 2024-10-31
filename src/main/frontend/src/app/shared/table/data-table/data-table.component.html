@@ -1,0 +1,82 @@
+<mat-form-field>
+    <mat-label>Filter</mat-label>
+    <input matInput (keyup)="applyFilter($event)" #input>
+</mat-form-field>
+
+<table mat-table [dataSource]="dataSource" matSort>
+
+    <ng-container matColumnDef="studyId">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Study ID' | uppercase}} </th>
+        <td mat-cell *matCellDef="let row">
+            {{row.studyId}}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="dvspondes">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Dvspondes' | uppercase}} </th>
+        <td mat-cell *matCellDef="let row">
+            {{row.dvspondes}}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="dvcat">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Dvcat' | uppercase}} </th>
+        <td mat-cell *matCellDef="let row">
+            {{row.dvcat}}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="dvdecod">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Dvdecod' | uppercase}} </th>
+        <td mat-cell *matCellDef="let row">
+            {{row.dvdecod}}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>more_horiz</mat-icon>
+            </button>
+        </th>
+        <td mat-cell *matCellDef="let row">
+            <div class="actionContainer">
+                <button mat-icon-button (click)="onEdit(row)">
+                    <mat-icon color="accent">
+                        edit
+                    </mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="onCancel(row)" *ngIf="row.isEdited">
+                    <mat-icon>close</mat-icon>
+                </button>
+                <button mat-icon-button class="tick" (click)="onConfirm(row)" *ngIf="row.isEdited">
+                    <mat-icon>check</mat-icon>
+                </button>
+            </div>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+    </tr>
+</table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+
+<mat-menu #menu="matMenu">
+    <button mat-menu-item class="tick" [disabled]="hasActiveEdits" (click)="onConfirmAll()">
+        <mat-icon>done_all</mat-icon>
+        <span>Confirm all</span>
+    </button>
+    <button mat-menu-item [disabled]="hasActiveEdits" (click)="onCancelAll()">
+        <mat-icon color="warn">cancel</mat-icon>
+        <span>Cancel all</span>
+    </button>
+    <button mat-menu-item (click)="onRefresh()">
+        <mat-icon color="accent">refresh</mat-icon>
+        <span>Refresh</span>
+    </button>
+</mat-menu>

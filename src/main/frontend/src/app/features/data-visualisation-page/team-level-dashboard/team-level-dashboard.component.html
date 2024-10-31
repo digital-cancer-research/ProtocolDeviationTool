@@ -14,7 +14,7 @@
     <mat-card-content class="dvdecodBarGraph">
         <app-dvdecod-bar-graph [data]="graphData" 
         [isColourModeDefault]="isColourModeDefault"
-        (selectedDvdecod)="updateSelectedDvdecod($event)">
+        (selectedDvdecod)="updateTable($event)">
     </app-dvdecod-bar-graph>
     </mat-card-content>
     <mat-card-footer>
@@ -29,9 +29,9 @@
         {{ selectedDvdecod | titlecase }}
     </mat-card-header>
     <mat-card-content>
-        <app-study-data-table
-        [data]="tableData"
-        [dvdecod]="selectedDvdecod">
-        </app-study-data-table>
+        <app-data-table
+        [fetchedData]="tableData"
+        [fetchData]="apiRequest">
+        </app-data-table>
     </mat-card-content>
 </mat-card>

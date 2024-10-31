@@ -92,7 +92,7 @@ public interface DataEntryRepository
 
 	Optional<DataEntry> findByEntryId(Long entryId);
 
-	@Query("SELECT new org.digitalecmt.qualityassurance.dto.Data.DataDTO(de.studyId, d.dvspondesValue, pc.dvcat, pc.dvdecod, pc.dvterm) "
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.Data.DataDTO(de.entryId, de.siteId, de.studyId, d.dvspondesValue, pc.dvcat, pc.dvdecod, pc.dvterm) "
 			+
 			"FROM DataEntry de " +
 			"JOIN Dvspondes d ON d.dvspondesId = de.dvspondesId " +
@@ -100,7 +100,7 @@ public interface DataEntryRepository
 			"JOIN PdCategory pc ON pc.categoryId = dec.categoryId ")
 	List<DataDTO> findPdData();
 
-	@Query("SELECT new org.digitalecmt.qualityassurance.dto.Data.DataDTO(de.studyId, d.dvspondesValue, pc.dvcat, pc.dvdecod, pc.dvterm) "
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.Data.DataDTO(de.entryId, de.siteId, de.studyId, d.dvspondesValue, pc.dvcat, pc.dvdecod, pc.dvterm) "
 			+
 			"FROM DataEntry de " +
 			"JOIN Dvspondes d ON d.dvspondesId = de.dvspondesId " +
@@ -112,5 +112,14 @@ public interface DataEntryRepository
 			"   WHERE tsa.teamId = :teamId" +
 			")")
 	List<DataDTO> findPdDataByTeamId(@Param("teamId") Long teamId);
+
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.Data.DataDTO(de.entryId, de.siteId, de.studyId, d.dvspondesValue, pc.dvcat, pc.dvdecod, pc.dvterm) "
+			+
+			"FROM DataEntry de " +
+			"JOIN Dvspondes d ON d.dvspondesId = de.dvspondesId " +
+			"JOIN DataEntryCategory dec ON dec.entryId = de.entryId " +
+			"JOIN PdCategory pc ON pc.categoryId = dec.categoryId " +
+			"WHERE de.studyId = :studyId")
+	List<DataDTO> findPdDataByStudyId(@Param("studyId") String studyId);
 
 }
