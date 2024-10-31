@@ -84,7 +84,7 @@ export class DvdecodBarGraphComponent implements OnChanges {
     this.chart.data.datasets = this.dvdecodBarGraphService.formatDataForUpdating(this.data, this.colours);
     this.chart.data.labels = newLabels;
     if (this.chart.options.plugins && this.chart.options.plugins.title) {
-      this.chart.options.plugins.title.text = `Total number of PD coded terms (DVDECOD) for ${this.data[0].dvcat} at site`;
+      this.chart.options.plugins.title.text = `Total number of PD coded terms (DVDECOD) for ${this.data[0].dvcat} for team`;
     } 
     this.chart.update();
   }

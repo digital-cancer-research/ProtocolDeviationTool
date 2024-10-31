@@ -78,7 +78,7 @@ export class DvdecodBarGraphService {
         },
         title: {
           display: true,
-          text: `Total number of PD coded terms (DVDECOD) for ${dvcat} at site`
+          text: `Total number of PD coded terms (DVDECOD) for ${dvcat} for team`
         },
       }
     };
