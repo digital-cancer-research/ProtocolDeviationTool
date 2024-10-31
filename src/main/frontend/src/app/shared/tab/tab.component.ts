@@ -52,8 +52,10 @@ export class TabComponent {
    * @private
    */
   private updateActiveTab() {
-    const currentRoute = this.router.url.split('/').pop();
-    this.activeTab = this.tabs.find((tab) => currentRoute?.includes(tab.link)) || this.tabs[0];
+    const currentRoute = this.router.url
+    .split('/').pop()
+    ?.split('?').reverse().pop();
+    this.activeTab = this.tabs.find((tab) => currentRoute == tab.link) || this.tabs[0];
   }
 
   /**
@@ -63,8 +65,7 @@ export class TabComponent {
   protected navigateToTab(tab: Tab) {
     const navigationExtras: NavigationExtras = {
       queryParamsHandling: this.queryParamsHandling, 
-      relativeTo: this.route,
-      skipLocationChange: true
+      relativeTo: this.route
     };
     this.router.navigate([tab.link], navigationExtras);
   }
