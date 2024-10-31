@@ -44,7 +44,8 @@ export class AppComponent {
   }
 
   updateFooterVisibility(url: string): boolean {
-    const urlRoot = url.split('/')[1];
+    const urlRoot = url.split('/')[1]
+      .split('?').reverse().pop();
     switch (urlRoot) {
       case '':
       case 'site':
