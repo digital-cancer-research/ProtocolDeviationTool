@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UserService } from '../services/user.service';
 import { AuthService } from '../../user/auth.service';
 import { User } from '../models/user.model';
@@ -6,6 +6,10 @@ import { filter, map, Observable, Subscription } from 'rxjs';
 import { Team } from '../models/team.model';
 import { NavigationEnd, Router } from '@angular/router';
 import { DataVisualisationPageModule } from 'src/app/features/data-visualisation-page/data-visualisation-page.module';
+import { SitePageComponent } from 'src/app/features/site-page/site-page.component';
+import { DataUploadComponent } from 'src/app/features/data-upload/data-upload/data-upload.component';
+import { AdministrationPageComponent } from 'src/app/features/administration-page/administration-page.component';
+import { AdministrationPageModule } from 'src/app/features/administration-page/administration-page.module';
 
 /**
  * HeaderComponent is responsible for managing the header UI element of the application,
@@ -67,10 +71,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
    */
   ngOnInit(): void {
     this.urlPath$.subscribe((url => {
-      let urlLinks: string[] = url.split('/');
-      this.urlRoot = urlLinks[1];
 
-      const urlFinalPath = urlLinks.pop();
+      this.urlRoot = url.split('/')[1]
+        .split('?')
+        .reverse().pop() || "";
+
+      const urlFinalPath = url.split('/')
+        .pop()?.split('?')
+        .reverse().pop() || "";
       if (urlFinalPath !== undefined) {
         this.urlFinalPath = urlFinalPath;
       }
@@ -149,16 +157,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
    */
   get pageTitle(): string {
     switch (this.urlRoot) {
-      case ('site'): {
+      case (SitePageComponent.URL): {
         return "SITE";
       }
-      case ('data-upload'): {
+      case (DataUploadComponent.URL): {
         return "DATA UPLOAD";
       }
-      case ('data-visualisation'): {
+      case (DataVisualisationPageModule.URL): {
         return DataVisualisationPageModule.getTitle(this.urlFinalPath);
       }
-      case ('administration-page'): {
+      case (AdministrationPageModule.URL): {
         return "ADMINISTRATOR";
       }
       default: {

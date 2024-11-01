@@ -8,6 +8,7 @@ import { CategoryTableComponent } from 'src/app/shared/category-table/category-t
   styleUrl: './data-upload.component.css'
 })
 export class DataUploadComponent {
+  public static readonly URL = 'data-upload';
   @ViewChild(FileListComponent) fileListComponent!: FileListComponent;
   @ViewChild(CategoryTableComponent) categoryTableComponent!: CategoryTableComponent;
 

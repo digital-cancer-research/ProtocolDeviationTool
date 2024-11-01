@@ -78,8 +78,6 @@ export class TotalPdsComponent {
    * @param dvdecod 
    */
   updateSelectedDvdecod(dvdecod: string): void {
-    console.log("this.selectedTeam");
-    console.log(this.selectedTeam);
     if (this.selectedTeam) {
       this.studyDataService.getDataByTeamId$(this.selectedTeam.teamId)
       .subscribe(

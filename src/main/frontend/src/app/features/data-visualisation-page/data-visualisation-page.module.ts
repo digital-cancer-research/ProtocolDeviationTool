@@ -34,6 +34,7 @@ import { TotalPdsComponent } from './dashboard/detailed-view/total-pds/total-pds
 import { TotalPdsOverTimeComponent } from './dashboard/detailed-view/total-pds-over-time/total-pds-over-time.component';
 import { DvcatDvdecodBreakdownGraphComponent } from './dashboard/detailed-view/total-pds/dvcat-dvdecod-breakdown-graph/dvcat-dvdecod-breakdown-graph.component';
 import { DvdecodGraphComponent } from './dashboard/detailed-view/total-pds/dvdecod-graph/dvdecod-graph.component';
+import { ActivatedRoute } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -78,10 +79,12 @@ import { DvdecodGraphComponent } from './dashboard/detailed-view/total-pds/dvdec
 export class DataVisualisationPageModule {
   public static URL = "dashboard";
   private static currentTeam: Team | null = null;
-  
-  constructor(userService: UserService) {
+
+  constructor(
+    userService: UserService,
+  ) {
     userService.currentUserSelectedTeam$.subscribe(team => DataVisualisationPageModule.currentTeam = team);
-   }
+  }
 
   /**
    * Returns the page title of the visualisation pages based on the provided URL.
@@ -91,11 +94,16 @@ export class DataVisualisationPageModule {
    */
   public static getTitle(url: string) {
     switch (url) {
-      case ("data-visualisation"): {
+      case (this.URL): {
         return "TEAM SUMMARY DASHBOARD";
       }
-      case ('team-level-dashboard'): {
-        return `${this.currentTeam ? this.currentTeam.teamName : "TEAM"} PROTOCOL DEVIATIONS`;
+      case (TotalPdsComponent.URL):
+      case (TotalPdsOverTimeComponent.URL): {
+        let title = DetailedViewComponent.studyId;
+        if (title === undefined) {
+          title = this.currentTeam ? this.currentTeam.teamName : "Team";
+        }
+        return `${title} PROTOCOL DEVIATIONS`;
       }
       default: {
         return "";
