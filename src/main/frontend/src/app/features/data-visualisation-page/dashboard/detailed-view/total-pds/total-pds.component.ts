@@ -1,10 +1,12 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Team } from 'src/app/core/models/team.model';
-import { StudyData } from 'src/app/shared/study-data-table/study-data';
 import { StudyDataService } from 'src/app/shared/study-data-table/study-data.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { DvdecodData } from '../../../models/team-pd-dvdecod-bar-graph-data.model';
+import { map, Observable } from 'rxjs';
+import { DataTableEntry } from 'src/app/core/models/data/data-table-entry.model';
+import { DataTableService } from 'src/app/shared/table/data-table/data-table.service';
 
 @Component({
   selector: 'app-total-pds',
@@ -24,9 +26,11 @@ export class TotalPdsComponent {
     });
   }
 
-  private static readonly dvdecodGraphId: string = '#dvdecodGraph'
+  private readonly dvdecodGraphId: string = '#dvdecodGraph'
 
-  private static readonly tableClass: string = '.table'
+  private readonly tableClass: string = '.table'
+
+  apiRequest: Observable<DataTableEntry[]> = new Observable();
 
   /** Array holding dvdecod data for the graph. */
   graphData: DvdecodData[] = [];
@@ -40,12 +44,13 @@ export class TotalPdsComponent {
   /** The user's selected team. */
   selectedTeam: Team | null = null;
 
-  tableData: StudyData[] = [];
+  tableData: DataTableEntry[] = [];
 
   constructor(
     private cdr: ChangeDetectorRef,
     private studyDataService: StudyDataService,
-    private userService: UserService
+    private userService: UserService,
+    private dataTableService: DataTableService
   ) {
     userService.currentUserSelectedTeam$.subscribe(team => this.selectedTeam = team);
   }
@@ -68,25 +73,29 @@ export class TotalPdsComponent {
   updateDvdecodGraphData(newData: DvdecodData[]): void {
     this.graphData = newData;
     this.selectedDvdecod = "";
-    this.scroll(TotalPdsComponent.dvdecodGraphId);
+    this.scroll(this.dvdecodGraphId);
   }
 
   /** 
-   * Sets the selected dvdecod.
+   * Updates the selected dvdecod and api request for the table.
    * Triggers a smooth scroll to table component.
    * 
    * @param dvdecod 
    */
-  updateSelectedDvdecod(dvdecod: string): void {
+  updateTable(dvdecod: string): void {
+    this.selectedDvdecod = dvdecod;
     if (this.selectedTeam) {
-      this.studyDataService.getDataByTeamId$(this.selectedTeam.teamId)
-      .subscribe(
-        {
-          next: (data) => {
-            this.selectedDvdecod = dvdecod;
-            this.tableData = data
-            .filter(dataEntry => dataEntry.dvdecod === this.selectedDvdecod);
-            this.scroll(TotalPdsComponent.tableClass);
+      this.apiRequest = this.dataTableService.getDataByTeamId$(this.selectedTeam.teamId)
+        .pipe(
+          map((data) => data.filter(entry => entry.dvdecod === dvdecod)
+          )
+        );
+      this.apiRequest
+        .subscribe(
+          {
+            next: (data) => {
+              this.tableData = data;
+              this.scroll(this.tableClass);
             },
             error: (error) => {
               this.openSnackBar(`There was an error loading the data. ${error}`, "");
@@ -108,5 +117,4 @@ export class TotalPdsComponent {
       element.scrollIntoView({ block: 'end', behavior: 'smooth' });
     }
   }
-
 }

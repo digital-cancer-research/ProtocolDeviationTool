@@ -5,12 +5,12 @@
     </app-dvcat-dvdecod-breakdown-graph>
 </mat-card>
 
-<mat-card *ngIf="graphData.length !== 0" class="dvdecodBarGraph" #dvdecodGraph>
-    <mat-card-content class="dvdecodBarGraph">
-        <app-dvdecod-graph [data]="graphData" 
+<mat-card *ngIf="graphData.length !== 0" class="dvdecodGraph" #dvdecodGraph>
+    <mat-card-content class="dvdecodGraph">
+        <app-dvdecod-graph [data]="graphData"
         [isColourModeDefault]="isColourModeDefault"
         (selectedDvdecod)="updateTable($event)">
-    </app-dvdecod-bar-graph>
+        </app-dvdecod-graph>
     </mat-card-content>
     <mat-card-footer>
         <mat-icon class="help" matTooltip="Click below a bar to generate a table">
