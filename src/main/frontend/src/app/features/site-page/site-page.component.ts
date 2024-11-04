@@ -21,6 +21,7 @@ import { Subscription } from 'rxjs';
 	styleUrls: ['./site-page.component.css']
 })
 export class SitePageComponent implements OnInit, OnDestroy {
+	public static readonly URL = 'site';
 	userTeams: Team[] = [];
 	userTeamsSubscription!: Subscription;
 

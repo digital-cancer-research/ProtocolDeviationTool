@@ -4,6 +4,8 @@
       (click)="activeLink = link"
       [active]="activeLink == link"
       [routerLink]="link.route"
+      queryParamsHandling="merge"
+      [queryParams]="queryParams"
       [disabled]="isUserDeactivated || link.disabled"> {{link.label | titlecase}} </a>
   }
 </nav>

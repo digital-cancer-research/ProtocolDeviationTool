@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { UserService } from '../../../core/services/user.service';
+import { DataUploadComponent } from '../../data-upload/data-upload/data-upload.component';
+import { DataUploadModule } from '../../data-upload/data-upload-page.module';
+import { DataVisualisationPageModule } from '../../data-visualisation-page/data-visualisation-page.module';
 
 /**
  * Component for displaying navigation buttons on the site page.
@@ -17,6 +20,11 @@ import { UserService } from '../../../core/services/user.service';
   styleUrls: ['./site-page-navigation-buttons.component.css']
 })
 export class SitePageNavigationButtonsComponent {
+
+  links: string[] = [
+    `/${DataUploadModule.URL}`,
+    `/${DataVisualisationPageModule.URL}`
+  ]
   
   /**
    * Boolean flag indicating whether the user is deactivated.

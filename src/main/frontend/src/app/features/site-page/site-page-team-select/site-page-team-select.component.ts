@@ -2,6 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Team } from '../../../core/models/team.model';
 import { UserService } from '../../../core/services/user.service';
 import { Subscription } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /**
  * Component for selecting a team on the site page.
@@ -39,7 +40,11 @@ export class SitePageTeamSelectComponent implements OnInit, OnDestroy {
    * Creates an instance of SitePageTeamSelectComponent.
    * @param {UserService} userService Service to handle user-related data.
    */
-  constructor(private userService: UserService) { }
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) { }
 
   /**
    * Initialises the component by subscribing to the currently selected team.
@@ -68,6 +73,11 @@ export class SitePageTeamSelectComponent implements OnInit, OnDestroy {
   setTeam(team: Team | null): void {
     if (team) {
       this.userService.currentUserSelectedTeamSubject.next(team);
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: {teamId: team.teamId},
+        queryParamsHandling: 'merge'
+      })
     }
   }
 }

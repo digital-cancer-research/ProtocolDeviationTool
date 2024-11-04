@@ -1,0 +1,32 @@
+<mat-card>
+    <app-dvcat-dvdecod-breakdown-graph 
+    (dvdecodGraphData)="updateDvdecodGraphData($event)" 
+    (colourMode)="updateColourMode($event)">
+    </app-dvcat-dvdecod-breakdown-graph>
+</mat-card>
+
+<mat-card *ngIf="graphData.length !== 0" class="dvdecodGraph" #dvdecodGraph>
+    <mat-card-content class="dvdecodGraph">
+        <app-dvdecod-graph [data]="graphData"
+        [isColourModeDefault]="isColourModeDefault"
+        (selectedDvdecod)="updateTable($event)">
+        </app-dvdecod-graph>
+    </mat-card-content>
+    <mat-card-footer>
+        <mat-icon class="help" matTooltip="Click below a bar to generate a table">
+            help
+        </mat-icon>
+    </mat-card-footer>
+</mat-card>
+
+<mat-card *ngIf="selectedDvdecod" class="table">
+    <mat-card-header>
+        {{ selectedDvdecod | titlecase }}
+    </mat-card-header>
+    <mat-card-content>
+        <app-data-table
+        [fetchedData]="tableData"
+        [fetchData]="apiRequest">
+        </app-data-table>
+    </mat-card-content>
+</mat-card>

@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { QueryParamsHandling } from '@angular/router';
 
 /**
  * @class PageButtonComponent
@@ -23,4 +24,5 @@ export class PageButtonComponent {
   @Input() link: string = "";
   @Input() disabled: boolean = false;
   @Input() MatIcon: string = "";
+  @Input() queryParamsHandling: QueryParamsHandling = 'merge';
 }
