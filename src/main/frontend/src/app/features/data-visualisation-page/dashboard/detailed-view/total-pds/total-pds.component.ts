@@ -4,9 +4,11 @@ import { Team } from 'src/app/core/models/team.model';
 import { StudyDataService } from 'src/app/shared/study-data-table/study-data.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { DvdecodData } from '../../../models/team-pd-dvdecod-bar-graph-data.model';
-import { map, Observable } from 'rxjs';
+import { filter, map, Observable } from 'rxjs';
 import { DataTableEntry } from 'src/app/core/models/data/data-table-entry.model';
 import { DataTableService } from 'src/app/shared/table/data-table/data-table.service';
+import { ActivatedRoute } from '@angular/router';
+import { DetailedViewComponent } from '../detailed-view.component';
 
 @Component({
   selector: 'app-total-pds',
@@ -45,6 +47,8 @@ export class TotalPdsComponent {
   selectedTeam: Team | null = null;
 
   tableData: DataTableEntry[] = [];
+
+  studyId?: string;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -88,7 +92,8 @@ export class TotalPdsComponent {
       this.apiRequest = this.dataTableService.getDataByTeamId$(this.selectedTeam.teamId)
         .pipe(
           map((data) => data.filter(entry => entry.dvdecod === dvdecod)
-          )
+          ),
+          map((data) => data.filter(entry => DetailedViewComponent.studyId ? entry.studyId === DetailedViewComponent.studyId : true))
         );
       this.apiRequest
         .subscribe(
