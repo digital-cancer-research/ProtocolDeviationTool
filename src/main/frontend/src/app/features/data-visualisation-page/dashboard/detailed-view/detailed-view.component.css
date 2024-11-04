@@ -1,0 +1,7 @@
+.tabs {
+    display: flex;
+}
+
+app-tab {
+    flex: 1;
+}
