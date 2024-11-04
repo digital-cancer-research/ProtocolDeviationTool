@@ -5,3 +5,10 @@
 app-tab {
     flex: 1;
 }
+
+mat-radio-group {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    padding-right: 5px;
+}
