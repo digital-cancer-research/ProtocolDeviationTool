@@ -126,7 +126,7 @@ export class DvcatDvdecodBreakdownGraphComponent {
    * @param teamId - The ID of the team for which to load the data.
    */
   private loadBarGraphData(teamId: number): void {
-    this.visSubscription = this.dataVisualisationService.getPdDvdecodBarGraphData$(teamId)
+    this.visSubscription = this.dataVisualisationService.getPdDvdecodBarGraphDataByTeam$(teamId)
       .subscribe({
         next: (response) => {
           this.labels = response.dvcats;
