@@ -42,7 +42,7 @@ export class DataVisualisationService {
   }
   
   getCategoryBarGraphDataByStudy$(studyId: string): Observable<CategoryBarGraphData[]> {
-    return this.http.get<CategoryBarGraphData[]>(`${this.baseUrl}/team-pd-categories?teamId=${studyId}`);
+    return this.http.get<CategoryBarGraphData[]>(`${this.baseUrl}/team-pd-categories?studyId=${studyId}`);
   }
 
   getPdDvdecodBarGraphDataByTeam$(teamId: number): Observable<PdDvdecodBarGraphData> {
@@ -50,6 +50,6 @@ export class DataVisualisationService {
   }
   
   getPdDvdecodBarGraphDataByStudy$(studyId: string): Observable<PdDvdecodBarGraphData> {
-    return this.http.get<PdDvdecodBarGraphData>(`${this.baseUrl}/team-pd-categories/dvdecod-breakdown?teamId=${studyId}`);
+    return this.http.get<PdDvdecodBarGraphData>(`${this.baseUrl}/team-pd-categories/dvdecod-breakdown?studyId=${studyId}`);
   }
 }

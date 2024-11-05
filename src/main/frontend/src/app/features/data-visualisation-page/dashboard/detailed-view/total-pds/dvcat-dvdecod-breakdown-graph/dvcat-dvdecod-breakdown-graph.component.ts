@@ -1,12 +1,13 @@
 import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Chart, CategoryScale } from 'chart.js';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { UtilsService } from 'src/app/core/services/utils.service';
-import { UserService } from 'src/app/core/services/user.service'; 
+import { UserService } from 'src/app/core/services/user.service';
 import { DvcatDvdecodBreakdownGraphService } from './dvcat-dvdecod-breakdown-graph.service';
 import { DataVisualisationService } from 'src/app/features/data-visualisation-page/data-visualisation.service';
-import { PdDvdecod, DvdecodData } from 'src/app/features/data-visualisation-page/models/team-pd-dvdecod-bar-graph-data.model';
+import { PdDvdecod, DvdecodData, PdDvdecodBarGraphData } from 'src/app/features/data-visualisation-page/models/team-pd-dvdecod-bar-graph-data.model';
+import { DetailedViewComponent } from '../../detailed-view.component';
 
 @Component({
   selector: 'app-dvcat-dvdecod-breakdown-graph',
@@ -126,21 +127,26 @@ export class DvcatDvdecodBreakdownGraphComponent {
    * @param teamId - The ID of the team for which to load the data.
    */
   private loadBarGraphData(teamId: number): void {
-    this.visSubscription = this.dataVisualisationService.getPdDvdecodBarGraphDataByTeam$(teamId)
-      .subscribe({
-        next: (response) => {
-          this.labels = response.dvcats;
-          this.selectedLabels = this.labels;
-          this.data = response.data;
-          this.filteredData = this.data;
-          this.createChart();
-        },
-        error: (error) => {
-          this.errorMessage = error.message || `An error occurred while trying to load the data. 
+    let apiRequest: Observable<PdDvdecodBarGraphData> = new Observable();
+    if (DetailedViewComponent.studyId === undefined) {
+      apiRequest = this.dataVisualisationService.getPdDvdecodBarGraphDataByTeam$(teamId);
+    } else {
+      apiRequest = this.dataVisualisationService.getPdDvdecodBarGraphDataByStudy$(DetailedViewComponent.studyId);
+    }
+    this.visSubscription = apiRequest.subscribe({
+      next: (response) => {
+        this.labels = response.dvcats;
+        this.selectedLabels = this.labels;
+        this.data = response.data;
+        this.filteredData = this.data;
+        this.createChart();
+      },
+      error: (error) => {
+        this.errorMessage = error.message || `An error occurred while trying to load the data. 
           Please try again later.`;
-          this.handleError();
-        }
-      });
+        this.handleError();
+      }
+    });
   }
 
   /**
