@@ -50,13 +50,20 @@ export class TotalPdsComponent {
 
   studyId?: string;
 
+  hasStudyChanged: boolean = false;
+
   constructor(
     private cdr: ChangeDetectorRef,
     private studyDataService: StudyDataService,
     private userService: UserService,
-    private dataTableService: DataTableService
+    private dataTableService: DataTableService,
+    private route: ActivatedRoute
   ) {
     userService.currentUserSelectedTeam$.subscribe(team => this.selectedTeam = team);
+    route.queryParams.subscribe(() => {
+      console.log("Changed Study")
+      this.hasStudyChanged = true;
+    });
   }
 
   /**
@@ -75,6 +82,7 @@ export class TotalPdsComponent {
    * @param newData - Array of dvdecod data to be set.
    */
   updateDvdecodGraphData(newData: DvdecodData[]): void {
+    this.hasStudyChanged = false;
     this.graphData = newData;
     this.selectedDvdecod = "";
     this.scroll(this.dvdecodGraphId);
@@ -87,6 +95,7 @@ export class TotalPdsComponent {
    * @param dvdecod 
    */
   updateTable(dvdecod: string): void {
+    this.hasStudyChanged = false;
     this.selectedDvdecod = dvdecod;
     if (this.selectedTeam) {
       this.apiRequest = this.dataTableService.getDataByTeamId$(this.selectedTeam.teamId)

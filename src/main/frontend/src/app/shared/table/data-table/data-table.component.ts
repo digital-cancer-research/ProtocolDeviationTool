@@ -133,7 +133,6 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
     this.fetchData.subscribe(
       {
         next: (data) => {
-          console.log(data);
           this.updateData(data);
         },
         error: (error) => {
