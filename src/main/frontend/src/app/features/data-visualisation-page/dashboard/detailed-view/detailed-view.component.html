@@ -8,7 +8,7 @@
 </div>
 
 <mat-menu #filter>
-    <mat-radio-group [(ngModel)]="selectedOption" (change)="onOptionChange()">
+    <mat-radio-group [(ngModel)]="selectedOption" (change)="onOptionChange()" (click)="$event.stopPropagation()">
         <mat-radio-button *ngFor="let option of options$ | async"
         [value]="option">
             {{ option }}
