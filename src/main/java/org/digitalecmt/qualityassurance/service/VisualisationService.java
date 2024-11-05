@@ -69,9 +69,15 @@ public class VisualisationService {
      * @return a list of PdCategoryGraphDataDTO objects containing the category
      *         data for the specified team.
      */
-    public List<PdCategoryGraphDataDTO> findPdCategoryGraphData(Integer teamId) {
+    public List<PdCategoryGraphDataDTO> findPdCategoryGraphDataByTeam(Integer teamId) {
         List<PdCategoryGraphDataDTO> existingCategoryData = pdCategoryRepository
                 .findPdCategoryGraphDataByTeamId(teamId);
+        return fillInMissingPdCategoryGraphData(existingCategoryData);
+    }
+
+    public List<PdCategoryGraphDataDTO> findPdCategoryGraphDataByStudy(String studyId) {
+        List<PdCategoryGraphDataDTO> existingCategoryData = pdCategoryRepository
+                .findPdCategoryGraphDataByStudyId(studyId);
         return fillInMissingPdCategoryGraphData(existingCategoryData);
     }
 
@@ -115,12 +121,32 @@ public class VisualisationService {
      * @return DvcatDvdecodGraphDataDTO containing the list of DVCATs and the
      *         breakdown data for each.
      */
-    public DvcatDvdecodGraphDataDTO findPdCategoryBreakdownGraphData(Integer teamId) {
+    public DvcatDvdecodGraphDataDTO findPdCategoryBreakdownGraphDataByTeam(Integer teamId) {
         List<PdCategoryGraphDataDTO> pdCategories = getSortedPdCategories(teamId);
         List<String> dvcats = extractDvcats(pdCategories);
         Integer numberOfDvcats = dvcats.size();
 
         List<DvcatDvdecodRepositoryDataDTO> pdData = pdCategoryRepository.findPdCategoryBreakdownDataByTeamId(teamId);
+        List<DvcatDvdecodDTO> dvcatDvdecodData = mapPdDataToDvcatDvdecodDTO(pdData, dvcats, numberOfDvcats);
+
+        dvcatDvdecodData.sort(Comparator.comparing(DvcatDvdecodDTO::getTotalCount).reversed());
+        return new DvcatDvdecodGraphDataDTO(dvcats, dvcatDvdecodData);
+    }
+
+    /**
+     * Retrieves protocol deviation category breakdown graph data for a given study.
+     * This is data formatted for a stacked bar graph in chart.js.
+     *
+     * @param studyId the ID of the study for which the data is retrieved.
+     * @return DvcatDvdecodGraphDataDTO containing the list of DVCATs and the
+     *         breakdown data for each.
+     */
+    public DvcatDvdecodGraphDataDTO findPdCategoryBreakdownGraphDataByStudy(String studyId) {
+        List<PdCategoryGraphDataDTO> pdCategories = getSortedPdCategories(studyId);
+        List<String> dvcats = extractDvcats(pdCategories);
+        Integer numberOfDvcats = dvcats.size();
+
+        List<DvcatDvdecodRepositoryDataDTO> pdData = pdCategoryRepository.findPdCategoryBreakdownDataByStudyId(studyId);
         List<DvcatDvdecodDTO> dvcatDvdecodData = mapPdDataToDvcatDvdecodDTO(pdData, dvcats, numberOfDvcats);
 
         dvcatDvdecodData.sort(Comparator.comparing(DvcatDvdecodDTO::getTotalCount).reversed());
@@ -134,7 +160,19 @@ public class VisualisationService {
      * @return a sorted list of PdCategoryGraphDataDTO.
      */
     private List<PdCategoryGraphDataDTO> getSortedPdCategories(Integer teamId) {
-        List<PdCategoryGraphDataDTO> pdCategories = findPdCategoryGraphData(teamId);
+        List<PdCategoryGraphDataDTO> pdCategories = findPdCategoryGraphDataByTeam(teamId);
+        pdCategories.sort(Comparator.comparing(PdCategoryGraphDataDTO::getCount));
+        return pdCategories;
+    }
+
+    /**
+     * Retrieves and sorts protocol deviation categories by count for a given study.
+     *
+     * @param studyId the ID of the study for which to retrieve categories.
+     * @return a sorted list of PdCategoryGraphDataDTO.
+     */
+    private List<PdCategoryGraphDataDTO> getSortedPdCategories(String studyId) {
+        List<PdCategoryGraphDataDTO> pdCategories = findPdCategoryGraphDataByStudy(studyId);
         pdCategories.sort(Comparator.comparing(PdCategoryGraphDataDTO::getCount));
         return pdCategories;
     }
@@ -190,6 +228,18 @@ public class VisualisationService {
         return count;
     }
 
+    /**
+     * Retrieves a list of bar chart colours from the database.
+     * 
+     * <p>
+     * This method fetches all the bar chart colours from the
+     * {@code BarChartColoursRepository} and returns them as a list of strings.
+     * The colours are used to visually distinguish different categories in
+     * various visualisation components.
+     * </p>
+     * 
+     * @return a list of strings representing the bar chart colours.
+     */
     public List<String> getBarChartColours() {
         return barChartColoursRepository
                 .findAll()
@@ -198,6 +248,19 @@ public class VisualisationService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves a list of distinct protocol deviation categories from the database.
+     * 
+     * <p>
+     * This method fetches all distinct DVCAT (protocol deviation category) entries
+     * from the {@code PdCategoryRepository} and returns them as a list of strings.
+     * These categories are used to categorize protocol deviation data in various
+     * visualisation components.
+     * </p>
+     * 
+     * @return a list of strings representing the distinct protocol deviation
+     *         categories.
+     */
     public List<String> getPdCategories() {
         return pdCategoryRepository.findDistinctDVCat();
     }

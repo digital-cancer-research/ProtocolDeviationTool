@@ -64,6 +64,26 @@ public class VisualisationController {
 
     private Logger log = Logger.getLogger(VisualisationController.class.getName());
 
+    /**
+     * Retrieves the total number of data entries with an optionial site ID.
+     *
+     * <p>
+     * This method interacts with the {@code DataEntryRepository} to count the total
+     * number of data entries. If a site ID is provided, the method will count only
+     * the data entries
+     * associated with that site. If no site ID is provided, the method will count
+     * all data entries.
+     * </p>
+     *
+     * @param siteId the ID of the site for which to retrieve the total number of
+     *               data entries. If null, the total count for all data entries
+     *               will be returned.
+     * @return a {@code ResponseEntity} containing the total number of data entries
+     *         and an HTTP status of 200 (OK) if the operation is successful, or an
+     *         HTTP status
+     *         of 500 (Internal Server Error) if an exception occurs during the
+     *         retrieval process.
+     */
     @GetMapping("/total-rows")
     public ResponseEntity<Long> getTotalRows(@RequestParam(required = false) String siteId) {
         try {
@@ -79,6 +99,25 @@ public class VisualisationController {
         }
     }
 
+
+    /**
+     * Retrieves the count of data entries per PD category, optionally filtered by site ID.
+     *
+     * <p>
+     * This method interacts with the {@code DataEntryRepository} and {@code PdCategoryRepository}
+     * to fetch the count of data entries per PD category. If a site ID is provided, the method
+     * will filter the data entries by the specified site. The method returns a list of
+     * {@code EntryCountPerCategoryDTO} objects, each containing the PD category and its corresponding
+     * entry count.
+     * </p>
+     *
+     * @param siteId the ID of the site for which to retrieve the entry counts. If null, the
+     *               entry counts will not be filtered by site.
+     * @return a {@code ResponseEntity} containing a list of {@code EntryCountPerCategoryDTO}
+     *         objects and an HTTP status of 200 (OK) if the operation is successful. If an
+     *         exception occurs during the retrieval process, an HTTP status of 500 (Internal
+     *         Server Error) will be returned.
+     */
     @GetMapping("/entry-counts-per-category")
     public ResponseEntity<List<EntryCountPerCategoryDTO>> getEntryCountsPerCategory(
             @RequestParam(required = false) String siteId) {
@@ -109,6 +148,17 @@ public class VisualisationController {
         }
     }
 
+
+    /**
+     * Retrieves the count of data entries per study, optionally filtered by site ID.
+     *
+     * @param siteId the ID of the site for which to retrieve the entry counts. If null, the
+     *               entry counts will not be filtered by site.
+     * @return a {@code ResponseEntity} containing a list of {@code CountPerStudyDTO} objects
+     *         and an HTTP status of 200 (OK) if the operation is successful. If an exception
+     *         occurs during the retrieval process, an HTTP status of 500 (Internal Server Error)
+     *         will be returned.
+     */
     @GetMapping("/count-per-study")
     public ResponseEntity<List<CountPerStudyDTO>> getCountPerStudy(
             @RequestParam(required = false) String siteId) {
@@ -138,6 +188,15 @@ public class VisualisationController {
         }
     }
 
+
+    /**
+     * Retrieves a list of unique site IDs from the data entry repository.
+     *
+     * @return a {@code ResponseEntity} containing a list of unique site IDs and an HTTP status of 200 (OK).
+     *         If an exception occurs during the retrieval process, an HTTP status of 500 (Internal Server Error)
+     *         will be returned.
+     * @throws Exception if an error occurs during the retrieval process.
+     */
     @GetMapping("/unique-sites")
     public ResponseEntity<List<String>> getUniqueSites() {
         try {
@@ -148,6 +207,17 @@ public class VisualisationController {
         }
     }
 
+
+    /**
+     * Retrieves the count of data entries per PD category and study, optionally filtered by site ID.
+     *
+     * @param siteId the ID of the site for which to retrieve the entry counts. If null, the
+     *               entry counts will not be filtered by site.
+     * @return a {@code ResponseEntity} containing a list of {@code EntryCountPerCategoryPerStudyDTO}
+     *         objects and an HTTP status of 200 (OK) if the operation is successful. If an
+     *         exception occurs during the retrieval process, an HTTP status of 500 (Internal
+     *         Server Error) will be returned.
+     */
     @GetMapping("/entry-counts-per-category-per-study")
     public ResponseEntity<List<EntryCountPerCategoryPerStudyDTO>> getEntryCountsPerCategoryPerStudy(
             @RequestParam(required = false) String siteId) {
@@ -161,6 +231,13 @@ public class VisualisationController {
         }
     }
 
+
+    /**
+     * Retrieves the count of data entries per PD subcategory and PD category, optionally filtered by site ID.
+     *
+     * @param siteId the ID of the site for which to retrieve the entry counts. If null, the entry counts will not be filtered by site.
+     * @return a {@code ResponseEntity} containing a list of {@code EntryCountPerSubcategoryPerCategoryDTO} objects and an HTTP status of 200 (OK) if the operation is successful. If an exception occurs during the retrieval process, an HTTP status of 500 (Internal Server Error) will be returned.
+     */
     @GetMapping("/entry-counts-per-subcategory-per-category")
     public ResponseEntity<List<EntryCountPerSubcategoryPerCategoryDTO>> getEntryCountsPerSubcategoryPerCategory(
             @RequestParam(required = false) String siteId) {
@@ -173,6 +250,7 @@ public class VisualisationController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     /**
      * Retrieves the total number of protocol deviations (PDs) for a specific team.
@@ -234,9 +312,31 @@ public class VisualisationController {
      *         {@code PdCategoryGraphDataDTO}
      *         objects and an HTTP status of 200 (OK).
      */
-    @GetMapping("/team-pd-categories")
-    public ResponseEntity<List<PdCategoryGraphDataDTO>> getPdCategoryData(@RequestParam("teamId") Integer teamId) {
-        List<PdCategoryGraphDataDTO> data = visualisationService.findPdCategoryGraphData(teamId);
+    @GetMapping(path = "/team-pd-categories", params = "teamId")
+    public ResponseEntity<List<PdCategoryGraphDataDTO>> getPdCategoryDataByTeam(
+            @RequestParam Integer teamId) {
+        List<PdCategoryGraphDataDTO> data = visualisationService.findPdCategoryGraphDataByTeam(teamId);
+        return new ResponseEntity<>(data, HttpStatus.OK);
+    }
+
+    /**
+     * Retrieves PD category data for a specific team.
+     * 
+     * This method calls the `visualisationService` to fetch the PD category
+     * data associated with a specific team. The data returned includes the
+     * category name, the associated color, and the count of related data entries
+     * for the given team. The team ID is provided as a request parameter.
+     * </p>
+     * 
+     * @param teamId the ID of the team for which to retrieve PD category data.
+     * @return a {@code ResponseEntity} containing a list of
+     *         {@code PdCategoryGraphDataDTO}
+     *         objects and an HTTP status of 200 (OK).
+     */
+    @GetMapping(path = "/team-pd-categories", params = "studyId")
+    public ResponseEntity<List<PdCategoryGraphDataDTO>> getPdCategoryDataByStudy(
+            @RequestParam String studyId) {
+        List<PdCategoryGraphDataDTO> data = visualisationService.findPdCategoryGraphDataByStudy(studyId);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
@@ -258,20 +358,69 @@ public class VisualisationController {
      *         {@code DvcatDvdecodGraphDataDTO}
      *         object and an HTTP status of 200 (OK).
      */
-
-    @GetMapping("/team-pd-categories/dvdecod-breakdown")
-    public ResponseEntity<DvcatDvdecodGraphDataDTO> getPdCategoryBreakdownData(@RequestParam("teamId") Integer teamId) {
-        DvcatDvdecodGraphDataDTO graphData = visualisationService.findPdCategoryBreakdownGraphData(teamId);
+    @GetMapping(path = "/team-pd-categories/dvdecod-breakdown", params = "teamId")
+    public ResponseEntity<DvcatDvdecodGraphDataDTO> getPdCategoryBreakdownDataByTeam(@RequestParam("teamId") Integer teamId) {
+        DvcatDvdecodGraphDataDTO graphData = visualisationService.findPdCategoryBreakdownGraphDataByTeam(teamId);
+        return new ResponseEntity<>(graphData, HttpStatus.OK);
+    }
+    
+    /**
+     * Retrieves PD category data broken down into dvdecods for a specific study.
+     *
+     * <p>
+     * This method returns data for a stacked bar chart in chart.js.
+     * It returns a list of dvcats, ordered by their count in descending order.
+     * It also returns the data for each dvcat as an array of
+     * {@code DvcatDvdecodGraphDataDTO} values,
+     * ordered by the size of the dvdecod in descending order, so that the bar chart
+     * is in descending order,
+     * with the largest dvdecods to the left, for each dvcat.
+     * </p>
+     *
+     * @param studyId the ID of the study for which to retrieve PD category data.
+     * @return a {@code ResponseEntity} containing a
+     *         {@code DvcatDvdecodGraphDataDTO}
+     *         object and an HTTP status of 200 (OK).
+     */
+    @GetMapping(path = "/team-pd-categories/dvdecod-breakdown", params = "studyId")
+    public ResponseEntity<DvcatDvdecodGraphDataDTO> getPdCategoryBreakdownDataByStudy(@RequestParam("studyId") String studyId) {
+        DvcatDvdecodGraphDataDTO graphData = visualisationService.findPdCategoryBreakdownGraphDataByStudy(studyId);
         return new ResponseEntity<>(graphData, HttpStatus.OK);
     }
 
+    /**
+     * Retrieves a list of colours suitable for use in a bar chart.
+     *
+     * <p>
+     * This method interacts with the {@code VisualisationService} to fetch a list of
+     * colours that can be used to represent different categories in a bar chart. The
+     * colours are returned as a {@code ResponseEntity} containing a list of
+     * {@code String} values.
+     *
+     * @return a {@code ResponseEntity} containing a list of colours and an HTTP status
+     *         of 200 (OK).
+     */
     @GetMapping("/bar-chart-colours")
     public ResponseEntity<List<String>> getBarChartColours() {
         return new ResponseEntity<>(visualisationService.getBarChartColours(), HttpStatus.OK);
     }
 
+
+    /**
+     * Retrieves a list of PD categories from the visualisation service.
+     *
+     * <p>
+     * This function interacts with the {@code VisualisationService} to fetch a list of
+     * PD categories that can be used for data visualization purposes. The function
+     * returns a {@code ResponseEntity} containing a list of {@code String} values,
+     * where each string represents a PD category.
+     *
+     * @return a {@code ResponseEntity} containing a list of PD categories and an HTTP status
+     *         of 200 (OK).
+     */
     @GetMapping("/pd-categories")
     public ResponseEntity<List<String>> getPdCategories() {
         return new ResponseEntity<>(visualisationService.getPdCategories(), HttpStatus.OK);
     }
+
 }

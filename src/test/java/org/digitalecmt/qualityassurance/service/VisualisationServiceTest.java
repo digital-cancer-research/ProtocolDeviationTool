@@ -65,7 +65,7 @@ class VisualisationServiceTest {
         mockColours.add(new DvcatColour("CategoryB", "Blue"));
         when(dvcatColourRepository.findAll()).thenReturn(mockColours);
 
-        List<PdCategoryGraphDataDTO> result = visualisationService.findPdCategoryGraphData(teamId);
+        List<PdCategoryGraphDataDTO> result = visualisationService.findPdCategoryGraphDataByTeam(teamId);
 
         assertEquals(2, result.size());
         assertEquals("CategoryA", result.get(0).getDvcat());
@@ -88,7 +88,7 @@ class VisualisationServiceTest {
         mockColours.add(new DvcatColour("CategoryB", "Blue"));
         when(dvcatColourRepository.findAll()).thenReturn(mockColours);
 
-        List<PdCategoryGraphDataDTO> result = visualisationService.findPdCategoryGraphData(teamId);
+        List<PdCategoryGraphDataDTO> result = visualisationService.findPdCategoryGraphDataByTeam(teamId);
 
         assertEquals(2, result.size());
         assertEquals("CategoryA", result.get(0).getDvcat());
@@ -114,7 +114,7 @@ class VisualisationServiceTest {
         when(pdCategoryRepository.findPdCategoryBreakdownDataByTeamId(teamId)).thenReturn(mockPdData);
 
         
-        DvcatDvdecodGraphDataDTO result = visualisationService.findPdCategoryBreakdownGraphData(teamId);
+        DvcatDvdecodGraphDataDTO result = visualisationService.findPdCategoryBreakdownGraphDataByTeam(teamId);
 
         assertNotNull(result);
         assertEquals(2, result.getDvcats().size());
