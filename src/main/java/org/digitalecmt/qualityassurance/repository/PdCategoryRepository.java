@@ -125,7 +125,7 @@ public interface PdCategoryRepository
 			"JOIN DvcatColour dc ON dc.dvcat = pc.dvcat " +
 			"JOIN DataEntryCategory dec ON dec.categoryId = pc.categoryId " +
 			"JOIN DataEntry de ON de.entryId = dec.entryId " +
-			"WHERE de.studyId = studyId " +
+			"WHERE de.studyId = :studyId " +
 			"GROUP BY pc.dvcat, dc.colour")
 	List<PdCategoryGraphDataDTO> findPdCategoryGraphDataByStudyId(@Param("studyId") String studyId);
 

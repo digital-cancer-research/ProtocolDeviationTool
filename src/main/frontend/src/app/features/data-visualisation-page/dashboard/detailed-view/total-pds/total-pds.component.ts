@@ -61,7 +61,6 @@ export class TotalPdsComponent {
   ) {
     userService.currentUserSelectedTeam$.subscribe(team => this.selectedTeam = team);
     route.queryParams.subscribe(() => {
-      console.log("Changed Study")
       this.hasStudyChanged = true;
     });
   }
