@@ -14,13 +14,13 @@ public class UserService {
 
     public UserAccount findUserById(Integer id) {
         UserAccount user = userAccountRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new UserNotFoundException(id));
         return user;
     };
 
     public UserAccount updateUser(Integer id, UserAccount user) {
         UserAccount currentUser = userAccountRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new UserNotFoundException(id));
 
         currentUser.setUsername(user.getUsername());
         currentUser.setRoleId(user.getRoleId());
