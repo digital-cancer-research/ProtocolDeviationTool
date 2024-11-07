@@ -14,7 +14,7 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiError {
 
-    private HttpStatus status;
+    private Integer statusCode;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-mm-yyyy HH:mm:ss")
     private LocalDateTime timestamp;
     private String message;
@@ -24,24 +24,24 @@ public class ApiError {
     ApiError() {
         timestamp = LocalDateTime.now();
         message = "Unexpected error. Please try again later or contact adminstrator if issue persists.";
-        this.status = HttpStatus.INTERNAL_SERVER_ERROR;
+        this.statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
     }
 
     ApiError(HttpStatus status) {
         this();
-        this.status = status;
+        this.statusCode = status.value();
     }
  
     ApiError(HttpStatus status, Throwable ex) {
         this();
-        this.status = status;
+        this.statusCode = status.value();
         this.message = "Unexpected error";
         this.debugMessage = ex.getLocalizedMessage();
     }
  
     ApiError(HttpStatus status, String message, Throwable ex) {
         this();
-        this.status = status;
+        this.statusCode = status.value();
         this.message = message;
         this.debugMessage = ex.getLocalizedMessage();
     }
