@@ -35,6 +35,7 @@ import { TotalPdsOverTimeComponent } from './dashboard/detailed-view/total-pds-o
 import { DvcatDvdecodBreakdownGraphComponent } from './dashboard/detailed-view/total-pds/dvcat-dvdecod-breakdown-graph/dvcat-dvdecod-breakdown-graph.component';
 import { DvdecodGraphComponent } from './dashboard/detailed-view/total-pds/dvdecod-graph/dvdecod-graph.component';
 import { ActivatedRoute } from '@angular/router';
+import { MatMenuModule } from '@angular/material/menu';
 
 @NgModule({
   declarations: [
@@ -73,6 +74,7 @@ import { ActivatedRoute } from '@angular/router';
     SharedModule,
     MatDialogModule,
     MatRadioModule,
+    MatMenuModule
   ],
 })
 

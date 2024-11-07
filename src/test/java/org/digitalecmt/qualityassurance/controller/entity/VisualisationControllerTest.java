@@ -35,26 +35,26 @@ public class VisualisationControllerTest {
     public void testGetPdCategoryDataSuccess() {
         Integer teamId = 1;
         List<PdCategoryGraphDataDTO> mockData = Arrays.asList(new PdCategoryGraphDataDTO(), new PdCategoryGraphDataDTO());
-        when(visualisationService.findPdCategoryGraphData(teamId)).thenReturn(mockData);
+        when(visualisationService.findPdCategoryGraphDataByTeam(teamId)).thenReturn(mockData);
 
-        ResponseEntity<List<PdCategoryGraphDataDTO>> response = visualisationController.getPdCategoryData(teamId);
+        ResponseEntity<List<PdCategoryGraphDataDTO>> response = visualisationController.getPdCategoryDataByTeam(teamId);
 
         assertEquals(OK, response.getStatusCode());
         assertEquals(mockData, response.getBody());
-        verify(visualisationService, times(1)).findPdCategoryGraphData(teamId);
+        verify(visualisationService, times(1)).findPdCategoryGraphDataByTeam(teamId);
     }
 
     @Test
     public void testGetPdCategoryBreakdownDataSuccess() {
         Integer teamId = 1;
         DvcatDvdecodGraphDataDTO mockGraphData = new DvcatDvdecodGraphDataDTO();
-        when(visualisationService.findPdCategoryBreakdownGraphData(teamId)).thenReturn(mockGraphData);
+        when(visualisationService.findPdCategoryBreakdownGraphDataByTeam(teamId)).thenReturn(mockGraphData);
 
-        ResponseEntity<DvcatDvdecodGraphDataDTO> response = visualisationController.getPdCategoryBreakdownData(teamId);
+        ResponseEntity<DvcatDvdecodGraphDataDTO> response = visualisationController.getPdCategoryBreakdownDataByTeam(teamId);
 
         assertEquals(OK, response.getStatusCode());
         assertEquals(mockGraphData, response.getBody());
-        verify(visualisationService, times(1)).findPdCategoryBreakdownGraphData(teamId);
+        verify(visualisationService, times(1)).findPdCategoryBreakdownGraphDataByTeam(teamId);
     }
 
     @Test

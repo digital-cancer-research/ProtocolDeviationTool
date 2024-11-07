@@ -4,6 +4,7 @@ export interface PdDvdecodBarGraphData {
 }
 
 export interface PdDvdecod {
+    studyId: string;
     dvcat: string;
     dvdecod: string;
     count: number[];
@@ -11,6 +12,7 @@ export interface PdDvdecod {
 }
 
 export interface DvdecodData {
+    studyId: string;
     dvcat: string;
     dvdecod: string;
     count: number;
