@@ -2,6 +2,7 @@ package org.digitalecmt.qualityassurance.exceptions;
 
 import java.util.Date;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,5 +19,14 @@ public class GlobalExceptionHandler {
         errorObject.setMessage(ex.getMessage());
         errorObject.setTimestamp(new Date());
         return new ResponseEntity<>(errorObject, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<ErrorObject> handleDataAccessException(DataAccessException ex, WebRequest webRequest) {
+        ErrorObject errorObject = new ErrorObject();
+        errorObject.setStatusCode(HttpStatus.SERVICE_UNAVAILABLE.value());
+        errorObject.setMessage(ex.getMessage());
+        errorObject.setTimestamp(new Date());
+        return new ResponseEntity<>(errorObject, HttpStatus.SERVICE_UNAVAILABLE);
     }
 }

@@ -44,6 +44,7 @@ import org.digitalecmt.qualityassurance.repository.RoleRepository;
 import org.digitalecmt.qualityassurance.repository.TeamRepository;
 import org.digitalecmt.qualityassurance.repository.UserAccountRepository;
 import org.digitalecmt.qualityassurance.repository.UserTeamRepository;
+import org.digitalecmt.qualityassurance.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,49 +64,52 @@ import java.util.logging.Logger;
 @RequestMapping("/api/users")
 public class UserController {
 
-	private Logger log = Logger.getLogger(UserController.class.getName());
-	
-	private String currentUsername = "Default User";
+    private Logger log = Logger.getLogger(UserController.class.getName());
+
+    private String currentUsername = "Default User";
     private Integer currentUserId = 1;
-	
+
     @Autowired
     private UserAccountRepository userRepository;
-    
+
     @Autowired
     private TeamRepository teamRepository;
-    
+
     @Autowired
     private UserTeamRepository userTeamRepository;
-    
+
     @Autowired
     private RoleRepository roleRepository;
-    
+
     @Autowired
     private DataEntryRepository dataEntryRepository;
-    
+
     @Autowired
     private CurrentSitesRepository currentSitesRepository;
-    
+
     @Autowired
     private AuditTrailRepository auditTrailRepository;
-    
+
+    @Autowired
+    private UserService userService;
+
     @PostMapping("/setCurrentUser")
     public ResponseEntity<Void> setCurrentUser(@RequestBody String username) {
         this.currentUsername = username;
         this.currentUserId = userRepository.getUserIdByUsername(username);
-        
+
         if (currentUserId == null) {
             // Handle case where userId could not be retrieved
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().build();
     }
-    
+
     // Create a new user
     @PostMapping
     public ResponseEntity<UserAccount> createUser(@RequestBody UserAccount user) {
         try {
-        	UserAccount newUser = userRepository.save(user);
+            UserAccount newUser = userRepository.save(user);
             return new ResponseEntity<>(newUser, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -115,41 +119,60 @@ public class UserController {
     // Get all users
     @GetMapping
     public ResponseEntity<List<UserAccount>> getAllUsers() {
-    	try {
-	        List<UserAccount> users = userRepository.findAll();
-	        return new ResponseEntity<>(users, HttpStatus.OK);
-    	} catch (Exception e) {
+        try {
+            List<UserAccount> users = userRepository.findAll();
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    // Get a single user by ID
+    @Deprecated(forRemoval = true)
     @GetMapping("/user")
+    /**
+     * Retrieves a user by their unique identifier.
+     *
+     * @param userId The unique identifier of the user to retrieve.
+     * @return A ResponseEntity containing the retrieved user with an HTTP 200
+     *         status code if found,
+     *         or a ResponseEntity containing a UserNotFoundException, with an HTTP
+     *         400 status code, if the user is not found.
+     * @deprecated This method is deprecated and will be removed in a future
+     *             release.
+     *             Please use the {@link #findUserById(int)} method instead.
+     *             Deprecated because of endpoint change.
+     */
     public ResponseEntity<UserAccount> getUserById(@RequestParam int userId) {
-        Optional<UserAccount> userData = userRepository.findById(userId);
-
-        if (userData.isPresent()) {
-            return new ResponseEntity<>(userData.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(userService.findUserById(userId), HttpStatus.OK);
     }
 
-    // Update a user by ID
+    /**
+     * Retrieves a user by their unique identifier.
+     *
+     * @param userId The unique identifier of the user to retrieve.
+     * @return A ResponseEntity containing the retrieved user with an HTTP 200
+     *         status code if found,
+     *         or a ResponseEntity containing a UserNotFoundException, with an HTTP
+     *         400 status code, if the user is not found.
+     */
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserAccount> findUserById(@PathVariable(required = true) int userId) {
+        return new ResponseEntity<>(userService.findUserById(userId), HttpStatus.OK);
+    }
+
+    /**
+     * Updates a user's information in the database.
+     *
+     * @param userId The unique identifier of the user to update.
+     * @param user   The updated user information.
+     * @return A ResponseEntity containing the updated user information, with an
+     *         HTTP 200 status code.
+     *         or a ResponseEntity containing a UserNotFoundException, with an HTTP
+     *         400 status code, if the user is not found.
+     */
     @PutMapping("/{userId}")
     public ResponseEntity<UserAccount> updateUser(@PathVariable int userId, @RequestBody UserAccount user) {
-        Optional<UserAccount> userData = userRepository.findById(userId);
-
-        if (userData.isPresent()) {
-            UserAccount existingUser = userData.get();
-            existingUser.setUsername(user.getUsername());
-            existingUser.setRoleId(user.getRoleId());
-            existingUser.setIsSite(user.getIsSite());
-            existingUser.setIsSponsor(user.getIsSponsor());
-            return new ResponseEntity<>(userRepository.save(existingUser), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(userService.updateUser(userId, user), HttpStatus.OK);
     }
 
     // Delete a user by ID
@@ -162,8 +185,8 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
-	// Check if current user is an admin
+
+    // Check if current user is an admin
     @GetMapping("/check-admin-role")
     public ResponseEntity<Boolean> checkAdminRole(@RequestParam String username) {
         // Use the username to fetch the user's role from the database
@@ -178,70 +201,71 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
         }
     }
-    
+
     @GetMapping("/user-id")
     public ResponseEntity<Integer> getUserIdByUsername(@RequestParam String username) {
-    	try {
-	        Integer userId = userRepository.getUserIdByUsername(username);
-	        return ResponseEntity.ok(userId);
-    	} catch (Exception e) {
+        try {
+            Integer userId = userRepository.getUserIdByUsername(username);
+            return ResponseEntity.ok(userId);
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        
+
     }
-    
+
     @GetMapping("/get-current-user-teams")
     public ResponseEntity<List<UserWithTeamDTO>> getUserTeams(@RequestParam("userId") Integer userId) {
-    	try {
-	        List<UserWithTeamDTO> teams = userTeamRepository.findUserTeamsByUserId(userId);
-	        return new ResponseEntity<>(teams, HttpStatus.OK);
-    	} catch (Exception e) {
+        try {
+            List<UserWithTeamDTO> teams = userTeamRepository.findUserTeamsByUserId(userId);
+            return new ResponseEntity<>(teams, HttpStatus.OK);
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @GetMapping("/get-users-with-roles")
     public ResponseEntity<List<UserWithRoleDTO>> getUsersWithRoles() {
-    	try {
-	        List<UserWithRoleDTO> usersWithRolesTeams = userRepository.findUsersWithRoles();
-	        return new ResponseEntity<>(usersWithRolesTeams, HttpStatus.OK);
-    	} catch (Exception e) {
+        try {
+            List<UserWithRoleDTO> usersWithRolesTeams = userRepository.findUsersWithRoles();
+            return new ResponseEntity<>(usersWithRolesTeams, HttpStatus.OK);
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @GetMapping("/get-user-teams")
     public ResponseEntity<List<UserWithTeamDTO>> getUserTeams() {
-    	try {
-	        List<UserWithTeamDTO> teams = userTeamRepository.findUsersWithTeams();
-	        return new ResponseEntity<>(teams, HttpStatus.OK);
-    	} catch (Exception e) {
+        try {
+            List<UserWithTeamDTO> teams = userTeamRepository.findUsersWithTeams();
+            return new ResponseEntity<>(teams, HttpStatus.OK);
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @GetMapping("/get-roles")
     public ResponseEntity<List<Role>> getRoles() {
-    	try {
-	        List<Role> roles = roleRepository.findAll();
-	        return new ResponseEntity<>(roles, HttpStatus.OK);
-    	} catch (Exception e) {
+        try {
+            List<Role> roles = roleRepository.findAll();
+            return new ResponseEntity<>(roles, HttpStatus.OK);
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @GetMapping("/get-teams")
     public ResponseEntity<List<Team>> getTeams() {
-    	try {
-	        List<Team> teams = teamRepository.findAll();
-	        return new ResponseEntity<>(teams, HttpStatus.OK);
-    	} catch (Exception e) {
+        try {
+            List<Team> teams = teamRepository.findAll();
+            return new ResponseEntity<>(teams, HttpStatus.OK);
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @PostMapping("/change-user-role/{userId}")
-    public ResponseEntity<HttpStatus> changeUserRole(@PathVariable int userId, @RequestBody RoleChangeDTO roleChangeDTO) {
+    public ResponseEntity<HttpStatus> changeUserRole(@PathVariable int userId,
+            @RequestBody RoleChangeDTO roleChangeDTO) {
         try {
             Optional<UserAccount> userData = userRepository.findById(userId);
             List<Role> roles = roleRepository.findAll();
@@ -250,7 +274,7 @@ public class UserController {
                 UserAccount user = userData.get();
                 int oldRole = user.getRoleId();
                 user.setRoleId(roleChangeDTO.getNewRoleId());
-                
+
                 // Log the audit information
                 LocalDateTime currentLocalDateTime = LocalDateTime.now();
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
@@ -261,15 +285,15 @@ public class UserController {
                 audit.setEntityChanged(user.getUsername());
                 audit.setAttributeChanged("Changed User Role");
                 audit.setChangeFrom(roleRepository.findById(oldRole).map(Role::getRoleName).orElse(null));
-                audit.setChangeTo(roleRepository.findById(roleChangeDTO.getNewRoleId()).map(Role::getRoleName).orElse(null));
+                audit.setChangeTo(
+                        roleRepository.findById(roleChangeDTO.getNewRoleId()).map(Role::getRoleName).orElse(null));
                 audit.setDateTimeEdited(dateTimeEdited);
                 userRepository.save(user);
-                
-                
+
                 if (String.valueOf(oldRole) != String.valueOf(roleChangeDTO.getNewRoleId())) {
-                	auditTrailRepository.save(audit);
+                    auditTrailRepository.save(audit);
                 }
-                
+
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -278,67 +302,66 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @Transactional
     @PostMapping("/change-user-team")
     public ResponseEntity<HttpStatus> changeUserTeam(@RequestBody TeamChangeDTO teamChangeDTO) {
-        try {          
-        	
-        	// Fetch existing UserTeam entries for the given userId
-        	List<UserTeam> oldTeams = userTeamRepository.findByUserId(teamChangeDTO.getUserId());
-        	Optional<UserAccount> userData = userRepository.findById(teamChangeDTO.getUserId());
-        	UserAccount user = userData.get();
+        try {
 
-        	// Extract IDs from existing UserTeam entries and store them in a list
-        	List<Integer> oldTeamIds = new ArrayList<>();
-        	for (UserTeam userTeam : oldTeams) {
-        	    oldTeamIds.add(userTeam.getTeamId());
-        	}
+            // Fetch existing UserTeam entries for the given userId
+            List<UserTeam> oldTeams = userTeamRepository.findByUserId(teamChangeDTO.getUserId());
+            Optional<UserAccount> userData = userRepository.findById(teamChangeDTO.getUserId());
+            UserAccount user = userData.get();
+
+            // Extract IDs from existing UserTeam entries and store them in a list
+            List<Integer> oldTeamIds = new ArrayList<>();
+            for (UserTeam userTeam : oldTeams) {
+                oldTeamIds.add(userTeam.getTeamId());
+            }
 
             // Delete existing UserTeam entries for the given userId
             userTeamRepository.deleteByUserId(teamChangeDTO.getUserId());
             List<Integer> newTeams = new ArrayList<>();
 
-             	// Add the teams for the user
-                for (Integer team : teamChangeDTO.getTeamId()) {
-                    UserTeam userTeam = new UserTeam();
-                    userTeam.setUserId(teamChangeDTO.getUserId());
-                    userTeam.setTeamId(team);
-                    userTeamRepository.save(userTeam);
-                    newTeams.add(team);
-                }
-                
-                // Log the audit information
-                LocalDateTime currentLocalDateTime = LocalDateTime.now();
-                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
-                String dateTimeEdited = currentLocalDateTime.format(dateTimeFormatter);
+            // Add the teams for the user
+            for (Integer team : teamChangeDTO.getTeamId()) {
+                UserTeam userTeam = new UserTeam();
+                userTeam.setUserId(teamChangeDTO.getUserId());
+                userTeam.setTeamId(team);
+                userTeamRepository.save(userTeam);
+                newTeams.add(team);
+            }
 
-                AuditTrail audit = new AuditTrail();
-                audit.setUserId(currentUserId);
-                audit.setEntityChanged(user.getUsername());
-                audit.setAttributeChanged("Changed User Team");
-                audit.setChangeFrom(String.valueOf(oldTeams));
-                audit.setChangeTo(String.valueOf(newTeams));
-                audit.setDateTimeEdited(dateTimeEdited);
-                if (String.valueOf(oldTeams) != String.valueOf(newTeams)) {
-                	auditTrailRepository.save(audit);
-                }
+            // Log the audit information
+            LocalDateTime currentLocalDateTime = LocalDateTime.now();
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
+            String dateTimeEdited = currentLocalDateTime.format(dateTimeFormatter);
 
-                return new ResponseEntity<>(HttpStatus.OK);
+            AuditTrail audit = new AuditTrail();
+            audit.setUserId(currentUserId);
+            audit.setEntityChanged(user.getUsername());
+            audit.setAttributeChanged("Changed User Team");
+            audit.setChangeFrom(String.valueOf(oldTeams));
+            audit.setChangeTo(String.valueOf(newTeams));
+            audit.setDateTimeEdited(dateTimeEdited);
+            if (String.valueOf(oldTeams) != String.valueOf(newTeams)) {
+                auditTrailRepository.save(audit);
+            }
+
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             // Handle any exceptions that occur during processing
-        	System.out.println("An error occurred while updating teams: " + e.getMessage());
+            System.out.println("An error occurred while updating teams: " + e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    
     @PostMapping("/add-user-with-role-team")
     public ResponseEntity<UserAccount> addUserWithRoleAndTeam(@RequestBody UserWithRoleTeamDTO userRoleTeamDTO) {
         try {
 
             UserAccount newUser = new UserAccount();
-            
+
             // Get the current time
             LocalDateTime currentLocalDateTime = LocalDateTime.now();
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
@@ -357,7 +380,7 @@ public class UserController {
                 userTeam.setTeamId(team);
                 userTeamRepository.save(userTeam);
             }
-            
+
             // Log the audit information
             AuditTrail audit = new AuditTrail();
             audit.setUserId(currentUserId);
@@ -367,7 +390,7 @@ public class UserController {
             audit.setChangeTo(userRoleTeamDTO.getUsername());
             audit.setDateTimeEdited(dateTimeEdited);
             if (null != userRoleTeamDTO.getUsername()) {
-            	auditTrailRepository.save(audit);
+                auditTrailRepository.save(audit);
             }
 
             return new ResponseEntity<>(newUserAccount, HttpStatus.CREATED);
@@ -376,24 +399,24 @@ public class UserController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @GetMapping("/get-teams-with-username")
     public ResponseEntity<List<TeamWithUsernameDTO>> getTeamsWithUsername() {
-    	try {
-	        List<TeamWithUsernameDTO> teams = teamRepository.findTeamsWithUsername();
-	        return new ResponseEntity<>(teams, HttpStatus.OK);
-    	} catch (Exception e) {
+        try {
+            List<TeamWithUsernameDTO> teams = teamRepository.findTeamsWithUsername();
+            return new ResponseEntity<>(teams, HttpStatus.OK);
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     // Create a new team
     @PostMapping("/create-new-team")
     public ResponseEntity<Team> createTeam(@RequestBody TeamWithUsernameDTO teamWithUsernameDTO) {
         try {
 
             Team newTeam = new Team();
-            
+
             // Get the current time
             LocalDateTime currentLocalDateTime = LocalDateTime.now();
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
@@ -404,7 +427,7 @@ public class UserController {
             newTeam.setTeamName(teamWithUsernameDTO.getTeamName());
             newTeam.setUserId(teamWithUsernameDTO.getUserId());
             Team newTeamData = teamRepository.save(newTeam);
-            
+
             // Log the audit information
             AuditTrail audit = new AuditTrail();
             audit.setUserId(currentUserId);
@@ -414,17 +437,16 @@ public class UserController {
             audit.setChangeTo(String.valueOf(teamWithUsernameDTO.getTeamName()));
             audit.setDateTimeEdited(dateTimeEdited);
             if (null != String.valueOf(teamWithUsernameDTO.getTeamName())) {
-            	auditTrailRepository.save(audit);
+                auditTrailRepository.save(audit);
             }
-            
-           
+
             return new ResponseEntity<>(newTeamData, HttpStatus.CREATED);
         } catch (Exception e) {
             System.out.println("An error occurred while adding team: " + e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     // Delete a team
     @PostMapping("/delete-team/{teamId}")
     public ResponseEntity<HttpStatus> deleteTeam(@PathVariable int teamId) {
@@ -451,9 +473,9 @@ public class UserController {
                 audit.setChangeTo(null);
                 audit.setDateTimeEdited(dateTimeEdited);
                 if (null != String.valueOf(teamToDelete.getTeamName())) {
-                	auditTrailRepository.save(audit);
+                    auditTrailRepository.save(audit);
                 }
-                
+
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -463,8 +485,8 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
-	// Change the team name
+
+    // Change the team name
     @PostMapping("/change-team-name/{teamId}")
     public ResponseEntity<HttpStatus> changeTeamName(@PathVariable int teamId, @RequestBody String newTeamName) {
         try {
@@ -473,32 +495,31 @@ public class UserController {
             Optional<Team> optionalTeam = teamRepository.findById(teamId);
             if (optionalTeam.isPresent()) {
                 Team team = optionalTeam.get();
-                
+
                 AuditTrail audit = new AuditTrail();
                 audit.setEntityChanged(team.getTeamName());
                 String oldTeamName = team.getTeamName();
                 audit.setChangeFrom(oldTeamName);
-                
+
                 // Update the team's name
                 team.setTeamName(newTeamName);
-                
+
                 // Save the updated team to the database
                 Team updatedTeam = teamRepository.save(team);
-                
+
                 // Log the audit information
                 LocalDateTime currentLocalDateTime = LocalDateTime.now();
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
                 String dateTimeEdited = currentLocalDateTime.format(dateTimeFormatter);
 
-                
                 audit.setUserId(currentUserId);
                 audit.setAttributeChanged("Change Team Name");
                 audit.setChangeTo(newTeamName);
                 audit.setDateTimeEdited(dateTimeEdited);
                 if (oldTeamName != newTeamName) {
-                	auditTrailRepository.save(audit);
+                    auditTrailRepository.save(audit);
                 }
-                
+
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -508,7 +529,7 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @GetMapping("/unique-sites")
     public ResponseEntity<List<String>> getUniqueSites() {
         try {
@@ -518,7 +539,7 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @PostMapping("/update-sites")
     @Transactional
     public ResponseEntity<String> updateSites(@RequestBody List<String> siteIds) {
@@ -544,14 +565,12 @@ public class UserController {
     // Retrieve audit data
     @GetMapping("/get-audit-trail-data")
     public ResponseEntity<List<AuditTrailDTO>> getAllAuditTrails() {
-    	try {
-	        List<AuditTrailDTO> auditTrails = auditTrailRepository.findAllAuditTrails();
-	        return ResponseEntity.ok(auditTrails);
-    	} catch (Exception e) {
+        try {
+            List<AuditTrailDTO> auditTrails = auditTrailRepository.findAllAuditTrails();
+            return ResponseEntity.ok(auditTrails);
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-
 }
-
