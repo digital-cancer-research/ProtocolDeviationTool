@@ -34,8 +34,9 @@ import { TotalPdsComponent } from './dashboard/detailed-view/total-pds/total-pds
 import { TotalPdsOverTimeComponent } from './dashboard/detailed-view/total-pds-over-time/total-pds-over-time.component';
 import { DvcatDvdecodBreakdownGraphComponent } from './dashboard/detailed-view/total-pds/dvcat-dvdecod-breakdown-graph/dvcat-dvdecod-breakdown-graph.component';
 import { DvdecodGraphComponent } from './dashboard/detailed-view/total-pds/dvdecod-graph/dvdecod-graph.component';
-import { ActivatedRoute } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
+import { VisualisationService } from './dashboard/visualisation/visualisation.service';
+import { PieChartService } from './dashboard/team-pd-pie-chart/pie-chart.service';
 
 @NgModule({
   declarations: [
@@ -76,6 +77,10 @@ import { MatMenuModule } from '@angular/material/menu';
     MatRadioModule,
     MatMenuModule
   ],
+  providers: [
+    VisualisationService,
+    PieChartService
+  ]
 })
 
 export class DataVisualisationPageModule {

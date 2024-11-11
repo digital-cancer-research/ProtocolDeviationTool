@@ -30,6 +30,7 @@ import java.util.Optional;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryPerStudyDTO;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerSubcategoryPerCategoryDTO;
 import org.digitalecmt.qualityassurance.dto.Data.DataDTO;
+import org.digitalecmt.qualityassurance.dto.Visualisation.CountPerStudyDto;
 import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -121,5 +122,26 @@ public interface DataEntryRepository
 			"JOIN PdCategory pc ON pc.categoryId = dec.categoryId " +
 			"WHERE de.studyId = :studyId")
 	List<DataDTO> findPdDataByStudyId(@Param("studyId") String studyId);
+
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.Visualisation.CountPerStudyDto(de.studyId, COUNT(*)) " +
+			"FROM DataEntry de " +
+			"GROUP BY de.studyId")
+	List<CountPerStudyDto> findCountPerStudy();
+
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.Visualisation.CountPerStudyDto(de.studyId, COUNT(*)) " +
+			"FROM DataEntry de " +
+			"WHERE de.studyId IN (" +
+			"SELECT tsa.studyId " +
+			"FROM TeamStudyAccess tsa " +
+			"WHERE tsa.teamId = :teamId" +
+			") " +
+			"GROUP BY de.studyId")
+	List<CountPerStudyDto> findCountPerStudyByTeam(@Param(value = "teamId") Long teamId);
+
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.Visualisation.CountPerStudyDto(de.studyId, COUNT(*)) " +
+			"FROM DataEntry de " +
+			"WHERE de.studyId = :studyId " +
+			"GROUP BY de.studyId")
+	List<CountPerStudyDto> findCountPerStudyByStudy(@Param(value = "studyId") String studyId);
 
 }

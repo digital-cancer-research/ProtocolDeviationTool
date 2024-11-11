@@ -4,12 +4,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.digitalecmt.qualityassurance.dto.Visualisation.CountPerStudyDto;
 import org.digitalecmt.qualityassurance.dto.Visualisation.DvcatDvdecodDTO;
 import org.digitalecmt.qualityassurance.dto.Visualisation.DvcatDvdecodGraphDataDTO;
 import org.digitalecmt.qualityassurance.dto.Visualisation.DvcatDvdecodRepositoryDataDTO;
 import org.digitalecmt.qualityassurance.dto.Visualisation.PdCategoryGraphDataDTO;
 import org.digitalecmt.qualityassurance.model.persistence.DvcatColour;
 import org.digitalecmt.qualityassurance.repository.BarChartColoursRepository;
+import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.repository.DvcatColourRepository;
 import org.digitalecmt.qualityassurance.repository.PdCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,9 @@ public class VisualisationService {
 
     @Autowired
     private BarChartColoursRepository barChartColoursRepository;
+
+    @Autowired
+    private DataEntryRepository dataEntryRepository;
 
     /**
      * Retrieves a sorted list of category colors.
@@ -264,4 +269,68 @@ public class VisualisationService {
     public List<String> getPdCategories() {
         return pdCategoryRepository.findDistinctDVCat();
     }
+
+    /**
+     * Retrieves a list of count data per study from the data entry repository.
+     * 
+     * <p>
+     * This method fetches the count of entries for each study from the data entry
+     * repository.
+     * It can be used to get an overview of the distribution of entries across
+     * different studies.
+     * </p>
+     * 
+     * @return A list of {@link CountPerStudyDto} objects, where each object
+     *         contains
+     *         the study identifier and the count of entries for that study.
+     */
+    public List<CountPerStudyDto> getCountPerStudy() {
+        return dataEntryRepository.findCountPerStudy();
+    };
+
+    /**
+     * Retrieves a list of count data per study for a specific team.
+     * 
+     * <p>
+     * This method fetches the count of entries for each study associated with the
+     * specified team
+     * from the data entry repository. It can be used to get an overview of the
+     * distribution of
+     * entries across different studies for a particular team.
+     * </p>
+     * 
+     * @param teamId The unique identifier of the team for which to retrieve the
+     *               count data.
+     * @return A list of {@link CountPerStudyDto} objects, where each object
+     *         contains
+     *         the study identifier and the count of entries for that study,
+     *         specifically
+     *         for the given team.
+     */
+    public List<CountPerStudyDto> getCountPerStudy(Long teamId) {
+        return dataEntryRepository.findCountPerStudyByTeam(teamId);
+    };
+
+    /**
+     * Retrieves a list of count data for a specific study.
+     * 
+     * <p>
+     * This method fetches the count of entries for the specified study
+     * from the data entry repository. It can be used to get detailed information
+     * about the number of entries for a particular study.
+     * </p>
+     * 
+     * @param studyId The unique identifier of the study for which to retrieve the
+     *                count data.
+     * @return A list of {@link CountPerStudyDto} objects, where each object
+     *         contains
+     *         the study identifier and the count of entries for that study. In this
+     *         case,
+     *         the list will typically contain only one element since it's for a
+     *         specific study.
+     */
+    public List<CountPerStudyDto> getCountPerStudy(String studyId) {
+        return dataEntryRepository.findCountPerStudyByStudy(studyId);
+    };
+
 }
