@@ -107,7 +107,7 @@ export class DvcatDvdecodBreakdownGraphService {
           };
         })
       },
-      options: this.getSkeletonChartOptions(false),
+      options: this.getSkeletonChartOptions(),
     });
   }
 
@@ -214,10 +214,9 @@ export class DvcatDvdecodBreakdownGraphService {
 
   /**
    * Retrieves the options for the skeleton chart.
-   * @param {boolean} isLegendVisible - Indicates if the legend should be visible.
    * @returns {ChartOptions} The skeleton chart options.
    */
-  getSkeletonChartOptions(isLegendVisible: boolean): ChartOptions {
+  getSkeletonChartOptions(): ChartOptions {
     const colour = '#EFF1f6';
     const defaultChartOptions = this.getChartOptions(false);
     return {

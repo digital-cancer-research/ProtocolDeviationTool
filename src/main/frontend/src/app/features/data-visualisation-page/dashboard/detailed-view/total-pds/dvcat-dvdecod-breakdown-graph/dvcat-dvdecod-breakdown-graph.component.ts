@@ -1,12 +1,13 @@
 import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Chart, CategoryScale } from 'chart.js';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { UtilsService } from 'src/app/core/services/utils.service';
-import { UserService } from 'src/app/core/services/user.service'; 
+import { UserService } from 'src/app/core/services/user.service';
 import { DvcatDvdecodBreakdownGraphService } from './dvcat-dvdecod-breakdown-graph.service';
 import { DataVisualisationService } from 'src/app/features/data-visualisation-page/data-visualisation.service';
-import { PdDvdecod, DvdecodData } from 'src/app/features/data-visualisation-page/models/team-pd-dvdecod-bar-graph-data.model';
+import { PdDvdecod, DvdecodData, PdDvdecodBarGraphData } from 'src/app/features/data-visualisation-page/models/team-pd-dvdecod-bar-graph-data.model';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-dvcat-dvdecod-breakdown-graph',
@@ -39,6 +40,9 @@ export class DvcatDvdecodBreakdownGraphComponent {
 
   /** Subscription for visualisation service to track data changes. */
   private visSubscription!: Subscription;
+
+  /** Currently selected studyId */
+  private studyId?: string;
 
   /** The labels for the chart categories. */
   public labels: string[] = this.dataVisualisationService.pdCategories;
@@ -74,8 +78,11 @@ export class DvcatDvdecodBreakdownGraphComponent {
   constructor(
     private userService: UserService,
     private dataVisualisationService: DataVisualisationService,
-    private dvcatDvdecodBreakdownGraphService: DvcatDvdecodBreakdownGraphService
-  ) { }
+    private dvcatDvdecodBreakdownGraphService: DvcatDvdecodBreakdownGraphService,
+    private route: ActivatedRoute
+  ) {
+
+  }
 
   /**
    * Lifecycle hook that is called after the component's view has been fully initialised.
@@ -83,7 +90,10 @@ export class DvcatDvdecodBreakdownGraphComponent {
    */
   ngAfterViewInit(): void {
     this.createSkeletonChart();
-    this.subscribeToSelectedTeam();
+    this.route.queryParams.subscribe(params => {
+      this.studyId = params['studyId'];
+      this.updateData();
+    });
   }
 
   /**
@@ -96,16 +106,19 @@ export class DvcatDvdecodBreakdownGraphComponent {
     if (this.chart) this.chart.destroy();
   }
 
-  /**
-   * Subscribes to the currently selected team from the user service.
-   * Loads bar graph data if a team is selected, otherwise handles errors.
-   */
-  private subscribeToSelectedTeam(): void {
-    this.userSubscription = this.userService.currentUserSelectedTeam$.subscribe({
+  updateData() {
+    let apiRequest: Observable<PdDvdecodBarGraphData> | null = null;
+    if (this.studyId !== undefined) {
+      apiRequest = this.dataVisualisationService.getPdDvdecodBarGraphDataByStudy$(this.studyId);
+    }
+    this.userService.currentUserSelectedTeam$.subscribe({
       next: (team) => {
         this.isDataLoading = false;
-        if (team) {
-          this.loadBarGraphData(team.teamId);
+        if (team !== null) {
+          if (apiRequest === null) { 
+            apiRequest = this.dataVisualisationService.getPdDvdecodBarGraphDataByTeam$(team.teamId);
+          }
+          this.fetchGraphData(apiRequest);
         } else {
           this.errorMessage = `An error occurred while trying to load the data - no team selected. 
           Please select a team and try again.`;
@@ -118,29 +131,24 @@ export class DvcatDvdecodBreakdownGraphComponent {
         this.handleError();
       }
     });
-  }
 
-  /**
-   * Loads the bar graph data for the specified team ID from the visualisation service.
-   * 
-   * @param teamId - The ID of the team for which to load the data.
-   */
-  private loadBarGraphData(teamId: number): void {
-    this.visSubscription = this.dataVisualisationService.getPdDvdecodBarGraphData$(teamId)
-      .subscribe({
-        next: (response) => {
-          this.labels = response.dvcats;
-          this.selectedLabels = this.labels;
-          this.data = response.data;
-          this.filteredData = this.data;
-          this.createChart();
-        },
-        error: (error) => {
-          this.errorMessage = error.message || `An error occurred while trying to load the data. 
-          Please try again later.`;
-          this.handleError();
-        }
-      });
+  };
+
+  fetchGraphData(apiRequest: Observable<PdDvdecodBarGraphData>): void {
+    this.visSubscription = apiRequest.subscribe({
+      next: (response) => {
+        this.labels = response.dvcats;
+        this.selectedLabels = this.labels;
+        this.data = response.data;
+        this.filteredData = this.data;
+        this.createChart();
+      },
+      error: (error) => {
+        this.errorMessage = error.message || `An error occurred while trying to load the data. 
+      Please try again later.`;
+        this.handleError();
+      }
+    });
   }
 
   /**

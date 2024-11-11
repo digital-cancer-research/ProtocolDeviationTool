@@ -19,7 +19,7 @@ export class CategoryBarGraphComponent implements OnInit {
     this.userService.currentUserSelectedTeam$.subscribe((team) => {
       if (team !== null) {
         this.team = team;
-        this.dataVisualisationService.getCategoryBarGraphData$(team.teamId)
+        this.dataVisualisationService.getCategoryBarGraphDataByTeam$(team.teamId)
           .subscribe(data => {
             this.data = data.sort((a,b) => a.count - b.count);
             this.createChart();

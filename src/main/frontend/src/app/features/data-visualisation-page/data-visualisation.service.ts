@@ -37,11 +37,19 @@ export class DataVisualisationService {
     return this.http.get<string[]>(`${this.baseUrl}/bar-chart-colours`);
   }
 
-  getCategoryBarGraphData$(teamId: number): Observable<CategoryBarGraphData[]> {
+  getCategoryBarGraphDataByTeam$(teamId: number): Observable<CategoryBarGraphData[]> {
     return this.http.get<CategoryBarGraphData[]>(`${this.baseUrl}/team-pd-categories?teamId=${teamId}`);
   }
+  
+  getCategoryBarGraphDataByStudy$(studyId: string): Observable<CategoryBarGraphData[]> {
+    return this.http.get<CategoryBarGraphData[]>(`${this.baseUrl}/team-pd-categories?studyId=${studyId}`);
+  }
 
-  getPdDvdecodBarGraphData$(teamId: number): Observable<PdDvdecodBarGraphData> {
+  getPdDvdecodBarGraphDataByTeam$(teamId: number): Observable<PdDvdecodBarGraphData> {
     return this.http.get<PdDvdecodBarGraphData>(`${this.baseUrl}/team-pd-categories/dvdecod-breakdown?teamId=${teamId}`);
+  }
+  
+  getPdDvdecodBarGraphDataByStudy$(studyId: string): Observable<PdDvdecodBarGraphData> {
+    return this.http.get<PdDvdecodBarGraphData>(`${this.baseUrl}/team-pd-categories/dvdecod-breakdown?studyId=${studyId}`);
   }
 }

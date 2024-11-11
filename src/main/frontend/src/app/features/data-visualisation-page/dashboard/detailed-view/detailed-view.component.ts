@@ -50,7 +50,7 @@ export class DetailedViewComponent {
             map(studies => [team.teamName, ...studies])
           );
         } else {
-          return of(['1', '2']);
+          return of();
         }
       })
     );
