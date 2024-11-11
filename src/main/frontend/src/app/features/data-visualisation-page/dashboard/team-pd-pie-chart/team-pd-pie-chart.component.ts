@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
+import distinctColors from 'distinct-colors';
 import { EntryCountPerStudyDTO } from 'src/app/category-pie-graph/category-pie-graph.model';
 import { CategoryPieGraphService } from 'src/app/category-pie-graph/category-pie-graph.service';
 import { Team } from 'src/app/core/models/team.model';
@@ -14,17 +15,22 @@ export class TeamPdPieChartComponent implements OnInit {
   chart!: Chart<'pie', number[], string>;
   data: EntryCountPerStudyDTO[] = [];
   team: Team | null = null;
+  colours: string[] = []
 
   constructor(
     private categoryPieGraphService: CategoryPieGraphService,
     private userService: UserService
-  ) { 
+  ) {
     userService.currentUserSelectedTeam$.subscribe(team => this.team = team);
+    this.data = [];
   }
 
   ngOnInit(): void {
     this.categoryPieGraphService.getEntryCountPerStudy().subscribe((data) => {
       this.data = data;
+      this.colours = distinctColors({
+        count: data.length
+      }).map(colour => colour.hex('rgba'));
       this.chart = this.createChart();
     });
   }
@@ -40,7 +46,7 @@ export class TeamPdPieChartComponent implements OnInit {
         {
           data: this.data.map(study => study.entryCount),
           hoverOffset: 4,
-          backgroundColor: ['rgb(255, 99, 132)', 'rgb(54, 162, 235)', 'rgb(255, 205, 86)'],
+          backgroundColor: this.colours,
         },
       ],
     };
@@ -52,7 +58,7 @@ export class TeamPdPieChartComponent implements OnInit {
         plugins: {
           title: {
             display: true,
-            text: `Total number of PDs per study for ${this.team? this.team.teamName : 'team'}`,
+            text: `Total number of PDs per study for ${this.team ? this.team.teamName : 'team'}`,
           },
         },
       },
