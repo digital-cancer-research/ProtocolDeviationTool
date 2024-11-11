@@ -28,10 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.digitalecmt.qualityassurance.dto.CountPerStudyDTO;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryDTO;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryPerStudyDTO;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerSubcategoryPerCategoryDTO;
+import org.digitalecmt.qualityassurance.dto.Visualisation.CountPerStudyDto;
 import org.digitalecmt.qualityassurance.dto.Visualisation.DvcatDvdecodGraphDataDTO;
 import org.digitalecmt.qualityassurance.dto.Visualisation.PdCategoryGraphDataDTO;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
@@ -99,23 +99,31 @@ public class VisualisationController {
         }
     }
 
-
     /**
-     * Retrieves the count of data entries per PD category, optionally filtered by site ID.
+     * Retrieves the count of data entries per PD category, optionally filtered by
+     * site ID.
      *
      * <p>
-     * This method interacts with the {@code DataEntryRepository} and {@code PdCategoryRepository}
-     * to fetch the count of data entries per PD category. If a site ID is provided, the method
-     * will filter the data entries by the specified site. The method returns a list of
-     * {@code EntryCountPerCategoryDTO} objects, each containing the PD category and its corresponding
+     * This method interacts with the {@code DataEntryRepository} and
+     * {@code PdCategoryRepository}
+     * to fetch the count of data entries per PD category. If a site ID is provided,
+     * the method
+     * will filter the data entries by the specified site. The method returns a list
+     * of
+     * {@code EntryCountPerCategoryDTO} objects, each containing the PD category and
+     * its corresponding
      * entry count.
      * </p>
      *
-     * @param siteId the ID of the site for which to retrieve the entry counts. If null, the
+     * @param siteId the ID of the site for which to retrieve the entry counts. If
+     *               null, the
      *               entry counts will not be filtered by site.
-     * @return a {@code ResponseEntity} containing a list of {@code EntryCountPerCategoryDTO}
-     *         objects and an HTTP status of 200 (OK) if the operation is successful. If an
-     *         exception occurs during the retrieval process, an HTTP status of 500 (Internal
+     * @return a {@code ResponseEntity} containing a list of
+     *         {@code EntryCountPerCategoryDTO}
+     *         objects and an HTTP status of 200 (OK) if the operation is
+     *         successful. If an
+     *         exception occurs during the retrieval process, an HTTP status of 500
+     *         (Internal
      *         Server Error) will be returned.
      */
     @GetMapping("/entry-counts-per-category")
@@ -148,52 +156,13 @@ public class VisualisationController {
         }
     }
 
-
-    /**
-     * Retrieves the count of data entries per study, optionally filtered by site ID.
-     *
-     * @param siteId the ID of the site for which to retrieve the entry counts. If null, the
-     *               entry counts will not be filtered by site.
-     * @return a {@code ResponseEntity} containing a list of {@code CountPerStudyDTO} objects
-     *         and an HTTP status of 200 (OK) if the operation is successful. If an exception
-     *         occurs during the retrieval process, an HTTP status of 500 (Internal Server Error)
-     *         will be returned.
-     */
-    @GetMapping("/count-per-study")
-    public ResponseEntity<List<CountPerStudyDTO>> getCountPerStudy(
-            @RequestParam(required = false) String siteId) {
-        try {
-            List<CountPerStudyDTO> entryCounts = new ArrayList<>();
-
-            // Fetch all studies
-            List<String> studies = dataEntryRepository.findDistinctStudyIds();
-            for (String study : studies) {
-                Long entryCount;
-                if (siteId != null) {
-                    entryCount = dataEntryRepository.countByStudyIdAndSiteId(study, siteId);
-                } else {
-                    entryCount = dataEntryRepository.countByStudyId(study);
-                }
-                // Create DTO and add to the list
-                CountPerStudyDTO entryCountDTO = new CountPerStudyDTO();
-                entryCountDTO.setStudyId(study);
-                entryCountDTO.setEntryCount(entryCount);
-
-                entryCounts.add(entryCountDTO);
-            }
-
-            return new ResponseEntity<>(entryCounts, HttpStatus.OK);
-        } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
     /**
      * Retrieves a list of unique site IDs from the data entry repository.
      *
-     * @return a {@code ResponseEntity} containing a list of unique site IDs and an HTTP status of 200 (OK).
-     *         If an exception occurs during the retrieval process, an HTTP status of 500 (Internal Server Error)
+     * @return a {@code ResponseEntity} containing a list of unique site IDs and an
+     *         HTTP status of 200 (OK).
+     *         If an exception occurs during the retrieval process, an HTTP status
+     *         of 500 (Internal Server Error)
      *         will be returned.
      * @throws Exception if an error occurs during the retrieval process.
      */
@@ -207,15 +176,19 @@ public class VisualisationController {
         }
     }
 
-
     /**
-     * Retrieves the count of data entries per PD category and study, optionally filtered by site ID.
+     * Retrieves the count of data entries per PD category and study, optionally
+     * filtered by site ID.
      *
-     * @param siteId the ID of the site for which to retrieve the entry counts. If null, the
+     * @param siteId the ID of the site for which to retrieve the entry counts. If
+     *               null, the
      *               entry counts will not be filtered by site.
-     * @return a {@code ResponseEntity} containing a list of {@code EntryCountPerCategoryPerStudyDTO}
-     *         objects and an HTTP status of 200 (OK) if the operation is successful. If an
-     *         exception occurs during the retrieval process, an HTTP status of 500 (Internal
+     * @return a {@code ResponseEntity} containing a list of
+     *         {@code EntryCountPerCategoryPerStudyDTO}
+     *         objects and an HTTP status of 200 (OK) if the operation is
+     *         successful. If an
+     *         exception occurs during the retrieval process, an HTTP status of 500
+     *         (Internal
      *         Server Error) will be returned.
      */
     @GetMapping("/entry-counts-per-category-per-study")
@@ -231,12 +204,17 @@ public class VisualisationController {
         }
     }
 
-
     /**
-     * Retrieves the count of data entries per PD subcategory and PD category, optionally filtered by site ID.
+     * Retrieves the count of data entries per PD subcategory and PD category,
+     * optionally filtered by site ID.
      *
-     * @param siteId the ID of the site for which to retrieve the entry counts. If null, the entry counts will not be filtered by site.
-     * @return a {@code ResponseEntity} containing a list of {@code EntryCountPerSubcategoryPerCategoryDTO} objects and an HTTP status of 200 (OK) if the operation is successful. If an exception occurs during the retrieval process, an HTTP status of 500 (Internal Server Error) will be returned.
+     * @param siteId the ID of the site for which to retrieve the entry counts. If
+     *               null, the entry counts will not be filtered by site.
+     * @return a {@code ResponseEntity} containing a list of
+     *         {@code EntryCountPerSubcategoryPerCategoryDTO} objects and an HTTP
+     *         status of 200 (OK) if the operation is successful. If an exception
+     *         occurs during the retrieval process, an HTTP status of 500 (Internal
+     *         Server Error) will be returned.
      */
     @GetMapping("/entry-counts-per-subcategory-per-category")
     public ResponseEntity<List<EntryCountPerSubcategoryPerCategoryDTO>> getEntryCountsPerSubcategoryPerCategory(
@@ -250,7 +228,6 @@ public class VisualisationController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
     /**
      * Retrieves the total number of protocol deviations (PDs) for a specific team.
@@ -359,11 +336,12 @@ public class VisualisationController {
      *         object and an HTTP status of 200 (OK).
      */
     @GetMapping(path = "/team-pd-categories/dvdecod-breakdown", params = "teamId")
-    public ResponseEntity<DvcatDvdecodGraphDataDTO> getPdCategoryBreakdownDataByTeam(@RequestParam("teamId") Integer teamId) {
+    public ResponseEntity<DvcatDvdecodGraphDataDTO> getPdCategoryBreakdownDataByTeam(
+            @RequestParam("teamId") Integer teamId) {
         DvcatDvdecodGraphDataDTO graphData = visualisationService.findPdCategoryBreakdownGraphDataByTeam(teamId);
         return new ResponseEntity<>(graphData, HttpStatus.OK);
     }
-    
+
     /**
      * Retrieves PD category data broken down into dvdecods for a specific study.
      *
@@ -383,7 +361,8 @@ public class VisualisationController {
      *         object and an HTTP status of 200 (OK).
      */
     @GetMapping(path = "/team-pd-categories/dvdecod-breakdown", params = "studyId")
-    public ResponseEntity<DvcatDvdecodGraphDataDTO> getPdCategoryBreakdownDataByStudy(@RequestParam("studyId") String studyId) {
+    public ResponseEntity<DvcatDvdecodGraphDataDTO> getPdCategoryBreakdownDataByStudy(
+            @RequestParam("studyId") String studyId) {
         DvcatDvdecodGraphDataDTO graphData = visualisationService.findPdCategoryBreakdownGraphDataByStudy(studyId);
         return new ResponseEntity<>(graphData, HttpStatus.OK);
     }
@@ -392,12 +371,15 @@ public class VisualisationController {
      * Retrieves a list of colours suitable for use in a bar chart.
      *
      * <p>
-     * This method interacts with the {@code VisualisationService} to fetch a list of
-     * colours that can be used to represent different categories in a bar chart. The
+     * This method interacts with the {@code VisualisationService} to fetch a list
+     * of
+     * colours that can be used to represent different categories in a bar chart.
+     * The
      * colours are returned as a {@code ResponseEntity} containing a list of
      * {@code String} values.
      *
-     * @return a {@code ResponseEntity} containing a list of colours and an HTTP status
+     * @return a {@code ResponseEntity} containing a list of colours and an HTTP
+     *         status
      *         of 200 (OK).
      */
     @GetMapping("/bar-chart-colours")
@@ -405,22 +387,62 @@ public class VisualisationController {
         return new ResponseEntity<>(visualisationService.getBarChartColours(), HttpStatus.OK);
     }
 
-
     /**
      * Retrieves a list of PD categories from the visualisation service.
      *
      * <p>
-     * This function interacts with the {@code VisualisationService} to fetch a list of
+     * This function interacts with the {@code VisualisationService} to fetch a list
+     * of
      * PD categories that can be used for data visualization purposes. The function
      * returns a {@code ResponseEntity} containing a list of {@code String} values,
      * where each string represents a PD category.
      *
-     * @return a {@code ResponseEntity} containing a list of PD categories and an HTTP status
+     * @return a {@code ResponseEntity} containing a list of PD categories and an
+     *         HTTP status
      *         of 200 (OK).
      */
     @GetMapping("/pd-categories")
     public ResponseEntity<List<String>> getPdCategories() {
         return new ResponseEntity<>(visualisationService.getPdCategories(), HttpStatus.OK);
+    }
+
+    /**
+     * Retrieves the count of data entries per study based on the provided
+     * parameters.
+     * 
+     * <p>
+     * This method allows fetching count data either for a specific study, a
+     * specific team,
+     * or across all studies if no parameters are provided.
+     * </p>
+     * 
+     * <p>
+     * This method uses specificity to determine which studies to retrieve, with
+     * studyId parameter having the highest order, followed by the teamId and then
+     * no
+     * paramaters.
+     * </p>
+     *
+     * @param teamId  The ID of the team for which to retrieve study counts.
+     *                If null and studyId is also null, counts for all studies are
+     *                returned.
+     * @param studyId The ID of the specific study for which to retrieve the count.
+     *                If provided, this parameter takes precedence over teamId.
+     * @return A ResponseEntity containing a List of CountPerStudyDto objects and an
+     *         HTTP status code.
+     *         The list contains count data for the requested study, team or all data.
+     *         Returns HTTP status 200 (OK) if the operation is successful.
+     */
+    @GetMapping("/count-per-study")
+    public ResponseEntity<List<CountPerStudyDto>> getCountPerStudy(@RequestParam(required = false) Long teamId,
+            @RequestParam(required = false) String studyId) {
+        if (studyId != null) {
+            return new ResponseEntity<>(visualisationService.getCountPerStudy(studyId), HttpStatus.OK);
+        } else if (teamId == null) {
+            return new ResponseEntity<>(visualisationService.getCountPerStudy(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(visualisationService.getCountPerStudy(teamId), HttpStatus.OK);
+        }
     }
 
 }
