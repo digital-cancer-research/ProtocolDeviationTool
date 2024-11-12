@@ -296,6 +296,8 @@ public class VisualisationService {
      *         the study identifier and the count of entries for that study.
      */
     public List<CountPerStudyDto> getCountPerStudy() {
+        List<CountPerStudyDto> countPerStudy = dataEntryRepository.findCountPerStudy();
+        countPerStudy.sort(Comparator.comparing(CountPerStudyDto::getStudyId));
         return dataEntryRepository.findCountPerStudy();
     };
 
@@ -319,7 +321,9 @@ public class VisualisationService {
      *         for the given team.
      */
     public List<CountPerStudyDto> getCountPerStudy(Long teamId) {
-        return dataEntryRepository.findCountPerStudyByTeam(teamId);
+        List<CountPerStudyDto> countPerStudy = dataEntryRepository.findCountPerStudyByTeam(teamId);
+        countPerStudy.sort(Comparator.comparing(CountPerStudyDto::getStudyId));
+        return countPerStudy;
     };
 
     /**
@@ -361,11 +365,11 @@ public class VisualisationService {
      */
     public StudyBreakdownDataDto getStudyBreakdownDataDto() {
         List<String> studies = dataEntryRepository.findDistinctStudyIds();
+        Collections.sort(studies);
         StudyBreakdownDataDto data = StudyBreakdownDataDto.builder()
                 .studies(studies)
                 .data(getStudyData(studies))
                 .build();
-        Collections.sort(studies);
         return data;
     }
 
@@ -389,11 +393,11 @@ public class VisualisationService {
      */
     public StudyBreakdownDataDto getStudyBreakdownDataDtoByTeam(Integer teamId) {
         List<String> studies = teamStudyAccessRepository.findTeamStudiesByTeamId(teamId);
+        Collections.sort(studies);
         StudyBreakdownDataDto data = StudyBreakdownDataDto.builder()
                 .studies(studies)
                 .data(getStudyData(studies))
                 .build();
-        Collections.sort(studies);
         return data;
     }
 
@@ -418,11 +422,11 @@ public class VisualisationService {
     public StudyBreakdownDataDto getStudyBreakdownDataDtoByStudy(String studyId) {
         List<String> studies = new ArrayList<>();
         studies.add(studyId);
+        Collections.sort(studies);
         StudyBreakdownDataDto data = StudyBreakdownDataDto.builder()
                 .studies(studies)
                 .data(getStudyData(studies))
                 .build();
-        Collections.sort(studies);
         return data;
     }
 

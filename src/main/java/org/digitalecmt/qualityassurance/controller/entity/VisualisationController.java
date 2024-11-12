@@ -450,17 +450,24 @@ public class VisualisationController {
     /**
      * Retrieves a breakdown of study data based on the provided parameters.
      * 
-     * <p>This method fetches study breakdown data either for a specific study,
+     * <p>
+     * This method fetches study breakdown data either for a specific study,
      * a specific team, or for all studies if no parameters are provided. The
-     * method prioritizes the studyId parameter over the teamId parameter.</p>
+     * method prioritizes the studyId parameter over the teamId parameter.
+     * </p>
      *
      * @param teamId  The ID of the team for which to retrieve the study breakdown.
-     *                If null and studyId is also null, breakdown for all studies is returned.
-     * @param studyId The ID of the specific study for which to retrieve the breakdown.
+     *                If null and studyId is also null, breakdown for all studies is
+     *                returned.
+     * @param studyId The ID of the specific study for which to retrieve the
+     *                breakdown.
      *                If provided, this parameter takes precedence over teamId.
-     * @return A ResponseEntity containing a StudyBreakdownDataDto object and an HTTP status code.
-     *         The StudyBreakdownDataDto contains the breakdown data for the requested study,
-     *         team, or all data. Returns HTTP status 200 (OK) if the operation is successful.
+     * @return A ResponseEntity containing a StudyBreakdownDataDto object and an
+     *         HTTP status code.
+     *         The StudyBreakdownDataDto contains the breakdown data for the
+     *         requested study,
+     *         team, or all data. Returns HTTP status 200 (OK) if the operation is
+     *         successful.
      */
     @GetMapping("study-breakdown")
     public ResponseEntity<StudyBreakdownDataDto> getStudyBreakdown(@RequestParam(required = false) Integer teamId,
@@ -475,5 +482,4 @@ public class VisualisationController {
         }
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
-
 }

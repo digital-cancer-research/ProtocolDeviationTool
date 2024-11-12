@@ -4,6 +4,7 @@ import { StudyBarGraphService } from './study-bar-graph.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { mergeMap, Observable, of } from 'rxjs';
 import { StudyBarGraphData } from '../../models/study-bar-graph-data.model';
+import distinctColors from 'distinct-colors';
 
 @Component({
   selector: 'app-team-study-bar-graph',
@@ -40,6 +41,9 @@ export class TeamStudyBarGraphComponent implements OnInit {
   ngOnInit(): void {
     this.API_REQUEST.subscribe(data => {
       this.data = data;
+      this.colours = distinctColors({
+        count: data.studies.length
+      }).map(colour => colour.hex('rgba'));
       this.chart = this.createChart();
     })
   }
@@ -67,6 +71,7 @@ export class TeamStudyBarGraphComponent implements OnInit {
             stacked: true,
             ticks: {
               autoSkip: false,
+              color: this.colours
             },
             title: {
               display: true,
