@@ -1,7 +1,11 @@
 package org.digitalecmt.qualityassurance.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.digitalecmt.qualityassurance.dto.Visualisation.CountPerStudyDto;
@@ -9,11 +13,15 @@ import org.digitalecmt.qualityassurance.dto.Visualisation.DvcatDvdecodDTO;
 import org.digitalecmt.qualityassurance.dto.Visualisation.DvcatDvdecodGraphDataDTO;
 import org.digitalecmt.qualityassurance.dto.Visualisation.DvcatDvdecodRepositoryDataDTO;
 import org.digitalecmt.qualityassurance.dto.Visualisation.PdCategoryGraphDataDTO;
+import org.digitalecmt.qualityassurance.dto.Visualisation.StudyBreakdownDataDto;
+import org.digitalecmt.qualityassurance.dto.Visualisation.StudyBreakdownDto;
+import org.digitalecmt.qualityassurance.dto.Visualisation.StudyBreakdownRepositoryDataDto;
 import org.digitalecmt.qualityassurance.model.persistence.DvcatColour;
 import org.digitalecmt.qualityassurance.repository.BarChartColoursRepository;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.repository.DvcatColourRepository;
 import org.digitalecmt.qualityassurance.repository.PdCategoryRepository;
+import org.digitalecmt.qualityassurance.repository.TeamStudyAccessRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +47,9 @@ public class VisualisationService {
 
     @Autowired
     private DataEntryRepository dataEntryRepository;
+
+    @Autowired
+    private TeamStudyAccessRepository teamStudyAccessRepository;
 
     /**
      * Retrieves a sorted list of category colors.
@@ -333,4 +344,125 @@ public class VisualisationService {
         return dataEntryRepository.findCountPerStudyByStudy(studyId);
     };
 
+    /**
+     * Retrieves a StudyBreakdownDataDto object containing breakdown data for all
+     * studies.
+     * 
+     * <p>
+     * This method fetches all distinct study IDs from the data entry repository,
+     * retrieves the breakdown data for these studies, and returns it in a
+     * structured format.
+     * The list of studies is sorted before being returned.
+     * </p>
+     * 
+     * @return A StudyBreakdownDataDto object containing:
+     *         - A sorted list of all distinct study IDs
+     *         - The corresponding breakdown data for each study
+     */
+    public StudyBreakdownDataDto getStudyBreakdownDataDto() {
+        List<String> studies = dataEntryRepository.findDistinctStudyIds();
+        StudyBreakdownDataDto data = StudyBreakdownDataDto.builder()
+                .studies(studies)
+                .data(getStudyData(studies))
+                .build();
+        Collections.sort(studies);
+        return data;
+    }
+
+    /**
+     * Retrieves a StudyBreakdownDataDto object containing breakdown data for
+     * studies associated with a specific team.
+     * 
+     * <p>
+     * This method fetches all study IDs associated with the given team from the
+     * team study access repository,
+     * retrieves the breakdown data for these studies, and returns it in a
+     * structured format.
+     * The list of studies is sorted before being returned.
+     * </p>
+     * 
+     * @param teamId The unique identifier of the team for which to retrieve the
+     *               study breakdown data.
+     * @return A StudyBreakdownDataDto object containing:
+     *         - A sorted list of study IDs associated with the specified team
+     *         - The corresponding breakdown data for each study
+     */
+    public StudyBreakdownDataDto getStudyBreakdownDataDtoByTeam(Integer teamId) {
+        List<String> studies = teamStudyAccessRepository.findTeamStudiesByTeamId(teamId);
+        StudyBreakdownDataDto data = StudyBreakdownDataDto.builder()
+                .studies(studies)
+                .data(getStudyData(studies))
+                .build();
+        Collections.sort(studies);
+        return data;
+    }
+
+    /**
+     * Retrieves a StudyBreakdownDataDto object containing breakdown data for a
+     * specific study.
+     * 
+     * <p>
+     * This method creates a list containing only the specified study ID,
+     * retrieves the breakdown data for this study, and returns it in a structured
+     * format.
+     * The list of studies (containing only one study in this case) is sorted before
+     * being returned.
+     * </p>
+     * 
+     * @param studyId The unique identifier of the study for which to retrieve the
+     *                breakdown data.
+     * @return A StudyBreakdownDataDto object containing:
+     *         - A sorted list with a single study ID (the one specified)
+     *         - The corresponding breakdown data for the specified study
+     */
+    public StudyBreakdownDataDto getStudyBreakdownDataDtoByStudy(String studyId) {
+        List<String> studies = new ArrayList<>();
+        studies.add(studyId);
+        StudyBreakdownDataDto data = StudyBreakdownDataDto.builder()
+                .studies(studies)
+                .data(getStudyData(studies))
+                .build();
+        Collections.sort(studies);
+        return data;
+    }
+
+    /**
+     * Generates a list of StudyBreakdownDto objects based on the provided list of
+     * study IDs.
+     * This method processes the study data, aggregating counts for each DVCAT
+     * (Deviation Category)
+     * across all specified studies.
+     *
+     * @param studies A list of study IDs for which to generate the breakdown data.
+     * @return A list of StudyBreakdownDto objects, each representing a unique DVCAT
+     *         with its count across all specified studies and associated color.
+     *         The list contains one entry per unique DVCAT found in the data.
+     */
+    private List<StudyBreakdownDto> getStudyData(List<String> studies) {
+        List<StudyBreakdownRepositoryDataDto> reposData = dataEntryRepository.findStudyBreakdownData().stream()
+                .filter(data -> studies.contains(data.getStudyId())).collect(Collectors.toList());
+
+        Set<String> dvcats = new HashSet<>();
+        List<StudyBreakdownDto> breakdowns = new ArrayList<>();
+
+        for (StudyBreakdownRepositoryDataDto data : reposData) {
+            String dvcat = data.getDvcat();
+            if (!dvcats.contains(dvcat)) {
+                dvcats.add(dvcat);
+                List<Long> count = new ArrayList<>(Collections.nCopies(studies.size(), 0L));
+                count.set(studies.indexOf(data.getStudyId()), data.getCount());
+                StudyBreakdownDto studyBreakdown = StudyBreakdownDto.builder()
+                        .dvcat(dvcat)
+                        .count(count)
+                        .colour(dvcatColourRepository.findById(dvcat).get().getColour())
+                        .build();
+                breakdowns.add(studyBreakdown);
+            } else {
+                StudyBreakdownDto studyBreakdown = breakdowns.stream().filter(sb -> sb.getDvcat().equals(dvcat))
+                        .findFirst().get();
+                studyBreakdown.getCount().set(studies.indexOf(data.getStudyId()), data.getCount());
+            }
+        }
+        return breakdowns;
+    }
 }

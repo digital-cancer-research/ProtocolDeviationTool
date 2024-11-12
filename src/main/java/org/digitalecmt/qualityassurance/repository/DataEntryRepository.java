@@ -31,6 +31,7 @@ import org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryPerStudyDTO;
 import org.digitalecmt.qualityassurance.dto.EntryCountPerSubcategoryPerCategoryDTO;
 import org.digitalecmt.qualityassurance.dto.Data.DataDTO;
 import org.digitalecmt.qualityassurance.dto.Visualisation.CountPerStudyDto;
+import org.digitalecmt.qualityassurance.dto.Visualisation.StudyBreakdownRepositoryDataDto;
 import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -144,4 +145,11 @@ public interface DataEntryRepository
 			"GROUP BY de.studyId")
 	List<CountPerStudyDto> findCountPerStudyByStudy(@Param(value = "studyId") String studyId);
 
+	@Query("SELECT new org.digitalecmt.qualityassurance.dto.Visualisation.StudyBreakdownRepositoryDataDto(de.studyId, pc.dvcat, COUNT(*), dc.colour) " +
+	"FROM DataEntry de " +
+    "JOIN DataEntryCategory dec ON dec.entryId = de.entryId " +
+    "JOIN PdCategory pc ON pc.categoryId = dec.categoryId " +
+    "JOIN DvcatColour dc ON dc.dvcat = pc.dvcat " +
+	"GROUP BY de.studyId, pc.dvcat, dc.colour")
+	List<StudyBreakdownRepositoryDataDto> findStudyBreakdownData();
 }
