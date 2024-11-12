@@ -15,11 +15,13 @@ export class TeamStudyBarGraphComponent implements OnInit {
     studies: [],
     data: []
   }
+  teamName: string = "team";
   colours: string[] = [];
   chart!: Chart;
   private readonly API_REQUEST: Observable<StudyBarGraphData> = this.userService.currentUserSelectedTeam$.pipe(
     mergeMap(team => {
       if (team != null) {
+        this.teamName = team.teamName;
         return this.studyBarGraphService.getStudyBarGraphDataByTeam$(team.teamId);
       } else {
         return of({
@@ -83,7 +85,7 @@ export class TeamStudyBarGraphComponent implements OnInit {
         plugins: {
           title: {
             display: true,
-            text: 'Total number of PDs per category (DVCAT) per study for team',
+            text: `Total number of PDs per category (DVCAT) per study for ${this.teamName}`,
           },
         }
       },
