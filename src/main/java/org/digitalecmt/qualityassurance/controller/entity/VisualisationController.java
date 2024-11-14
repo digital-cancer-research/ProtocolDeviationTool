@@ -34,6 +34,7 @@ import org.digitalecmt.qualityassurance.dto.EntryCountPerSubcategoryPerCategoryD
 import org.digitalecmt.qualityassurance.dto.Visualisation.CountPerStudyDto;
 import org.digitalecmt.qualityassurance.dto.Visualisation.DvcatDvdecodGraphDataDTO;
 import org.digitalecmt.qualityassurance.dto.Visualisation.PdCategoryGraphDataDTO;
+import org.digitalecmt.qualityassurance.dto.Visualisation.StudyBreakdownDataDto;
 import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
 import org.digitalecmt.qualityassurance.repository.PdCategoryRepository;
 import org.digitalecmt.qualityassurance.repository.TeamRepository;
@@ -430,7 +431,8 @@ public class VisualisationController {
      *                If provided, this parameter takes precedence over teamId.
      * @return A ResponseEntity containing a List of CountPerStudyDto objects and an
      *         HTTP status code.
-     *         The list contains count data for the requested study, team or all data.
+     *         The list contains count data for the requested study, team or all
+     *         data.
      *         Returns HTTP status 200 (OK) if the operation is successful.
      */
     @GetMapping("/count-per-study")
@@ -445,4 +447,39 @@ public class VisualisationController {
         }
     }
 
+    /**
+     * Retrieves a breakdown of study data based on the provided parameters.
+     * 
+     * <p>
+     * This method fetches study breakdown data either for a specific study,
+     * a specific team, or for all studies if no parameters are provided. The
+     * method prioritizes the studyId parameter over the teamId parameter.
+     * </p>
+     *
+     * @param teamId  The ID of the team for which to retrieve the study breakdown.
+     *                If null and studyId is also null, breakdown for all studies is
+     *                returned.
+     * @param studyId The ID of the specific study for which to retrieve the
+     *                breakdown.
+     *                If provided, this parameter takes precedence over teamId.
+     * @return A ResponseEntity containing a StudyBreakdownDataDto object and an
+     *         HTTP status code.
+     *         The StudyBreakdownDataDto contains the breakdown data for the
+     *         requested study,
+     *         team, or all data. Returns HTTP status 200 (OK) if the operation is
+     *         successful.
+     */
+    @GetMapping("study-breakdown")
+    public ResponseEntity<StudyBreakdownDataDto> getStudyBreakdown(@RequestParam(required = false) Integer teamId,
+            @RequestParam(required = false) String studyId) {
+        StudyBreakdownDataDto data = new StudyBreakdownDataDto();
+        if (studyId != null) {
+            data = visualisationService.getStudyBreakdownDataDtoByStudy(studyId);
+        } else if (teamId != null) {
+            data = visualisationService.getStudyBreakdownDataDtoByTeam(teamId);
+        } else {
+            data = visualisationService.getStudyBreakdownDataDto();
+        }
+        return new ResponseEntity<>(data, HttpStatus.OK);
+    }
 }

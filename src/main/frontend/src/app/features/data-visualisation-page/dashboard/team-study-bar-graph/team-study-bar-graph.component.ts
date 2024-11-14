@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
-import { EntryCountPerCategoryPerStudyDTO } from 'src/app/category-bar-graph-segmented/category-bar-graph-segmented.model';
-import { CategoryBarGraphSegmentedService } from 'src/app/category-bar-graph-segmented/category-bar-graph-segmented.service';
+import { StudyBarGraphService } from './study-bar-graph.service';
+import { UserService } from 'src/app/core/services/user.service';
+import { mergeMap, Observable, of } from 'rxjs';
+import { StudyBarGraphData } from '../../models/study-bar-graph-data.model';
+import distinctColors from 'distinct-colors';
 
 @Component({
   selector: 'app-team-study-bar-graph',
@@ -9,40 +12,40 @@ import { CategoryBarGraphSegmentedService } from 'src/app/category-bar-graph-seg
   styleUrl: './team-study-bar-graph.component.css'
 })
 export class TeamStudyBarGraphComponent implements OnInit {
-  data: EntryCountPerCategoryPerStudyDTO[] = [];
-  transformedData: TransformedData[] = [];
+  data: StudyBarGraphData = {
+    studies: [],
+    data: []
+  }
+  teamName: string = "team";
+  colours: string[] = [];
   chart!: Chart;
-  labels: string[] = [];
+  private readonly API_REQUEST: Observable<StudyBarGraphData> = this.userService.currentUserSelectedTeam$.pipe(
+    mergeMap(team => {
+      if (team != null) {
+        this.teamName = team.teamName;
+        return this.studyBarGraphService.getStudyBarGraphDataByTeam$(team.teamId);
+      } else {
+        return of({
+          studies: [],
+          data: []
+        })
+      }
+    })
+  );
+
   constructor(
-    private categoryBarGraphSegmentedService: CategoryBarGraphSegmentedService
+    private studyBarGraphService: StudyBarGraphService,
+    private userService: UserService
   ) { }
 
   ngOnInit(): void {
-    this.categoryBarGraphSegmentedService.getEntryCountPerCategoryPerStudy()
-      .subscribe(data => {
-        this.data = data;
-        this.transformedData = this.formatData();
-        this.chart = this.createChart();
-      })
-  }
-
-  formatData() {
-    return this.data.reduce((acc: TransformedData[], item) => {
-      let existing = acc.find(obj => obj.label === item.dvcat);
-
-      if (!existing) {
-        existing = {
-          label: item.dvcat,
-          data: Array(this.labels.length).fill(0)
-        };
-        acc.push(existing);
-      }
-
-      const studyIndex = this.labels.indexOf(item.studyId);
-      existing.data[studyIndex] = item.entryCount;
-
-      return acc;
-    }, [] as TransformedData[]);
+    this.API_REQUEST.subscribe(data => {
+      this.data = data;
+      this.colours = distinctColors({
+        count: data.studies.length
+      }).map(colour => colour.hex('rgba'));
+      this.chart = this.createChart();
+    })
   }
 
   createChart() {
@@ -50,14 +53,15 @@ export class TeamStudyBarGraphComponent implements OnInit {
       this.chart.destroy();
     }
 
-    this.labels = [...new Set(this.data.map(item => item.studyId))]
-    this.transformedData = this.formatData();
-
     return new Chart('teamStudyBarGraphCanvas', {
       type: 'bar',
       data: {
-        labels: this.labels,
-        datasets: this.transformedData
+        labels: this.data.studies,
+        datasets: this.data.data.map(d => ({
+          label: d.dvcat,
+          data: d.count,
+          backgroundColor: d.colour,
+        }))
       },
       options: {
         maintainAspectRatio: false,
@@ -66,7 +70,8 @@ export class TeamStudyBarGraphComponent implements OnInit {
             beginAtZero: true,
             stacked: true,
             ticks: {
-              autoSkip: false
+              autoSkip: false,
+              color: this.colours
             },
             title: {
               display: true,
@@ -85,15 +90,10 @@ export class TeamStudyBarGraphComponent implements OnInit {
         plugins: {
           title: {
             display: true,
-            text: 'Total number of PDs per category (DVCAT) per study for team',
+            text: `Total number of PDs per category (DVCAT) per study for ${this.teamName}`,
           },
         }
       },
     });
   }
-}
-
-interface TransformedData {
-  label: string;
-  data: number[];
 }

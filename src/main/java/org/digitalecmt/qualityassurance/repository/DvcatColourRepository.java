@@ -30,5 +30,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DvcatColourRepository
-        extends JpaRepository<DvcatColour, Integer> {
+                extends JpaRepository<DvcatColour, String> {
 }
