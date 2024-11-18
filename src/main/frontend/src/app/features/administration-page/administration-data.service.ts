@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { filter, map, Observable, switchMap } from 'rxjs';
+import { map, Observable, switchMap } from 'rxjs';
 import { TeamWithStudies } from 'src/app/core/models/team-with-studies.model';
-import { Team } from 'src/app/core/models/team.model';
+import { Team } from 'src/app/core/models/team/team.model';
 import { StudyService } from 'src/app/core/services/study.service';
 import { TeamService } from 'src/app/core/services/team.service';
 
@@ -9,7 +9,7 @@ import { TeamService } from 'src/app/core/services/team.service';
   providedIn: 'root'
 })
 export class AdministrationDataService {
-  teams$ = this.teamService.teams$;
+  teams$ = this.teamService.getTeams$();
   teamsWithStudies$: Observable<TeamWithStudies[]> = new Observable();
   teams: Team[] = [];
   teamIds: number[] = [];

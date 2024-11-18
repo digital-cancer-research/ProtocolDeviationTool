@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TeamDetailsDto {
     private Integer teamId;
-    private String name;
+    private String teamName;
     private Integer userId;
     private String dateCreated;
     private String username;
@@ -34,7 +34,7 @@ public class TeamDetailsDto {
     public static TeamDetailsDto mapToDetailedTeam(Team team, UserAccountRepository userAccountRepository) {
         return TeamDetailsDto.builder()
                 .teamId(team.getTeamId())
-                .name(team.getTeamName())
+                .teamName(team.getTeamName())
                 .userId(team.getUserId())
                 .dateCreated(team.getDateCreated())
                 .username(userAccountRepository.findById(team.getUserId()).orElse(null).getUsername())

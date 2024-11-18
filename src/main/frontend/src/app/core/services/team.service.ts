@@ -1,8 +1,10 @@
-import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { Team } from '../models/team.model';
-import { TeamWithStudies } from '../models/team-with-studies.model';
+import { Observable } from 'rxjs';
+import { Team } from '../models/team/team.model';
+import { TeamWithStudies } from '../models/team/team-with-studies.model';
+import { TeamCreation } from '../models/team/team-creation.model';
+import { TeamWithDetails } from '../models/team/team-with-details.model';
 
 /**
  * Service for managing teams.
@@ -14,65 +16,81 @@ import { TeamWithStudies } from '../models/team-with-studies.model';
 })
 export class TeamService {
 
-  private teamsSubject: BehaviorSubject<Team[]> = new BehaviorSubject<Team[]>([]);
-  public teams$: Observable<Team[]> = this.teamsSubject.asObservable();
-  private readonly baseUrl = 'api/users';
-  private readonly apiUrl = 'api/teams';
+  private readonly URL = 'api/teams';
 
-  constructor(private http: HttpClient) {
-    this.getTeams();
+  constructor(private http: HttpClient) { }
+
+  /**
+   * Retrieves a list of teams from the server.
+   * 
+   * @param includeDetails - A boolean flag indicating whether to include additional details for each team.
+   *                         If true, more comprehensive team information will be fetched.
+   *                         Defaults to false.
+   * @returns void - This method does not return a value. It likely updates an internal state or triggers a subscription.
+   */
+  getTeams$(includeDetails: boolean = false): Observable<Team[] | TeamWithDetails[] | TeamWithDetails[]> {
+    const params = new HttpParams().set('includeDetails', includeDetails);
+    return this.http.get<Team[] | TeamWithDetails[]>(`${this.URL}`, { params })
   }
 
   /**
-   * Retrieves a list of teams.
+   * Adds a new team to the system.
+   * 
+   * @param newTeam - The team creation data object containing information for the new team.
+   * @returns An Observable that emits the newly created Team object upon successful addition.
    */
-  private getTeams(): void {
-    this.http.get<Team[]>(`${this.baseUrl}/get-teams-with-username`)
-      .subscribe(teams => {
-        this.teamsSubject.next(teams)});
+  addTeam$(newTeam: TeamCreation): Observable<Team | TeamWithDetails> {
+    return this.http.post<Team | TeamWithDetails>(`${this.URL}`, newTeam);
   }
 
   /**
-   * Adds a new team.
-   * @param newTeam The team to be added.
-   * @returns {Observable<HttpResponse<any>>} Observable Http Response.
+   * Retrieves a team by its ID from the server.
+   *
+   * @param teamId - The unique identifier of the team to retrieve.
+   * @param includeDetails - A boolean flag indicating whether to include additional details for the team.
+   *                         If true, more comprehensive team information will be fetched.
+   * @returns An Observable that emits the Team object with the specified ID.
    */
-  addTeam(newTeam: Team): Observable<HttpResponse<any>> {
-    return this.http.post<void>(`${this.baseUrl}/create-new-team`, newTeam,
-      { observe: 'response' })
-      .pipe(
-        tap(() => {
-          this.getTeams();
-        }))
+  getTeamById$(teamId: number, includeDetails: boolean): Observable<Team | TeamWithDetails> {
+    const params = new HttpParams().set('includeDetails', includeDetails);
+    return this.http.get<Team | TeamWithDetails>(`${this.URL}/${teamId}`, { params });
   }
 
   /**
-   * Deletes a team by its ID.
-   * @param teamId The ID of the team to be deleted.
-   * @returns {Observable<HttpResponse<any>>} Observable Http Response.
+   * Updates an existing team's information in the system.
+   * 
+   * @param team - The Team object containing updated information.
+   *               This object should include the teamId of the team to be updated,
+   *               along with any modified properties.
+   * @returns An Observable that emits the updated Team object upon successful update.
+   *          The emitted Team object reflects the state of the team after the update operation.
    */
-  deleteTeam(teamId: number): Observable<HttpResponse<any>> {
-    return this.http.post(`${this.baseUrl}/delete-team/${teamId}`, {},
-      { observe: 'response' })
-      .pipe(
-        tap(() => {
-          this.getTeams();
-        }));
+  updateTeamById$(team: Team): Observable<Team> {
+    return this.http.put<Team>(`${this.URL}/${team.teamId}`, { team: team });
   }
 
   /**
-   * Changes the name of a team.
-   * @param teamId The ID of the team to be updated.
-   * @param newTeamName The new name for the team.
-   * @returns {Observable<HttpResponse<any>>} Observable Http Response.
+   * Deletes a team from the system using its ID.
+   *
+   * @param teamId - The unique identifier of the team to be deleted.
+   * @returns An Observable that completes when the deletion is successful.
+   *          The Observable does not emit any value (void) but its completion
+   *          indicates that the team has been successfully deleted.
    */
-  changeTeamName(teamId: number, newTeamName: string): Observable<HttpResponse<any>> {
-    return this.http.post(`${this.baseUrl}/change-team-name/${teamId}`, newTeamName,
-      { observe: 'response' })
-      .pipe(
-        tap(() => {
-          this.getTeams();
-        }));
+  deleteTeam$(teamId: number): Observable<void> {
+    return this.http.delete<void>(`${this.URL}/${teamId}`)
+  }
+
+  /**
+   * Changes the name of a team in the system.
+   * 
+   * @param team - The Team object containing the updated team information.
+   *               This should include the team's ID and the new name.
+   * @returns An Observable that emits the updated Team object.
+   *          The emitted Team object reflects the state of the team after the name change.
+   */
+  changeTeamName$(team: Team): Observable<Team> {
+    return this.http.put<Team>(`${this.URL}/${team.teamId}`, { team: team })
   }
 
   /**
@@ -84,15 +102,10 @@ export class TeamService {
   getTeamStudyAccess(teamIds: number[]): Observable<TeamWithStudies[]> {
     let params = new HttpParams();
     teamIds.forEach(id => params = params.append('teamIds', id.toString()));
-    return this.http.get<TeamWithStudies[]>(`${this.apiUrl}/team-study-access`, { params });
+    return this.http.get<TeamWithStudies[]>(`${this.URL}/team-study-access`, { params });
   }
 
-  // updateTeamStudyAccess(teamWithStudiesArray: TeamWithStudies[]) {
-  //   console.log("Posting");
-  //   return this.http.get<void>(`${this.apiUrl}/team-study-access`, teamWithStudiesArray);
-  // }
-
   updateTeamStudyAccess(teamWithStudiesArray: any): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/team-study-access`, teamWithStudiesArray);
+    return this.http.post<void>(`${this.URL}/team-study-access`, teamWithStudiesArray);
   }
 }
