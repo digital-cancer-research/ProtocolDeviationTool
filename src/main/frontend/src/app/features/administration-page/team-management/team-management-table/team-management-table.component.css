@@ -1,0 +1,22 @@
+mat-card {
+    width: calc(100% - 10px);
+    margin: 5px;
+}
+
+table {
+    width: 100%;
+}
+
+.mat-mdc-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+td,
+th {
+    width: 25%;
+}
+
+.actions {
+    width: 96px;
+}

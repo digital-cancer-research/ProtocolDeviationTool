@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Edit Team</h2>
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="teamEditForm">
+
+    <mat-form-field appearance="outline">
+      <mat-label cdkFocusInitial>Team name</mat-label>
+      <input matInput placeholder="Team name" [formControl]="teamName" (input)="updateErrorMessage()">
+      @if (teamName.errors) {
+      <mat-error>{{errorMessage()}}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Created By</mat-label>
+      <input matInput formControlName="createdBy">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Date Created</mat-label>
+      <input matInput formControlName="dateCreated">
+    </mat-form-field>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button [mat-dialog-close]="true" [disabled]="teamEditForm.hasError">Confirm</button>
+</mat-dialog-actions>

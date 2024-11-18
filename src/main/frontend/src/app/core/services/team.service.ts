@@ -65,7 +65,7 @@ export class TeamService {
    * @returns An Observable that emits the updated Team object upon successful update.
    *          The emitted Team object reflects the state of the team after the update operation.
    */
-  updateTeamById$(team: Team): Observable<Team> {
+  updateTeam$(team: Team): Observable<Team> {
     return this.http.put<Team>(`${this.URL}/${team.teamId}`, { team: team });
   }
 

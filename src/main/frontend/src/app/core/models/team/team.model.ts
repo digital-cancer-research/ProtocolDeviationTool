@@ -7,5 +7,5 @@ export interface Team {
 	teamId: number;
   teamName: string;
   userId: number;
-  dateCreated: Date;
+  dateCreated: string;
 }

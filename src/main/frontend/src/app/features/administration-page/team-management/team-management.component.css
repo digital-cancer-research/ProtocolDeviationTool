@@ -1,0 +1,8 @@
+:host {
+    padding: 10px;
+}
+
+app-team-management-form,
+app-team-management-table {
+    width: 100%;
+}

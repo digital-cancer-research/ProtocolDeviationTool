@@ -30,6 +30,9 @@ import { UserManagementFormComponent } from './user-management/user-management-f
 import { UserManagementTableComponent } from './user-management/user-management-table/user-management-table.component';
 import { TeamManagementFormComponent } from './team-management/team-management-form/team-management-form.component';
 import { TeamManagementTableComponent } from './team-management/team-management-table/team-management-table.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule } from '@angular/material/dialog';
+import { TeamManagementEditDialogueComponent } from './team-management/team-management-edit-dialogue/team-management-edit-dialogue.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +41,7 @@ import { TeamManagementTableComponent } from './team-management/team-management-
     SiteManagementComponent,
     StudyManagementComponent,
     TeamManagementComponent,
+    TeamManagementEditDialogueComponent,
     TeamManagementFormComponent,
     TeamManagementTableComponent,
     UserManagementComponent,
@@ -52,7 +56,9 @@ import { TeamManagementTableComponent } from './team-management/team-management-
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
+    MatDialogModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
@@ -69,6 +75,6 @@ import { TeamManagementTableComponent } from './team-management/team-management-
     UserManagementService
   ]
 })
-export class AdministrationPageModule { 
-  public static URL = "administration-page" ;
+export class AdministrationPageModule {
+  public static URL = "administration-page";
 }

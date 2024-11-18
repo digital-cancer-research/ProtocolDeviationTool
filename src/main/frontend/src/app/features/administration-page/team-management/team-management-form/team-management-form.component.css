@@ -2,6 +2,7 @@ mat-card {
     width: fit-content;
     margin: 5px;
 }
+
 form {
     display: flex;
     flex-direction: row;

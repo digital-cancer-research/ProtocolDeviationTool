@@ -8,7 +8,7 @@
                 <mat-label>Team name</mat-label>
                 <input matInput placeholder="Team name" [formControl]="teamName"
                 (input)="updateErrorMessage()">
-                @if (teamName.invalid) {
+                @if (teamName.errors) {
                     <mat-error>{{errorMessage()}}</mat-error>
                 }
             </mat-form-field>
