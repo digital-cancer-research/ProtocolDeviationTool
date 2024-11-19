@@ -12,8 +12,24 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ApiError> handleUserNotFoundException(UserNotFoundException ex, WebRequest webRequest) {
-        ApiError ApiError = new ApiError(HttpStatus.NOT_FOUND, "User not found with id: " + ex.getId(), ex);
-        return new ResponseEntity<>(ApiError, HttpStatus.NOT_FOUND);
+        ApiError apiError = null;
+        if (ex.getId() != null) {
+            apiError = new ApiError(HttpStatus.NOT_FOUND, "User not found with id: " + ex.getId(), ex);
+        } else {
+            apiError = new ApiError(HttpStatus.NOT_FOUND, "User not found with id", ex);
+        }
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(TeamNotFoundException.class)
+    public ResponseEntity<ApiError> handleTeamNotFoundException(TeamNotFoundException ex, WebRequest webRequest) {
+        ApiError apiError = null;
+        if (ex.getId() != null) {
+            apiError = new ApiError(HttpStatus.NOT_FOUND, "Team not found with id: " + ex.getId(), ex);
+        } else {
+            apiError = new ApiError(HttpStatus.NOT_FOUND, "Team not found with id", ex);
+        }
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(CannotCreateTransactionException.class)
