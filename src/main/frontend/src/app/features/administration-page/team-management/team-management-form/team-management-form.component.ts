@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnChanges, OnInit, signal, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TeamWithDetails } from 'src/app/core/models/team/team-with-details.model';
@@ -14,13 +14,15 @@ import { ValidateNameTaken } from 'src/app/shared/validators/name-taken.validato
   styleUrl: './team-management-form.component.css'
 })
 export class TeamManagementFormComponent implements OnChanges, OnInit {
-  
+
   private fb = inject(FormBuilder);
   private teamService = inject(TeamService);
   private userService = inject(UserService);
   private _snackBar = inject(MatSnackBar);
 
   @Input() teams: TeamWithDetails[] = [];
+  @Output() dataUpdate: EventEmitter<void> = new EventEmitter();
+
   private user: User | null = null;
   protected teamManagementForm = this.fb.group({
     teamName: ''
@@ -131,10 +133,15 @@ export class TeamManagementFormComponent implements OnChanges, OnInit {
    */
   private handleTeamCreationSuccess(team: Team): void {
     const undoAction = this.openSnackbar(`${team.teamName} created`, 'Undo');
+    this.dataUpdate.emit();
+    this.teamName.setValue("");
+    this.teamName.reset();
+    this.teamName.markAsUntouched();
 
     undoAction.onAction().subscribe(() => {
       this.teamService.deleteTeam$(team.teamId).subscribe(() => {
         this.openSnackbar(`${team.teamName} deleted`, '');
+        this.dataUpdate.emit();
       });
     });
   }

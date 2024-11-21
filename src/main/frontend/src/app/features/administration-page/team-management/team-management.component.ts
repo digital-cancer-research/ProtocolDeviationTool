@@ -12,12 +12,20 @@ export class TeamManagementComponent {
 	
 	protected teams: TeamWithDetails[] = [];
 	constructor(private teamService: TeamService) {
-		teamService.getTeams$(true).subscribe(teams => {
-			this.teams = teams as TeamWithDetails[];
-		})
+		this.fetchTeams();
+	}
+
+	onTeamCreationChange() {
+		this.fetchTeams();
 	}
 
 	onDatabaseChange(updatedTeams: TeamWithDetails[]): void {
 		this.teams = updatedTeams;
+	}
+
+	fetchTeams() {
+		this.teamService.getTeams$(true).subscribe(teams => {
+			this.teams = teams as TeamWithDetails[];
+		});
 	}
 }
