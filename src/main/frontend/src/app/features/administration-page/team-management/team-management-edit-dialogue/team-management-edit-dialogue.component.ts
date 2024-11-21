@@ -46,7 +46,7 @@ export class TeamManagementEditDialogueComponent {
       {
         ...this.currentTeam,
         teamName: this.teamName.value
-      } as Team
+      } as TeamWithDetails
     )
   }
 }

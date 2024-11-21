@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -7,7 +7,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { TeamWithDetails } from 'src/app/core/models/team/team-with-details.model';
 import { TeamService } from 'src/app/core/services/team.service';
 import { TeamManagementEditDialogueComponent } from '../team-management-edit-dialogue/team-management-edit-dialogue.component';
-import { mergeMap } from 'rxjs';
+import { catchError, map, mergeMap, of, switchMap, tap } from 'rxjs';
+import { Team } from 'src/app/core/models/team/team.model';
 
 @Component({
   selector: 'app-team-management-table',
@@ -21,8 +22,11 @@ export class TeamManagementTableComponent implements AfterViewInit, OnChanges {
   private dialog = inject(MatDialog);
 
   @Input() teams: TeamWithDetails[] = [];
+  @Output() dataUpdate: EventEmitter<TeamWithDetails[]> = new EventEmitter();
+
   displayedColumns: string[] = ['teamName', 'username', 'dateCreated', 'actions'];
   dataSource!: MatTableDataSource<TableData>;
+
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -35,17 +39,11 @@ export class TeamManagementTableComponent implements AfterViewInit, OnChanges {
   }
 
   ngAfterViewInit(): void {
-    const data = this.teams.map(team => {
-      return {
-        ...team,
-        actions: true
-      };
-    });
-    this.setupTable(this.teams)
+    this.setupTable(this.teams);
   }
 
   setupTable(teams: TeamWithDetails[]): void {
-    const data = MOCK_DATA.map(team => {
+    const data = teams.map(team => {
       return {
         ...team,
         actions: true,
@@ -67,34 +65,76 @@ export class TeamManagementTableComponent implements AfterViewInit, OnChanges {
   }
 
   onEdit(row: TableData): void {
-    this.dialog.open(TeamManagementEditDialogueComponent, {
-      data: {
-        team: row,
-        teams: this.teams
-      }
-    }).afterClosed().pipe(
-      mergeMap(newTeam => this.teamService.updateTeam$(newTeam))
-    ).subscribe(
-      {
-        next: (editedTeam) => {
-          this.openSnackbar(`${editedTeam.teamName} updated successfully`, "Undo").onAction().pipe(
-            mergeMap(() => this.teamService.updateTeam$(row))
-          ).subscribe(
-            {
-              next: (team) => {
-                this.openSnackbar(`${team.teamName} updated successfully`, "")
-              },
-              error: (error) => {
-                this.openSnackbar(`Error updating ${editedTeam.teamName}`, "");
-              }
-            }
-          );
-        },
-        error: (error) => {
-          this.openSnackbar(`Error updating ${row.teamName}`, "");
-        }
-      }
+    this.openEditDialog(row).afterClosed()
+      .pipe(
+        switchMap(editedTeam => this.updateTeam(editedTeam, row)),
+        tap(editedTeam => this.handleSuccessfulEdit(editedTeam, row)),
+        catchError(error => this.handleEditError(error, row))
+      )
+      .subscribe();
+  }
+
+  private openEditDialog(row: TableData) {
+    return this.dialog.open(TeamManagementEditDialogueComponent, {
+      data: { team: row, teams: this.teams }
+    });
+  }
+
+  private updateTeam(newTeam: Team, originalTeam: TableData) {
+    return this.teamService.updateTeam$(newTeam).pipe(
+      map(updatedTeam => ({
+        ...updatedTeam,
+        username: originalTeam.username
+      } as TeamWithDetails))
     );
+  }
+
+  private handleSuccessfulEdit(editedTeam: TeamWithDetails, originalTeam: TableData) {
+    const message = `${originalTeam.teamName} updated successfully`;
+    const undoAction = "Undo";
+
+    this.openSnackbar(message, undoAction)
+      .onAction()
+      .pipe(
+        switchMap(() => this.revertTeamChanges(originalTeam)),
+        tap(() => {
+          this.openSnackbar(`${originalTeam.teamName} reverted successfully`, "")
+          this.updateLocalTeamData(originalTeam)
+        }),
+        catchError(error => this.handleRevertError(error, originalTeam))
+      )
+      .subscribe();
+
+    this.updateLocalTeamData(editedTeam);
+  }
+
+  private revertTeamChanges(team: TableData) {
+    return this.teamService.updateTeam$(team);
+  }
+
+  private updateLocalTeamData(team: TeamWithDetails) {
+    const index = this.getIndexOfTeam(team);
+    if (index !== -1) {
+      this.teams[index] = team;
+      this.notifyParentOfChangeInData();
+    }
+  }
+
+  private handleRevertError(error: any, team: TableData) {
+    console.error('Error reverting team changes:', error);
+    this.openSnackbar(`Error reverting changes for ${team.teamName}`, "");
+    return of(null);
+  }
+
+  private handleEditError(error: any, team: TableData) {
+    console.error('Error updating team:', error);
+    this.openSnackbar(`Error updating ${team.teamName}`, "");
+    return of(null);
+  }
+
+  getIndexOfTeam(target: Team): number {
+    const index = this.teams.findIndex(team => team.teamId === target.teamId);
+    return index ? index : -1;
   }
 
   onDelete(row: TableData): void {
@@ -102,7 +142,9 @@ export class TeamManagementTableComponent implements AfterViewInit, OnChanges {
     this.teamService.deleteTeam$(row.teamId).subscribe(
       {
         complete: () => {
-          this.openSnackbar("Team deleted successfully", "");
+          this.openSnackbar(`${row.teamName} deleted successfully`, "");
+          this.teams = this.teams.filter(team => team.teamId !== row.teamId);
+          this.notifyParentOfChangeInData();
         },
         next: () => {
           row.disabled = false;
@@ -113,6 +155,17 @@ export class TeamManagementTableComponent implements AfterViewInit, OnChanges {
       }
     )
   }
+
+  /**
+   * Notifies the parent component of changes in the team data and updates the table.
+   * 
+   * @returns {void} This function does not return a value.
+   */
+  notifyParentOfChangeInData(): void {
+    this.dataUpdate.emit(this.teams);
+    this.setupTable(this.teams);
+  }
+
 
   /**
    * Opens a snackbar to display a message to the user.
@@ -132,132 +185,3 @@ interface TableData extends TeamWithDetails {
   actions: boolean;
   disabled: boolean;
 }
-
-const MOCK_DATA = [
-  {
-    "teamId": 1,
-    "teamName": "Clinical Operations Team",
-    "userId": 1,
-    "dateCreated": "01/01/2023",
-    "username": "drjohndoe@gmail.com"
-  },
-  {
-    "teamId": 2,
-    "teamName": "Cardiovascular Research Team",
-    "userId": 1,
-    "dateCreated": "01/01/2023",
-    "username": "drjohndoe@gmail.com"
-  },
-  {
-    "teamId": 3,
-    "teamName": "Oncology Clinical Trials Unit",
-    "userId": 1,
-    "dateCreated": "01/01/2023",
-    "username": "drjohndoe@gmail.com"
-  },
-  {
-    "teamId": 4,
-    "teamName": "Neuroscience Investigative Group",
-    "userId": 1,
-    "dateCreated": "01/01/2023",
-    "username": "drjohndoe@gmail.com"
-  },
-  {
-    "teamId": 5,
-    "teamName": "Pediatric Clinical Research Consortium",
-    "userId": 1,
-    "dateCreated": "01/01/2023",
-    "username": "drjohndoe@gmail.com"
-  },
-  {
-    "teamId": 6,
-    "teamName": "Infectious Diseases Research Team",
-    "userId": 1,
-    "dateCreated": "01/01/2023",
-    "username": "drjohndoe@gmail.com"
-  },
-  {
-    "teamId": 7,
-    "teamName": "Endocrinology and Metabolism Study Group",
-    "userId": 1,
-    "dateCreated": "01/01/2023",
-    "username": "drjohndoe@gmail.com"
-  },
-  {
-    "teamId": 8,
-    "teamName": "Women's Health Research Alliance",
-    "userId": 1,
-    "dateCreated": "01/01/2023",
-    "username": "drjohndoe@gmail.com"
-  },
-  {
-    "teamId": 9,
-    "teamName": "Surgical Outcomes Research Network",
-    "userId": 1,
-    "dateCreated": "01/01/2023",
-    "username": "drjohndoe@gmail.com"
-  },
-  {
-    "teamId": 10,
-    "teamName": "Geriatrics and Aging Research Collaborative",
-    "userId": 1,
-    "dateCreated": "01/01/2023",
-    "username": "drjohndoe@gmail.com"
-  },
-  {
-    "teamId": 11,
-    "teamName": "Translational Medicine Investigation Team",
-    "userId": 1,
-    "dateCreated": "01/01/2023",
-    "username": "drjohndoe@gmail.com"
-  },
-  {
-    "teamId": 12,
-    "teamName": "New Team",
-    "userId": 3,
-    "dateCreated": "08-Nov-2024 12:00",
-    "username": "healthpro123@hotmail.com"
-  },
-  {
-    "teamId": 16,
-    "teamName": "Testing user form",
-    "userId": 1,
-    "dateCreated": "2024-11-18T10:48:43.1418856",
-    "username": "drjohndoe@gmail.com"
-  },
-  {
-    "teamId": 17,
-    "teamName": "Tests name taken",
-    "userId": 1,
-    "dateCreated": "2024-11-18T12:32:06.7411307",
-    "username": "drjohndoe@gmail.com"
-  },
-  {
-    "teamId": 19,
-    "teamName": "a",
-    "userId": 1,
-    "dateCreated": "2024-11-18T12:50:32.2586404",
-    "username": "drjohndoe@gmail.com"
-  },
-  {
-    "teamId": 20,
-    "teamName": "b",
-    "userId": 1,
-    "dateCreated": "2024-11-18T15:43:52.6526649",
-    "username": "drjohndoe@gmail.com"
-  },
-  {
-    "teamId": 21,
-    "teamName": "c",
-    "userId": 1,
-    "dateCreated": "2024-11-18T15:57:55.9630036",
-    "username": "drjohndoe@gmail.com"
-  },
-  {
-    "teamId": 23,
-    "teamName": "d",
-    "userId": 1,
-    "dateCreated": "2024-11-18T16:00:46.4636796",
-    "username": "drjohndoe@gmail.com"
-  }
-]

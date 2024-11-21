@@ -17,4 +17,7 @@ export class TeamManagementComponent {
 		})
 	}
 
+	onDatabaseChange(updatedTeams: TeamWithDetails[]): void {
+		this.teams = updatedTeams;
+	}
 }

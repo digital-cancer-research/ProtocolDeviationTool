@@ -124,7 +124,7 @@ public class TeamController {
      *         The Team object represents the team after the update operation has
      *         been performed.
      */
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<Team> updateTeam(@RequestBody(required = true) Team team) {
         return new ResponseEntity<>(teamService.updateTeam(team), HttpStatus.CREATED);
     }

@@ -3,5 +3,6 @@
 </app-team-management-form>
 
 <app-team-management-table
-[teams]="teams">
+[teams]="teams"
+(dataUpdate)="onDatabaseChange($event)">
 </app-team-management-table>
