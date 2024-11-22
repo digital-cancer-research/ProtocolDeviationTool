@@ -25,10 +25,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdministrationDataService } from './administration-data.service';
 import { AuditTrailManagementService } from './audit-trail-management/audit-trail-management.service';
 import { SiteManagementService } from './site-management/site-management.service';
-import { TeamManagementService } from './team-management/team-management.service';
 import { UserManagementService } from './user-management/user-management.service';
 import { UserManagementFormComponent } from './user-management/user-management-form/user-management-form.component';
 import { UserManagementTableComponent } from './user-management/user-management-table/user-management-table.component';
+import { TeamManagementFormComponent } from './team-management/team-management-form/team-management-form.component';
+import { TeamManagementTableComponent } from './team-management/team-management-table/team-management-table.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule } from '@angular/material/dialog';
+import { TeamManagementEditDialogueComponent } from './team-management/team-management-edit-dialogue/team-management-edit-dialogue.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +41,9 @@ import { UserManagementTableComponent } from './user-management/user-management-
     SiteManagementComponent,
     StudyManagementComponent,
     TeamManagementComponent,
+    TeamManagementEditDialogueComponent,
+    TeamManagementFormComponent,
+    TeamManagementTableComponent,
     UserManagementComponent,
     UserManagementFormComponent,
     UserManagementTableComponent,
@@ -49,7 +56,9 @@ import { UserManagementTableComponent } from './user-management/user-management-
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
+    MatDialogModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
@@ -63,10 +72,9 @@ import { UserManagementTableComponent } from './user-management/user-management-
     AdministrationDataService,
     AuditTrailManagementService,
     SiteManagementService,
-    TeamManagementService,
     UserManagementService
   ]
 })
-export class AdministrationPageModule { 
-  public static URL = "administration-page" ;
+export class AdministrationPageModule {
+  public static URL = "administration-page";
 }
