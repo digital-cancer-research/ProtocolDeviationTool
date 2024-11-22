@@ -67,8 +67,18 @@ export class TeamManagementTableComponent implements AfterViewInit, OnChanges {
   onEdit(row: TableData): void {
     this.openEditDialog(row).afterClosed()
       .pipe(
-        switchMap(editedTeam => this.updateTeam(editedTeam, row)),
-        tap(editedTeam => this.handleSuccessfulEdit(editedTeam, row)),
+        switchMap(editedTeam => {
+          if (editedTeam) {
+            return this.updateTeam(editedTeam, row)
+          } else {
+            return of(null);
+          }
+        }),
+        tap(editedTeam => {
+          if (editedTeam !== null) {
+            this.handleSuccessfulEdit(editedTeam, row)
+          }
+        }),
         catchError(error => this.handleEditError(error, row))
       )
       .subscribe();
@@ -132,11 +142,32 @@ export class TeamManagementTableComponent implements AfterViewInit, OnChanges {
     return of(null);
   }
 
+  /**
+   * Finds the index of a specified team within the component's teams array.
+   * 
+   * @param target - The team object to search for in the array.
+   *                 It should have a 'teamId' property that matches the team to find.
+   * 
+   * @returns The index of the team in the array if found, or -1 if the team is not present.
+   */
   getIndexOfTeam(target: Team): number {
     const index = this.teams.findIndex(team => team.teamId === target.teamId);
     return index ? index : -1;
   }
 
+
+  /**
+   * Initiates the deletion process for a team from the table.
+   * 
+   * This function disables the row, sends a delete request to the server,
+   * and handles the response by updating the UI accordingly.
+   * 
+   * @param row - The TableData object representing the team to be deleted.
+   *              It contains all the information about the team, including its ID and name.
+   * 
+   * @returns void This function doesn't return a value, but it updates the component's state
+   *               and triggers UI updates based on the deletion outcome.
+   */
   onDelete(row: TableData): void {
     row.disabled = true;
     this.teamService.deleteTeam$(row.teamId).subscribe(
@@ -155,6 +186,7 @@ export class TeamManagementTableComponent implements AfterViewInit, OnChanges {
       }
     )
   }
+
 
   /**
    * Notifies the parent component of changes in the team data and updates the table.
