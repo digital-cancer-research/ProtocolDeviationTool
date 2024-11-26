@@ -1,6 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
-import { FileListComponent } from '../../../shared/file-list/file-list.component';
-import { CategoryTableComponent } from 'src/app/shared/category-table/category-table.component';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-data-upload',
@@ -9,15 +7,9 @@ import { CategoryTableComponent } from 'src/app/shared/category-table/category-t
 })
 export class DataUploadComponent {
   public static readonly URL = 'data-upload';
-  @ViewChild(FileListComponent) fileListComponent!: FileListComponent;
-  @ViewChild(CategoryTableComponent) categoryTableComponent!: CategoryTableComponent;
+  protected files: File[] = [];
 
-  refreshData(): void {
-    // Call the loadFiles() method of FileListComponent
-    this.fileListComponent.loadFiles();
-
-    // Call the fetchData() and fetchDvTermData() methods of CategoryTableComponent
-    this.categoryTableComponent.fetchData();
-    this.categoryTableComponent.fetchDvTermData();
+  onFileChange(files: File[]): void {
+    this.files = files;
   }
 }

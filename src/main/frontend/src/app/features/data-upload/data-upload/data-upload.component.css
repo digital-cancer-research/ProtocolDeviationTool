@@ -1,4 +1,15 @@
-.content {
+:host {
     display: flex;
-    justify-content: space-evenly;
+    flex-direction: row;
+}
+
+mat-card {
+    margin: 5px;
+    max-width: 35%;
+    flex: 1;
+    height: fit-content;
+}
+
+mat-panel-description {
+    overflow: auto;
 }

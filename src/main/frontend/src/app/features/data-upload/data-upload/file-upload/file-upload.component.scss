@@ -1,0 +1,20 @@
+app-file-upload {
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    ngx-file-drop > div {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: fit-content;
+        width: fit-content;
+        padding: 25px;
+        margin: 10px !important;
+    }
+}

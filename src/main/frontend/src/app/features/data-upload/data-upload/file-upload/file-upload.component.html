@@ -1,0 +1,10 @@
+<ngx-file-drop dropZoneLabel="Drop files here" (onFileDrop)="onFileDrop($event)" [multiple]="false">
+    <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+        <div class="content">
+            <mat-icon>upload_file</mat-icon>
+            Drag & Drop
+            <div>or</div>
+            <button mat-button type="button" (click)="openFileSelector()">Browse Files</button>
+        </div>
+    </ng-template>
+</ngx-file-drop>

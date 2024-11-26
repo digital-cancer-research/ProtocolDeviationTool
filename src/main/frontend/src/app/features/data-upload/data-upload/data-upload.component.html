@@ -1,8 +1,21 @@
-<div class="content">
-    <div class="upload">
-        <app-upload (fileUploaded)="refreshData()"></app-upload>
-    </div>
-    <div class="table">
-        <app-file-list (fileDeleted)="refreshData()"></app-file-list>
-    </div>
-</div>
+<mat-card appearance="outlined">
+    <mat-card-header>
+        Upload Files
+    </mat-card-header>
+    <mat-card-content>
+        <app-file-upload (filesChange)="onFileChange($event)"></app-file-upload>
+    </mat-card-content>
+    <mat-card-footer>
+        <mat-expansion-panel  class="mat-elevation-z0">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Files
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <app-pending-uploads-table [data]="files">
+                </app-pending-uploads-table>
+            </mat-panel-description>
+        </mat-expansion-panel>
+    </mat-card-footer>
+</mat-card>
