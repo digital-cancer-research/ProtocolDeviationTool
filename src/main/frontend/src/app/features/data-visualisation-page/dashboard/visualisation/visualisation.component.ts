@@ -35,7 +35,7 @@ export class VisualisationComponent implements OnInit {
 
 		this.apiRequest.subscribe({
 			next: (teamPDs) => {
-				this.isLoading = true;
+				this.isLoading = false;
 				this.teamPDs = 0;
 				if (teamPDs) {
 					this.teamPDs = teamPDs;

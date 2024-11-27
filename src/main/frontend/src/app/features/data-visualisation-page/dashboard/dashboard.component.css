@@ -1,3 +1,8 @@
+:host {
+    display: block;
+    height: 100%;
+}
+
 .select {
     display: flex;
     justify-content: center;
@@ -14,13 +19,13 @@
 }
 
 @media only screen and (max-width: 1300px) {
-    html {
-        height: 125%;
+    :host {
+        height: 200%;
     }
 }
 
 @media only screen and (max-width: 650px) {
-    html {
+    :host {
         height: 300%;
     }
     h5 {
