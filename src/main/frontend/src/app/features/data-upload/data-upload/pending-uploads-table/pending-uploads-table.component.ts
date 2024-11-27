@@ -1,5 +1,8 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, inject, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { User } from 'src/app/core/models/user.model';
+import { UserService } from 'src/app/core/services/user.service';
+import { UploadService } from 'src/app/shared/upload/upload.service';
 
 @Component({
   selector: 'app-pending-uploads-table',
@@ -7,9 +10,16 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrl: './pending-uploads-table.component.css'
 })
 export class PendingUploadsTableComponent implements OnInit, OnChanges {
+  private uploadService = inject(UploadService);
+  private userService = inject(UserService);
+  private currentUser: User | null = null;
   displayedColumns: string[] = ['name', 'type', 'size', 'actions'];
   @Input() data: File[] = [];
   dataSource = new MatTableDataSource<TableDataEntry>();
+
+  constructor() {
+    this.userService.currentUser$.subscribe(user => this.currentUser = user);
+  }
 
   ngOnInit(): void {
     this.dataSource.data = this.formatData(this.data);
@@ -43,17 +53,36 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
   formatData(data: File[]): TableDataEntry[] {
     const tableData = data.map(file => {
       return {
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        lastModified: file.lastModified,
+        file: file,
         actions: true
       } as TableDataEntry;
     })
     return tableData;
   }
+
+  onUpload(file: File, index: number): void {
+    if (!this.currentUser) {
+      console.error("You must be logged in to upload");
+      return;
+    }
+
+    this.uploadService.uploadFile(file, this.currentUser).subscribe(
+      {
+        next: (response) => {
+          const tempData = this.dataSource.data;
+          tempData.splice(index, 1);
+          this.dataSource.data = tempData;
+        },
+        error: (error) => {
+          console.error('Error uploading file:', error);
+        }
+      }
+    );
+  }
+
 }
 
-interface TableDataEntry extends File {
+interface TableDataEntry {
+  file: File;
   actions: boolean;
 }
