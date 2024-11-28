@@ -75,7 +75,7 @@ export class EditDataDialogueComponent implements OnInit {
   private createForm(): FormGroup {
     return this.fb.group({
       studyId: [this.data.studyId, Validators.required],
-      dvspondes: [this.data.dvspondes, Validators.required],
+      dvspondes: [{ value: this.data.dvspondes, disabled: true }, Validators.required],
       dvcat: [this.data.dvcat, Validators.required],
       dvdecod: [this.data.dvdecod, Validators.required]
     });
