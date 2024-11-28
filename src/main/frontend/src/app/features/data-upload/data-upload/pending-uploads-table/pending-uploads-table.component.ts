@@ -1,5 +1,7 @@
 import { Component, inject, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
+import { Subscription } from 'rxjs';
 import { User } from 'src/app/core/models/user.model';
 import { UserService } from 'src/app/core/services/user.service';
 import { UploadService } from 'src/app/shared/upload/upload.service';
@@ -13,6 +15,7 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
   private uploadService = inject(UploadService);
   private userService = inject(UserService);
   private currentUser: User | null = null;
+  private snackbar = inject(MatSnackBar);
   displayedColumns: string[] = ['name', 'type', 'size', 'actions'];
   @Input() data: File[] = [];
   dataSource = new MatTableDataSource<TableDataEntry>();
@@ -54,30 +57,56 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
     const tableData = data.map(file => {
       return {
         file: file,
-        actions: true
+        actions: true,
+        inProgress: false,
       } as TableDataEntry;
     })
     return tableData;
   }
 
-  onUpload(file: File, index: number): void {
+  onUpload(data: TableDataEntry, index: number): void {
+    data.inProgress = true;
     if (!this.currentUser) {
       console.error("You must be logged in to upload");
+      data.inProgress = false;
       return;
     }
 
-    this.uploadService.uploadFile(file, this.currentUser).subscribe(
+    const upload = this.uploadService.uploadFile(data.file, this.currentUser).subscribe(
       {
         next: (response) => {
-          const tempData = this.dataSource.data;
-          tempData.splice(index, 1);
-          this.dataSource.data = tempData;
+          this.removeItemFromDataSource(index);
+          this.openSnackbar(response.message, "Dismiss");
         },
         error: (error) => {
+          this.openSnackbar(error.message, "Dismiss");
           console.error('Error uploading file:', error);
+          data.inProgress = false;
         }
       }
     );
+    data.upload = upload;
+  }
+
+  onCancel(data: TableDataEntry): void {
+      data.upload.unsubscribe();
+      data.inProgress = false;
+  }
+
+  onDelete(index: number): void {
+    this.removeItemFromDataSource(index);
+  }
+
+  removeItemFromDataSource(index: number): void {
+    const tempData = this.dataSource.data;
+    tempData.splice(index, 1);
+    this.dataSource.data = tempData;
+  }
+
+  openSnackbar(message: string, actions: string) {
+    this.snackbar.open(message, actions, {
+      duration: 5000,
+    });
   }
 
 }
@@ -85,4 +114,6 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
 interface TableDataEntry {
   file: File;
   actions: boolean;
+  inProgress: boolean;
+  upload: Subscription
 }

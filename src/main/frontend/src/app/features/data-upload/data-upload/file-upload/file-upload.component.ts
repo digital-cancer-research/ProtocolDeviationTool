@@ -29,15 +29,14 @@ export class FileUploadComponent {
         const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
         fileEntry.file((file) => {
           this.files.push(file);
+          this.filesChange.emit(this.files);
         }, (error) => {
           const errorMessage = "Error loading the file."
           this.openSnackBar(`${errorMessage}. ${error}`, "Dismiss")
           console.error('Error loading the file:', error);
-
         })
       }
     }
-    this.filesChange.emit(this.files);
   }
 
   openSnackBar(message: string, action: string) {
