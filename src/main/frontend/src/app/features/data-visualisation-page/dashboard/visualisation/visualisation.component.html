@@ -1,13 +1,11 @@
 <mat-spinner *ngIf="isLoading"></mat-spinner>
 
-<div *ngIf="!isLoading" class="container">
-    <h4>Total number of PDs at site for team</h4>
-    <div class="card">
-        <div>
-            <div class="data" *ngIf="!error">
-                <p>{{ teamPDs }}</p>
-            </div>
-            <h5 *ngIf="error">{{ errorMessage }}</h5>
-        </div>
-    </div>
-</div>
+<mat-card-header>
+    Total number of PDs for {{ team ? team.teamName : "team" }}
+</mat-card-header>
+<mat-card>
+    <mat-card-content>
+        <p *ngIf="!error">{{ teamPDs }}</p>
+        <p *ngIf="error">{{ errorMessage }}</p>
+    </mat-card-content>
+</mat-card>

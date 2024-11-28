@@ -24,13 +24,13 @@ export class DashboardComponent {
 
   get LAYOUT_MEDIUM(): Tile[] {
     this.cols = 5
-    this.rowHeight = '16.6%'
+    this.rowHeight = `${100/10}%`
     return [
-      { colspan: 1, rowspan: 1, order: 0 },
-      { colspan: 4, rowspan: 3, order: 2 },
-      { colspan: 1, rowspan: 2, order: 1 },
-      { colspan: 1, rowspan: 3, order: 3 },
-      { colspan: 4, rowspan: 3, order: 4 },
+      { colspan: 1, rowspan: 2, order: 0 },
+      { colspan: 4, rowspan: 5, order: 2 },
+      { colspan: 1, rowspan: 3, order: 1 },
+      { colspan: 2, rowspan: 5, order: 3 },
+      { colspan: 3, rowspan: 5, order: 4 },
     ];
   }
 
