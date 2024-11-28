@@ -7,7 +7,9 @@
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>DVSPONDES</mat-label>
-            <input matInput formControlName="dvspondes">
+            <textarea matInput formControlName="dvspondes" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5">
+            </textarea>
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>DVCAT</mat-label>
