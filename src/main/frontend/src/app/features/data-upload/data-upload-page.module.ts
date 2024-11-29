@@ -20,6 +20,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { UploadErrorsTableComponent } from './data-upload/upload-errors-table/upload-errors-table.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     DataUploadComponent,
     FileUploadComponent,
     PendingUploadsTableComponent,
+    UploadErrorsTableComponent,
     DataCategorisationComponent,
     DataTrailComponent,
     DataUploadSummaryComponent

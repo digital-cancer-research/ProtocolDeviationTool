@@ -2,10 +2,13 @@
     <mat-card-header>
         Upload Files
     </mat-card-header>
+
     <mat-card-content>
         <app-file-upload (filesChange)="onFileChange($event)"></app-file-upload>
     </mat-card-content>
+
     <mat-card-footer>
+
         <mat-expansion-panel  class="mat-elevation-z0">
             <mat-expansion-panel-header>
                 <mat-panel-title>
@@ -13,9 +16,22 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <app-pending-uploads-table [data]="files">
+                <app-pending-uploads-table [data]="files" (errors)="onFileErrors($event)">
                 </app-pending-uploads-table>
             </mat-panel-description>
         </mat-expansion-panel>
+
+        <mat-expansion-panel  class="mat-elevation-z0">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Errors
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <app-upload-errors-table [errors]="errors">
+                </app-upload-errors-table>
+            </mat-panel-description>
+        </mat-expansion-panel>
+
     </mat-card-footer>
 </mat-card>

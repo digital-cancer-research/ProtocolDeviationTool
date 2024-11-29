@@ -1,10 +1,12 @@
-import { Component, inject, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
 import { User } from 'src/app/core/models/user.model';
 import { UserService } from 'src/app/core/services/user.service';
+import { UploadResponse } from 'src/app/shared/upload/upload-response.model';
 import { UploadService } from 'src/app/shared/upload/upload.service';
+import { UploadError } from '../models/upload-error.model';
 
 @Component({
   selector: 'app-pending-uploads-table',
@@ -16,9 +18,12 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
   private userService = inject(UserService);
   private currentUser: User | null = null;
   private snackbar = inject(MatSnackBar);
-  displayedColumns: string[] = ['name', 'type', 'size', 'actions'];
+  // Supports 'type' column -  just add to array.
+  displayedColumns: string[] = ['name', 'size', 'actions'];
   @Input() data: File[] = [];
+  @Output() errors: EventEmitter<string> = new EventEmitter();
   dataSource = new MatTableDataSource<TableDataEntry>();
+
 
   constructor() {
     this.userService.currentUser$.subscribe(user => this.currentUser = user);
@@ -64,10 +69,24 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
     return tableData;
   }
 
+  /**
+   * Initiates the file upload process for a specific table entry.
+   * This method handles the upload process, including user authentication checks,
+   * progress indication, and error handling.
+   *
+   * @param data - The TableDataEntry object representing the file to be uploaded.
+   * @param index - The index of the file in the data source array.
+   * @returns void
+   *
+   * @throws Will display an error message if the user is not logged in.
+   * @emits errors - Emits an error message if the upload response indicates a problem.
+   */
   onUpload(data: TableDataEntry, index: number): void {
     data.inProgress = true;
     if (!this.currentUser) {
-      console.error("You must be logged in to upload");
+      const noUserErrorMessage = "You must be logged in to upload. Please login and try again.";
+      console.error(noUserErrorMessage);
+      this.openSnackbar(noUserErrorMessage, "Dismiss");
       data.inProgress = false;
       return;
     }
@@ -77,6 +96,9 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
         next: (response) => {
           this.removeItemFromDataSource(index);
           this.openSnackbar(response.message, "Dismiss");
+          if (!response.message.includes("file uploaded.")) {
+            this.errors.emit(`${data.file.name}: ${response.message}`);
+          }
         },
         error: (error) => {
           this.openSnackbar(error.message, "Dismiss");
@@ -88,11 +110,31 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
     data.upload = upload;
   }
 
+  /**
+   * Cancels an ongoing file upload operation.
+   * 
+   * This function unsubscribes from the upload subscription and resets the progress state.
+   * It should be called when the user wants to cancel an in-progress upload.
+   *
+   * @param data - The TableDataEntry object representing the file upload to be cancelled.
+   *               This object contains the upload subscription and progress state.
+   * 
+   * @returns void
+   */
   onCancel(data: TableDataEntry): void {
-      data.upload.unsubscribe();
-      data.inProgress = false;
+    data.upload.unsubscribe();
+    data.inProgress = false;
   }
 
+  /**
+   * Deletes a file entry from the pending uploads table.
+   * 
+   * This function removes a specific file entry from the data source
+   * of the pending uploads table based on its index.
+   *
+   * @param index - The index of the file entry to be deleted from the data source.
+   * @returns void This function does not return a value.
+   */
   onDelete(index: number): void {
     this.removeItemFromDataSource(index);
   }
