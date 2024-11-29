@@ -9,10 +9,11 @@
 
     <mat-card-footer>
 
-        <mat-expansion-panel  class="mat-elevation-z0">
+        <mat-expansion-panel class="mat-elevation-z0" #FilesPanel (afterExpand)="hasFilesPanelGotNewFiles=false">
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    Files
+                    Files <a *ngIf="isFilePanelVisible" [matBadge]="files.length" class="badge"
+                        [matBadgeOverlap]="false" matBadgePosition="above after" [matBadgeColor]="'accent'"></a>
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
@@ -21,10 +22,11 @@
             </mat-panel-description>
         </mat-expansion-panel>
 
-        <mat-expansion-panel  class="mat-elevation-z0">
+        <mat-expansion-panel class="mat-elevation-z0" #ErrorsPanel (afterExpand)="hasErrorsPanelGotNewFiles=false">
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    Errors
+                    Errors <a *ngIf="isErrorPanelVisible" [matBadge]="1" class="badge" [matBadgeOverlap]="false"
+                        matBadgePosition="above after" [matBadgeColor]="'accent'"></a>
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>

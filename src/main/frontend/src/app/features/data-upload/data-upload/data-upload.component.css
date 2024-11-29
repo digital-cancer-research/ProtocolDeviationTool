@@ -13,3 +13,7 @@ mat-card {
 mat-panel-description {
     overflow: auto;
 }
+
+.badge {
+    margin-bottom: 16px;
+}

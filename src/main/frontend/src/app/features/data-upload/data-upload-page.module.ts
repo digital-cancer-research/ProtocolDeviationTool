@@ -21,6 +21,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { UploadErrorsTableComponent } from './data-upload/upload-errors-table/upload-errors-table.component';
+import { MatBadgeModule } from '@angular/material/badge';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { UploadErrorsTableComponent } from './data-upload/upload-errors-table/up
     CommonModule,
     DataUploadRoutingModule,
     SharedModule,
+    MatBadgeModule,
     MatButtonModule,
     MatCardModule,
     MatExpansionModule,

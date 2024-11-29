@@ -94,10 +94,11 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
     const upload = this.uploadService.uploadFile(data.file, this.currentUser).subscribe(
       {
         next: (response) => {
-          this.removeItemFromDataSource(index);
           this.openSnackbar(response.message, "Dismiss");
           if (!response.message.includes("file uploaded.")) {
             this.errors.emit(`${data.file.name}: ${response.message}`);
+          } else {
+            this.removeItemFromDataSource(index);
           }
         },
         error: (error) => {

@@ -1,5 +1,4 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { UploadError } from '../models/upload-error.model';
 
 @Component({
   selector: 'app-upload-errors-table',
