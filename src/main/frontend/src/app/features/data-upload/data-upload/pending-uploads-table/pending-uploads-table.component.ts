@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
@@ -7,21 +7,26 @@ import { UserService } from 'src/app/core/services/user.service';
 import { UploadResponse } from 'src/app/shared/upload/upload-response.model';
 import { UploadService } from 'src/app/shared/upload/upload.service';
 import { UploadError } from '../models/upload-error.model';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-pending-uploads-table',
   templateUrl: './pending-uploads-table.component.html',
   styleUrl: './pending-uploads-table.component.css'
 })
-export class PendingUploadsTableComponent implements OnInit, OnChanges {
+export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterViewInit {
   private uploadService = inject(UploadService);
   private userService = inject(UserService);
   private currentUser: User | null = null;
   private snackbar = inject(MatSnackBar);
+  private idCounter = 0;
   // Supports 'type' column -  just add to array.
   displayedColumns: string[] = ['name', 'size', 'actions'];
   @Input() newData: File[] = [];
   @Output() errors: EventEmitter<UploadError> = new EventEmitter();
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
   dataSource = new MatTableDataSource<TableDataEntry>();
 
 
@@ -31,6 +36,7 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.dataSource.data = this.formatData(this.newData);
+    this.setFilter();
   }
 
   /**
@@ -50,6 +56,73 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
     }
   }
 
+  /**
+   * Lifecycle hook that is called after Angular has fully initialized the component's view.
+   * It sets up the paginator, custom sorting accessor, and sort functionality for the data table.
+   *
+   * This method performs the following tasks:
+   * 1. Assigns the paginator to the data source for pagination functionality.
+   * 2. Defines a custom sorting accessor to handle nested properties in the data structure.
+   * 3. Assigns the sort directive to the data source for sorting functionality.
+   *
+   * The custom sorting accessor allows sorting on both top-level properties of TableDataEntry
+   * and nested properties within the 'file' object.
+   *
+   * @returns {void}
+   */
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      const value = property in item.file ? item.file[property as keyof File] : item[property as keyof TableDataEntry];
+      if (typeof value === 'string' || typeof value === 'number') {
+        return value;
+      }
+      return '';
+    };
+    this.dataSource.sort = this.sort;
+  }
+
+
+  /**
+   * Sets up a custom filter predicate for the data source.
+   * This function configures how filtering is applied to the table data.
+   * This is due to the nested File object in the entries.
+   * 
+   * The filter checks if the file name, type, or size (in KB) includes the filter value.
+   * The comparison is case-insensitive.
+   * 
+   * @returns {void}
+   */
+  setFilter() {
+    this.dataSource.filterPredicate = (data: TableDataEntry, filter: string) => {
+      const filterValue = filter.trim().toLowerCase();
+      return (
+        data.file.name.toLowerCase().includes(filterValue) ||
+        data.file.type.toLowerCase().includes(filterValue) ||
+        (data.file.size / 1024).toFixed(2).includes(filterValue)
+      );
+    };
+  }
+
+
+  /**
+   * Applies a filter to the data source based on user input.
+   * This function updates the filter of the data source with the input value,
+   * converts it to lowercase, and trims any whitespace.
+   * If a paginator is present, it also resets the view to the first page.
+   *
+   * @param event - The event object from the input element.
+   *                This is typically a 'change' or 'input' event.
+   */
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
 
   /**
   * Formats an array of File objects into TableDataEntry objects for display in the table.
@@ -61,6 +134,7 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
   formatData(data: File[]): TableDataEntry[] {
     const tableData = data.map(file => {
       return {
+        id: this.idCounter++,
         file: file,
         actions: true,
         inProgress: false,
@@ -81,37 +155,37 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
    * @throws Will display an error message if the user is not logged in.
    * @emits errors - Emits an error message if the upload response indicates a problem.
    */
-  onUpload(data: TableDataEntry, index: number): void {
-    data.inProgress = true;
+  onUpload(entry: TableDataEntry): void {
+    entry.inProgress = true;
     if (!this.currentUser) {
       const noUserErrorMessage = "You must be logged in to upload files. Please login and try again.";
       console.error(noUserErrorMessage);
       this.openSnackbar(noUserErrorMessage, "Dismiss");
-      data.inProgress = false;
+      entry.inProgress = false;
       return;
     }
 
-    const upload = this.uploadService.uploadFile(data.file, this.currentUser).subscribe(
+    const upload = this.uploadService.uploadFile(entry.file, this.currentUser).subscribe(
       {
         next: (response) => {
           this.openSnackbar(response.message, "Dismiss");
           if (!response.message.includes("file uploaded.")) {
             const error = {
-              filename: data.file.name,
+              filename: entry.file.name,
               message: response.message
             };
             this.errors.emit(error);
           }
-          this.removeItemFromDataSource(index);
+          this.onDelete(entry);
         },
         error: (error) => {
           this.openSnackbar(error.message, "Dismiss");
           console.error('Error uploading file:', error);
-          data.inProgress = false;
+          entry.inProgress = false;
         }
       }
     );
-    data.upload = upload;
+    entry.upload = upload;
   }
 
   /**
@@ -139,16 +213,17 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
    * @param index - The index of the file entry to be deleted from the data source.
    * @returns void This function does not return a value.
    */
-  onDelete(index: number): void {
-    this.removeItemFromDataSource(index);
+  onDelete(entry: TableDataEntry): void {
+    this.dataSource.data = this.dataSource.data.filter(de => de.id !== entry.id);
   }
 
-  removeItemFromDataSource(index: number): void {
-    const tempData = this.dataSource.data;
-    tempData.splice(index, 1);
-    this.dataSource.data = tempData;
-  }
-
+  /**
+   * Opens a snackbar to display a message to the user.
+   * 
+   * @param message - The text message to be displayed in the snackbar.
+   * @param actions - The text for the action button in the snackbar.
+   * @returns void This function does not return a value.
+   */
   openSnackbar(message: string, actions: string) {
     this.snackbar.open(message, actions, {
       duration: 5000,
@@ -158,6 +233,7 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
 }
 
 interface TableDataEntry {
+  id: number;
   file: File;
   actions: boolean;
   inProgress: boolean;

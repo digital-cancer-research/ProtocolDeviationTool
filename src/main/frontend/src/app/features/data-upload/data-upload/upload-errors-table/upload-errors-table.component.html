@@ -1,15 +1,43 @@
-<table mat-table [dataSource]="dataSource">
+<mat-form-field>
+  <mat-label>Filter</mat-label>
+  <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
+</mat-form-field>
 
-    <ng-container matColumnDef="filename">
-        <th mat-header-cell *matHeaderCellDef> File Name </th>
-        <td mat-cell *matCellDef="let error"> {{error.filename}} </td>
-    </ng-container>
+<table mat-table [dataSource]="dataSource" matSort>
 
-    <ng-container matColumnDef="message">
-        <th mat-header-cell *matHeaderCellDef> Error </th>
-        <td mat-cell *matCellDef="let error"> {{error.message}} </td>
-    </ng-container>
+  <ng-container matColumnDef="filename">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> File Name </th>
+    <td mat-cell *matCellDef="let error"> {{error.filename}} </td>
+  </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  <ng-container matColumnDef="message">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Error </th>
+    <td mat-cell *matCellDef="let error"> {{error.message}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>
+      <button mat-icon-button matTooltip="Options" aria-label="Options">
+        <mat-icon>
+          more_horiz
+        </mat-icon>
+      </button>
+    </th>
+    <td mat-cell *matCellDef="let error">
+      <div style="display: flex;">
+        <button mat-icon-button color="warn" matTooltip="Delete" aria-label="Delete" (click)="onDelete(error)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  <tr class="mat-row" *matNoDataRow>
+    <td class="mat-cell" colspan="4">No errors matching the filter "{{input.value}}"</td>
+  </tr>
 </table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>

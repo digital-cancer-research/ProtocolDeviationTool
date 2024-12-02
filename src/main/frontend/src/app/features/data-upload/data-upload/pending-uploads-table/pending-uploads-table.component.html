@@ -1,3 +1,8 @@
+<mat-form-field>
+  <mat-label>Filter</mat-label>
+  <input matInput (keyup)="applyFilter($event)" #input>
+</mat-form-field>
+
 <table mat-table [dataSource]="dataSource" matSort>
 
   <ng-container matColumnDef="name">
@@ -23,9 +28,9 @@
         </mat-icon>
       </button>
     </th>
-    <td mat-cell *matCellDef="let data; let i=index">
+    <td mat-cell *matCellDef="let data">
       <div style="display: flex;">
-        <button mat-icon-button color="accent" matTooltip="Upload" aria-label="Upload" (click)="onUpload(data, i)"
+        <button mat-icon-button color="accent" matTooltip="Upload" aria-label="Upload" (click)="onUpload(data)"
           [disabled]="data.inProgress">
           <mat-icon>upload</mat-icon>
         </button>
@@ -43,4 +48,10 @@
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  <tr class="mat-row" *matNoDataRow>
+    <td class="mat-cell" colspan="4">No files matching the filter "{{input.value}}"</td>
+  </tr>
 </table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>

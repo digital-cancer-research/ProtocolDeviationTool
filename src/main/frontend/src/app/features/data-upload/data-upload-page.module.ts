@@ -22,6 +22,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { UploadErrorsTableComponent } from './data-upload/upload-errors-table/upload-errors-table.component';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -43,6 +46,9 @@ import { MatBadgeModule } from '@angular/material/badge';
     MatButtonModule,
     MatCardModule,
     MatExpansionModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatPaginatorModule,
     MatSnackBarModule,
     MatSortModule,
     MatTableModule,
