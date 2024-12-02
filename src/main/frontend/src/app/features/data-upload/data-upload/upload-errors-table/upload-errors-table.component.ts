@@ -1,4 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { UploadError } from '../models/upload-error.model';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-upload-errors-table',
@@ -6,12 +8,16 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
   styleUrl: './upload-errors-table.component.css'
 })
 export class UploadErrorsTableComponent implements OnChanges {
-  @Input() errors: string = "";
+  protected displayedColumns: string[] = ['filename', 'message'];
+  @Input() errors: UploadError[] = [];
+  dataSource: MatTableDataSource<UploadError> = new MatTableDataSource(this.errors);
 
   ngOnChanges(changes: SimpleChanges): void {
     const errorChanges = changes['errors'];
-    if (errorChanges) {
+    console.log("Changes");
+    if (errorChanges && !errorChanges.firstChange) {
       this.errors = errorChanges.currentValue;
+      this.dataSource.data = this.errors;
     }
   }
 }

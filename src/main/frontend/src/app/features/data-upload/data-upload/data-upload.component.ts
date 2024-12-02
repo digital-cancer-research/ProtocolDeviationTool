@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatExpansionPanel } from '@angular/material/expansion';
+import { UploadError } from './models/upload-error.model';
 
 @Component({
   selector: 'app-data-upload',
@@ -8,27 +9,28 @@ import { MatExpansionPanel } from '@angular/material/expansion';
 })
 export class DataUploadComponent implements AfterViewInit {
   public static readonly URL = 'data-upload';
-  @ViewChild('FilesPanel') filesPanel!: MatExpansionPanel;
-  @ViewChild('ErrorsPanel') errorsPanel!: MatExpansionPanel;
+  @ViewChild('filesPanel') filesPanel!: MatExpansionPanel;
+  @ViewChild('errorsPanel') errorsPanel!: MatExpansionPanel;
   protected hasFilesPanelGotNewFiles: boolean = false;
   protected hasErrorsPanelGotNewFiles: boolean = false;
-  protected files: File[] = [];
-  protected errors: string = "";
+  protected newFiles: File[] = [];
+  protected errors: UploadError[] = [];
 
   ngAfterViewInit(): void {
+    this.filesPanel.open();
   }
 
   onFileChange(files: File[]): void {
-    this.hasFilesPanelGotNewFiles = true;
-    this.files = files;
+    this.hasFilesPanelGotNewFiles = this.filesPanel ? !this.filesPanel.expanded : false;
+    this.newFiles = files;
+  }
+  
+  onFileErrors(newErrors: UploadError): void {
+    this.hasErrorsPanelGotNewFiles = this.filesPanel ? !this.errorsPanel.expanded : false;
+    this.errors = [...this.errors, newErrors];
   }
 
-  onFileErrors(error: string): void {
-    this.hasErrorsPanelGotNewFiles = true;
-    this.errors = error;
-  }
-
-  get isFilePanelVisible(): boolean {
+  get isFilePanelBadgesVisible(): boolean {
     if (this.filesPanel) {
       return !this.filesPanel.expanded && this.hasFilesPanelGotNewFiles;
     } else {
@@ -36,7 +38,7 @@ export class DataUploadComponent implements AfterViewInit {
     }
   }
 
-  get isErrorPanelVisible(): boolean {
+  get isErrorPanelBadgesVisible(): boolean {
     if (this.errorsPanel) {
       return !this.errorsPanel.expanded && this.hasErrorsPanelGotNewFiles;
     } {

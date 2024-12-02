@@ -8,13 +8,15 @@ app-file-upload {
     }
 
     ngx-file-drop > div {
+        margin-top: 10px  !important;
+        margin-bottom: 10px  !important;
+        box-sizing: border-box;
         flex: 1;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: fit-content;
-        width: fit-content;
+        height: fit-content !important;
+        width: 100%;
         padding: 25px;
-        margin: 10px !important;
     }
 }

@@ -10,7 +10,6 @@ import { NgxFileDropEntry } from 'ngx-file-drop';
 })
 export class FileUploadComponent {
   private _snackBar = inject(MatSnackBar);
-  protected files: File[] = [];
   @Output() readonly filesChange: EventEmitter<File[]> = new EventEmitter();
 
   /**
@@ -22,14 +21,14 @@ export class FileUploadComponent {
   * @returns void - This function does not return a value, but it emits the updated file list
   *                 through the filesChange EventEmitter.
   */
-  protected onFileDrop(files: NgxFileDropEntry[]) {
-    this.files = [];
-    for (const droppedFile of files) {
+  protected onFileDrop(filesDropped: NgxFileDropEntry[]) {
+    const files: File[] = [];
+    for (const droppedFile of filesDropped) {
       if (droppedFile.fileEntry.isFile) {
         const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
         fileEntry.file((file) => {
-          this.files.push(file);
-          this.filesChange.emit(this.files);
+          files.push(file);
+          this.filesChange.emit(files);
         }, (error) => {
           const errorMessage = "Error loading the file."
           this.openSnackBar(`${errorMessage}. ${error}`, "Dismiss")

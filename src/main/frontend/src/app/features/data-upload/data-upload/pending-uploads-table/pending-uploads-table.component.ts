@@ -20,8 +20,8 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
   private snackbar = inject(MatSnackBar);
   // Supports 'type' column -  just add to array.
   displayedColumns: string[] = ['name', 'size', 'actions'];
-  @Input() data: File[] = [];
-  @Output() errors: EventEmitter<string> = new EventEmitter();
+  @Input() newData: File[] = [];
+  @Output() errors: EventEmitter<UploadError> = new EventEmitter();
   dataSource = new MatTableDataSource<TableDataEntry>();
 
 
@@ -30,7 +30,7 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.dataSource.data = this.formatData(this.data);
+    this.dataSource.data = this.formatData(this.newData);
   }
 
   /**
@@ -43,10 +43,10 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
    * @returns void
    */
   ngOnChanges(changes: SimpleChanges): void {
-    const dataChanges = changes['data'];
+    const dataChanges = changes['newData'];
     if (dataChanges && !dataChanges.isFirstChange()) {
-      this.data = dataChanges.currentValue;
-      this.dataSource.data = this.formatData(this.data);
+      this.newData = dataChanges.currentValue;
+      this.dataSource.data = [...this.dataSource.data, ...this.formatData(this.newData)];
     }
   }
 
@@ -84,7 +84,7 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
   onUpload(data: TableDataEntry, index: number): void {
     data.inProgress = true;
     if (!this.currentUser) {
-      const noUserErrorMessage = "You must be logged in to upload. Please login and try again.";
+      const noUserErrorMessage = "You must be logged in to upload files. Please login and try again.";
       console.error(noUserErrorMessage);
       this.openSnackbar(noUserErrorMessage, "Dismiss");
       data.inProgress = false;
@@ -96,10 +96,13 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges {
         next: (response) => {
           this.openSnackbar(response.message, "Dismiss");
           if (!response.message.includes("file uploaded.")) {
-            this.errors.emit(`${data.file.name}: ${response.message}`);
-          } else {
-            this.removeItemFromDataSource(index);
+            const error = {
+              filename: data.file.name,
+              message: response.message
+            };
+            this.errors.emit(error);
           }
+          this.removeItemFromDataSource(index);
         },
         error: (error) => {
           this.openSnackbar(error.message, "Dismiss");
