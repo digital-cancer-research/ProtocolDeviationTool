@@ -1,4 +1,4 @@
-export interface FileDTO {
+export interface UploadedFile {
   fileId: number;
   fileName: string;
   username: string;

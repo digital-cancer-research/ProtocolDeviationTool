@@ -4,8 +4,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
 import { User } from 'src/app/core/models/user.model';
 import { UserService } from 'src/app/core/services/user.service';
-import { UploadResponse } from 'src/app/shared/upload/upload-response.model';
-import { UploadService } from 'src/app/shared/upload/upload.service';
+import { UploadResponse } from 'src/app/features/data-upload/data-upload/models/upload-response.model';
+import { UploadService } from 'src/app/features/data-upload/data-upload/upload.service';
 import { UploadError } from '../models/upload-error.model';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -24,6 +24,7 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
   // Supports 'type' column -  just add to array.
   displayedColumns: string[] = ['name', 'size', 'actions'];
   @Input() newData: File[] = [];
+  @Output() onSuccessfulUpload: EventEmitter<void> = new EventEmitter();
   @Output() errors: EventEmitter<UploadError> = new EventEmitter();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -82,11 +83,10 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
     this.dataSource.sort = this.sort;
   }
 
-
   /**
    * Sets up a custom filter predicate for the data source.
-   * This function configures how filtering is applied to the table data.
-   * This is due to the nested File object in the entries.
+   * This method configures how filtering is applied to the table data,
+   * specifically handling the nested File object in the TableDataEntry.
    * 
    * The filter checks if the file name, type, or size (in KB) includes the filter value.
    * The comparison is case-insensitive.
@@ -103,7 +103,6 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
       );
     };
   }
-
 
   /**
    * Applies a filter to the data source based on user input.
@@ -122,7 +121,6 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
       this.dataSource.paginator.firstPage();
     }
   }
-
 
   /**
   * Formats an array of File objects into TableDataEntry objects for display in the table.
@@ -175,6 +173,8 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
               message: response.message
             };
             this.errors.emit(error);
+          } else {
+            this.onSuccessfulUpload.emit();
           }
           this.onDelete(entry);
         },

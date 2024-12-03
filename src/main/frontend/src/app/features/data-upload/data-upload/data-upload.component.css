@@ -3,9 +3,15 @@
     flex-direction: row;
 }
 
-mat-card {
+mat-card.pending {
     margin: 5px;
     max-width: 35%;
+    flex: 1;
+    height: fit-content;
+}
+
+mat-card.uploaded {
+    margin: 5px;
     flex: 1;
     height: fit-content;
 }

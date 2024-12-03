@@ -25,6 +25,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
+import { UploadedFilesTableComponent } from './data-upload/uploaded-files-table/uploaded-files-table.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { MatInputModule } from '@angular/material/input';
     FileUploadComponent,
     PendingUploadsTableComponent,
     UploadErrorsTableComponent,
+    UploadedFilesTableComponent,
     DataCategorisationComponent,
     DataTrailComponent,
     DataUploadSummaryComponent

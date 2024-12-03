@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { User } from 'src/app/core/models/user.model';
-import { UploadResponse } from './upload-response.model';
+import { UploadResponse } from './models/upload-response.model';
 
 @Injectable({
   providedIn: 'root'

@@ -1,4 +1,4 @@
-<mat-card appearance="outlined">
+<mat-card appearance="outlined" class="pending">
     <mat-card-header>
         Upload Files
     </mat-card-header>
@@ -17,7 +17,7 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <app-pending-uploads-table #pendingUploadTable [newData]="newFiles" (errors)="onFileErrors($event)">
+                <app-pending-uploads-table #pendingUploadTable [newData]="newFiles" (onSuccessfulUpload)="onSuccessfulUpload()" (errors)="onFileErrors($event)">
                 </app-pending-uploads-table>
             </mat-panel-description>
         </mat-expansion-panel>
@@ -36,4 +36,15 @@
         </mat-expansion-panel>
 
     </mat-card-footer>
+</mat-card>
+
+<mat-card appearance="outlined" class="uploaded">
+    <mat-card-header>
+        Uploaded Files
+    </mat-card-header>
+
+    <mat-card-content>
+        <app-uploaded-files-table #uploadedFilesTable>
+        </app-uploaded-files-table>
+    </mat-card-content>
 </mat-card>
