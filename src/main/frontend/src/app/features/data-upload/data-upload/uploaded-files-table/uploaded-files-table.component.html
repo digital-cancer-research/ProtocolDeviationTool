@@ -28,9 +28,9 @@
             </mat-icon>
           </button>
         </th>
-        <td mat-cell *matCellDef="let error">
+        <td mat-cell *matCellDef="let file">
           <div style="display: flex;">
-            <button mat-icon-button color="warn" matTooltip="Delete" aria-label="Delete">
+            <button mat-icon-button color="warn" matTooltip="Delete" aria-label="Delete" (click)="onDelete(file)">
               <mat-icon>delete</mat-icon>
             </button>
           </div>

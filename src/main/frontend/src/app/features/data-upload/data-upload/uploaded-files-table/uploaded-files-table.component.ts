@@ -4,6 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { UploadedFile } from '../models/uploaded-file.model';
 import { FileListService } from '../file-list.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-uploaded-files-table',
@@ -12,6 +13,7 @@ import { FileListService } from '../file-list.service';
 })
 export class UploadedFilesTableComponent implements AfterViewInit {
   private fileListService = inject(FileListService);
+  private _snackBar = inject(MatSnackBar);
   displayedColumns: string[] = ['fileName', 'username', 'dateTimeUploaded', 'actions'];
   dataSource: MatTableDataSource<TableDataEntry> = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -20,13 +22,13 @@ export class UploadedFilesTableComponent implements AfterViewInit {
   constructor() {
     this.setDataSource();
   }
-  
+
   setDataSource(): void {
     this.fileListService.getUploadedFiles().subscribe((files) => {
       this.dataSource.data = this.formatFiles(files);
     })
   }
-  
+
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -47,6 +49,23 @@ export class UploadedFilesTableComponent implements AfterViewInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  onDelete(file: TableDataEntry) {
+    console.log(file);
+    this.fileListService.deleteFile(file.fileId).subscribe({
+      next: () => {
+        this.dataSource.data = this.dataSource.data.filter((f) => f.fileId !== file.fileId);
+        this.openSnackbar(`${file.fileName} deleted successfully`);
+      },
+      error: (error) => {
+        this.openSnackbar(`Error deleting ${file.fileName}`);
+      }
+    });
+  }
+
+  openSnackbar(message: string) {
+    this._snackBar.open(message, 'Dismiss', { duration: 5000 });
   }
 }
 
