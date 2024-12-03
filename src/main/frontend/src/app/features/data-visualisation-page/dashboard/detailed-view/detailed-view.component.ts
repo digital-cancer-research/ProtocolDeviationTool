@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from 'src/app/core/services/user.service';
 import { Team } from 'src/app/core/models/team.model';
 import { StudyService } from 'src/app/core/services/study.service';
-import { map, Observable, of, switchMap, tap } from 'rxjs';
+import { map, Observable, of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-detailed-view',
@@ -68,7 +68,7 @@ export class DetailedViewComponent {
       }
     });
   }
-  
+
   onOptionChange() {
     this.router.navigate([], {
       relativeTo: this.route,

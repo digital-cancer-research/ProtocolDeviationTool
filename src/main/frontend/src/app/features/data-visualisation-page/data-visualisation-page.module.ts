@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 
 import { DataVisualisationPageRoutingModule } from './data-visualisation-page-routing.module';
 import { DataVisualisationPageComponent } from './data-visualisation-page.component';
@@ -95,28 +95,39 @@ export class DataVisualisationPageModule {
 
   /**
    * Returns the page title of the visualisation pages based on the provided URL.
+   * Formats the page title with a `TitleCasePipe` apart from the study name.
    * 
    * @param url - The URL path used to determine the title.
    * @returns The title for the corresponding page.
    */
   public static getTitle(url: string) {
+    let title: string = ""
+    const tp = new TitleCasePipe();
+
     switch (url) {
       case (this.URL): {
-        return "TEAM SUMMARY DASHBOARD";
+        title = "TEAM SUMMARY DASHBOARD";
+        break;
       }
       case (TotalPdsComponent.URL):
       case (TotalPdsOverTimeComponent.URL): {
-        let title = DetailedViewComponent.studyId;
-        if (title === undefined) {
-          title = this.currentTeam ? this.currentTeam.teamName : "Team";
-        }
-        return `${title} PROTOCOL DEVIATIONS`;
+        return this.detailedViewPageTitle;
       }
       default: {
-        return "";
+        title = "";
+        break;
       }
     }
+    return tp.transform(title);
   }
 
+  private static get detailedViewPageTitle(): string {
+    const tp = new TitleCasePipe();
+    let subject = DetailedViewComponent.studyId;
+    if (subject === undefined) {
+      subject = this.currentTeam ? tp.transform(this.currentTeam.teamName) : "Team";
+    }
+    return `${tp.transform("PROTOCOL DEVIATIONS")} for ${subject}`;
+  }
 }
 
