@@ -17,7 +17,7 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <app-pending-uploads-table #pendingUploadTable [newData]="newFiles" (errors)="onFileErrors($event)">
+                <app-pending-uploads-table #pendingUploadTable [newData]="newFiles" (onSuccessfulUpload)="onSuccessfulUpload()" (errors)="onFileErrors($event)">
                 </app-pending-uploads-table>
             </mat-panel-description>
         </mat-expansion-panel>
@@ -44,7 +44,7 @@
     </mat-card-header>
 
     <mat-card-content>
-        <app-uploaded-files-table>
+        <app-uploaded-files-table #uploadedFilesTable>
         </app-uploaded-files-table>
     </mat-card-content>
 </mat-card>

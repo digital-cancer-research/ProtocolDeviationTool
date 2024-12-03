@@ -24,6 +24,7 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
   // Supports 'type' column -  just add to array.
   displayedColumns: string[] = ['name', 'size', 'actions'];
   @Input() newData: File[] = [];
+  @Output() onSuccessfulUpload: EventEmitter<void> = new EventEmitter();
   @Output() errors: EventEmitter<UploadError> = new EventEmitter();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -172,6 +173,8 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
               message: response.message
             };
             this.errors.emit(error);
+          } else {
+            this.onSuccessfulUpload.emit();
           }
           this.onDelete(entry);
         },

@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { UploadError } from './models/upload-error.model';
+import { UploadedFilesTableComponent } from './uploaded-files-table/uploaded-files-table.component';
 
 @Component({
   selector: 'app-data-upload',
@@ -9,6 +10,7 @@ import { UploadError } from './models/upload-error.model';
 })
 export class DataUploadComponent implements AfterViewInit {
   public static readonly URL = 'data-upload';
+  @ViewChild('uploadedFilesTable') uploadedFilesTable!: UploadedFilesTableComponent;
   @ViewChild('filesPanel') filesPanel!: MatExpansionPanel;
   @ViewChild('errorsPanel') errorsPanel!: MatExpansionPanel;
   protected hasFilesPanelGotNewFiles: boolean = false;
@@ -18,6 +20,10 @@ export class DataUploadComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.filesPanel.open();
+  }
+
+  onSuccessfulUpload(): void {
+    this.uploadedFilesTable.setDataSource();
   }
 
   onFileChange(files: File[]): void {

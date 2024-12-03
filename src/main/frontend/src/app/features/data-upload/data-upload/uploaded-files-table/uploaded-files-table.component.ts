@@ -69,6 +69,12 @@ export class UploadedFilesTableComponent implements AfterViewInit {
   }
 }
 
+/**
+ * Represents an entry in the uploaded files table.
+ * Changes the type of 'dateTimeUploaed' from string to Date - enables correct sorting in the table.
+ * @interface TableDataEntry
+ * @extends {Omit<UploadedFile, 'dateTimeUploaded'>}
+ */
 interface TableDataEntry extends Omit<UploadedFile, 'dateTimeUploaded'> {
   actions: boolean;
   dateTimeUploaded: Date;
