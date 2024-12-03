@@ -8,8 +8,8 @@ import { NavigationEnd, Router } from '@angular/router';
 import { DataVisualisationPageModule } from 'src/app/features/data-visualisation-page/data-visualisation-page.module';
 import { SitePageComponent } from 'src/app/features/site-page/site-page.component';
 import { DataUploadComponent } from 'src/app/features/data-upload/data-upload/data-upload.component';
-import { AdministrationPageComponent } from 'src/app/features/administration-page/administration-page.component';
 import { AdministrationPageModule } from 'src/app/features/administration-page/administration-page.module';
+import { TitleCasePipe } from '@angular/common';
 
 /**
  * HeaderComponent is responsible for managing the header UI element of the application,
@@ -154,24 +154,34 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   /**
    * Gets the page title based on the current URL.
+   * Formats the page title with `TitleCasePipe` unless the page is from DataVisualisation module.
+   * This is to allow custom formatting - keeping the study name in its original form.
    */
   get pageTitle(): string {
+    let title = "";
     switch (this.urlRoot) {
       case (SitePageComponent.URL): {
-        return "SITE";
+        title = "SITE";
+        break;
       }
       case (DataUploadComponent.URL): {
-        return "DATA UPLOAD";
+        title = "DATA UPLOAD";
+        break;
       }
       case (DataVisualisationPageModule.URL): {
-        return DataVisualisationPageModule.getTitle(this.urlFinalPath);
+        title = DataVisualisationPageModule.getTitle(this.urlFinalPath);
+        return title;
       }
       case (AdministrationPageModule.URL): {
-        return "ADMINISTRATOR";
+        title = "ADMINISTRATOR";
+        break;
       }
       default: {
-        return "";
+        title = "";
+        break;
       }
     }
+    const tc = new TitleCasePipe();
+    return tc.transform(title);
   }
 }
