@@ -1,15 +1,19 @@
 <div class="container">
     <div *ngFor="let tab of tabs">
         <button
-         mat-flat-button 
+        mat-raised-button
         *ngIf="tab !== activeTab"
+        [disabled]="tab.disabled"
+        [matTooltip]="tab.tooltip"
         (click)="navigateToTab(tab)">
             {{ tab.label | titlecase }}
         </button>
 
         <button
-         mat-raised-button 
+        mat-flat-button 
         *ngIf="tab === activeTab"
+        [disabled]="tab.disabled"
+        [matTooltip]="tab.tooltip"
         (click)="navigateToTab(tab)">
             {{ tab.label | titlecase }}
         </button>
