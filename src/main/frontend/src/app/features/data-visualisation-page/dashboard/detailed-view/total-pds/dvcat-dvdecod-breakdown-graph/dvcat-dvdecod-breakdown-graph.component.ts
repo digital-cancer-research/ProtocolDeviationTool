@@ -51,7 +51,7 @@ export class DvcatDvdecodBreakdownGraphComponent {
   public selectedLabels: string[] = this.labels;
 
   /** Flag to control the visibility of the chart legend. */
-  public isLegendVisible: boolean = false;
+  public isLegendVisible: boolean = true;
 
   /** Flag to indicate if data is currently loading. */
   public isDataLoading: boolean = true;
@@ -60,7 +60,7 @@ export class DvcatDvdecodBreakdownGraphComponent {
   public errorMessage: string = "";
 
   /** Flag to indicate if the color mode is default. */
-  public isColourModeDefault: boolean = true;
+  public isColourModeDefault: boolean = false;
 
   /** Indicates whether the panel for the filters is scrollable - true when expanded */
   public panelOpenState = signal(false);
@@ -118,7 +118,7 @@ export class DvcatDvdecodBreakdownGraphComponent {
       next: (team) => {
         this.isDataLoading = false;
         if (team !== null) {
-          if (apiRequest === null) { 
+          if (apiRequest === null) {
             apiRequest = this.dataVisualisationService.getPdDvdecodBarGraphDataByTeam$(team.teamId);
           }
           this.fetchGraphData(apiRequest);
@@ -235,6 +235,13 @@ export class DvcatDvdecodBreakdownGraphComponent {
    * Toggles the color mode of the chart and updates the chart.
    */
   public toggleColourMode(): void {
+    this.isColourModeDefault = !this.isColourModeDefault;
+    this.createChart();
+  }
+
+  public toggleLegendAndColourMode(): void {
+    this.isColourModeDefault = !this.isColourModeDefault;
+    this.isLegendVisible = !this.isLegendVisible;
     this.createChart();
   }
 
