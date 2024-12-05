@@ -47,6 +47,15 @@
             info
         </mat-icon>
     </div>
-    <app-multi-select [items]="labels" [defaultValues]="labels" [height]="320" (confirmedItems)="updateChart($event)">
-    </app-multi-select>
+    <mat-expansion-panel #panel [ngClass]="{'open': panelOpenState()}"
+    (afterExpand)="panelOpenState.set(true)"
+    (closed)="panelOpenState.set(false)">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Filter Dvcats
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <app-multi-select [items]="labels" [defaultValues]="labels" [height]="400" (confirmedItems)="updateChart($event)">
+        </app-multi-select>
+      </mat-expansion-panel>
 </mat-card-actions>

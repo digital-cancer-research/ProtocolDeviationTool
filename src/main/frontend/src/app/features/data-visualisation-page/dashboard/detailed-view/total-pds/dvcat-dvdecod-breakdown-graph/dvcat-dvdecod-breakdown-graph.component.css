@@ -60,3 +60,11 @@ div.toggleWithIcon {
 .help {
     color: #009cee;
 }
+
+mat-expansion-panel {
+    height: fit-content;
+}
+
+.open {
+    overflow-y: auto;
+}

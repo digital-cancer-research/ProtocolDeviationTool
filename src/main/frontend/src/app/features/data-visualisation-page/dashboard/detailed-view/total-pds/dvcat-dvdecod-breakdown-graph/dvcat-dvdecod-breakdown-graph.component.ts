@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Output, signal } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Chart, CategoryScale } from 'chart.js';
 import { Observable, Subscription } from 'rxjs';
@@ -61,6 +61,9 @@ export class DvcatDvdecodBreakdownGraphComponent {
 
   /** Flag to indicate if the color mode is default. */
   public isColourModeDefault: boolean = true;
+
+  /** Indicates whether the panel for the filters is scrollable - true when expanded */
+  public panelOpenState = signal(false);
 
   /** Output event emitter for sending graph data to parent components. */
   @Output() dvdecodGraphData: EventEmitter<DvdecodData[]> = new EventEmitter();
