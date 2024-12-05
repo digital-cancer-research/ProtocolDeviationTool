@@ -57,10 +57,6 @@ div.toggleWithIcon {
     gap: 5px;
 }
 
-.help {
-    color: #009cee;
-}
-
 mat-expansion-panel {
     height: fit-content;
 }
