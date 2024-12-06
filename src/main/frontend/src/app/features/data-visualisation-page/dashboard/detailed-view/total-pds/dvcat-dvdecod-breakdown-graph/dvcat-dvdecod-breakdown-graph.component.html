@@ -18,35 +18,34 @@
     </canvas>
     </div>
     <mat-card-footer *ngIf="!isDataLoading">
-        <mat-icon class="help" matTooltip="Click a dvcat to generate a graph">
-            help
+        <mat-icon matTooltip="Click a dvcat to generate a graph">
+            info
         </mat-icon>
     </mat-card-footer>
 </mat-card-content>
 
 
 <mat-card-actions *ngIf="!isDataLoading">
+    
     <div class="toggleWithIcon">
-        <mat-slide-toggle [(ngModel)]="isColourModeDefault" (ngModelChange)="toggleColourMode()">
-            Colour mode
+        <mat-slide-toggle (toggleChange)="toggleLegendAndColourMode()">
+            Toggle Legend & Colours
         </mat-slide-toggle>
-        <mat-icon matTooltip="Switch between colour modes.
-            Active state will match dvdecod colours to order of frequency with respect to their dvcat.
-            Inactive state will give each dvdecod a different colour.">
+        <mat-icon matTooltip="Turn the legend and colours on and off. 
+            When on, each dvdecod is given a unique colour.
+            When off, the colours across each dvcat is consistent">
             info
         </mat-icon>
     </div>
-
-    <div class="toggleWithIcon">
-        <mat-slide-toggle (toggleChange)="toggleLegend()">
-            Toggle Legend
-        </mat-slide-toggle>
-        <mat-icon matTooltip="Enable and disable the legend. 
-            The legend is ordered by frequency in descending order,
-            from left to right and top to bottom.">
-            info
-        </mat-icon>
-    </div>
-    <app-multi-select [items]="labels" [defaultValues]="labels" [height]="320" (confirmedItems)="updateChart($event)">
-    </app-multi-select>
+    <mat-expansion-panel #panel [ngClass]="{'open': panelOpenState()}"
+    (afterExpand)="panelOpenState.set(true)"
+    (closed)="panelOpenState.set(false)">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Filter Dvcats
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <app-multi-select [items]="labels" [defaultValues]="labels" [height]="400" (confirmedItems)="updateChart($event)">
+        </app-multi-select>
+      </mat-expansion-panel>
 </mat-card-actions>

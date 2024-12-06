@@ -37,6 +37,7 @@ import { DvdecodGraphComponent } from './dashboard/detailed-view/total-pds/dvdec
 import { MatMenuModule } from '@angular/material/menu';
 import { VisualisationService } from './dashboard/visualisation/visualisation.service';
 import { PieChartService } from './dashboard/team-pd-pie-chart/pie-chart.service';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @NgModule({
   declarations: [
@@ -75,7 +76,8 @@ import { PieChartService } from './dashboard/team-pd-pie-chart/pie-chart.service
     SharedModule,
     MatDialogModule,
     MatRadioModule,
-    MatMenuModule
+    MatMenuModule,
+    MatExpansionModule
   ],
   providers: [
     VisualisationService,
