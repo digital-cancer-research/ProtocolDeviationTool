@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, inject, Input, ChangeDetectorRef, OnDestroy, AfterViewInit } from '@angular/core';
 import { UserManagementService } from '../user-management.service';
 import { Observable, Subscription } from 'rxjs';
-import { UserManagementData } from '../models/user-management-data.model';
+import { UserManagementData } from '../../models/user-management-data.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { Team } from 'src/app/core/models/team.model';

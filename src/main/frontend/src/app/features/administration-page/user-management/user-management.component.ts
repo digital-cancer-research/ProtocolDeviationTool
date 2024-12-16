@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserManagementService } from './user-management.service';
 import { map, Observable, of, Subscription } from 'rxjs';
-import { UserManagementData } from './models/user-management-data.model';
+import { UserManagementData } from '../models/user-management-data.model';
 import { Team } from 'src/app/core/models/team.model';
 
 @Component({
