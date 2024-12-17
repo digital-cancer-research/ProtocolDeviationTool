@@ -1,28 +1,103 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { AuditTrailManagementService } from './audit-trail-management.service';
+import { AuditTrailData } from '../models/audit-trail-data.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-audit-trail-management',
   templateUrl: './audit-trail-management.component.html',
   styleUrls: ['./audit-trail-management.component.css']
 })
-export class AuditTrailManagementComponent implements OnInit {
-  auditTrailData: any[] = [];
+export class AuditTrailManagementComponent {
+  private readonly auditTrailService = inject(AuditTrailManagementService);
+  private _snackbar = inject(MatSnackBar);
 
-  constructor(private auditTrailService: AuditTrailManagementService) {}
+  protected displayedColumns: string[] = [
+    'username',
+    'dateTimeEdited',
+    'entityChanged',
+    'attributeChanged',
+    'changeFrom',
+    'changeTo'
+  ];
 
-  ngOnInit(): void {
-    this.getAuditTrailData();
+  protected dataSource: MatTableDataSource<TableDataEntry> = new MatTableDataSource();
+
+  @ViewChild(MatPaginator) private paginator!: MatPaginator;
+  @ViewChild(MatSort) private sort!: MatSort;
+
+
+  constructor() {
+    this.fetchAuditTrailData();
   }
 
-  getAuditTrailData(): void {
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  /**
+   * Fetches audit trail data from the server and updates the data source.
+   * 
+   * This method calls the audit trail service to retrieve data, formats it,
+   * and updates the component's data source. If an error occurs during the
+   * fetch operation, it displays an error message using a snackbar.
+   * 
+   * @returns {void} This method doesn't return a value.
+   */
+  private fetchAuditTrailData(): void {
     this.auditTrailService.getAuditTrailData().subscribe(
-      (data: any[]) => {
-        this.auditTrailData = data;
-      },
-      error => {
-        console.error('Error fetching auditTrailData:', error);
+      {
+        next: (data) => {
+          this.dataSource.data = this.formatData(data);
+        },
+        error: (error) => {
+          this._snackbar.open(`Couldn't load audit trail data: ${error.message}`, "Dismiss", {
+            duration: 5000
+          });
+        }
       }
     );
   }
+
+  /**
+   * Formats the audit trail data by converting the dateTimeEdited string to a Date object.
+   * 
+   * @param data - An array of AuditTrailData objects to be formatted.
+   * @returns An array of TableDataEntry objects with dateTimeEdited as a Date object.
+   */
+  private formatData(data: AuditTrailData[]) {
+    return data.map(entry => {
+      return {
+        ...entry,
+        dateTimeEdited: new Date(entry.dateTimeEdited)
+      } as TableDataEntry
+    })
+  }
+
+  /**
+   * Applies a filter to the data source based on user input.
+   * 
+   * This method is triggered when the user types into the filter input field.
+   * It updates the data source's filter with the lowercase trimmed input value
+   * and resets the paginator to the first page if it exists.
+   * 
+   * @param event - The input event from the filter field.
+   *                Contains the user's input value.
+   */
+  protected applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+}
+
+interface TableDataEntry extends Omit<AuditTrailData, 'dateTimeEdited'> {
+  dateTimeEdited: Date
 }

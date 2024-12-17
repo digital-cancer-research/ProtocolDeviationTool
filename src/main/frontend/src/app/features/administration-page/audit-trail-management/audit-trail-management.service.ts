@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AuditTrailData } from '../models/audit-trail-data.model';
 
 @Injectable({
   providedIn: 'root',
@@ -8,11 +9,17 @@ import { Observable } from 'rxjs';
 export class AuditTrailManagementService {
   private readonly baseUrl = 'api/users';
 
-  constructor(private http: HttpClient) {}
-  
-  getAuditTrailData(): Observable<any[]> {
-    // Make an HTTP GET request to fetch sites
-    return this.http.get<any[]>(`${this.baseUrl}/get-audit-trail-data`);
-    }
+  constructor(private http: HttpClient) { }
 
+  /**
+   * Retrieves audit trail data from the server.
+   * 
+   * This method sends a GET request to the server to fetch audit trail information.
+   * The data is returned as an Observable of an array of AuditTrailData objects.
+   * 
+   * @returns An Observable that emits an array of AuditTrailData objects representing the audit trail information.
+   */
+  getAuditTrailData(): Observable<AuditTrailData[]> {
+    return this.http.get<AuditTrailData[]>(`${this.baseUrl}/get-audit-trail-data`);
+  }
 }
