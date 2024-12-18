@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Tab } from 'src/app/shared/tab/tab';
 
 @Component({
   selector: 'app-administration-page',
@@ -6,11 +7,11 @@ import { Component } from '@angular/core';
   styleUrl: './administration-page.component.css'
 })
 export class AdministrationPageComponent {
-  tabs: { label: string, link: string }[] = [
-    { label: "User Management", link: "user-management" },
-    { label: "Team Management", link: "team-management" },
-    { label: "Site Management", link: "site-management" },
-    { label: "Study Management", link: "study-management" },
-    { label: "Audit Trail", link: "audit-trail" }
+  tabs: Tab[] = [
+    new Tab("User Management", "user-management"),
+    new Tab("Team Management", "team-management"),
+    new Tab("Site Management", "site-management", true),
+    new Tab("Study Management", "study-management"),
+    new Tab("Audit Trail", "audit-trail")
   ];
 }

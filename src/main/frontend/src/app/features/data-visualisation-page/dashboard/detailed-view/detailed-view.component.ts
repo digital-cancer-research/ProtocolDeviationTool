@@ -21,14 +21,8 @@ export class DetailedViewComponent {
   protected selectedOption: string = "";
 
   protected tabs: Tab[] = [
-    {
-      label: "Total Protocol Deviations",
-      link: TotalPdsComponent.URL
-    },
-    {
-      label: "Total Protocol Deviations Over Time",
-      link: TotalPdsOverTimeComponent.URL
-    }
+    new Tab("Total Protocol Deviations", TotalPdsComponent.URL),
+    new Tab("Total Protocol Deviations Over Time", TotalPdsOverTimeComponent.URL)
   ]
 
   constructor(

@@ -27,6 +27,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDialogModule } from '@angular/material/dialog';
 import { EditDataDialogueComponent } from './table/edit-data/edit-data-dialogue.component';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatRadioModule,
     MatFormFieldModule,
     MatTableModule,
+    MatTooltipModule,
     MatSortModule,
     MatPaginatorModule,
     MatMenuModule,

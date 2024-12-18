@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Tab } from 'src/app/shared/tab/tab';
 
 @Component({
   selector: 'app-data-upload-page',
@@ -6,11 +7,11 @@ import { Component } from '@angular/core';
   styleUrl: './data-upload-page.component.css'
 })
 export class DataUploadPageComponent {
-  tabs: { label: string, link: string }[] = [
-    { label: "DATA UPLOAD", link: "/data-upload" },
-    { label: "DATA UPLOAD SUMMARY", link: "summary" },
-    { label: "AUDIT TRAIL", link: "audit-trail" },
-    { label: "DATA TRAIL", link: "data-trail" },
-    { label: "DATA CATEGORISATION", link: "data-categorisation" }
+  tabs: Tab[] = [
+    new Tab("DATA UPLOAD", "/data-upload"),
+    new Tab("DATA UPLOAD SUMMARY", "summary"),
+    new Tab("AUDIT TRAIL", "audit-trail"),
+    new Tab("DATA TRAIL", "data-trail"),
+    new Tab("DATA CATEGORISATION", "data-categorisation")
   ];
 }

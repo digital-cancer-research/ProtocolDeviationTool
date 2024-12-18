@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { filter } from 'rxjs/operators';
-import { combineLatest } from 'rxjs';
-import { UserService } from './core/services/user.service';
+import { Component, inject } from '@angular/core';
+import { UrlService } from './core/services/url.service';
+import { NavigationEnd } from '@angular/router';
+import { HomePageComponent } from './features/home-page/home-page.component';
+import { SitePageComponent } from './features/site-page/site-page.component';
 
 @Component({
   selector: 'app-root',
@@ -10,49 +10,21 @@ import { UserService } from './core/services/user.service';
   styleUrls: ['./app.component.sass']
 })
 export class AppComponent {
-  title = 'frontend';
-  /** 
-   * Indicates whether the footer is visible.
-   * @type {boolean}
-   */
-  isFooterVisible: boolean = false;
+  private title = 'frontend';
 
-  /**
-   * Creates an instance of AppComponent.
-   * 
-   * Listens for changes in the url and the user to 
-   * manage access to the site and update footer visibility.
-   * 
-   * @param {Router} router - The Angular router instance for navigating between routes.
-   * @param {UserService} userService - The service to manage user-related data and state.
-   */
-  constructor(
-    private router: Router,
-    private userService: UserService
-  ) {
-    const navigationEnd$ = this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    );
-    combineLatest([navigationEnd$, userService.currentUser$])
-      .subscribe(([event, currentUser]) => {
-        event = event as NavigationEnd;
-        this.isFooterVisible = this.updateFooterVisibility(event.url);
-        if (event.url !== '' && event.url !== '/site' && currentUser?.roleId === 3) {
-          this.router.navigateByUrl('');
-        }
-      })
+  private readonly urlService = inject(UrlService);
+
+  protected isFooterVisible: boolean = false;
+
+  private readonly PAGES_WITH_FOOTER = [
+    `/${HomePageComponent.URL}`,
+    `/${SitePageComponent.URL}`
+  ]
+
+  constructor() {
+    this.urlService.newNav$().subscribe(nav => {
+      const url = (nav as unknown as NavigationEnd).url;
+      this.isFooterVisible = this.PAGES_WITH_FOOTER.some(pageUrl => pageUrl.includes(url));
+    })
   }
-
-  updateFooterVisibility(url: string): boolean {
-    const urlRoot = url.split('/')[1]
-      .split('?').reverse().pop();
-    switch (urlRoot) {
-      case '':
-      case 'site':
-        return true;
-      default:
-        return false;
-    }
-  }
-
 }
