@@ -33,6 +33,7 @@ import { TeamManagementTableComponent } from './team-management/team-management-
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TeamManagementEditDialogueComponent } from './team-management/team-management-edit-dialogue/team-management-edit-dialogue.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { TeamManagementEditDialogueComponent } from './team-management/team-mana
     MatSortModule,
     MatSnackBarModule,
     MatTableModule,
+    MatTooltipModule,
     ReactiveFormsModule
   ],
   providers: [

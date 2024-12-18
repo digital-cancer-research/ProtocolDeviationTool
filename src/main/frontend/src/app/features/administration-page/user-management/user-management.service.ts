@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, combineLatest, map, Observable, of, tap } from 'rxjs';
 import { Team } from 'src/app/core/models/team.model';
-import { UserWithRoles } from './models/user-with-roles.model';
-import { Role } from './models/role.model';
-import { UserManagementData } from './models/user-management-data.model';
+import { UserWithRoles } from '../models/user-with-roles.model';
+import { Role } from '../models/role.model';
+import { UserManagementData } from '../models/user-management-data.model';
 import { UserTeam as CoreUserTeam } from 'src/app/core/models/user-team.model';
-import { UserTeam } from './models/user-team.model';
+import { UserTeam } from '../models/user-team.model';
 
 @Injectable({
   providedIn: 'root',

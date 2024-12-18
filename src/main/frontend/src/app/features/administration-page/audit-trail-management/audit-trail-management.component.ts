@@ -1,90 +1,103 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { AuditTrailManagementService } from './audit-trail-management.service';
+import { AuditTrailData } from '../models/audit-trail-data.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-audit-trail-management',
   templateUrl: './audit-trail-management.component.html',
   styleUrls: ['./audit-trail-management.component.css']
 })
-export class AuditTrailManagementComponent implements OnInit {
-  auditTrailData: any[] = [];
-  pagedAuditTrail: any[] = [];
+export class AuditTrailManagementComponent {
+  private readonly auditTrailService = inject(AuditTrailManagementService);
+  private _snackbar = inject(MatSnackBar);
 
-  // Pagination properties
-  itemsPerPage: number = 7;
-  currentPage: number = 1;
-  disabledFirstButton: boolean = false;
-  disabledPreviousButton: boolean = false;
-  disabledNextButton: boolean = false;
-  disabledLastButton: boolean = false;
+  protected displayedColumns: string[] = [
+    'username',
+    'dateTimeEdited',
+    'entityChanged',
+    'attributeChanged',
+    'changeFrom',
+    'changeTo'
+  ];
 
-  sortedColumn: string = 'dateTimeEdited'; // Default sorting column
-  sortDirection: 'asc' | 'desc' = 'desc';
+  protected dataSource: MatTableDataSource<TableDataEntry> = new MatTableDataSource();
 
-  constructor(private auditTrailService: AuditTrailManagementService) {}
+  @ViewChild(MatPaginator) private paginator!: MatPaginator;
+  @ViewChild(MatSort) private sort!: MatSort;
 
-  ngOnInit(): void {
-    this.getAuditTrailData();
+
+  constructor() {
+    this.fetchAuditTrailData();
   }
 
-  getAuditTrailData(): void {
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  /**
+   * Fetches audit trail data from the server and updates the data source.
+   * 
+   * This method calls the audit trail service to retrieve data, formats it,
+   * and updates the component's data source. If an error occurs during the
+   * fetch operation, it displays an error message using a snackbar.
+   * 
+   * @returns {void} This method doesn't return a value.
+   */
+  private fetchAuditTrailData(): void {
     this.auditTrailService.getAuditTrailData().subscribe(
-      (data: any[]) => {
-        this.auditTrailData = data;
-        this.updatePage();
-      },
-      error => {
-        console.error('Error fetching auditTrailData:', error);
+      {
+        next: (data) => {
+          this.dataSource.data = this.formatData(data);
+        },
+        error: (error) => {
+          this._snackbar.open(`Couldn't load audit trail data: ${error.message}`, "Dismiss", {
+            duration: 5000
+          });
+        }
       }
     );
   }
 
-  updatePage(): void {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    this.pagedAuditTrail = this.auditTrailData.slice(startIndex, startIndex + this.itemsPerPage);
-    this.updateNavigationButtons();
+  /**
+   * Formats the audit trail data by converting the dateTimeEdited string to a Date object.
+   * 
+   * @param data - An array of AuditTrailData objects to be formatted.
+   * @returns An array of TableDataEntry objects with dateTimeEdited as a Date object.
+   */
+  private formatData(data: AuditTrailData[]) {
+    return data.map(entry => {
+      return {
+        ...entry,
+        dateTimeEdited: new Date(entry.dateTimeEdited)
+      } as TableDataEntry
+    })
   }
 
-  setPage(page: number): void {
-    this.currentPage = page;
-    this.updatePage();
-  }
+  /**
+   * Applies a filter to the data source based on user input.
+   * 
+   * This method is triggered when the user types into the filter input field.
+   * It updates the data source's filter with the lowercase trimmed input value
+   * and resets the paginator to the first page if it exists.
+   * 
+   * @param event - The input event from the filter field.
+   *                Contains the user's input value.
+   */
+  protected applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
-  updateNavigationButtons(): void {
-    this.disabledFirstButton = this.currentPage === 1;
-    this.disabledPreviousButton = this.currentPage === 1;
-    const totalPages = this.pages.length;
-    this.disabledNextButton = this.currentPage === totalPages;
-    this.disabledLastButton = this.currentPage === totalPages;
-  }
-
-  get pages(): number[] {
-    return Array.from({ length: Math.ceil(this.auditTrailData.length / this.itemsPerPage) }, (_, i) => i + 1);
-  }
-
-  sortTable(column: string): void {
-    if (this.sortedColumn === column) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-      this.sortedColumn = column;
-      this.sortDirection = 'asc';
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
     }
-
-    // Sort the entire dataset
-    this.auditTrailData.sort((a, b) => {
-      const aValue = a[this.sortedColumn];
-      const bValue = b[this.sortedColumn];
-
-      if (typeof aValue === 'string' && typeof bValue === 'string') {
-        return this.sortDirection === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-      } else if (typeof aValue === 'number' && typeof bValue === 'number') {
-        return this.sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
-      } else {
-        return 0;
-      }
-    });
-
-    // Update pagination after sorting
-    this.setPage(this.currentPage);
   }
+}
+
+interface TableDataEntry extends Omit<AuditTrailData, 'dateTimeEdited'> {
+  dateTimeEdited: Date
 }
