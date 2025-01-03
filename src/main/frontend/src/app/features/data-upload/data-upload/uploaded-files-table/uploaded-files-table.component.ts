@@ -14,7 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class UploadedFilesTableComponent implements AfterViewInit {
   private fileListService = inject(FileListService);
   private _snackBar = inject(MatSnackBar);
-  displayedColumns: string[] = ['fileName', 'username', 'dateTimeUploaded', 'actions'];
+  displayedColumns: string[] = ['fileName', 'username', 'dateTimeUploaded', 'isFileBeingDeleted'];
   dataSource: MatTableDataSource<TableDataEntry> = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -38,7 +38,7 @@ export class UploadedFilesTableComponent implements AfterViewInit {
     return files.map((file) => ({
       ...file,
       dateTimeUploaded: new Date(file.dateTimeUploaded),
-      actions: true
+      isFileBeingDeleted: false,
     }));
   }
 
@@ -52,7 +52,7 @@ export class UploadedFilesTableComponent implements AfterViewInit {
   }
 
   onDelete(file: TableDataEntry) {
-    console.log(file);
+    file.isFileBeingDeleted = true;
     this.fileListService.deleteFile(file.fileId).subscribe({
       next: () => {
         this.dataSource.data = this.dataSource.data.filter((f) => f.fileId !== file.fileId);
@@ -60,6 +60,7 @@ export class UploadedFilesTableComponent implements AfterViewInit {
       },
       error: (error) => {
         this.openSnackbar(`Error deleting ${file.fileName}`);
+        file.isFileBeingDeleted = false;
       }
     });
   }
@@ -76,6 +77,6 @@ export class UploadedFilesTableComponent implements AfterViewInit {
  * @extends {Omit<UploadedFile, 'dateTimeUploaded'>}
  */
 interface TableDataEntry extends Omit<UploadedFile, 'dateTimeUploaded'> {
-  actions: boolean;
   dateTimeUploaded: Date;
+  isFileBeingDeleted: boolean;
 }
