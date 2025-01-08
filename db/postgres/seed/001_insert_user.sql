@@ -1,7 +1,7 @@
 INSERT INTO
-    "user_account" (
+    "user" (
         "username",
-        "role_id",
+        "role",
         "is_site",
         "is_sponsor",
         "date_created"
@@ -9,57 +9,57 @@ INSERT INTO
 VALUES
     (
         'drjohndoe@gmail.com',
-        1,
+        'ADMIN',
         true,
         true,
-        '01/01/2023'
+        '2023-01-01T00:00:00'
     ),
     (
         'sara.smith.md@hospital.edu',
-        1,
+        'ADMIN',
         true,
         false,
-        '02/01/2023'
+        '2023-02-01T00:00:00'
     ),
     (
         'healthpro123@hotmail.com',
-        1,
+        'ADMIN',
         false,
         true,
-        '03/01/2023'
+        '2023-03-01T00:00:00'
     ),
     (
         'emily.green.md@clinic.org',
-        1,
+        'ADMIN',
         false,
         false,
-        '04/01/2023'
+        '2023-04-01T00:00:00'
     ),
     (
         'clinical.expert99@medcenter.net',
-        2,
+        'USER',
         true,
         true,
-        '05/01/2023'
+        '2023-05-01T00:00:00'
     ),
     (
         'medresearcher23@outlook.com',
-        2,
+        'USER',
         true,
         false,
-        '06/01/2023'
+        '2023-06-01T00:00:00'
     ),
     (
         'doctorcare456@gmail.com',
-        2,
+        'USER',
         false,
         true,
-        '07/01/2023'
+        '2023-07-01T00:00:00'
     ),
     (
         'doctor.awesome@yahoo.com',
-        2,
+        'USER',
         false,
         false,
-        '08/01/2023'
+        '2023-08-01T00:00:00'
     );
