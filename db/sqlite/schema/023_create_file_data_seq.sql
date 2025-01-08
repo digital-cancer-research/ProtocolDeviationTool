@@ -1,1 +1,0 @@
-CREATE TABLE file_data_seq (next_val INTEGER);

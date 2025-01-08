@@ -1,1 +1,0 @@
-CREATE TABLE dvspondes_seq (next_val INTEGER);
