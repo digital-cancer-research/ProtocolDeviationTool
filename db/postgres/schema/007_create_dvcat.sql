@@ -1,5 +1,5 @@
 CREATE TABLE "dvcat" (
   "dvcat_id" SERIAL PRIMARY KEY,
-  "description" VARCHAR NOT NULL,
-  "colour" VARCHAR NOT NULL
+  "description" VARCHAR(255) NOT NULL,
+  "colour" VARCHAR(9) NOT NULL
 );

@@ -3,63 +3,54 @@ INSERT INTO
         "username",
         "role",
         "is_site",
-        "is_sponsor",
-        "date_created"
+        "is_sponsor"
     )
 VALUES
     (
         'drjohndoe@gmail.com',
         'ADMIN',
         true,
-        true,
-        '2023-01-01T00:00:00'
+        true
     ),
     (
         'sara.smith.md@hospital.edu',
         'ADMIN',
         true,
-        false,
-        '2023-02-01T00:00:00'
+        false
     ),
     (
         'healthpro123@hotmail.com',
         'ADMIN',
         false,
-        true,
-        '2023-03-01T00:00:00'
+        true
     ),
     (
         'emily.green.md@clinic.org',
         'ADMIN',
         false,
-        false,
-        '2023-04-01T00:00:00'
+        false
     ),
     (
         'clinical.expert99@medcenter.net',
         'USER',
         true,
-        true,
-        '2023-05-01T00:00:00'
+        true
     ),
     (
         'medresearcher23@outlook.com',
         'USER',
         true,
-        false,
-        '2023-06-01T00:00:00'
+        false
     ),
     (
         'doctorcare456@gmail.com',
         'USER',
         false,
-        true,
-        '2023-07-01T00:00:00'
+        true
     ),
     (
         'doctor.awesome@yahoo.com',
         'USER',
         false,
-        false,
-        '2023-08-01T00:00:00'
+        false
     );

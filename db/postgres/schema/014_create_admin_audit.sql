@@ -4,5 +4,5 @@ CREATE TABLE admin_audit (
     "action" TEXT NOT NULL,
     "original_value" TEXT NOT NULL,
     "new_value" TEXT NOT NULL,
-    "date" TEXT
+    "date" TIMESTAMP NOT NULL
 );
