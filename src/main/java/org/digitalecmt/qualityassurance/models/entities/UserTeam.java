@@ -1,4 +1,4 @@
-package org.digitalecmt.qualityassurance.model.persistence;
+package org.digitalecmt.qualityassurance.models.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -6,29 +6,30 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "team")
+@Table(name = "user_team")
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class Team {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "team_id", columnDefinition = "serial")
-    private int teamId;
+public class UserTeam {
 
-    @Column(name = "team_name", unique = true, nullable = false)
-    private String teamName;
-    
+	@Id
+	@Column(name = "user_team_id")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private int userTeamId;
+	
     @Column(name = "user_id")
+    @NotNull
     private int userId;
-    
-    @Column(name = "date_created")
-    private String dateCreated;
+
+    @Column(name = "team_id")
+    @NotNull
+    private int teamId;
 }
