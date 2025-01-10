@@ -15,44 +15,41 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Represents a team entity.
+ * Entity representing a file in the system.
  */
 @Entity
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Team {
+public class File {
 
     /**
-     * The unique identifier for the team.
+     * The unique identifier for the file.
      */
     @Id
+    @Column(name = "file_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     /**
-     * The name of the team.
-     * Must be unique and not null.
-     * The minimum length is 1 character.
-     * The maximum length is 255 characters.
+     * The name of the file.
+     * Must not be null and must be between 1 and 255 characters.
      */
-    @Column(name = "team_name")
-    @NotNull
+    @Column(name = "file_name")
     @Size(min = 1, max = 255)
-    private String teamName;
+    @NotNull
+    private String fileName;
 
     /**
-     * The ID of the {@link User} who created the team.
+     * The ID of the {@link User} who uploaded the file.
      */
-    @Column(name = "created_by")
-    private Long createdBy;
+    @Column(name = "uploaded_by")
+    private Long uploadedBy;
 
     /**
-     * The date and time when the team was created.
-     * This field is automatically populated by the database if not provided.
+     * The date and time when the file was uploaded.
      */
-    @Column(name = "date_created")
-    private LocalDateTime dateCreated;
+    @Column(name = "date_uploaded")
+    private LocalDateTime dateUploaded;
 }
