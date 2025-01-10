@@ -2,6 +2,7 @@ package org.digitalecmt.qualityassurance.models.entities;
 
 import java.io.Serializable;
 
+import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
  * 
  * @see TeamStudy
  */
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
