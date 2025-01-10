@@ -11,26 +11,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Entity representing the association between a user and a team.
+ * Entity representing the association between a team and a study.
  * 
- * @see UserTeamId
+ * @see TeamStudyId
  */
 @Entity
-@Table(name = "user_team")
-@IdClass(UserTeamId.class)
+@IdClass(TeamStudyId.class)
+@Table(name = "team_study_access")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserTeam {
-
-    /**
-     * The ID of the user.
-     * This field is part of the composite key.
-     */
-    @Id
-    @Column(name = "user_id")
-    private long userId;
+public class TeamStudy {
 
     /**
      * The ID of the team.
@@ -38,5 +30,13 @@ public class UserTeam {
      */
     @Id
     @Column(name = "team_id")
-    private long teamId;
+    private int teamId;
+
+    /**
+     * The ID of the study.
+     * This field is part of the composite key.
+     */
+    @Id
+    @Column(name = "study_id")
+    private String studyId;
 }
