@@ -7,22 +7,20 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
- * Composite key class for the association between a user and a team.
- * 
- * @see UserTeam
+ * Composite key class for the association between a site and an external site.
  */
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class UserTeamId implements Serializable {
+public class ExternalSiteMappingId implements Serializable {
 
     /**
-     * The ID of the user.
+     * The ID of the site.
      */
-    private long userId;
+    private Long siteId;
 
     /**
-     * The ID of the team.
+     * The ID of the external site.
      */
-    private long teamId;
+    private Long externalSiteId;
 }
