@@ -7,13 +7,13 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class TeamNotFoundException extends RuntimeException {
 
-    private Integer id;
+    private Long id;
 
     public TeamNotFoundException() {
         super("TeamNotFoundException: Team not found.");
     }
 
-    public TeamNotFoundException(Integer id) {
+    public TeamNotFoundException(Long id) {
         this();
         this.id = id;
     }
@@ -22,7 +22,7 @@ public class TeamNotFoundException extends RuntimeException {
         super(message);
     }
 
-    public TeamNotFoundException(Integer id, String message) {
+    public TeamNotFoundException(Long id, String message) {
         super(message);
         this.id = id;
     }

@@ -4,30 +4,30 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * Exception thrown when a user is not found.
+ * Exception thrown when a user does not have admin rights.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class UserNotFoundException extends RuntimeException {
+public class UserNotAuthorisedException extends RuntimeException {
 
     /**
-     * The ID of the user that was not found.
+     * The ID of the user who is not authorized.
      */
     private Long id;
 
     /**
      * Constructs a new exception with the default message.
      */
-    public UserNotFoundException() {
-        super("UserNotFoundException: User not found.");
+    public UserNotAuthorisedException() {
+        super("UserNotAuthorisedException: User does not have admin rights.");
     }
 
     /**
      * Constructs a new exception with the default message and the specified user ID.
      *
-     * @param id the ID of the user that was not found
+     * @param id the ID of the user who is not authorized
      */
-    public UserNotFoundException(Long id) {
+    public UserNotAuthorisedException(Long id) {
         this();
         this.id = id;
     }
@@ -37,17 +37,17 @@ public class UserNotFoundException extends RuntimeException {
      *
      * @param message the detail message
      */
-    public UserNotFoundException(String message) {
+    public UserNotAuthorisedException(String message) {
         super(message);
     }
 
     /**
      * Constructs a new exception with the specified message and user ID.
      *
-     * @param id the ID of the user that was not found
+     * @param id the ID of the user who is not authorized
      * @param message the detail message
      */
-    public UserNotFoundException(Long id, String message) {
+    public UserNotAuthorisedException(Long id, String message) {
         super(message);
         this.id = id;
     }
