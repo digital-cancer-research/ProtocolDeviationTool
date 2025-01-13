@@ -152,7 +152,7 @@ public interface PdCategoryRepository
 			"  FROM TeamStudyAccess tsa " +
 			"  WHERE tsa.teamId = :teamId" +
 			") " +
-			"GROUP BY de.studyId, pc.dvcat, pc.dvdecod, dc.colour")
+			"GROUP BY pc.dvcat, pc.dvdecod, dc.colour")
 	List<DvcatDvdecodRepositoryDataDTO> findPdCategoryBreakdownDataByTeamId(@Param("teamId") Integer teamId);
 
 	/**
@@ -174,7 +174,7 @@ public interface PdCategoryRepository
 			"JOIN PdCategory pc ON pc.categoryId = dec.categoryId " +
 			"JOIN DvdecodColour dc ON dc.dvdecod = pc.dvdecod " +
 			"WHERE de.studyId = :studyId " +
-			"GROUP BY de.studyId, pc.dvcat, pc.dvdecod, dc.colour")
+			"GROUP BY pc.dvcat, pc.dvdecod, dc.colour")
 	List<DvcatDvdecodRepositoryDataDTO> findPdCategoryBreakdownDataByStudyId(@Param("studyId") String studyId);
 
 	/**
@@ -198,20 +198,20 @@ public interface PdCategoryRepository
 	List<String> findDvdecodsByDvcat(@Param("dvcat") String dvcat);
 
 	/**
-     * Retrieves all `dvterm` values from `PdCategory`.
-     *
-     * @return a list of `dvterm` values.
-     */
+	 * Retrieves all `dvterm` values from `PdCategory`.
+	 *
+	 * @return a list of `dvterm` values.
+	 */
 	@Query("SELECT pc.dvterm " +
 			"FROM PdCategory pc")
 	List<String> findDvterms();
 
 	/**
-     * Finds the `dvterm` associated with a specific `dvdecod`.
-     *
-     * @param dvdecod the code to find the term for.
-     * @return the `dvterm` associated with the given `dvdecod`.
-     */
+	 * Finds the `dvterm` associated with a specific `dvdecod`.
+	 *
+	 * @param dvdecod the code to find the term for.
+	 * @return the `dvterm` associated with the given `dvdecod`.
+	 */
 	@Query("SELECT pc.dvterm " +
 			"FROM PdCategory pc " +
 			"WHERE pc.dvdecod = :dvdecod")
