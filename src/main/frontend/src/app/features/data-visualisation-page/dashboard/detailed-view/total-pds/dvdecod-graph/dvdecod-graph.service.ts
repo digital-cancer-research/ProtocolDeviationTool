@@ -19,7 +19,7 @@ export class DvdecodGraphService {
   createChart(data: DvdecodData[], colours: string[]): Chart {
     const labels = data.map(dataEntry => dataEntry.dvdecod);
     const dataFormatted = data.map(dataEntry => dataEntry.count);
-    
+
     return new Chart(DvdecodGraphService.canvasId, {
       type: 'bar',
       data: {
@@ -32,7 +32,7 @@ export class DvdecodGraphService {
       options: this.getChartOptions(data),
     });
   }
-  
+
 
   /**
    * Returns data needed for updated a chart.js graph.
@@ -78,9 +78,26 @@ export class DvdecodGraphService {
         },
         title: {
           display: true,
-          text: `Total number of PD coded terms (DVDECOD) for ${dvcat} for team`
+          text: this.getTitle(dvcat)
         },
       }
     };
+  }
+
+  /**
+   * Returns the title for the bar chart based on the given `dvcat`.
+   *
+   * @param dvcat - The `dvcat` value to use in the title.
+   * @returns A string representing the title for the bar chart.
+   *
+   * @example
+   * ```typescript
+   * const dvcat = 'Example Category';
+   * const title = getTitle(dvcat);
+   * console.log(title); // Output: "Total number of PD coded terms (DVDECOD) for Example Category"
+   * ```
+   */
+  getTitle(dvcat: string): string {
+    return `Total number of PD coded terms (DVDECOD) for ${dvcat}`;
   }
 }

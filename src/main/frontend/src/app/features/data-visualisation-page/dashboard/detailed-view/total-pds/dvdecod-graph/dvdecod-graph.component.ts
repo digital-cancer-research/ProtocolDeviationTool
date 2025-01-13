@@ -84,7 +84,7 @@ export class DvdecodGraphComponent {
     this.chart.data.datasets = this.dvdecodGraphService.formatDataForUpdating(this.data, this.colours);
     this.chart.data.labels = newLabels;
     if (this.chart.options.plugins && this.chart.options.plugins.title) {
-      this.chart.options.plugins.title.text = `Total number of PD coded terms (DVDECOD) for ${this.data[0].dvcat} for team`;
+      this.chart.options.plugins.title.text = this.dvdecodGraphService.getTitle(this.data[0].dvcat);
     } 
     this.chart.update();
   }
