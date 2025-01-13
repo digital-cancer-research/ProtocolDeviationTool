@@ -26,6 +26,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
 import { UploadedFilesTableComponent } from './data-upload/uploaded-files-table/uploaded-files-table.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { UploadedFilesTableComponent } from './data-upload/uploaded-files-table/
     MatFormFieldModule,
     MatInputModule,
     MatPaginatorModule,
+    MatProgressSpinnerModule,
     MatSnackBarModule,
     MatSortModule,
     MatTableModule,
