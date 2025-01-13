@@ -1,4 +1,4 @@
-package org.digitalecmt.qualityassurance.exceptions;
+package org.digitalecmt.qualityassurance.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

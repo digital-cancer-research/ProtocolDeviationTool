@@ -1,4 +1,4 @@
-package org.digitalecmt.qualityassurance.exceptions;
+package org.digitalecmt.qualityassurance.exception;
 
 import java.time.LocalDateTime;
 import java.util.List;
