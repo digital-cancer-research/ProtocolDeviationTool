@@ -8,6 +8,16 @@ export const deactivatedUserGuard: CanActivateFn = () => {
   const userService = inject(UserService);
 
   return userService.currentUser$.pipe(
-    map(user => user ? user.roleId !== 3 : true)
+    map(user => {
+      if (user !== null) {
+        if (user.roleId === 3) {
+          return false;
+        } else {
+          return true;
+        }
+      } else {
+        return true;
+      }
+    })
   );
 };
