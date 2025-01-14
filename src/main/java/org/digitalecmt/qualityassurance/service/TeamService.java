@@ -1,17 +1,24 @@
 package org.digitalecmt.qualityassurance.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.digitalecmt.qualityassurance.dto.Team.TeamCreationDto;
-import org.digitalecmt.qualityassurance.dto.Team.TeamDetailsDto;
-import org.digitalecmt.qualityassurance.exceptions.TeamNotFoundException;
-import org.digitalecmt.qualityassurance.model.persistence.Team;
+import org.digitalecmt.qualityassurance.exception.TeamNotFoundException;
+import org.digitalecmt.qualityassurance.exception.UserNotAuthorisedException;
+import org.digitalecmt.qualityassurance.models.dto.Team.TeamCreateDto;
+import org.digitalecmt.qualityassurance.models.dto.Team.TeamDeleteDto;
+import org.digitalecmt.qualityassurance.models.dto.Team.TeamUpdateDto;
+import org.digitalecmt.qualityassurance.models.dto.Team.TeamWithAdminUsernameDto;
+import org.digitalecmt.qualityassurance.models.entities.Team;
+import org.digitalecmt.qualityassurance.models.mapper.TeamMapper;
 import org.digitalecmt.qualityassurance.repository.TeamRepository;
-import org.digitalecmt.qualityassurance.repository.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
+
+/**
+ * Service class for managing teams.
+ */
 @Service
 public class TeamService {
 
@@ -19,41 +26,115 @@ public class TeamService {
     private TeamRepository teamRepository;
 
     @Autowired
-    private UserAccountRepository userAccountRepository;
+    private AuthorisationService authService;
 
+    @Autowired
+    private AdminAuditService adminAuditService;
+
+    @Autowired
+    private TeamMapper teamMapper;
+
+    /**
+     * Retrieves all teams.
+     *
+     * @return a list of all teams
+     */
     public List<Team> findTeams() {
         return teamRepository.findAll();
     }
 
-    public List<TeamDetailsDto> findTeamsWithDetails() {
-        return teamRepository.findAll().stream()
-                .map(team -> TeamDetailsDto.mapToDetailedTeam(team, userAccountRepository))
-                .collect(Collectors.toList());
+    /**
+     * Retrieves all teams with their admin usernames.
+     *
+     * @return a list of teams with admin usernames
+     * @note The admin is the user who created the team.
+     */
+    public List<TeamWithAdminUsernameDto> findTeamsWithAdminUsername() {
+        return teamRepository.findTeamsWithAdminUsername();
     }
 
-    public Team findTeamById(Integer teamId) {
+    /**
+     * Finds a team by its ID.
+     *
+     * @param teamId the ID of the team to find
+     * @return the found team
+     * @throws TeamNotFoundException if the team is not found
+     */
+    public Team findTeamById(Long teamId) {
         return teamRepository.findById(teamId).orElseThrow(() -> new TeamNotFoundException(teamId));
     }
 
-    public TeamDetailsDto findTeamWithDetailsById(Integer teamId) {
-        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamNotFoundException(teamId));
-        return TeamDetailsDto.mapToDetailedTeam(team, userAccountRepository);
+    /**
+     * Finds a team with admin username by its ID.
+     *
+     * @param teamId the ID of the team to find
+     * @return the found team with admin username
+     * @throws TeamNotFoundException if the team is not found
+     * @note The admin is the user who created the team.
+     */
+    public TeamWithAdminUsernameDto findTeamWithAdminNameById(Long teamId) {
+        return teamRepository.findTeamWithAdminUsername(teamId).orElseThrow(() -> new TeamNotFoundException(teamId));
     }
 
-    public Team createTeam(TeamCreationDto team) {
-        return teamRepository.save(TeamCreationDto.mapper(team));
+    /**
+     * Creates a new team.
+     *
+     * @param teamDto the data transfer object containing the team details
+     * @return the created team
+     * @throws UserNotAuthorisedException if the admin is not authorised
+     * @note The admin is the user who created the team.
+     */
+    @Transactional
+    public Team createTeam(TeamCreateDto teamDto) {
+        Long adminId = teamDto.getAdminId();
+
+        authService.checkIfUserIsAdmin(adminId);
+
+        Team team = teamMapper.toTeam(teamDto);
+        adminAuditService.auditCreateTeam(team, adminId);
+
+        return team;
     }
 
-    public Team updateTeam(Team team) {
-        Team currentTeam = teamRepository.findById(team.getTeamId())
-                .orElseThrow(() -> new TeamNotFoundException(team.getTeamId()));
-        currentTeam.setTeamName(team.getTeamName());
-        return teamRepository.save(currentTeam);
+    /**
+     * Updates an existing team.
+     *
+     * @param teamDto the data transfer object containing the updated team details
+     * @return the updated team
+     * @throws TeamNotFoundException      if the team is not found
+     * @throws UserNotAuthorisedException if the admin is not authorised
+     */
+    @Transactional
+    public Team updateTeam(TeamUpdateDto teamDto) {
+        Long adminId = teamDto.getAdminId();
+        Long teamId = teamDto.getTeamId();
+
+        authService.checkIfUserIsAdmin(adminId);
+        findTeamById(teamId);
+
+        Team team = teamMapper.toTeam(teamDto);
+        teamRepository.save(team);
+        adminAuditService.auditUpdateTeam(team, adminId);
+
+        return team;
     }
 
-    public void deleteTeam(Integer teamId) {
-        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamNotFoundException(teamId));
-        teamRepository.delete(team);
-    }
+    /**
+     * Deletes a team by its ID.
+     *
+     * @param teamDto the data transfer object containing the team ID and admin ID
+     * @throws TeamNotFoundException      if the team is not found
+     * @throws UserNotAuthorisedException if the admin is not authorised
+     */
+    @Transactional
+    public void deleteTeam(TeamDeleteDto teamDto) {
+        Long adminId = teamDto.getAdminId();
+        Long teamId = teamDto.getTeamId();
 
+        authService.checkIfUserIsAdmin(adminId);
+        Team team = findTeamById(teamId);
+
+        teamRepository.deleteById(teamId);
+        adminAuditService.auditDeleteTeam(team, adminId);
+    }
 }

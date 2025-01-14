@@ -3,7 +3,7 @@ package org.digitalecmt.qualityassurance.repository;
 import java.util.List;
 import java.util.Optional;
 
-import org.digitalecmt.qualityassurance.dto.EntryCountPerCategoryPerStudyDTO;
+import org.digitalecmt.qualityassurance.models.dto.EntryCountPerCategoryPerStudyDTO;
 import org.digitalecmt.qualityassurance.models.entities.Data;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

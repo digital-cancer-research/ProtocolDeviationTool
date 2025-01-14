@@ -19,5 +19,6 @@ CREATE TABLE "data" (
     "nonadv" TEXT,
     "dvscat" TEXT,
     "dvstdtc" DATETIME,
+    FOREIGN KEY ("study_id") REFERENCES "study"("study_id") ON DELETE CASCADE,
     FOREIGN KEY ("file_id") REFERENCES "file"("file_id") ON DELETE CASCADE
 );

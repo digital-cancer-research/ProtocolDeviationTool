@@ -53,7 +53,40 @@ public class AdminAuditService {
         .userId(adminId)
         .action("Added a user to a team")
         .originalValue("N/A")
-        .newValue("User: " + user.getUsername() + "\nTeam: " + team.getTeamName())
+        .newValue("User: " + user.getUsername() + "\nTeam: " + team.getName())
+        .date(LocalDateTime.now())
+        .build();
+        return adminAuditRepository.save(audit);
+    }
+
+    public AdminAudit auditCreateTeam(Team team, Long adminId) {
+        AdminAudit audit = AdminAudit.builder()
+        .userId(adminId)
+        .action("Created a new team")
+        .originalValue("N/A")
+        .newValue(team.toString())
+        .date(LocalDateTime.now())
+        .build();
+        return adminAuditRepository.save(audit);
+    }
+
+    public AdminAudit auditUpdateTeam(Team team, Long adminId) {
+        AdminAudit audit = AdminAudit.builder()
+        .userId(adminId)
+        .action("Updated a team")
+        .originalValue(team.toString())
+        .newValue(team.toString())
+        .date(LocalDateTime.now())
+        .build();
+        return adminAuditRepository.save(audit);
+    }
+
+    public AdminAudit auditDeleteTeam(Team team, Long adminId) {
+        AdminAudit audit = AdminAudit.builder()
+        .userId(adminId)
+        .action("Deleted a team")
+        .originalValue(team.toString())
+        .newValue("N/A")
         .date(LocalDateTime.now())
         .build();
         return adminAuditRepository.save(audit);

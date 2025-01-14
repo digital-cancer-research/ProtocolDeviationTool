@@ -2,6 +2,8 @@ package org.digitalecmt.qualityassurance.models.entities;
 
 import java.io.Serializable;
 
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -21,10 +23,14 @@ public class TeamStudyId implements Serializable {
     /**
      * The ID of the team.
      */
+    @Column(name = "team_id")
     private long teamId;
 
     /**
      * The ID of the study.
+     * The id must be within the range of 1 to 255 characters.
      */
-    private long studyId;
+    @Column(name = "study_id")
+    @Size(min = 1, max = 255)
+    private String studyId;
 }

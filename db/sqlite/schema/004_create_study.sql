@@ -1,4 +1,4 @@
 CREATE TABLE "study" (
-    "study_id" INTEGER PRIMARY KEY,
+    "study_id" TEXT PRIMARY KEY,
     "study_name" TEXT
 );

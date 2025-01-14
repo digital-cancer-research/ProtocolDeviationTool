@@ -29,7 +29,11 @@ public class Data {
     @Id
     @Column(name = "data_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
+
+    @Column(name = "study_id")
+    @Size(min = 1, max = 255)
+    private String studyId;
 
     /**
      * The external site identifier.

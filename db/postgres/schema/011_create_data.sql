@@ -1,5 +1,6 @@
 CREATE TABLE "data" (
   "data_id" SERIAL PRIMARY KEY,
+  "study_id" VARCHAR(255) REFERENCES "study"("study_id") ON DELETE CASCADE ON UPDATE CASCADE,
   "external_site_id" VARCHAR(255) NOT NULL,
   "dvspondes" VARCHAR(255) NOT NULL,
   "file_id" INT REFERENCES "file"("file_id") ON DELETE CASCADE ON UPDATE CASCADE,

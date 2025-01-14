@@ -6,7 +6,8 @@ import org.springframework.stereotype.Repository;
 
 /**
  * Repository interface for accessing and managing {@link Study} entities.
- * Extends {@link JpaRepository} to provide CRUD operations and additional JPA functionalities.
+ * Extends {@link JpaRepository} to provide CRUD operations and additional JPA
+ * functionalities.
  */
 @Repository
 public interface StudyRepository extends JpaRepository<Study, Long> {

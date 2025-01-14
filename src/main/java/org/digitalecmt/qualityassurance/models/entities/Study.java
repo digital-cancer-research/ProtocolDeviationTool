@@ -24,11 +24,14 @@ public class Study {
 
     /**
      * The unique identifier for the study.
+     * The id must be within the range of 1 to 255 characters.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_id")
-    private Long id;
+    @Size(min = 1, max = 255)
+    private String studyId;
+    private String id;
 
     /**
      * The name of the study.
