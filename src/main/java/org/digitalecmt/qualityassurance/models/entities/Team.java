@@ -41,7 +41,7 @@ public class Team {
     @Column(name = "team_name")
     @NotNull
     @Size(min = 1, max = 255)
-    private String teamName;
+    private String name;
 
     /**
      * The ID of the {@link User} who created the team.
