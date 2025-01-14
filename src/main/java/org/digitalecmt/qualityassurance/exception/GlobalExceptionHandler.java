@@ -53,6 +53,19 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles {@link FileNotFoundException} and returns a 404 Not Found response.
+     *
+     * @param ex the exception
+     * @param webRequest the web request
+     * @return a ResponseEntity containing the error details
+     */
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity<ApiError> handleFileNotFoundException(FileNotFoundException ex, WebRequest webRequest) {
+        ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, "File not found", ex);
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+    }
+
+    /**
      * Handles {@link CannotCreateTransactionException} and returns a 503 Service Unavailable response.
      *
      * @param ex the exception
