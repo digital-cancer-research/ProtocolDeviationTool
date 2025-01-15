@@ -1,4 +1,4 @@
-package org.digitalecmt.qualityassurance.controller.entity;
+package org.digitalecmt.qualityassurance.controller;
 
 import java.util.HashMap;
 import java.util.List;

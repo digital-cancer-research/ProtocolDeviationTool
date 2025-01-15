@@ -5,7 +5,6 @@ import java.util.List;
 import org.digitalecmt.qualityassurance.models.dto.File.FileCreateDto;
 import org.digitalecmt.qualityassurance.models.dto.File.FileDeleteDto;
 import org.digitalecmt.qualityassurance.models.entities.File;
-import org.digitalecmt.qualityassurance.models.mapper.FileMapper;
 import org.digitalecmt.qualityassurance.repository.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,9 +18,6 @@ public class FileService {
     @Autowired
     private FileRepository fileRepository;
     
-    @Autowired
-    private FileMapper fileMapper;
-
     /**
      * Retrieves all files.
      *
@@ -48,7 +44,7 @@ public class FileService {
      * @return the saved file
      */
     public File saveFile(FileCreateDto fileDto) {
-        File file = fileMapper.toFile(fileDto);
+        File file = fileDto.toFile();
         return fileRepository.save(file);
     }
 

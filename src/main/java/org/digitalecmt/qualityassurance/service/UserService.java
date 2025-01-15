@@ -10,7 +10,6 @@ import org.digitalecmt.qualityassurance.models.dto.User.UserUpdateDto;
 import org.digitalecmt.qualityassurance.models.entities.Team;
 import org.digitalecmt.qualityassurance.models.entities.User;
 import org.digitalecmt.qualityassurance.repository.UserRepository;
-import org.digitalecmt.qualityassurance.models.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,9 +27,6 @@ public class UserService {
 
     @Autowired
     private AuthorisationService authService;
-
-    @Autowired
-    private UserMapper userMapper;
 
     /**
      * Finds a user by their ID.
@@ -57,7 +53,7 @@ public class UserService {
         
         authService.checkIfUserIsAdmin(adminId);
         
-        User user = userMapper.toUser(userDto);
+        User user = userDto.toUser();
         user = userRepository.save(user);
         
         adminAuditService.auditCreateUser(user, adminId);
@@ -81,7 +77,7 @@ public class UserService {
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        User user = userMapper.toUser(userDto);
+        User user = userDto.toUser();
         userRepository.save(currentUser);
 
         adminAuditService.auditUpdateUser(user, adminId);

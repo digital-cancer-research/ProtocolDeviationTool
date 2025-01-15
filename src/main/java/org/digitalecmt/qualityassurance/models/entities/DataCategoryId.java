@@ -1,15 +1,30 @@
 package org.digitalecmt.qualityassurance.models.entities;
 
-import lombok.Data;
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+/**
+ * Composite key class for the association between data and a category.
+ * 
+ * @see DataCategory
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class DataCategoryId {
+public class DataCategoryId implements Serializable {
+
+    /**
+     * The ID of the associated data.
+     */
     private Long dataId;
-    private Long ddvdecodId;
+
+    /**
+     * The ID of the associated DV decode.
+     */
+    private Long dvdecodId;
 }

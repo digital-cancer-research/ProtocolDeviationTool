@@ -1,8 +1,8 @@
-package org.digitalecmt.qualityassurance.controller.entity;
+package org.digitalecmt.qualityassurance.controller;
 
 import java.util.List;
 
-import org.digitalecmt.qualityassurance.dto.Data.DataDTO;
+import org.digitalecmt.qualityassurance.models.dto.Data.DataDto;
 import org.digitalecmt.qualityassurance.service.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,13 +30,13 @@ public class DataController {
      * returns it in a {@link ResponseEntity}.
      * </p>
      * 
-     * @return a {@link ResponseEntity} containing a list of {@link DataDTO} objects
+     * @return a {@link ResponseEntity} containing a list of {@link DataDto} objects
      *         representing
      *         all available protocol deviation data and {@code HttpStatus.OK} on a
      *         successful request.
      */
     @GetMapping
-    public ResponseEntity<List<DataDTO>> getData() {
+    public ResponseEntity<List<DataDto>> getData() {
         return ResponseEntity.ok(dataService.getPdData());
     }
 
@@ -52,24 +52,24 @@ public class DataController {
      * 
      * @param teamId the ID of the team for which to retrieve protocol deviation
      *               data.
-     * @return a {@link ResponseEntity} containing a list of {@link DataDTO} objects
+     * @return a {@link ResponseEntity} containing a list of {@link DataDto} objects
      *         representing
      *         the protocol deviation data for the specified team and
      *         {@code HttpStatus.OK} on a
      *         successful request.
      */
     @GetMapping(params = "teamId")
-    public ResponseEntity<List<DataDTO>> getDataByTeam(@RequestParam Long teamId) {
+    public ResponseEntity<List<DataDto>> getDataByTeam(@RequestParam Long teamId) {
         return ResponseEntity.ok(dataService.getPdDataByTeamId(teamId));
     }
     
     @GetMapping(params = "studyId")
-    public ResponseEntity<List<DataDTO>> getDataByStudy(@RequestParam String studyId) {
+    public ResponseEntity<List<DataDto>> getDataByStudy(@RequestParam String studyId) {
         return ResponseEntity.ok(dataService.getPdDataByStudyId(studyId));
     }
 
     @PutMapping("/update-entry")
-    public ResponseEntity<Void> updateEntry(@RequestBody DataDTO entry) {
+    public ResponseEntity<Void> updateEntry(@RequestBody DataDto entry) {
         dataService.updateEntry(entry);
         return new ResponseEntity<>(HttpStatus.OK);
     }

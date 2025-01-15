@@ -9,7 +9,6 @@ import org.digitalecmt.qualityassurance.models.dto.Team.TeamDeleteDto;
 import org.digitalecmt.qualityassurance.models.dto.Team.TeamUpdateDto;
 import org.digitalecmt.qualityassurance.models.dto.Team.TeamWithAdminUsernameDto;
 import org.digitalecmt.qualityassurance.models.entities.Team;
-import org.digitalecmt.qualityassurance.models.mapper.TeamMapper;
 import org.digitalecmt.qualityassurance.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,9 +29,6 @@ public class TeamService {
 
     @Autowired
     private AdminAuditService adminAuditService;
-
-    @Autowired
-    private TeamMapper teamMapper;
 
     /**
      * Retrieves all teams.
@@ -90,7 +86,7 @@ public class TeamService {
 
         authService.checkIfUserIsAdmin(adminId);
 
-        Team team = teamMapper.toTeam(teamDto);
+        Team team = teamDto.toTeam();
         adminAuditService.auditCreateTeam(team, adminId);
 
         return team;
@@ -112,7 +108,7 @@ public class TeamService {
         authService.checkIfUserIsAdmin(adminId);
         findTeamById(teamId);
 
-        Team team = teamMapper.toTeam(teamDto);
+        Team team = teamDto.toTeam();
         teamRepository.save(team);
         adminAuditService.auditUpdateTeam(team, adminId);
 

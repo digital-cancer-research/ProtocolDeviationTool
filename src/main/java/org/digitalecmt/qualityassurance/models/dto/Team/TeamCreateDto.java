@@ -1,5 +1,7 @@
 package org.digitalecmt.qualityassurance.models.dto.Team;
 
+import org.digitalecmt.qualityassurance.models.entities.Team;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,4 +25,16 @@ public class TeamCreateDto {
      * The ID of the admin creating the team.
      */
     private Long adminId;
+
+    /**
+     * Converts this DTO to a Team entity.
+     * 
+     * @return a Team entity with the same properties as this DTO.
+     */
+    public Team toTeam() {
+        return Team.builder()
+                .name(name)
+                .createdBy(adminId)
+                .build();
+    }
 }

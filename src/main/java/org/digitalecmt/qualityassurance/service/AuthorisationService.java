@@ -6,7 +6,9 @@ import org.digitalecmt.qualityassurance.models.entities.User;
 import org.digitalecmt.qualityassurance.models.pojo.Role;
 import org.digitalecmt.qualityassurance.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AuthorisationService {
 
     @Autowired

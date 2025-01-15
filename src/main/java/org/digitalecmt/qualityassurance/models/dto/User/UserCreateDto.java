@@ -28,4 +28,18 @@ public class UserCreateDto {
     private boolean isSponsor;
 
     private Long adminId;
+
+    /**
+     * Converts this DTO to a User entity.
+     * 
+     * @return a User entity with the same properties as this DTO.
+     */
+    public User toUser() {
+        return User.builder()
+                .username(username)
+                .role(role)
+                .isSite(isSite)
+                .isSponsor(isSponsor)
+                .build();
+    }
 }
