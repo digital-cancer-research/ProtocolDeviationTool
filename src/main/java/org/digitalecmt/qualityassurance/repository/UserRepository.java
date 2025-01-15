@@ -19,6 +19,6 @@ public interface UserRepository
 	
     Optional<Long> findIdByUsername(@Param("username") String username);
 
-	@Query("SELECT * FROM Team t JOIN UserTeam ut ON t.teamId = ut.teamId JOIN User u ON ut.userId = u.userId WHERE u.userId = :userId")
+	@Query("SELECT t FROM Team t JOIN UserTeam ut ON t.id = ut.teamId JOIN User u ON ut.userId = u.id WHERE u.id = :userId")
 	List<Team> findUserTeamsByUserId(@Param("userId") Long userId);
 }
