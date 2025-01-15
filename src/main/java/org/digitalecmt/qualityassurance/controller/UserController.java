@@ -74,6 +74,18 @@ public class UserController {
     }
 
     /**
+     * Retrieves a user by their username.
+     *
+     * @param username the username of the user to retrieve
+     * @return a ResponseEntity containing the retrieved user and HTTP status code
+     */
+    @GetMapping(params = "username")
+    public ResponseEntity<User> findUserByUsername(@RequestParam("username") String username) {
+        User user = userService.findUserByUsername(username);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    /**
      * Retrieves a user by their ID.
      *
      * @param id the ID of the user to retrieve

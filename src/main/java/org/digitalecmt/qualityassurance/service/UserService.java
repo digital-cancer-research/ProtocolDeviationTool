@@ -42,6 +42,19 @@ public class UserService {
     }
 
     /**
+     * Finds a user by their username.
+     *
+     * @param username the username of the user to find
+     * @return the found user
+     * @throws UserNotFoundException if the user is not found
+     */
+    public User findUserByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User with username " + username + " not found"));
+        return user;
+    }
+
+    /**
      * Creates a new user.
      *
      * @param userDto the data transfer object containing the user details
@@ -50,12 +63,12 @@ public class UserService {
      */
     public User createUser(UserCreateDto userDto) {
         Long adminId = userDto.getAdminId();
-        
+
         authService.checkIfUserIsAdmin(adminId);
-        
+
         User user = userDto.toUser();
         user = userRepository.save(user);
-        
+
         adminAuditService.auditCreateUser(user, adminId);
         return user;
     }
@@ -65,7 +78,7 @@ public class UserService {
      *
      * @param userDto the data transfer object containing the updated user details
      * @return the updated user
-     * @throws UserNotFoundException if the user is not found
+     * @throws UserNotFoundException      if the user is not found
      * @throws UserNotAuthorisedException if the admin is not authorised
      */
     public User updateUser(UserUpdateDto userDto) {
@@ -73,7 +86,7 @@ public class UserService {
         Long userId = userDto.getUserId();
 
         authService.checkIfUserIsAdmin(adminId);
-        
+
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
@@ -88,7 +101,7 @@ public class UserService {
      * Deletes a user by their ID.
      *
      * @param userDto the data transfer object containing the user ID and admin ID
-     * @throws UserNotFoundException if the user is not found
+     * @throws UserNotFoundException      if the user is not found
      * @throws UserNotAuthorisedException if the admin is not authorised
      */
     public void deleteUserById(UserDeleteDto userDto) {
@@ -96,7 +109,7 @@ public class UserService {
         Long userId = userDto.getUserId();
 
         authService.checkIfUserIsAdmin(adminId);
-        
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
