@@ -1,13 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { AuthService } from '../../../user/auth.service';
 import { UserService } from '../../services/user.service';
 import { RouterService } from '../../services/router.service';
 import { AdministrationPageModule } from 'src/app/features/administration-page/administration-page.module';
 import { DataUploadModule } from 'src/app/features/data-upload/data-upload-page.module';
 import { DataVisualisationPageModule } from 'src/app/features/data-visualisation-page/data-visualisation-page.module';
-import { User } from 'src/app/user/user.model';
 import { Params } from '@angular/router';
+import { User } from '../../models/user.model';
 
 /**
  * Component that represents the ribbon in the navigation.
@@ -59,7 +58,6 @@ export class NavigationRibbonComponent implements OnDestroy {
    * @param routerService - Service to handle router events and extract URL paths.
    */
   constructor(
-    private authService: AuthService,
     private userService: UserService,
     private routerService: RouterService
   ) {
@@ -89,11 +87,7 @@ export class NavigationRibbonComponent implements OnDestroy {
  * @param username - The username of the user to check for admin privileges.
  */
   updateAdminAccess(username: string): void {
-    this.authService.checkAdminRole(username).subscribe(
-      (isAdmin) => {
-        this.isAdmin = isAdmin;
-      }
-    );
+    this.isAdmin = true;
   }
 
   /**

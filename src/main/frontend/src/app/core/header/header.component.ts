@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UserService } from '../services/user.service';
-import { AuthService } from '../../user/auth.service';
 import { User } from '../models/user.model';
 import { filter, map, Observable, Subscription } from 'rxjs';
 import { Team } from '../models/team.model';
@@ -61,7 +60,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
    */
   constructor(
     private userService: UserService,
-    private authService: AuthService,
     private router: Router
   ) { }
 
@@ -138,18 +136,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
                 this.selectedTeam = teams[0];
               }
             })
-          this.authService.checkAdminRole(username).subscribe();
         })
     }
-  }
-
-  /**
-   * Checks if the current user has admin privileges.
-   * 
-   * @returns True if the user is an admin, false otherwise
-   */
-  get isAdmin(): boolean {
-    return this.authService.isAdmin;
   }
 
   /**
