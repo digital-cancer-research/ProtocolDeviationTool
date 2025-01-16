@@ -42,6 +42,6 @@ mat-form-field {
 }
 
 #app_title {
-	cursor: grab;
+	cursor: pointer;
 	display: flex;
 }
