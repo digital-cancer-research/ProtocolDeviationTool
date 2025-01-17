@@ -1,15 +1,14 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Team } from '../../../core/models/team.model';
-import { UserService } from '../../../core/services/user.service';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Team } from 'src/app/core/new/services/models/team.model';
+import { TeamService } from 'src/app/core/new/services/team.service';
 
 /**
  * Component for selecting a team on the site page.
  *
  * The `SitePageTeamSelectComponent` allows users to select a team from a provided list of teams.
  * It listens for changes in the currently selected team and updates the selection accordingly.
- * Users can also manually set the selected team, and the selected team is synchronized with the `UserService`.
  * 
  * @export
  * @class SitePageTeamSelectComponent
@@ -31,17 +30,19 @@ export class SitePageTeamSelectComponent implements OnInit, OnDestroy {
   selectedTeam: Team | null = null;
 
   /**
-     * Subscription to listen for changes to the currently selected team.
-     * @type {Subscription}
-     */
+   * Subscription to listen for changes to the currently selected team.
+   * @type {Subscription}
+   */
   selectedTeamSubscription!: Subscription;
 
   /**
    * Creates an instance of SitePageTeamSelectComponent.
-   * @param {UserService} userService Service to handle user-related data.
+   * @param {TeamService} teamService Service to handle team-related data.
+   * @param {Router} router Router for navigation.
+   * @param {ActivatedRoute} route Activated route for accessing route parameters.
    */
   constructor(
-    private userService: UserService,
+    private teamService: TeamService,
     private router: Router,
     private route: ActivatedRoute
   ) { }
@@ -50,7 +51,7 @@ export class SitePageTeamSelectComponent implements OnInit, OnDestroy {
    * Initialises the component by subscribing to the currently selected team.
    */
   ngOnInit(): void {
-    this.selectedTeamSubscription = this.userService.currentUserSelectedTeam$.subscribe((team) => {
+    this.selectedTeamSubscription = this.teamService.currentTeam$.subscribe((team) => {
       this.selectedTeam = team;
     });
     this.selectedTeamSubscription.unsubscribe();
@@ -66,18 +67,18 @@ export class SitePageTeamSelectComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Sets the selected team and notifies the `UserService` of the new selection.
+   * Sets the selected team and notifies the `TeamService` of the new selection.
    * 
    * @param {(Team | null)} team The team to set as selected.
    */
   setTeam(team: Team | null): void {
     if (team) {
-      this.userService.currentUserSelectedTeamSubject.next(team);
+      this.teamService.currentTeamSubject.next(team);
       this.router.navigate([], {
         relativeTo: this.route,
-        queryParams: {teamId: team.teamId},
+        queryParams: { teamId: team.id },
         queryParamsHandling: 'merge'
-      })
+      });
     }
   }
 }
