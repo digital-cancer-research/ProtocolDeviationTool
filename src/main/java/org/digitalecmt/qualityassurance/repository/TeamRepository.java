@@ -30,7 +30,7 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
         *         user information.
         */
        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Team.TeamWithAdminUsernameDto(" +
-                     "t.id, t.name, t.dateCreated, u.username) " +
+                     "t.id, t.name, t.createdBy, t.dateCreated, u.username) " +
                      "FROM Team t JOIN User u ON t.createdBy = u.id")
        List<TeamWithAdminUsernameDto> findTeamsWithAdminUsername();
 

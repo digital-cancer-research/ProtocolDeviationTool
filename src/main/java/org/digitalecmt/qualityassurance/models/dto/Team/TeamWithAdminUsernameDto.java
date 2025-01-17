@@ -1,5 +1,7 @@
 package org.digitalecmt.qualityassurance.models.dto.Team;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,25 +19,25 @@ public class TeamWithAdminUsernameDto {
     /**
      * The unique identifier for the team.
      */
-    private Long teamId;
+    private Long id;
 
     /**
      * The name of the team.
      */
-    private String teamName;
+    private String name;
 
     /**
      * The ID of the user associated with the team.
      */
-    private Integer userId;
+    private Long createdBy;
 
     /**
      * The date the team was created.
      */
-    private String dateCreated;
+    private LocalDateTime dateCreated;
 
     /**
      * The username of the admin who created the team.
      */
-    private String createdBy;
+    private String username;
 }

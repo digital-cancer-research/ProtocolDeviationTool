@@ -52,7 +52,7 @@ public class TeamController {
      *         The HTTP status is OK (200) in both cases.
      */
     @GetMapping
-    public ResponseEntity<?> getTeams(@RequestParam(required = false) boolean includeDetails) {
+    public ResponseEntity<?> getTeams(@RequestParam(required = false, name = "includeDetails") boolean includeDetails) {
         if (includeDetails) {
             List<TeamWithAdminUsernameDto> detailedTeams = teamService.findTeamsWithAdminUsername();
             return new ResponseEntity<>(detailedTeams, HttpStatus.OK);
