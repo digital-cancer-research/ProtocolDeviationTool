@@ -1,12 +1,14 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { UserService } from '../../services/user.service';
 import { RouterService } from '../../services/router.service';
 import { AdministrationPageModule } from 'src/app/features/administration-page/administration-page.module';
 import { DataUploadModule } from 'src/app/features/data-upload/data-upload-page.module';
 import { DataVisualisationPageModule } from 'src/app/features/data-visualisation-page/data-visualisation-page.module';
 import { Params } from '@angular/router';
-import { User } from '../../models/user.model';
+import { UserService } from '../../new/services/user.service';
+import { TeamService } from '../../new/services/team.service';
+import { User } from '../../new/services/models/user.model';
+import { Role } from '../../new/services/models/role.enum';
 
 /**
  * Component that represents the ribbon in the navigation.
@@ -17,6 +19,12 @@ import { User } from '../../models/user.model';
   styleUrls: ['./navigation-ribbon.component.css']
 })
 export class NavigationRibbonComponent implements OnDestroy {
+
+  private userService = inject(UserService);
+  private teamService = inject(TeamService);
+
+  user = this.userService.getUser();
+
   /** Boolean to track if the current user has admin privileges. */
   isAdmin: boolean = false;
 
@@ -58,7 +66,6 @@ export class NavigationRibbonComponent implements OnDestroy {
    * @param routerService - Service to handle router events and extract URL paths.
    */
   constructor(
-    private userService: UserService,
     private routerService: RouterService
   ) {
 
@@ -68,15 +75,14 @@ export class NavigationRibbonComponent implements OnDestroy {
       }
     )
 
-    this.userService.currentUser$.subscribe(
-      (user) => {
-        if (user) {
-          this.updateAdminAccess(user.username);
-          this.updateMultipleTeamSelectionAccess(user.userId);
-          this.updateVisualisationAccess();
-          this.updateIsUserDeactivated(user);
-        }
-      })
+    this.userService.currentUser$.subscribe((user) => {
+      if (user !== null) {
+        this.updateAdminAccess(user);
+        this.updateMultipleTeamSelectionAccess(user);
+        this.updateIsUserDeactivated(user);
+      }
+    });
+    this.updateVisualisationAccess();
   }
 
 
@@ -86,8 +92,8 @@ export class NavigationRibbonComponent implements OnDestroy {
  * 
  * @param username - The username of the user to check for admin privileges.
  */
-  updateAdminAccess(username: string): void {
-    this.isAdmin = true;
+  updateAdminAccess(user: User): void {
+    this.isAdmin = user.role === Role.ADMIN;
   }
 
   /**
@@ -96,8 +102,8 @@ export class NavigationRibbonComponent implements OnDestroy {
    * 
    * @param userId - The ID of the user whose teams are to be retrieved.
    */
-  updateMultipleTeamSelectionAccess(userId: number): void {
-    this.userService.getUserTeamsByUserId(userId).subscribe(
+  updateMultipleTeamSelectionAccess(user: User): void {
+    this.userService.getUserTeams(user.id).subscribe(
       (team) => {
         this.isPartOfMultipleTeams = team.length > 1;
         this.activeLink = this.links[2];
@@ -110,7 +116,7 @@ export class NavigationRibbonComponent implements OnDestroy {
    * Subscribes to the `currentUserSelectedTeam$` observable to check if a team is selected.
    */
   updateVisualisationAccess(): void {
-    this.userService.currentUserSelectedTeam$.subscribe(
+    this.teamService.currentTeam$.subscribe(
       (team) => {
         this.links[4].disabled = (team === null);
       }
@@ -124,7 +130,7 @@ export class NavigationRibbonComponent implements OnDestroy {
    * @param user - The user object to check for deactivation status.
    */
   updateIsUserDeactivated(user: User): void {
-    this.isUserDeactivated = user.roleId === 3;
+    this.isUserDeactivated = user.role === Role.DEACTIVATED;
   }
 
 

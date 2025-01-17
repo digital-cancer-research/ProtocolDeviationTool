@@ -15,7 +15,7 @@
 
   <div class="flex user">
     <mat-form-field appearance="outline">
-      <mat-select (valueChange)="onSelectUser($event)">
+      <mat-select [(ngModel)]="user" (valueChange)="onSelectUser($event)">
         <mat-label>Select a user</mat-label>
         <mat-option *ngFor="let user of users" [value]="user">
           {{ user.username | lowercase }}

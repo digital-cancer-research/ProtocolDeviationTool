@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { User } from './models/user.model';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Team } from './models/team.model';
 
@@ -10,6 +10,16 @@ import { Team } from './models/team.model';
 export class UserService {
   private readonly BASE_URL = 'api/users';
   private readonly http = inject(HttpClient);
+  currentUserSubject = new BehaviorSubject<User | null>(this.getUser());
+  currentUser$ = this.currentUserSubject.asObservable();
+
+  constructor() { 
+    const originalNext = this.currentUserSubject.next.bind(this.currentUserSubject);
+    this.currentUserSubject.next = (user: User | null) => {
+      this.setUser(user);
+      originalNext(user);
+    };
+  }
 
   /**
    * Retrieves the user from session storage.
@@ -30,7 +40,7 @@ export class UserService {
    * 
    * @param user - The user object to store in session storage.
    */
-  public setUser(user: User): void {
+  private setUser(user: User | null): void {
     sessionStorage.setItem('user', JSON.stringify(user));
   }
 
@@ -63,7 +73,13 @@ export class UserService {
     return this.http.get<User>(`${this.BASE_URL}/username=${username}`);
   }
 
+  /**
+   * Retrieves the list of teams associated with a user.
+   * 
+   * @param userId - The ID of the user.
+   * @returns An Observable that emits an array of Team objects associated with the user.
+   */
   getUserTeams(userId: number): Observable<Team[]> {
-    return this.http.get<Team[]>(`${this.BASE_URL}/${userId}/teams`)
+    return this.http.get<Team[]>(`${this.BASE_URL}/${userId}/teams`);
   }
 }

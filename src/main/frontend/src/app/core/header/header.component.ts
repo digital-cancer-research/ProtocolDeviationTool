@@ -27,6 +27,8 @@ export class HeaderComponent implements OnInit {
 
   private readonly teamService = inject(TeamService);
 
+  user: User | null = this.userService.getUser();
+
   selectedTeam$ = this.teamService.currentTeam$;
 
   users: User[] = [];
@@ -57,7 +59,8 @@ export class HeaderComponent implements OnInit {
    * @param user - The selected user.
    */
   onSelectUser(user: User): void {
-    this.userService.setUser(user);
+    this.userService.currentUserSubject.next(user);
+    this.teamService.currentTeamSubject.next(null);
     this.userService.getUserTeams(user.id).subscribe(teams => {
       if (teams.length === 1) {
         this.teamService.currentTeamSubject.next(teams[0]);
