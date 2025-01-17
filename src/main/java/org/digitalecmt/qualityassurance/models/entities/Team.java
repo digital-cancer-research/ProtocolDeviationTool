@@ -29,7 +29,7 @@ public class Team {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "team_id")
     private Long id;
 
     /**
