@@ -9,6 +9,7 @@ import { UserTeam } from '../models/user-team.model';
 /**
  * Service for managing user data.
  * @class
+ * @deprecated
  */
 @Injectable({
   providedIn: 'root'

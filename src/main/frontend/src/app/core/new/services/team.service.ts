@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Team } from './models/team.model';
 import { TeamWithDetails } from './models/team-with-details.model';
 
@@ -10,6 +10,20 @@ import { TeamWithDetails } from './models/team-with-details.model';
 export class TeamService {
   private readonly BASE_URL = 'api/teams';
   private readonly http = inject(HttpClient);
+  currentTeamSubject = new BehaviorSubject<Team | null>(this.getTeam());
+  currentTeam$ = this.currentTeamSubject.asObservable();
+
+  /**
+   * Defines a custom method to be called when the team is set for `currentTeamSubject`,
+   * saving it to sessionStorage.
+   */
+  constructor() {
+    const originalNext = this.currentTeamSubject.next.bind(this.currentTeamSubject);
+    this.currentTeamSubject.next = (team: Team | null) => {
+      this.setTeam(team);
+      originalNext(team);
+    };
+  }
 
   /**
    * Retrieves the team from session storage.
@@ -30,7 +44,7 @@ export class TeamService {
    * 
    * @param team - The team object to store in session storage.
    */
-  public setUser(team: Team): void {
+  private setTeam(team: Team | null): void {
     sessionStorage.setItem('team', JSON.stringify(team));
   }
 

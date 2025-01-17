@@ -115,7 +115,7 @@ public class UserController {
      * @return a ResponseEntity containing a list of teams associated with the user and HTTP status code
      */
     @GetMapping("/{id}/teams")
-    public ResponseEntity<List<Team>> getUserTeams(@PathVariable("userId") Long id) {
+    public ResponseEntity<List<Team>> getUserTeams(@PathVariable("id") Long id) {
         List<Team> teams = userService.getUserTeams(id);
         return new ResponseEntity<>(teams, HttpStatus.OK);
     }

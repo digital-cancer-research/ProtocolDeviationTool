@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { User } from './models/user.model';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { Team } from './models/team.model';
 
 @Injectable({
   providedIn: 'root'
@@ -39,7 +40,7 @@ export class UserService {
    * @returns An Observable that emits an array of User objects.
    */
   getUsers$(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.BASE_URL}/users`);
+    return this.http.get<User[]>(`${this.BASE_URL}`);
   }
 
   /**
@@ -49,7 +50,7 @@ export class UserService {
    * @returns An Observable that emits the User object with the specified ID.
    */
   getUserById$(userId: number): Observable<User> {
-    return this.http.get<User>(`${this.BASE_URL}/users/${userId}`);
+    return this.http.get<User>(`${this.BASE_URL}/${userId}`);
   }
 
   /**
@@ -59,6 +60,10 @@ export class UserService {
    * @returns An Observable that emits the User object with the specified username.
    */
   getUserByUsername$(username: string): Observable<User> {
-    return this.http.get<User>(`${this.BASE_URL}/users/username=${username}`);
+    return this.http.get<User>(`${this.BASE_URL}/username=${username}`);
+  }
+
+  getUserTeams(userId: number): Observable<Team[]> {
+    return this.http.get<Team[]>(`${this.BASE_URL}/${userId}/teams`)
   }
 }
