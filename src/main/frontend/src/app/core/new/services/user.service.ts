@@ -10,23 +10,15 @@ import { Team } from './models/team.model';
 export class UserService {
   private readonly BASE_URL = 'api/users';
   private readonly http = inject(HttpClient);
-  currentUserSubject = new BehaviorSubject<User | null>(this.getUser());
-  currentUser$ = this.currentUserSubject.asObservable();
-
-  constructor() { 
-    const originalNext = this.currentUserSubject.next.bind(this.currentUserSubject);
-    this.currentUserSubject.next = (user: User | null) => {
-      this.setUser(user);
-      originalNext(user);
-    };
-  }
+  private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromSessionStorage());
+  private currentUser$ = this.currentUserSubject.asObservable();
 
   /**
    * Retrieves the user from session storage.
    * 
    * @returns The user object if present in session storage, otherwise null.
    */
-  public getUser(): User | null {
+  private getUserFromSessionStorage(): User | null {
     const userJson = sessionStorage.getItem('user');
     if (userJson !== null) {
       return JSON.parse(userJson);
@@ -36,11 +28,30 @@ export class UserService {
   }
 
   /**
-   * Stores the user in session storage.
+   * Returns an observable of the current user.
+   * 
+   * @returns An Observable that emits the current user.
+   */
+  getUser$(): Observable<User | null> {
+    return this.currentUser$;
+  }
+
+  /**
+   * Returns the current user.
+   * 
+   * @returns The current user.
+   */
+  getUser(): User | null {
+    return this.currentUserSubject.getValue();
+  }
+
+  /**
+   * Stores the user in session storage and updates the current user subject.
    * 
    * @param user - The user object to store in session storage.
    */
-  private setUser(user: User | null): void {
+  setUser(user: User | null): void {
+    this.currentUserSubject.next(user);
     sessionStorage.setItem('user', JSON.stringify(user));
   }
 

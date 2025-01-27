@@ -25,7 +25,7 @@ export class SitePageComponent implements OnInit {
 	public static readonly URL = 'site';
 	private readonly userService = inject(UserService);
 	
-	teams$ = this.userService.currentUser$.pipe(
+	teams$ = this.userService.getUser$().pipe(
 		mergeMap(user => {
 			if (user === null) {
 				return [];

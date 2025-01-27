@@ -75,7 +75,7 @@ export class NavigationRibbonComponent implements OnDestroy {
       }
     )
 
-    this.userService.currentUser$.subscribe((user) => {
+    this.userService.getUser$().subscribe((user) => {
       if (user !== null) {
         this.updateAdminAccess(user);
         this.updateMultipleTeamSelectionAccess(user);
