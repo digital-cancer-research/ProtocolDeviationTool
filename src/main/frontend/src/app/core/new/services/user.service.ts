@@ -1,8 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import { User } from './models/user.model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { Team } from './models/team.model';
+import { Team } from './models/team/team.model';
+import { User } from './models/user/user.model';
+import { UserUpdateWithTeams } from './models/user/user-update-with-teams.model';
+import { UserWithTeams } from './models/user/user-with-teams.model';
 
 @Injectable({
   providedIn: 'root'
@@ -92,5 +94,9 @@ export class UserService {
    */
   getUserTeams(userId: number): Observable<Team[]> {
     return this.http.get<Team[]>(`${this.BASE_URL}/${userId}/teams`);
+  }
+
+  updateUserWithTeams(userWithTeamIds: UserUpdateWithTeams) {
+    return this.http.put<UserWithTeams>(`${this.BASE_URL}/${userWithTeamIds.id}/with-teams`, userWithTeamIds);
   }
 }

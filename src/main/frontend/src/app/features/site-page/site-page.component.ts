@@ -1,6 +1,6 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { map, mergeMap, Subscription } from 'rxjs';
-import { Team } from 'src/app/core/new/services/models/team.model';
+import { Team } from 'src/app/core/new/services/models/team/team.model';
 import { TeamService } from 'src/app/core/new/services/team.service';
 import { UserService } from 'src/app/core/new/services/user.service';
 

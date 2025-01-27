@@ -3,6 +3,8 @@ package org.digitalecmt.qualityassurance.models.dto.User;
 import org.digitalecmt.qualityassurance.models.entities.User;
 import org.digitalecmt.qualityassurance.models.pojo.Role;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,8 +25,10 @@ public class UserCreateDto {
 
     private Role role;
 
+    @JsonProperty("isSite")
     private boolean isSite;
 
+    @JsonProperty("isSponsor")
     private boolean isSponsor;
 
     private Long adminId;

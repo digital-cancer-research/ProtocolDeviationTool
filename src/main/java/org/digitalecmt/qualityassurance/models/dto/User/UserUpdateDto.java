@@ -22,7 +22,7 @@ public class UserUpdateDto extends UserCreateDto {
     /**
      * The ID of the user to be updated.
      */
-    private Long userId;
+    private Long id;
 
     /**
      * Converts this DTO to a User entity.
@@ -32,7 +32,7 @@ public class UserUpdateDto extends UserCreateDto {
     @Override
     public User toUser() {
         User user = super.toUser();
-        user.setId(userId);
+        user.setId(id);
         return user;
     }
 }

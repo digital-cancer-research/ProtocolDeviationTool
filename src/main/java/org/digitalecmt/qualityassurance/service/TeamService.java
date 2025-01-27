@@ -49,6 +49,10 @@ public class TeamService {
         return teamRepository.findTeamsWithAdminUsername();
     }
 
+    public void verifyTeamId(Long teamId) {
+        findTeamById(teamId);
+    }
+
     /**
      * Finds a team by its ID.
      *
@@ -106,11 +110,18 @@ public class TeamService {
         Long teamId = teamDto.getTeamId();
 
         authService.checkIfUserIsAdmin(adminId);
-        findTeamById(teamId);
+        Team oldTeam = findTeamById(teamId);
+        String oldTeamDetails = oldTeam.toString();
 
         Team team = teamDto.toTeam();
+        team.setDateCreated(oldTeam.getDateCreated());
+
+        if (team.toString().equals(oldTeamDetails)) {
+            return team;
+        }
+
         teamRepository.save(team);
-        adminAuditService.auditUpdateTeam(team, adminId);
+        adminAuditService.auditUpdateTeam(team, oldTeamDetails, adminId);
 
         return team;
     }

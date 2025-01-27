@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Team } from 'src/app/core/new/services/models/team.model';
+import { Team } from 'src/app/core/new/services/models/team/team.model';
 import { TeamService } from 'src/app/core/new/services/team.service';
 
 /**

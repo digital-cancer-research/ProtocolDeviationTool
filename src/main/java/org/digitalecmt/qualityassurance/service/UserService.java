@@ -29,6 +29,15 @@ public class UserService {
     private AuthorisationService authService;
 
     /**
+     * Verifies if a user exists by their ID.
+     *
+     * @param id the ID of the user to verify
+     */
+    public void verifyUserId(Long id) {
+        findUserById(id);
+    }
+
+    /**
      * Finds a user by their ID.
      *
      * @param id the ID of the user to find
@@ -83,18 +92,23 @@ public class UserService {
      */
     public User updateUser(UserUpdateDto userDto) {
         Long adminId = userDto.getAdminId();
-        Long userId = userDto.getUserId();
-
         authService.checkIfUserIsAdmin(adminId);
-
-        User currentUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+        
+        Long userId = userDto.getId();
+        User oldUser = findUserById(userId);
+        String oldUserDetails = oldUser.toString();
 
         User user = userDto.toUser();
-        userRepository.save(currentUser);
+        user.setDateCreated(oldUser.getDateCreated());
 
-        adminAuditService.auditUpdateUser(user, adminId);
-        return currentUser;
+        if (user.toString().equals(oldUserDetails)) {
+            return user;
+        }
+
+        userRepository.save(user);
+
+        adminAuditService.auditUpdateUser(user, oldUserDetails, adminId);
+        return user;
     }
 
     /**
@@ -106,12 +120,10 @@ public class UserService {
      */
     public void deleteUserById(UserDeleteDto userDto) {
         Long adminId = userDto.getAdminId();
-        Long userId = userDto.getUserId();
-
         authService.checkIfUserIsAdmin(adminId);
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+        
+        Long userId = userDto.getId();
+        User user = findUserById(userId);
 
         userRepository.delete(user);
         adminAuditService.auditDeleteUser(user, adminId);

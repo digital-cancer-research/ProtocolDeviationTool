@@ -7,8 +7,8 @@ import { DataVisualisationPageModule } from 'src/app/features/data-visualisation
 import { Params } from '@angular/router';
 import { UserService } from '../../new/services/user.service';
 import { TeamService } from '../../new/services/team.service';
-import { User } from '../../new/services/models/user.model';
-import { Role } from '../../new/services/models/role.enum';
+import { Role } from '../../new/services/models/user/role.enum';
+import { User } from '../../new/services/models/user/user.model';
 
 /**
  * Component that represents the ribbon in the navigation.

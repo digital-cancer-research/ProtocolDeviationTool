@@ -3,10 +3,13 @@ package org.digitalecmt.qualityassurance.controller;
 import org.digitalecmt.qualityassurance.models.dto.User.UserCreateDto;
 import org.digitalecmt.qualityassurance.models.dto.User.UserDeleteDto;
 import org.digitalecmt.qualityassurance.models.dto.User.UserUpdateDto;
+import org.digitalecmt.qualityassurance.models.dto.User.UserUpdateWithTeamsDto;
+import org.digitalecmt.qualityassurance.models.dto.User.UserWithTeamsDto;
 import org.digitalecmt.qualityassurance.models.entities.Team;
 import org.digitalecmt.qualityassurance.models.entities.User;
 import org.digitalecmt.qualityassurance.service.AuthorisationService;
 import org.digitalecmt.qualityassurance.service.UserService;
+import org.digitalecmt.qualityassurance.service.UserTeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +29,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserTeamService userTeamService;
 
     /**
      * Creates a new user.
@@ -60,6 +66,18 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@RequestBody UserDeleteDto user) {
         userService.deleteUserById(user);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    /**
+     * Updates a user's information along with their team access.
+     *
+     * @param user the data transfer object containing the updated user details and team IDs
+     * @return a ResponseEntity containing the updated user with their teams and HTTP status code
+     */
+    @PutMapping("/{id}/with-teams")
+    public ResponseEntity<UserWithTeamsDto> updateUserWithTeams(@RequestBody UserUpdateWithTeamsDto user) {
+        UserWithTeamsDto userWithTeams = userTeamService.updateUserWithTeamAccess(user);
+        return new ResponseEntity<>(userWithTeams, HttpStatus.OK);
     }
 
     /**

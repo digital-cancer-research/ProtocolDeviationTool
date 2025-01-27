@@ -17,7 +17,7 @@ public class UserDeleteDto {
     /**
      * The ID of the user to be deleted.
      */
-    private Long userId;
+    private Long id;
 
     /**
      * The ID of the admin performing the deletion.

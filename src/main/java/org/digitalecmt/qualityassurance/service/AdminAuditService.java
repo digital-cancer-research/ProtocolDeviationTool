@@ -1,6 +1,8 @@
 package org.digitalecmt.qualityassurance.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.digitalecmt.qualityassurance.models.entities.AdminAudit;
 import org.digitalecmt.qualityassurance.models.entities.Team;
@@ -26,11 +28,11 @@ public class AdminAuditService {
         return adminAuditRepository.save(audit);
     }
 
-    public AdminAudit auditUpdateUser(User user, Long adminId) {
+    public AdminAudit auditUpdateUser(User user, String oldUserDetails, Long adminId) {
         AdminAudit audit = AdminAudit.builder()
         .userId(adminId)
         .action("Updated a user")
-        .originalValue(user.toString())
+        .originalValue(oldUserDetails)
         .newValue(user.toString())
         .date(LocalDateTime.now())
         .build();
@@ -70,11 +72,11 @@ public class AdminAuditService {
         return adminAuditRepository.save(audit);
     }
 
-    public AdminAudit auditUpdateTeam(Team team, Long adminId) {
+    public AdminAudit auditUpdateTeam(Team team, String oldTeamDetails, Long adminId) {
         AdminAudit audit = AdminAudit.builder()
         .userId(adminId)
         .action("Updated a team")
-        .originalValue(team.toString())
+        .originalValue(oldTeamDetails)
         .newValue(team.toString())
         .date(LocalDateTime.now())
         .build();
@@ -87,6 +89,26 @@ public class AdminAuditService {
         .action("Deleted a team")
         .originalValue(team.toString())
         .newValue("N/A")
+        .date(LocalDateTime.now())
+        .build();
+        return adminAuditRepository.save(audit);
+    }
+
+    public AdminAudit auditSetUserTeamAccess(User user, List<Team> newTeams, List<Team> oldTeams, Long adminId) {
+
+        String originalValue = oldTeams.stream()
+        .map(team -> team.getName())
+        .collect(Collectors.joining("\n"));
+        
+        String newValue = newTeams.stream()
+        .map(team -> team.getName())
+        .collect(Collectors.joining("\n"));
+
+        AdminAudit audit = AdminAudit.builder()
+        .userId(adminId)
+        .action("Granted team access to " + user.getUsername())
+        .originalValue(originalValue)
+        .newValue(newValue)
         .date(LocalDateTime.now())
         .build();
         return adminAuditRepository.save(audit);

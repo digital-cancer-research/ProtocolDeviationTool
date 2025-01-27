@@ -7,8 +7,8 @@ import { DataUploadComponent } from 'src/app/features/data-upload/data-upload/da
 import { AdministrationPageModule } from 'src/app/features/administration-page/administration-page.module';
 import { TitleCasePipe } from '@angular/common';
 import { UserService } from '../new/services/user.service';
-import { User } from '../new/services/models/user.model';
 import { TeamService } from '../new/services/team.service';
+import { User } from '../new/services/models/user/user.model';
 
 /**
  * HeaderComponent is responsible for managing the header UI element of the application,
