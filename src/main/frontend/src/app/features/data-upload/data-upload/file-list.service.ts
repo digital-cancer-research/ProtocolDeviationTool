@@ -12,10 +12,10 @@ export class FileListService {
   constructor(private http: HttpClient) { }
 
   getUploadedFiles(): Observable<UploadedFile[]> {
-    return this.http.get<UploadedFile[]>(`${this.baseUrl}/list`);
+    return this.http.get<UploadedFile[]>(`${this.baseUrl}`);
   }
 
-  deleteFile(fileId: number): Observable<string> {
-    return this.http.delete<string>(`${this.baseUrl}/delete/${fileId}`);
+  deleteFile(fileId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${fileId}`);
   }
 }
