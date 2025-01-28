@@ -1,7 +1,6 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { map, mergeMap, Subscription } from 'rxjs';
+import { mergeMap } from 'rxjs';
 import { Team } from 'src/app/core/new/services/models/team/team.model';
-import { TeamService } from 'src/app/core/new/services/team.service';
 import { UserService } from 'src/app/core/new/services/user.service';
 
 /**
@@ -25,12 +24,12 @@ export class SitePageComponent implements OnInit {
 	public static readonly URL = 'site';
 	private readonly userService = inject(UserService);
 	
-	teams$ = this.userService.getUser$().pipe(
+	teams$ = this.userService.currentUser$.pipe(
 		mergeMap(user => {
 			if (user === null) {
 				return [];
 			} else {
-				return this.userService.getUserTeams(user.id);
+				return this.userService.getUserTeams$(user.id);
 			}
 		})
 	);

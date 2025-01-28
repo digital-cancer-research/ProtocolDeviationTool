@@ -1,6 +1,7 @@
 package org.digitalecmt.qualityassurance.controller;
 
 import org.digitalecmt.qualityassurance.models.dto.User.UserCreateDto;
+import org.digitalecmt.qualityassurance.models.dto.User.UserCreateWithTeamsDto;
 import org.digitalecmt.qualityassurance.models.dto.User.UserDeleteDto;
 import org.digitalecmt.qualityassurance.models.dto.User.UserUpdateDto;
 import org.digitalecmt.qualityassurance.models.dto.User.UserUpdateWithTeamsDto;
@@ -89,6 +90,18 @@ public class UserController {
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @PostMapping("/with-teams")
+    public ResponseEntity<UserWithTeamsDto> createUserWithTeams(@RequestBody UserCreateWithTeamsDto user) {
+        UserWithTeamsDto userWithTeams = userTeamService.createUserWithTeamAccess(user);
+        return new ResponseEntity<>(userWithTeams, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/with-teams")
+    public ResponseEntity<List<UserWithTeamsDto>> getAllUsersWithTeams() {
+        List<UserWithTeamsDto> userWithTeams = userService.getUsersWithTeams();
+        return new ResponseEntity<>(userWithTeams, HttpStatus.OK);
     }
 
     /**

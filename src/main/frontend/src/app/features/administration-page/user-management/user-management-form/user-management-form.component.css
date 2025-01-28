@@ -10,6 +10,11 @@ mat-card-content {
     align-items: baseline;
 }
 
+app-multi-select {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .confirm {
     display: flex;
     align-items: center;

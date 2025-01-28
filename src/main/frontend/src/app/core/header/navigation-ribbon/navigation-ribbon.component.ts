@@ -75,7 +75,7 @@ export class NavigationRibbonComponent implements OnDestroy {
       }
     )
 
-    this.userService.getUser$().subscribe((user) => {
+    this.userService.currentUser$.subscribe((user) => {
       if (user !== null) {
         this.updateAdminAccess(user);
         this.updateMultipleTeamSelectionAccess(user);
@@ -103,7 +103,7 @@ export class NavigationRibbonComponent implements OnDestroy {
    * @param userId - The ID of the user whose teams are to be retrieved.
    */
   updateMultipleTeamSelectionAccess(user: User): void {
-    this.userService.getUserTeams(user.id).subscribe(
+    this.userService.getUserTeams$(user.id).subscribe(
       (team) => {
         this.isPartOfMultipleTeams = team.length > 1;
         this.activeLink = this.links[2];

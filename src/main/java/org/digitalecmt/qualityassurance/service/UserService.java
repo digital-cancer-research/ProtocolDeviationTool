@@ -1,5 +1,6 @@
 package org.digitalecmt.qualityassurance.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.digitalecmt.qualityassurance.exception.UserNotAuthorisedException;
@@ -7,6 +8,7 @@ import org.digitalecmt.qualityassurance.exception.UserNotFoundException;
 import org.digitalecmt.qualityassurance.models.dto.User.UserCreateDto;
 import org.digitalecmt.qualityassurance.models.dto.User.UserDeleteDto;
 import org.digitalecmt.qualityassurance.models.dto.User.UserUpdateDto;
+import org.digitalecmt.qualityassurance.models.dto.User.UserWithTeamsDto;
 import org.digitalecmt.qualityassurance.models.entities.Team;
 import org.digitalecmt.qualityassurance.models.entities.User;
 import org.digitalecmt.qualityassurance.repository.UserRepository;
@@ -72,7 +74,6 @@ public class UserService {
      */
     public User createUser(UserCreateDto userDto) {
         Long adminId = userDto.getAdminId();
-
         authService.checkIfUserIsAdmin(adminId);
 
         User user = userDto.toUser();
@@ -136,6 +137,16 @@ public class UserService {
      */
     public List<User> getUsers() {
         return userRepository.findAll();
+    }
+
+    public List<UserWithTeamsDto> getUsersWithTeams() {
+        List<User> users = getUsers();
+        List<UserWithTeamsDto> userWithTeams = new ArrayList<>();
+        users.forEach(user -> {
+            List<Team> teams = getUserTeams(user.getId());
+            userWithTeams.add(new UserWithTeamsDto(user, teams));
+        });
+        return userWithTeams;
     }
 
     /**

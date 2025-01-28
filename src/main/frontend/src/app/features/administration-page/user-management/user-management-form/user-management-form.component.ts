@@ -1,11 +1,14 @@
-import { Component, ChangeDetectionStrategy, Input, inject, ChangeDetectorRef, Output, EventEmitter, ViewChild, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, inject, ChangeDetectorRef, ViewChild, signal } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { merge, Observable } from 'rxjs';
+import { map, merge, mergeMap, Observable, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Team } from 'src/app/core/models/team.model';
-import { UserManagementService } from '../user-management.service';
 import { MultiSelectComponent } from 'src/app/shared/select/multi-select/multi-select.component';
+import { Team } from 'src/app/core/new/services/models/team/team.model';
+import { UserService } from 'src/app/core/new/services/user.service';
+import { Role } from 'src/app/core/new/services/models/user/role.enum';
+import { UserCreateWithTeams } from 'src/app/core/new/services/models/user/user-create-with-teams.model';
+import { UserWithTeams } from 'src/app/core/new/services/models/user/user-with-teams.model';
 
 /**
  * Component for managing user creation and role assignment.
@@ -22,6 +25,8 @@ import { MultiSelectComponent } from 'src/app/shared/select/multi-select/multi-s
 })
 export class UserManagementFormComponent {
 
+  private readonly userService = inject(UserService);
+
   /** Form control for the user's email address. */
   readonly email = new FormControl('', [Validators.required, Validators.email]);
 
@@ -34,14 +39,13 @@ export class UserManagementFormComponent {
   /** Snack bar service for displaying notifications. */
   private _snackBar = inject(MatSnackBar);
 
+  user$ = this.userService.currentUser$;
+
   /** Configuration for the snack bar notifications. */
   snackBarConfig: MatSnackBarConfig = { duration: 5000 };
 
   /** Flag indicating if a user creation process is in progress. */
   inProgress: boolean = false;
-
-  /** Array of teams associated with the user being created. */
-  userTeams: Team[] = [];
 
   /** Signal for the email error message. */
   emailErrorMessage = signal('');
@@ -49,8 +53,10 @@ export class UserManagementFormComponent {
   /** Signal for the role error message. */
   roleErrorMessage = signal('');
 
+  selectedTeams: Team[] = [];
+
   /** Observable for role names. */
-  @Input() roleNames$: Observable<string[]> = new Observable();
+  @Input() roles: string[] = [];
 
   /** Array of all available teams. */
   @Input() teams: Team[] = [];
@@ -59,11 +65,9 @@ export class UserManagementFormComponent {
   @ViewChild(MultiSelectComponent) multiSelectComponent!: MultiSelectComponent<Team>;
 
   /**
-   * Initialises the component and sets up form control listeners.
-   * 
-   * @param userManagementService - Service for user management operations.
+   * Initializes the component and sets up form control listeners.
    */
-  constructor(private userManagementService: UserManagementService) {
+  constructor() {
     this.setupFormListeners();
   }
 
@@ -104,12 +108,12 @@ export class UserManagementFormComponent {
   }
 
   /**
-   * Sets the teams associated with the user.
+   * Updates the selected teams when the user selects or deselects teams in the multi-select component.
    * 
-   * @param teams - Array of teams to associate with the user.
+   * @param teams - The array of selected teams.
    */
-  setTeams(teams: Team[]): void {
-    this.userTeams = teams;
+  onSelectTeam(teams: Team[]) {
+    this.selectedTeams = teams;
   }
 
   /**
@@ -117,32 +121,54 @@ export class UserManagementFormComponent {
    * Validates the form and performs user creation.
    */
   onConfirm(): void {
+    this.inProgress = true;
+
     if (this.email.invalid || this.role.invalid) {
       this.updateEmailErrorMessage();
       this.updateRoleErrorMessage();
+      this.inProgress = false;
       return;
     }
 
-    this.inProgress = true;
     const username = this.email.getRawValue() ?? '';
-    const teamIds = this.userTeams.map(team => team.teamId);
-    const roleName = this.role.getRawValue() ?? "";
-    const roleId = this.userManagementService.getRoleId(roleName);
+    const teamIds = this.selectedTeams.map(team => team.id);
+    const role = this.role.getRawValue() as Role;
 
-    this.userManagementService.addUserWithRoleTeam({ username, teamId: teamIds, roleId })
-      .subscribe({
-        complete: () => this.handleSuccess(username),
-        error: (error) => this.handleError(username, error)
-      });
+    const createRequest: Observable<UserWithTeams | null> = this.userService.currentUser$.pipe(
+      mergeMap(user => {
+        if (user !== null) {
+          const newUser: UserCreateWithTeams = {
+            username: username,
+            role: role,
+            isSite: true,
+            isSponsor: false,
+            teamIds: teamIds,
+            adminId: user.id
+          };
+          return this.userService.createUserWithTeams$(newUser);
+        } else {
+          this.handleError("User is not logged in.");
+          return of(null);
+        }
+      })
+    );
+
+    createRequest.subscribe({
+      next: (response) => {
+        if (response !== null) {
+          this.handleSuccess();
+        }
+      },
+      error: (error) => this.handleError(error)
+    });
   }
 
   /**
    * Handles successful user creation by resetting the form and showing a success message.
-   * 
-   * @param username - The username of the created user.
    */
-  private handleSuccess(username: string): void {
+  private handleSuccess(): void {
     this.inProgress = false;
+    const username = this.email.getRawValue() ?? 'User';
     this.resetForm();
     this.showSnackBar('Success', `${username} created`);
   }
@@ -150,11 +176,11 @@ export class UserManagementFormComponent {
   /**
    * Handles errors during user creation by showing an error message.
    * 
-   * @param username - The username of the user being created.
    * @param error - Error object containing error details.
    */
-  private handleError(username: string, error: any): void {
+  private handleError(error: any): void {
     this.inProgress = false;
+    const username = this.email.getRawValue() ?? 'the user';
     this.showSnackBar('Error', `There was an error creating ${username}. ${error.message}`);
   }
 
@@ -164,7 +190,7 @@ export class UserManagementFormComponent {
   private resetForm(): void {
     this.email.reset('');
     this.role.reset('');
-    this.userTeams = [];
+    this.selectedTeams = [];
     this.multiSelectComponent.reset();
     this.cdr.markForCheck();
   }

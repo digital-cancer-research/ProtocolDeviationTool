@@ -14,20 +14,20 @@
         <mat-form-field class="role" appearance="outline">
             <mat-label>Role</mat-label>
             <mat-select [formControl]="role" (closed)="updateRoleErrorMessage()" required>
-                <mat-option *ngFor="let roleName of roleNames$ | async" [value]="roleName">
-                    {{ roleName }}
+                <mat-option *ngFor="let role of roles" [value]="role">
+                    {{ role | titlecase }}
                 </mat-option>
             </mat-select>
             <mat-error>{{ roleErrorMessage() }}</mat-error>
         </mat-form-field>
-        <app-multi-select class="teams" #multiSelect [items]="teams" [keyField]="'teamName'" 
+        <app-multi-select class="teams" #multiSelect [items]="teams" [keyField]="'name'" 
             [search]="true" [searchPlaceholder]="'Search teams'"
-            (confirmedItems)="setTeams($event)"
+            (confirmedItems)="onSelectTeam(teams)"
             appearance="outline">
         </app-multi-select>
         <div class="confirm">
             <button mat-raised-button 
-            [disabled]="email.errors || role.errors"
+            [disabled]="email.errors || role.errors || inProgress"
             (click)="onConfirm()">
                 Create
             </button>

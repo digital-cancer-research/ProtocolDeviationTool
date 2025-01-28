@@ -1,10 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { Team } from './models/team/team.model';
 import { User } from './models/user/user.model';
-import { UserUpdateWithTeams } from './models/user/user-update-with-teams.model';
+import { Team } from './models/team/team.model';
 import { UserWithTeams } from './models/user/user-with-teams.model';
+import { UserUpdateWithTeams } from './models/user/user-update-with-teams.model';
+import { UserCreateWithTeams } from './models/user/user-create-with-teams.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,15 +13,23 @@ import { UserWithTeams } from './models/user/user-with-teams.model';
 export class UserService {
   private readonly BASE_URL = 'api/users';
   private readonly http = inject(HttpClient);
-  private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromSessionStorage());
-  private currentUser$ = this.currentUserSubject.asObservable();
+  currentUserSubject = new BehaviorSubject<User | null>(this.getUser());
+  currentUser$ = this.currentUserSubject.asObservable();
+
+  constructor() { 
+    const originalNext = this.currentUserSubject.next.bind(this.currentUserSubject);
+    this.currentUserSubject.next = (user: User | null) => {
+      this.setUser(user);
+      originalNext(user);
+    };
+  }
 
   /**
    * Retrieves the user from session storage.
    * 
    * @returns The user object if present in session storage, otherwise null.
    */
-  private getUserFromSessionStorage(): User | null {
+  public getUser(): User | null {
     const userJson = sessionStorage.getItem('user');
     if (userJson !== null) {
       return JSON.parse(userJson);
@@ -30,30 +39,11 @@ export class UserService {
   }
 
   /**
-   * Returns an observable of the current user.
-   * 
-   * @returns An Observable that emits the current user.
-   */
-  getUser$(): Observable<User | null> {
-    return this.currentUser$;
-  }
-
-  /**
-   * Returns the current user.
-   * 
-   * @returns The current user.
-   */
-  getUser(): User | null {
-    return this.currentUserSubject.getValue();
-  }
-
-  /**
-   * Stores the user in session storage and updates the current user subject.
+   * Stores the user in session storage.
    * 
    * @param user - The user object to store in session storage.
    */
-  setUser(user: User | null): void {
-    this.currentUserSubject.next(user);
+  private setUser(user: User | null): void {
     sessionStorage.setItem('user', JSON.stringify(user));
   }
 
@@ -64,6 +54,15 @@ export class UserService {
    */
   getUsers$(): Observable<User[]> {
     return this.http.get<User[]>(`${this.BASE_URL}`);
+  }
+
+  /**
+   * Retrieves all users with their associated teams from the server.
+   * 
+   * @returns An Observable that emits an array of UserWithTeams objects.
+   */
+  getUsersWithTeams$(): Observable<UserWithTeams[]> {
+    return this.http.get<UserWithTeams[]>(`${this.BASE_URL}/with-teams`);
   }
 
   /**
@@ -87,16 +86,42 @@ export class UserService {
   }
 
   /**
+   * Retrieves a user with their associated teams by their ID from the server.
+   * 
+   * @param userId - The unique identifier of the user to retrieve.
+   * @returns An Observable that emits the UserWithTeams object with the specified ID.
+   */
+  getUserWithTeamsById$(userId: number): Observable<UserWithTeams> {
+    return this.http.get<UserWithTeams>(`${this.BASE_URL}/${userId}/with-teams`);
+  }
+
+  /**
    * Retrieves the list of teams associated with a user.
    * 
    * @param userId - The ID of the user.
    * @returns An Observable that emits an array of Team objects associated with the user.
    */
-  getUserTeams(userId: number): Observable<Team[]> {
+  getUserTeams$(userId: number): Observable<Team[]> {
     return this.http.get<Team[]>(`${this.BASE_URL}/${userId}/teams`);
   }
 
-  updateUserWithTeams(userWithTeamIds: UserUpdateWithTeams) {
-    return this.http.put<UserWithTeams>(`${this.BASE_URL}/${userWithTeamIds.id}/with-teams`, userWithTeamIds);
+  /**
+   * Creates a new user with their associated teams.
+   * 
+   * @param user - The user object to create.
+   * @returns An Observable that emits the created UserWithTeams object.
+   */
+  createUserWithTeams$(user: UserCreateWithTeams): Observable<UserWithTeams> {
+    return this.http.post<UserWithTeams>(`${this.BASE_URL}/with-teams`, user);
+  }
+
+  /**
+   * Updates an existing user with their associated teams.
+   * 
+   * @param user - The user object to update.
+   * @returns An Observable that emits the updated UserWithTeams object.
+   */
+  updateUserWithTeams$(user: UserUpdateWithTeams): Observable<UserWithTeams> {
+    return this.http.put<UserWithTeams>(`${this.BASE_URL}/${user.id}/with-teams`, user);
   }
 }

@@ -1,11 +1,5 @@
-import { Role } from "./role.enum";
+import { UserCreateWithTeams } from "./user-create-with-teams.model";
 
-export interface UserUpdateWithTeams {
+export interface UserUpdateWithTeams extends UserCreateWithTeams {
     id: number;
-    username: string;
-    role: Role,
-    isSite: boolean;
-    isSponsor: boolean;
-    adminId: number;
-    teamIds: number[];
 }

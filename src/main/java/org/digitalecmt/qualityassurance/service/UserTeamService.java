@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.digitalecmt.qualityassurance.models.dto.User.UserCreateWithTeamsDto;
 import org.digitalecmt.qualityassurance.models.dto.User.UserUpdateWithTeamsDto;
 import org.digitalecmt.qualityassurance.models.dto.User.UserWithTeamsDto;
 import org.digitalecmt.qualityassurance.models.entities.Team;
@@ -30,17 +31,24 @@ public class UserTeamService {
     @Autowired
     private TeamService teamService;
 
+    @Transactional
+    public UserWithTeamsDto createUserWithTeamAccess(UserCreateWithTeamsDto userDto) {
+        User user = userService.createUser(userDto);
+        List<Team> teams = setUserTeamAccess(user.getId(), userDto.getTeamIds(), userDto.getAdminId());
+        return new UserWithTeamsDto(user, teams);
+    }
+
     /**
      * Updates a user's team access and returns the updated user with their teams.
      * 
-     * @param userDto the data transfer object containing the updated user details and team IDs
+     * @param userDto the data transfer object containing the updated user details
+     *                and team IDs
      * @return a UserWithTeamsDto containing the updated user and their teams
      */
     @Transactional
     public UserWithTeamsDto updateUserWithTeamAccess(UserUpdateWithTeamsDto userDto) {
         Long userId = userDto.getId();
 
-        userService.verifyUserId(userId);
         User user = userService.updateUser(userDto);
         List<Team> teams = setUserTeamAccess(userId, userDto.getTeamIds(), userDto.getAdminId());
 
@@ -50,7 +58,7 @@ public class UserTeamService {
     /**
      * Sets the team access for a user.
      * 
-     * @param userId the ID of the user
+     * @param userId  the ID of the user
      * @param teamIds the list of team IDs to grant access to
      * @param adminId the ID of the admin performing the operation
      * @return a list of teams the user has access to
@@ -66,7 +74,7 @@ public class UserTeamService {
         }
 
         resetUserTeamAccess(userId);
-        
+
         List<Team> teams = new ArrayList<>();
 
         for (Long teamId : teamIds) {
