@@ -29,6 +29,7 @@
 		<spring.data.train.version>Neumann-SR9</spring.data.train.version>
 		<spring.version>6.0.11</spring.version>
 		<org.mapstruct.version>1.6.3</org.mapstruct.version>
+		<open.csv.version>5.10</open.csv.version>
 
 		<!-- ============== PLUGINS VERSIONS ============== -->
 		<plugin.spring.boot.version>${spring.boot.version}</plugin.spring.boot.version>
@@ -231,6 +232,13 @@
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
 			<version>${org.mapstruct.version}</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
+		<dependency>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>${open.csv.version}</version>
 		</dependency>
 	</dependencies>
 

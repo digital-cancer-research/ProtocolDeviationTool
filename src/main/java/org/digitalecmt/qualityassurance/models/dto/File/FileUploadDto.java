@@ -1,6 +1,6 @@
 package org.digitalecmt.qualityassurance.models.dto.File;
 
-import org.digitalecmt.qualityassurance.models.entities.File;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,26 +14,26 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class FileCreateDto {
+public class FileUploadDto {
     /**
-     * The name of the file.
+     * The native file object.
      */
-    String fileName;
+    MultipartFile file;
 
     /**
      * The ID of the user who uploaded the file.
      */
-    Long uploadedBy;
+    Long userId;
 
     /**
      * Converts this DTO to a File entity.
      * 
      * @return a File entity with the same properties as this DTO.
      */
-    public File toFile() {
-        return File.builder()
-                .fileName(fileName)
-                .uploadedBy(uploadedBy)
+    public org.digitalecmt.qualityassurance.models.entities.File toFile() {
+        return org.digitalecmt.qualityassurance.models.entities.File.builder()
+                .fileName(file.getOriginalFilename())
+                .uploadedBy(userId)
                 .build();
     }
 }

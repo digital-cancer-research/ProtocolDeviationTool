@@ -1,5 +1,7 @@
 package org.digitalecmt.qualityassurance.repository;
 
+import java.util.Optional;
+
 import org.digitalecmt.qualityassurance.models.entities.Dvdecod;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -10,4 +12,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface DvdecodRepository extends JpaRepository<Dvdecod, Long> {
+
+    public Optional<Dvdecod> findByDescription(String description);
+
 }

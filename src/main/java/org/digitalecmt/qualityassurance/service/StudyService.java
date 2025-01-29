@@ -32,7 +32,7 @@ public class StudyService {
      * @return the created or existing study
      */
     public Study createStudy(String id) {
-        id = id.toUpperCase();
+        id = id.toUpperCase().trim();
         return studyRepository.findById(id)
                 .orElse(saveStudy(id));
     }

@@ -21,5 +21,5 @@ public class FileDeleteDto {
     /**
      * The ID of the user requesting the deletion.
      */
-    Long deletedBy;
+    Long adminId;
 }

@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,10 +46,8 @@ public class Data {
 
     /**
      * PD descriptor assigned by sponsor.
-     * Must be between 1 and 255 characters.
      */
-    @Size(min = 1, max = 255)
-    private Integer dvspondes;
+    private String dvspondes;
 
     /**
      * The ID of the associated file.
@@ -150,4 +149,10 @@ public class Data {
      * Start date/time of deviation.
      */
     private LocalDateTime dvstdtc;
+
+    @PrePersist
+    public void prePersist() {
+        studyId = studyId.trim().toUpperCase();
+        externalSiteId = externalSiteId.trim().toUpperCase();
+    }
 }

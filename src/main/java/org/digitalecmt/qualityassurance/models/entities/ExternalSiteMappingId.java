@@ -24,5 +24,5 @@ public class ExternalSiteMappingId implements Serializable {
     /**
      * The ID of the external site.
      */
-    private Long externalSiteId;
+    private String externalSiteId;
 }
