@@ -66,6 +66,20 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles {@link FileUploadException} and returns a 422 Unprocessable Entity response.
+     *
+     * @param ex the exception
+     * @param webRequest the web request
+     * @return a ResponseEntity containing the error details
+     */
+    @ExceptionHandler(FileUploadException.class)
+    public ResponseEntity<ApiError> handleFileUploadException(FileUploadException ex, WebRequest webRequest) {
+        ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "Error uploading file", ex);
+        apiError.setSubErrors(ex.getFileErrors());
+        return new ResponseEntity<>(apiError, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    /**
      * Handles {@link CannotCreateTransactionException} and returns a 503 Service Unavailable response.
      *
      * @param ex the exception

@@ -1,11 +1,13 @@
 package org.digitalecmt.qualityassurance.service;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.digitalecmt.qualityassurance.exception.FileFormatException;
+import org.digitalecmt.qualityassurance.exception.FileUploadException;
 import org.digitalecmt.qualityassurance.models.dto.File.FileDto;
 import org.digitalecmt.qualityassurance.models.dto.File.FileUploadDto;
 import org.apache.commons.io.FilenameUtils;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 
 import jakarta.transaction.Transactional;
@@ -99,20 +102,9 @@ public class FileService {
      */
     @Transactional
     public FileDto uploadFile(FileUploadDto fileDto) {
-        try {
-            File file = saveFile(fileDto);
-            parseFile(fileDto.getFile(), file.getId());
-            return fileToFileDto(file);
-        } catch (FileNotFoundException e) {
-            // Handle exception
-        } catch (IllegalStateException e) {
-            // Handle exception
-        } catch (IOException e) {
-            // Handle exception
-        } catch (Exception e) {
-            // Handle exception
-        }
-        return null;
+        File file = saveFile(fileDto);
+        parseFile(fileDto.getFile(), file.getId());
+        return fileToFileDto(file);
     }
 
     /**
@@ -135,7 +127,7 @@ public class FileService {
      * @throws IllegalStateException if an error occurs during parsing
      * @throws IOException           if an error occurs during file reading
      */
-    private boolean parseFile(MultipartFile file, Long fileId) throws IllegalStateException, IOException {
+    private boolean parseFile(MultipartFile file, Long fileId) {
         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
 
         switch (extension) {
@@ -152,20 +144,43 @@ public class FileService {
      *
      * @param file   the CSV file
      * @param fileId the ID of the file
+     * @throws FileFormatException if there are errors within the file
      * @throws IllegalStateException if an error occurs during reading
      * @throws IOException           if an error occurs during file reading
      */
-    private void readCSV(MultipartFile file, Long fileId) throws IllegalStateException, IOException {
-        List<DataEntry> reader = new CsvToBeanBuilder<DataEntry>(new InputStreamReader(file.getInputStream()))
-                .withType(DataEntry.class).build().parse();
+    private void readCSV(MultipartFile file, Long fileId) {
+        try {
+            CsvToBean<DataEntry> csvToBean = new CsvToBeanBuilder<DataEntry>(
+                    new InputStreamReader(file.getInputStream()))
+                    .withType(DataEntry.class)
+                    .withThrowExceptions(false)
+                    .build();
 
-        reader.forEach(entry -> {
-            Data data = entry.toData(fileId);
-            studyService.createStudy(data.getStudyId());
-            data = dataService.saveData(data);
-            categoriseData(entry.getDvdecod(), data.getId());
-            siteService.addDefaultMapping(entry.getSiteId());
-        });
+            List<DataEntry> reader = csvToBean.parse();
+
+            reader.forEach(entry -> {
+                Data data = entry.toData(fileId);
+                studyService.createStudy(data.getStudyId());
+                data = dataService.saveData(data);
+                categoriseData(entry.getDvdecod(), data.getId());
+                siteService.addDefaultMapping(entry.getSiteId());
+            });
+
+            List<FileFormatException> errors = csvToBean.getCapturedExceptions().stream()
+                    .map(exception -> new FileFormatException(exception))
+                    .collect(Collectors.toList());
+
+            if (errors.size() > 0) {
+                throw new FileUploadException(
+                        "There seems to be a problem with the template of the file. Please fix it and try again.",
+                        file,
+                        errors);
+            }
+
+        } catch (IllegalStateException e) {
+        } catch (IOException e) {
+            throw new FileUploadException(file);
+        }
     }
 
     /**

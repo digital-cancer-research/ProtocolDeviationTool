@@ -16,7 +16,7 @@ public class FileNotFoundException extends RuntimeException {
      * Constructs a new FileNotFoundException with a default message.
      */
     public FileNotFoundException() {
-        super("FileNotFoundException: User not found.");
+        super("FileNotFoundException: File not found.");
     }
 
     /**

@@ -10,7 +10,7 @@ import { MatSort } from '@angular/material/sort';
   styleUrl: './upload-errors-table.component.css'
 })
 export class UploadErrorsTableComponent implements AfterViewInit, OnChanges {
-  protected displayedColumns: string[] = ['filename', 'message', 'actions'];
+  protected displayedColumns: string[] = ['index', 'filename', 'message', 'actions'];
   private idCounter = 0;
   @Input() errors: UploadError[] = [];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -45,16 +45,17 @@ export class UploadErrorsTableComponent implements AfterViewInit, OnChanges {
     return errors.map(error => (
       { 
         ...error,
+        entry: error.entry.filter(field => field.trim() !== ''),
         id: this.idCounter++, 
         actions: true }));
   }
 
   onDelete(entry: TableDataEntry): void {
-    this.dataSource.data = this.dataSource.data.filter(de => entry.id);
+    this.dataSource.data = this.dataSource.data.filter(de => de.id !== entry.id);
   }
 }
 
 interface TableDataEntry extends UploadError {
-  id: number;
   actions: boolean;
+  id: number;
 }

@@ -6,13 +6,26 @@
 <table mat-table [dataSource]="dataSource" matSort>
 
   <ng-container matColumnDef="filename">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> File Name </th>
-    <td mat-cell *matCellDef="let error"> {{error.filename}} </td>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> File </th>
+    <td mat-cell *matCellDef="let error"
+    [matTooltip]="error.filename"> {{error.filename}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="index">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Line </th>
+    <td mat-cell *matCellDef="let error"
+    [matTooltip]="error.entry | json"> {{error.index}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="entry">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Entry </th>
+    <td mat-cell *matCellDef="let error"> {{error.entry}} </td>
   </ng-container>
 
   <ng-container matColumnDef="message">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Error </th>
-    <td mat-cell *matCellDef="let error"> {{error.message}} </td>
+    <td mat-cell *matCellDef="let error"
+    [matTooltip]="error.message"> {{error.message}} </td>
   </ng-container>
 
   <ng-container matColumnDef="actions">

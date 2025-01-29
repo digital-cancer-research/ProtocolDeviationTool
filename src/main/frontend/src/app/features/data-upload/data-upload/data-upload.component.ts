@@ -31,9 +31,9 @@ export class DataUploadComponent implements AfterViewInit {
     this.newFiles = files;
   }
   
-  onFileErrors(newErrors: UploadError): void {
+  onFileErrors(newErrors: UploadError[]): void {
     this.hasErrorsPanelGotNewFiles = this.filesPanel ? !this.errorsPanel.expanded : false;
-    this.errors = [...this.errors, newErrors];
+    this.errors = [...this.errors, ...newErrors];
   }
 
   get isFilePanelBadgesVisible(): boolean {

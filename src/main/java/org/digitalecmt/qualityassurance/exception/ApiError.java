@@ -19,7 +19,7 @@ public class ApiError {
     private LocalDateTime timestamp;
     private String message;
     private String error;
-    private List<RuntimeException> subErrors;
+    private List<? extends RuntimeException> subErrors;
 
     ApiError() {
         timestamp = LocalDateTime.now();

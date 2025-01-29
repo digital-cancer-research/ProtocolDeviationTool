@@ -25,7 +25,7 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
   displayedColumns: string[] = ['name', 'size', 'actions'];
   @Input() newData: File[] = [];
   @Output() onSuccessfulUpload: EventEmitter<void> = new EventEmitter();
-  @Output() errors: EventEmitter<UploadError> = new EventEmitter();
+  @Output() errors: EventEmitter<UploadError[]> = new EventEmitter();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   dataSource = new MatTableDataSource<TableDataEntry>();
@@ -174,9 +174,19 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
           this.onSuccessfulUpload.emit();
           this.onDelete(entry);
         },
-        error: (error) => {
-          this.openSnackbar(error.message, "Dismiss");
-          console.error('Error uploading file:', error);
+        error: (response) => {
+          if (response.error.subErrors) {
+            const subErrors = response.error.subErrors.map((error: { message: any; entry: any; index: any; }) => {
+              return {
+                filename: entry.file.name,
+                message: error.message,
+                entry: error.entry,
+                index: error.index,
+              } as UploadError;
+            })
+            this.errors.emit(subErrors);
+          }
+          this.openSnackbar(`${response.error.message}. ${response.error.error}`, "Dismiss");
           entry.inProgress = false;
         }
       }
@@ -235,4 +245,3 @@ interface TableDataEntry {
   inProgress: boolean;
   upload: Subscription
 }
-
