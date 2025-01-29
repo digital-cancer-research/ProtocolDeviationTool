@@ -2,8 +2,8 @@ package org.digitalecmt.qualityassurance.controller;
 
 import java.util.List;
 
+import org.digitalecmt.qualityassurance.models.dto.File.FileDto;
 import org.digitalecmt.qualityassurance.models.dto.File.FileUploadDto;
-import org.digitalecmt.qualityassurance.models.entities.File;
 import org.digitalecmt.qualityassurance.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,15 +19,15 @@ public class FileController {
 
     @Autowired
     private FileService fileService;
-    
+
     /**
      * Retrieves all uploaded files.
      *
      * @return a ResponseEntity containing the list of all files and HTTP status OK
      */
     @GetMapping
-    public ResponseEntity<List<File>> getUploadedFiles() {
-        List<File> files = fileService.findAllFiles();
+    public ResponseEntity<List<FileDto>> getUploadedFiles() {
+        List<FileDto> files = fileService.findAllFiles();
         return new ResponseEntity<>(files, HttpStatus.OK);
     }
 
@@ -38,8 +38,8 @@ public class FileController {
      * @return a ResponseEntity containing the uploaded file and HTTP status OK
      */
     @PostMapping
-    public ResponseEntity<File> uploadFile(@ModelAttribute FileUploadDto fileDto) {
-        File file = fileService.uploadFile(fileDto);
+    public ResponseEntity<FileDto> uploadFile(@ModelAttribute FileUploadDto fileDto) {
+        FileDto file = fileService.uploadFile(fileDto);
         return new ResponseEntity<>(file, HttpStatus.OK);
     }
 

@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.digitalecmt.qualityassurance.models.dto.File.FileDto;
 import org.digitalecmt.qualityassurance.models.dto.File.FileUploadDto;
 import org.apache.commons.io.FilenameUtils;
 import org.digitalecmt.qualityassurance.models.entities.Data;
@@ -40,6 +41,9 @@ public class FileService {
     private SiteService siteService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private DataCategoryRepository dataCategoryRepository;
 
     @Autowired
@@ -53,8 +57,19 @@ public class FileService {
      *
      * @return a list of all files
      */
-    public List<File> findAllFiles() {
-        return fileRepository.findAll();
+    public List<FileDto> findAllFiles() {
+        List<FileDto> files = new ArrayList<>();
+        fileRepository.findAll().forEach(file -> {
+            FileDto fileDto = fileToFileDto(file);
+            files.add(fileDto);
+        });
+        return files;
+    }
+
+    public FileDto fileToFileDto(File file) {
+        FileDto fileDto = new FileDto(file);
+        fileDto.setUploadedBy(userService.findUserById(file.getUploadedBy()).getUsername());
+        return fileDto;
     }
 
     /**
@@ -70,7 +85,7 @@ public class FileService {
     /**
      * Deletes a file by its ID.
      *
-     * @param file the data transfer object containing the file ID
+     * @param id the ID of the file to delete
      */
     public void deleteFile(Long id) {
         fileRepository.deleteById(id);
@@ -83,10 +98,11 @@ public class FileService {
      * @return the uploaded file
      */
     @Transactional
-    public File uploadFile(FileUploadDto fileDto) {
+    public FileDto uploadFile(FileUploadDto fileDto) {
         try {
             File file = saveFile(fileDto);
             parseFile(fileDto.getFile(), file.getId());
+            return fileToFileDto(file);
         } catch (FileNotFoundException e) {
             // Handle exception
         } catch (IllegalStateException e) {
@@ -113,11 +129,11 @@ public class FileService {
     /**
      * Parses the uploaded file based on its extension.
      *
-     * @param file the uploaded file
+     * @param file   the uploaded file
      * @param fileId the ID of the file
      * @return true if the file was successfully parsed, false otherwise
      * @throws IllegalStateException if an error occurs during parsing
-     * @throws IOException if an error occurs during file reading
+     * @throws IOException           if an error occurs during file reading
      */
     private boolean parseFile(MultipartFile file, Long fileId) throws IllegalStateException, IOException {
         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
@@ -134,10 +150,10 @@ public class FileService {
     /**
      * Reads and processes the content of a CSV file.
      *
-     * @param file the CSV file
+     * @param file   the CSV file
      * @param fileId the ID of the file
      * @throws IllegalStateException if an error occurs during reading
-     * @throws IOException if an error occurs during file reading
+     * @throws IOException           if an error occurs during file reading
      */
     private void readCSV(MultipartFile file, Long fileId) throws IllegalStateException, IOException {
         List<DataEntry> reader = new CsvToBeanBuilder<DataEntry>(new InputStreamReader(file.getInputStream()))
@@ -156,7 +172,7 @@ public class FileService {
      * Categorises the data based on the provided DVDECODs.
      *
      * @param dvdecodsString the string containing DVDECODs
-     * @param dataId the ID of the data
+     * @param dataId         the ID of the data
      */
     private void categoriseData(String dvdecodsString, Long dataId) {
         List<String> dvdecods = new ArrayList<>(List.of(dvdecodsString.split(";")));
@@ -165,7 +181,8 @@ public class FileService {
             dvdecod = dvdecod.trim().toUpperCase();
             dvdecodRepository.findByDescription(dvdecod).ifPresentOrElse(
                     category -> saveCategory(category, dataId),
-                    () -> {});
+                    () -> {
+                    });
         });
     }
 
@@ -173,7 +190,7 @@ public class FileService {
      * Saves a data category.
      *
      * @param dvdecod the DVDECOD entity
-     * @param dataId the ID of the data
+     * @param dataId  the ID of the data
      * @return the saved data category
      */
     private DataCategory saveCategory(Dvdecod dvdecod, Long dataId) {

@@ -2,13 +2,13 @@ import { AfterViewInit, Component, EventEmitter, inject, Input, OnChanges, OnIni
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
-import { User } from 'src/app/core/models/user.model';
-import { UserService } from 'src/app/core/services/user.service';
-import { UploadResponse } from 'src/app/features/data-upload/data-upload/models/upload-response.model';
-import { UploadService } from 'src/app/features/data-upload/data-upload/upload.service';
 import { UploadError } from '../models/upload-error.model';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { FileUpload } from '../../models/file-upload.model';
+import { UserService } from 'src/app/core/new/services/user.service';
+import { User } from 'src/app/core/new/services/models/user/user.model';
+import { FileService } from '../file-list.service';
 
 @Component({
   selector: 'app-pending-uploads-table',
@@ -16,7 +16,7 @@ import { MatSort } from '@angular/material/sort';
   styleUrl: './pending-uploads-table.component.css'
 })
 export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterViewInit {
-  private uploadService = inject(UploadService);
+  private fileService = inject(FileService);
   private userService = inject(UserService);
   private currentUser: User | null = null;
   private snackbar = inject(MatSnackBar);
@@ -163,19 +163,15 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
       return;
     }
 
-    const upload = this.uploadService.uploadFile(entry.file, this.currentUser).subscribe(
+    const formData = new FormData();
+    formData.append('file', entry.file);
+    formData.append('userId', this.currentUser.id.toString());
+
+    const upload = this.fileService.uploadFile$(formData).subscribe(
       {
-        next: (response) => {
-          this.openSnackbar(response.message, "Dismiss");
-          if (!response.message.includes("file uploaded.")) {
-            const error = {
-              filename: entry.file.name,
-              message: response.message
-            };
-            this.errors.emit(error);
-          } else {
-            this.onSuccessfulUpload.emit();
-          }
+        next: () => {
+          this.openSnackbar(`${entry.file.name} successfully uploaded`, "Dismiss");
+          this.onSuccessfulUpload.emit();
           this.onDelete(entry);
         },
         error: (error) => {
@@ -239,3 +235,4 @@ interface TableDataEntry {
   inProgress: boolean;
   upload: Subscription
 }
+

@@ -1,6 +1,6 @@
 export interface UploadedFile {
-  fileId: number;
+  id: number;
   fileName: string;
-  username: string;
-  dateTimeUploaded: string;
+  uploadedBy: string;
+  dateUploaded: Date;
 }

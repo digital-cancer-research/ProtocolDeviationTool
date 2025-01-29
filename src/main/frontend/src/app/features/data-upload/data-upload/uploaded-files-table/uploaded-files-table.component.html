@@ -10,15 +10,15 @@
     <td mat-cell *matCellDef="let file"> {{file.fileName}} </td>
   </ng-container>
 
-  <ng-container matColumnDef="username">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Uploaded By </th>
-    <td mat-cell *matCellDef="let file"> {{file.username}} </td>
-  </ng-container>
+    <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Uploaded By </th>
+        <td mat-cell *matCellDef="let file"> {{file.uploadedBy}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="dateTimeUploaded">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
-    <td mat-cell *matCellDef="let file"> {{file.dateTimeUploaded | date:'full'}} </td>
-  </ng-container>
+    <ng-container matColumnDef="dateTimeUploaded">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
+        <td mat-cell *matCellDef="let file"> {{file.dateUploaded | date:'full'}} </td>
+    </ng-container>
 
   <ng-container matColumnDef="isFileBeingDeleted">
     <th mat-header-cell *matHeaderCellDef>
