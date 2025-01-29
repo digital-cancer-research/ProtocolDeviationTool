@@ -2,8 +2,6 @@ package org.digitalecmt.qualityassurance.models.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -27,10 +25,9 @@ public class Study {
      * The id must be within the range of 1 to 255 characters.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_id")
     @Size(min = 1, max = 255)
-    private String studyId;
+    @NotNull
     private String id;
 
     /**
@@ -40,6 +37,5 @@ public class Study {
      */
     @Column(name = "study_name")
     @Size(min = 1, max = 255)
-    @NotNull
     private String studyName;
 }

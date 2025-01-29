@@ -24,4 +24,30 @@ public class StudyService {
     public List<Study> findAllStudies() {
         return studyRepository.findAll();
     }
+
+    /**
+     * Creates a new study if it does not already exist.
+     *
+     * @param id the ID of the study to create
+     * @return the created or existing study
+     */
+    public Study createStudy(String id) {
+        id = id.toUpperCase();
+        return studyRepository.findById(id)
+                .orElse(saveStudy(id));
+    }
+
+    /**
+     * Saves a new study to the repository.
+     *
+     * @param id the ID of the study to save
+     * @return the saved study
+     */
+    private Study saveStudy(String id) {
+        Study study = Study.builder()
+                .id(id)
+                .studyName("")
+                .build();
+        return studyRepository.save(study);
+    }
 }
