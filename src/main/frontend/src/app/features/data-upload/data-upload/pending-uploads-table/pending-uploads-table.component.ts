@@ -186,7 +186,9 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
             })
             this.errors.emit(subErrors);
           }
-          this.openSnackbar(`${response.error.message}. ${response.error.error}`, "Dismiss");
+          const errorMessage = response.error.message ? response.error.message : "";
+          const errorInfo = response.error.error ? response.error.error : "";
+          this.openSnackbar(`${errorMessage}. ${errorInfo}`, "Dismiss");
           entry.inProgress = false;
         }
       }

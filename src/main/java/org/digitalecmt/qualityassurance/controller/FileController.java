@@ -52,7 +52,7 @@ public class FileController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFile(@PathVariable Long id, @RequestParam Long adminId) {
-        fileService.deleteFile(id);
+        fileService.deleteFile(id, adminId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -21,18 +21,21 @@ import org.digitalecmt.qualityassurance.repository.DvdecodRepository;
 import org.digitalecmt.qualityassurance.repository.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 
-import jakarta.transaction.Transactional;
 
 /**
  * Service class for managing files.
  */
 @Service
 public class FileService {
+
+    @Autowired
+    private FileAuditService fileAuditService;
 
     @Autowired
     private FileRepository fileRepository;
@@ -90,8 +93,11 @@ public class FileService {
      *
      * @param id the ID of the file to delete
      */
-    public void deleteFile(Long id) {
-        fileRepository.deleteById(id);
+    @Transactional
+    public void deleteFile(Long id, Long userId) {
+        File file = findById(id);
+        fileAuditService.auditDeleteFile(file, userId);
+        fileRepository.delete(file);
     }
 
     /**
@@ -103,7 +109,8 @@ public class FileService {
     @Transactional
     public FileDto uploadFile(FileUploadDto fileDto) {
         File file = saveFile(fileDto);
-        parseFile(fileDto.getFile(), file.getId());
+        parseFile(fileDto, file.getId());
+        fileAuditService.auditFileUpload(file, fileDto.getUserId());
         return fileToFileDto(file);
     }
 
@@ -127,12 +134,13 @@ public class FileService {
      * @throws IllegalStateException if an error occurs during parsing
      * @throws IOException           if an error occurs during file reading
      */
-    private boolean parseFile(MultipartFile file, Long fileId) {
+    private boolean parseFile(FileUploadDto fileDto, Long fileId) {
+        MultipartFile file = fileDto.getFile();
         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
 
         switch (extension) {
             case ("csv"):
-                readCSV(file, fileId);
+                readCSV(fileDto, fileId);
                 return true;
             default:
                 return false;
@@ -144,11 +152,12 @@ public class FileService {
      *
      * @param file   the CSV file
      * @param fileId the ID of the file
-     * @throws FileFormatException if there are errors within the file
+     * @throws FileFormatException   if there are errors within the file
      * @throws IllegalStateException if an error occurs during reading
      * @throws IOException           if an error occurs during file reading
      */
-    private void readCSV(MultipartFile file, Long fileId) {
+    private void readCSV(FileUploadDto fileDto, Long fileId) {
+        MultipartFile file = fileDto.getFile();
         try {
             CsvToBean<DataEntry> csvToBean = new CsvToBeanBuilder<DataEntry>(
                     new InputStreamReader(file.getInputStream()))
@@ -171,6 +180,7 @@ public class FileService {
                     .collect(Collectors.toList());
 
             if (errors.size() > 0) {
+                fileAuditService.auditUploadFailed(file.getOriginalFilename(), fileId);
                 throw new FileUploadException(
                         "There seems to be a problem with the template of the file. Please fix it and try again.",
                         file,
@@ -179,6 +189,7 @@ public class FileService {
 
         } catch (IllegalStateException e) {
         } catch (IOException e) {
+            fileAuditService.auditUploadFailed(file.getOriginalFilename(), fileId);
             throw new FileUploadException(file);
         }
     }
@@ -191,14 +202,15 @@ public class FileService {
      */
     private void categoriseData(String dvdecodsString, Long dataId) {
         List<String> dvdecods = new ArrayList<>(List.of(dvdecodsString.split(";")));
-
-        dvdecods.forEach(dvdecod -> {
-            dvdecod = dvdecod.trim().toUpperCase();
-            dvdecodRepository.findByDescription(dvdecod).ifPresentOrElse(
-                    category -> saveCategory(category, dataId),
-                    () -> {
-                    });
-        });
+        if (dvdecods != null) {
+            dvdecods.forEach(dvdecod -> {
+                dvdecod = dvdecod.trim().toUpperCase();
+                dvdecodRepository.findByDescription(dvdecod).ifPresentOrElse(
+                        category -> saveCategory(category, dataId),
+                        () -> {
+                        });
+            });
+        }
     }
 
     /**

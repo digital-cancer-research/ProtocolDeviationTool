@@ -12,8 +12,8 @@ import org.digitalecmt.qualityassurance.models.entities.Team;
 import org.digitalecmt.qualityassurance.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
 
 /**
  * Service class for managing teams.
