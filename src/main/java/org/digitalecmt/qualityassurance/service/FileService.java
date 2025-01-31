@@ -3,6 +3,7 @@ package org.digitalecmt.qualityassurance.service;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,12 +13,8 @@ import org.digitalecmt.qualityassurance.models.dto.File.FileDto;
 import org.digitalecmt.qualityassurance.models.dto.File.FileUploadDto;
 import org.apache.commons.io.FilenameUtils;
 import org.digitalecmt.qualityassurance.models.entities.Data;
-import org.digitalecmt.qualityassurance.models.entities.DataCategory;
-import org.digitalecmt.qualityassurance.models.entities.Dvdecod;
 import org.digitalecmt.qualityassurance.models.entities.File;
 import org.digitalecmt.qualityassurance.models.pojo.DataEntry;
-import org.digitalecmt.qualityassurance.repository.DataCategoryRepository;
-import org.digitalecmt.qualityassurance.repository.DvdecodRepository;
 import org.digitalecmt.qualityassurance.repository.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,16 +40,13 @@ public class FileService {
     private DataService dataService;
 
     @Autowired
+    private DeviationService deviationService;
+
+    @Autowired
     private SiteService siteService;
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private DataCategoryRepository dataCategoryRepository;
-
-    @Autowired
-    private DvdecodRepository dvdecodRepository;
 
     @Autowired
     private StudyService studyService;
@@ -71,6 +65,12 @@ public class FileService {
         return files;
     }
 
+    /**
+     * Converts a File entity to a FileDto.
+     *
+     * @param file the File entity
+     * @return the FileDto
+     */
     public FileDto fileToFileDto(File file) {
         FileDto fileDto = new FileDto(file);
         fileDto.setUploadedBy(userService.findUserById(file.getUploadedBy()).getUsername());
@@ -91,6 +91,7 @@ public class FileService {
      * Deletes a file by its ID.
      *
      * @param id the ID of the file to delete
+     * @param userId the ID of the user performing the deletion
      */
     @Transactional
     public void deleteFile(Long id, Long userId) {
@@ -127,11 +128,9 @@ public class FileService {
     /**
      * Parses the uploaded file based on its extension.
      *
-     * @param file   the uploaded file
+     * @param fileDto the data transfer object containing the file details
      * @param fileId the ID of the file
      * @return true if the file was successfully parsed, false otherwise
-     * @throws IllegalStateException if an error occurs during parsing
-     * @throws IOException           if an error occurs during file reading
      */
     private boolean parseFile(FileUploadDto fileDto, Long fileId) {
         MultipartFile file = fileDto.getFile();
@@ -149,11 +148,9 @@ public class FileService {
     /**
      * Reads and processes the content of a CSV file.
      *
-     * @param file   the CSV file
+     * @param fileDto the data transfer object containing the file details
      * @param fileId the ID of the file
-     * @throws FileFormatException   if there are errors within the file
-     * @throws IllegalStateException if an error occurs during reading
-     * @throws IOException           if an error occurs during file reading
+     * @throws FileFormatException if there are errors within the file
      */
     private void readCSV(FileUploadDto fileDto, Long fileId) {
         MultipartFile file = fileDto.getFile();
@@ -171,7 +168,13 @@ public class FileService {
                 Data data = entry.toData(fileId);
                 studyService.createStudy(data.getStudyId());
                 data = dataService.saveData(data);
-                categoriseData(entry.getDvdecod(), data.getId());
+
+                List<String> dvcats = Arrays.asList(
+                        entry.getDvcat().split(";"));
+                List<String> dvdecods = Arrays.asList(
+                        entry.getDvdecod().split(";"));
+
+                deviationService.categoriseData(dvcats, dvdecods, data.getId());
                 siteService.addDefaultMapping(entry.getSiteId());
             });
 
@@ -192,41 +195,5 @@ public class FileService {
             fileAuditService.auditUploadFailed(file.getOriginalFilename(), userId);
             throw new FileUploadException(file);
         }
-    }
-
-    /**
-     * Categorises the data based on the provided DVDECODs.
-     *
-     * @param dvdecodsString the string containing DVDECODs
-     * @param dataId         the ID of the data
-     */
-    private void categoriseData(String dvdecodsString, Long dataId) {
-        List<String> dvdecods = new ArrayList<>(List.of(dvdecodsString.split(";")));
-        if (dvdecods != null) {
-            dvdecods.forEach(dvdecod -> {
-                dvdecod = dvdecod.trim().toUpperCase();
-                // dvdecodRepository.findByDescription(dvdecod).ifPresentOrElse(
-                //         category -> saveCategory(category, dataId)
-                //         ,
-                //         () -> {
-                //         });
-            });
-        }
-    }
-
-    /**
-     * Saves a data category.
-     *
-     * @param dvdecod the DVDECOD entity
-     * @param dataId  the ID of the data
-     * @return the saved data category
-     */
-    private DataCategory saveCategory(Dvdecod dvdecod, Long dataId) {
-        // DataCategory dataCategory = DataCategory.builder()
-        // .dataId(dataId)
-        // .dvdecodId(dvdecod.getId())
-        // .build();
-        // return dataCategoryRepository.save(dataCategory);
-        return null;
     }
 }

@@ -1,5 +1,7 @@
 package org.digitalecmt.qualityassurance.repository;
 
+import java.util.List;
+
 import org.digitalecmt.qualityassurance.models.entities.DataCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,4 +14,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface DataCategoryRepository extends JpaRepository<DataCategory, Long> {
+
+    public List<DataCategory> findAllByDataId(Long dataId);
 }

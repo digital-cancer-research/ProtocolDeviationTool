@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { UploadedFile } from './models/uploaded-file.model';
 import { FileDelete } from './models/file-delete.model';
+import { FileAudit } from './models/file-audit.model';
 
 /**
  * Service for managing file-related operations.
@@ -47,5 +48,9 @@ export class FileService {
    */
   uploadFile$(fd: FormData): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}`, fd);
+  }
+
+  fileAudits$(): Observable<FileAudit[]> {
+    return this.http.get<FileAudit[]>(`${this.baseUrl}/audit`)
   }
 }
