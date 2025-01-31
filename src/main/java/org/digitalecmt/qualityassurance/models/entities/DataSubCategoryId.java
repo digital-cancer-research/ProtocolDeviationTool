@@ -16,12 +16,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class DataCategoryId implements Serializable {
+public class DataSubCategoryId implements Serializable {
 
     /**
      * The ID of the associated data.
      */
-    private Long dataId;
+    private Long dataCategoryId;
 
     /**
      * The ID of the associated DV decode.

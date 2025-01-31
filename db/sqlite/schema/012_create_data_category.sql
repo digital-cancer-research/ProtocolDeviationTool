@@ -1,7 +1,7 @@
 CREATE TABLE "data_category" (
+    data_category_id INTEGER PRIMARY KEY AUTOINCREMENT,
     data_id INT NOT NULL,
-    dvdecod_id INT NOT NULL,
-    PRIMARY KEY (data_id, dvdecod_id),
+    dvcat_id INT NOT NULL,
     FOREIGN KEY (data_id) REFERENCES "data"(data_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (dvdecod_id) REFERENCES "dvdecod"(dvdecod_id) ON DELETE SET NULL ON UPDATE CASCADE
+    FOREIGN KEY (dvcat_id) REFERENCES "dvcat"(dvcat_id) ON DELETE SET NULL ON UPDATE CASCADE
 );

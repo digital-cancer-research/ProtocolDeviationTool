@@ -2,8 +2,10 @@ package org.digitalecmt.qualityassurance.controller;
 
 import java.util.List;
 
+import org.digitalecmt.qualityassurance.models.dto.Audit.FileAuditDto;
 import org.digitalecmt.qualityassurance.models.dto.File.FileDto;
 import org.digitalecmt.qualityassurance.models.dto.File.FileUploadDto;
+import org.digitalecmt.qualityassurance.service.FileAuditService;
 import org.digitalecmt.qualityassurance.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,9 @@ public class FileController {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private FileAuditService fileAuditService;
 
     /**
      * Retrieves all uploaded files.
@@ -54,5 +59,11 @@ public class FileController {
     public ResponseEntity<Void> deleteFile(@PathVariable Long id, @RequestParam Long adminId) {
         fileService.deleteFile(id, adminId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/audit")
+    public ResponseEntity<List<FileAuditDto>> getFileAudit() {
+        List<FileAuditDto> audits = fileAuditService.getFileAudits();
+        return new ResponseEntity<>(audits, HttpStatus.OK);
     }
 }

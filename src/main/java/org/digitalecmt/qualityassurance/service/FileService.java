@@ -27,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 
-
 /**
  * Service class for managing files.
  */
@@ -158,6 +157,7 @@ public class FileService {
      */
     private void readCSV(FileUploadDto fileDto, Long fileId) {
         MultipartFile file = fileDto.getFile();
+        Long userId = fileDto.getUserId();
         try {
             CsvToBean<DataEntry> csvToBean = new CsvToBeanBuilder<DataEntry>(
                     new InputStreamReader(file.getInputStream()))
@@ -180,7 +180,7 @@ public class FileService {
                     .collect(Collectors.toList());
 
             if (errors.size() > 0) {
-                fileAuditService.auditUploadFailed(file.getOriginalFilename(), fileId);
+                fileAuditService.auditUploadFailed(file.getOriginalFilename(), userId);
                 throw new FileUploadException(
                         "There seems to be a problem with the template of the file. Please fix it and try again.",
                         file,
@@ -189,7 +189,7 @@ public class FileService {
 
         } catch (IllegalStateException e) {
         } catch (IOException e) {
-            fileAuditService.auditUploadFailed(file.getOriginalFilename(), fileId);
+            fileAuditService.auditUploadFailed(file.getOriginalFilename(), userId);
             throw new FileUploadException(file);
         }
     }
@@ -205,10 +205,11 @@ public class FileService {
         if (dvdecods != null) {
             dvdecods.forEach(dvdecod -> {
                 dvdecod = dvdecod.trim().toUpperCase();
-                dvdecodRepository.findByDescription(dvdecod).ifPresentOrElse(
-                        category -> saveCategory(category, dataId),
-                        () -> {
-                        });
+                // dvdecodRepository.findByDescription(dvdecod).ifPresentOrElse(
+                //         category -> saveCategory(category, dataId)
+                //         ,
+                //         () -> {
+                //         });
             });
         }
     }
@@ -221,10 +222,11 @@ public class FileService {
      * @return the saved data category
      */
     private DataCategory saveCategory(Dvdecod dvdecod, Long dataId) {
-        DataCategory dataCategory = DataCategory.builder()
-                .dataId(dataId)
-                .dvdecodId(dvdecod.getId())
-                .build();
-        return dataCategoryRepository.save(dataCategory);
+        // DataCategory dataCategory = DataCategory.builder()
+        // .dataId(dataId)
+        // .dvdecodId(dvdecod.getId())
+        // .build();
+        // return dataCategoryRepository.save(dataCategory);
+        return null;
     }
 }

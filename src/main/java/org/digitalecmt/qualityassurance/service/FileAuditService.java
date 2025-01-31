@@ -1,5 +1,9 @@
 package org.digitalecmt.qualityassurance.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.digitalecmt.qualityassurance.models.dto.Audit.FileAuditDto;
 import org.digitalecmt.qualityassurance.models.entities.File;
 import org.digitalecmt.qualityassurance.models.entities.FileAudit;
 import org.digitalecmt.qualityassurance.models.pojo.FileStatus;
@@ -13,7 +17,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class FileAuditService {
 
     @Autowired
-    FileAuditRepository fileAuditRepository;
+    private FileAuditRepository fileAuditRepository;
+
+    @Autowired
+    private UserService userService;
+
+    public List<FileAuditDto> getFileAudits() {
+        List<FileAudit> audits = fileAuditRepository.findAll();
+        List<FileAuditDto> results = new ArrayList<FileAuditDto>();
+        audits.forEach(audit -> {
+            String username = userService.findUserById(audit.getUserId()).getUsername();
+            FileAuditDto result = new FileAuditDto(audit);
+            result.setUsername(username);
+            results.add(result);
+        }); 
+        return results;
+    }
 
     public FileAudit auditFileUpload(File file, Long userId) {
         FileAudit audit = FileAudit.builder()

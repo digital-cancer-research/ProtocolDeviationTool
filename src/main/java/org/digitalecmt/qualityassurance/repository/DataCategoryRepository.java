@@ -1,7 +1,6 @@
 package org.digitalecmt.qualityassurance.repository;
 
 import org.digitalecmt.qualityassurance.models.entities.DataCategory;
-import org.digitalecmt.qualityassurance.models.entities.DataCategoryId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,5 +11,5 @@ import org.springframework.stereotype.Repository;
  * functionalities.
  */
 @Repository
-public interface DataCategoryRepository extends JpaRepository<DataCategory, DataCategoryId> {
+public interface DataCategoryRepository extends JpaRepository<DataCategory, Long> {
 }
