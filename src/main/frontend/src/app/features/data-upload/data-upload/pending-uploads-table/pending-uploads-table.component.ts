@@ -9,7 +9,11 @@ import { FileUpload } from '../../models/file-upload.model';
 import { UserService } from 'src/app/core/new/services/user.service';
 import { User } from 'src/app/core/new/services/models/user/user.model';
 import { FileService } from '../file-list.service';
+import { DEFAULT_AI_CONFIG } from '../models/ai-categorisation-config.model';
 
+/**
+ * Component for managing the table of pending file uploads.
+ */
 @Component({
   selector: 'app-pending-uploads-table',
   templateUrl: './pending-uploads-table.component.html',
@@ -24,17 +28,20 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
   // Supports 'type' column -  just add to array.
   displayedColumns: string[] = ['name', 'size', 'actions'];
   @Input() newData: File[] = [];
+  @Input() useAi: boolean = false;
   @Output() onSuccessfulUpload: EventEmitter<void> = new EventEmitter();
   @Output() errors: EventEmitter<UploadError[]> = new EventEmitter();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   dataSource = new MatTableDataSource<TableDataEntry>();
 
-
   constructor() {
     this.userService.currentUser$.subscribe(user => this.currentUser = user);
   }
 
+  /**
+   * Lifecycle hook that is called after Angular has initialized all data-bound properties.
+   */
   ngOnInit(): void {
     this.dataSource.data = this.formatData(this.newData);
     this.setFilter();
@@ -42,12 +49,11 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
 
   /**
    * Lifecycle hook that is called when data-bound properties of a directive change.
-   * Specifically, it updates the table data when the input 'data' changes.
+   * Specifically, it updates the table data when the input 'newData' changes.
    *
    * @param changes - An object containing all the change detection-checked properties
    *                  The keys are the names of the changed properties and the values
    *                  are SimpleChange instances.
-   * @returns void
    */
   ngOnChanges(changes: SimpleChanges): void {
     const dataChanges = changes['newData'];
@@ -60,16 +66,6 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
   /**
    * Lifecycle hook that is called after Angular has fully initialized the component's view.
    * It sets up the paginator, custom sorting accessor, and sort functionality for the data table.
-   *
-   * This method performs the following tasks:
-   * 1. Assigns the paginator to the data source for pagination functionality.
-   * 2. Defines a custom sorting accessor to handle nested properties in the data structure.
-   * 3. Assigns the sort directive to the data source for sorting functionality.
-   *
-   * The custom sorting accessor allows sorting on both top-level properties of TableDataEntry
-   * and nested properties within the 'file' object.
-   *
-   * @returns {void}
    */
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -146,12 +142,7 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
    * This method handles the upload process, including user authentication checks,
    * progress indication, and error handling.
    *
-   * @param data - The TableDataEntry object representing the file to be uploaded.
-   * @param index - The index of the file in the data source array.
-   * @returns void
-   *
-   * @throws Will display an error message if the user is not logged in.
-   * @emits errors - Emits an error message if the upload response indicates a problem.
+   * @param entry - The TableDataEntry object representing the file to be uploaded.
    */
   onUpload(entry: TableDataEntry): void {
     entry.inProgress = true;
@@ -164,8 +155,12 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
     }
 
     const formData = new FormData();
+    DEFAULT_AI_CONFIG.useAi = this.useAi;
+    let aiConfig = JSON.stringify(DEFAULT_AI_CONFIG);
+    console.log(aiConfig);
     formData.append('file', entry.file);
     formData.append('userId', this.currentUser.id.toString());
+    formData.append('aiConfig', aiConfig);
 
     const upload = this.fileService.uploadFile$(formData).subscribe(
       {
@@ -202,14 +197,14 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
    * This function unsubscribes from the upload subscription and resets the progress state.
    * It should be called when the user wants to cancel an in-progress upload.
    *
-   * @param data - The TableDataEntry object representing the file upload to be cancelled.
+   * @param entry - The TableDataEntry object representing the file upload to be cancelled.
    *               This object contains the upload subscription and progress state.
    * 
    * @returns void
    */
-  onCancel(data: TableDataEntry): void {
-    data.upload.unsubscribe();
-    data.inProgress = false;
+  onCancel(entry: TableDataEntry): void {
+    entry.upload.unsubscribe();
+    entry.inProgress = false;
   }
 
   /**
@@ -218,7 +213,7 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
    * This function removes a specific file entry from the data source
    * of the pending uploads table based on its index.
    *
-   * @param index - The index of the file entry to be deleted from the data source.
+   * @param entry - The TableDataEntry object representing the file entry to be deleted.
    * @returns void This function does not return a value.
    */
   onDelete(entry: TableDataEntry): void {
@@ -240,10 +235,14 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
 
 }
 
+/**
+ * Interface representing a table data entry.
+ */
 interface TableDataEntry {
   id: number;
   file: File;
   actions: boolean;
   inProgress: boolean;
-  upload: Subscription
+  upload: Subscription;
 }
+

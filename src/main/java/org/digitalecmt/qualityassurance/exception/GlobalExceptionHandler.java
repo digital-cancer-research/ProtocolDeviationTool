@@ -93,4 +93,17 @@ public class GlobalExceptionHandler {
                 ex);
         return new ResponseEntity<>(apiError, HttpStatus.SERVICE_UNAVAILABLE);
     }
+
+    /**
+     * Handles {@link AiModelException} and returns a 503 Service Unavailable response.
+     *
+     * @param ex the exception
+     * @param webRequest the web request
+     * @return a ResponseEntity containing the error details
+     */
+    @ExceptionHandler(AiModelException.class)
+    public ResponseEntity<ApiError> handleAiModelException(AiModelException ex, WebRequest webRequest) {
+        ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "Error interacting with AI model. Please try again later", ex);
+        return new ResponseEntity<>(apiError, HttpStatus.SERVICE_UNAVAILABLE);
+    }
 }

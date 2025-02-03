@@ -1,10 +1,15 @@
 <mat-card appearance="outlined" class="pending">
     <mat-card-header>
-        Upload Files
+        <mat-card-title>
+            Upload Files
+        </mat-card-title>
     </mat-card-header>
 
     <mat-card-content>
         <app-file-upload (filesChange)="onFileChange($event)"></app-file-upload>
+        <mat-checkbox [color]="'primary'" [(ngModel)]="useAi" (change)="onAiCheckbox()">
+            AI categorisation
+        </mat-checkbox>
     </mat-card-content>
 
     <mat-card-footer>
@@ -12,12 +17,14 @@
         <mat-expansion-panel class="mat-elevation-z0" #filesPanel (afterExpand)="hasFilesPanelGotNewFiles=false">
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    Files <a *ngIf="isFilePanelBadgesVisible" [matBadge]="pendingUploadTable.dataSource.data.length" class="badge"
-                        [matBadgeOverlap]="false" matBadgePosition="above after" [matBadgeColor]="'accent'"></a>
+                    Files <a *ngIf="isFilePanelBadgesVisible" [matBadge]="pendingUploadTable.dataSource.data.length"
+                        class="badge" [matBadgeOverlap]="false" matBadgePosition="above after"
+                        [matBadgeColor]="'accent'"></a>
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <app-pending-uploads-table #pendingUploadTable [newData]="newFiles" (onSuccessfulUpload)="onSuccessfulUpload()" (errors)="onFileErrors($event)">
+                <app-pending-uploads-table #pendingUploadTable [newData]="newFiles" [useAi]="useAi"
+                    (onSuccessfulUpload)="onSuccessfulUpload()" (errors)="onFileErrors($event)">
                 </app-pending-uploads-table>
             </mat-panel-description>
         </mat-expansion-panel>
@@ -25,8 +32,11 @@
         <mat-expansion-panel class="mat-elevation-z0" #errorsPanel (afterExpand)="hasErrorsPanelGotNewFiles=false">
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    Errors <a *ngIf="isErrorPanelBadgesVisible" [matBadge]="errorsTable.errors.length" class="badge" [matBadgeOverlap]="false"
-                        matBadgePosition="above after" [matBadgeColor]="'accent'"></a>
+                    Errors <a *ngIf="isErrorPanelBadgesVisible" [matBadge]="errorsTable.errors.length" class="badge"
+                        [matBadgeOverlap]="false" matBadgePosition="above after" [matBadgeColor]="'accent'"></a>
+                    <mat-icon matTooltip="Hover over the line number to see more information about the entry">
+                        information
+                    </mat-icon>
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
@@ -40,7 +50,9 @@
 
 <mat-card appearance="outlined" class="uploaded">
     <mat-card-header>
-        Uploaded Files
+        <mat-card-title>
+            Uploaded Files
+        </mat-card-title>
     </mat-card-header>
 
     <mat-card-content>

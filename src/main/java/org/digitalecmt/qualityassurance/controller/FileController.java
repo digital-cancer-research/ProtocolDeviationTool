@@ -5,6 +5,7 @@ import java.util.List;
 import org.digitalecmt.qualityassurance.models.dto.Audit.FileAuditDto;
 import org.digitalecmt.qualityassurance.models.dto.File.FileDto;
 import org.digitalecmt.qualityassurance.models.dto.File.FileUploadDto;
+import org.digitalecmt.qualityassurance.models.dto.File.SerializedFileUploadDto;
 import org.digitalecmt.qualityassurance.service.FileAuditService;
 import org.digitalecmt.qualityassurance.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +40,12 @@ public class FileController {
     /**
      * Uploads a new file.
      *
-     * @param fileDto the data transfer object containing the file details
+     * @param serializedFileDto the data transfer object containing the serialized file details
      * @return a ResponseEntity containing the uploaded file and HTTP status OK
      */
     @PostMapping
-    public ResponseEntity<FileDto> uploadFile(@ModelAttribute FileUploadDto fileDto) {
+    public ResponseEntity<FileDto> uploadFile(@ModelAttribute SerializedFileUploadDto serializedFileDto) {
+        FileUploadDto fileDto = new FileUploadDto(serializedFileDto);
         FileDto file = fileService.uploadFile(fileDto);
         return new ResponseEntity<>(file, HttpStatus.OK);
     }
@@ -61,6 +63,11 @@ public class FileController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    /**
+     * Retrieves the file audit logs.
+     *
+     * @return a ResponseEntity containing the list of file audit logs and HTTP status OK
+     */
     @GetMapping("/audit")
     public ResponseEntity<List<FileAuditDto>> getFileAudit() {
         List<FileAuditDto> audits = fileAuditService.getFileAudits();
