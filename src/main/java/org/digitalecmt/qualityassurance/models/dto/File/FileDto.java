@@ -31,7 +31,7 @@ public class FileDto {
 
     /**
      * Constructs a FileDto from a File entity.
-     * Does not initalise 'uploadedBy' as this is a string - the username of the
+     * Does not initialise 'uploadedBy' as this is a string - the username of the
      * user, rather than the id.
      *
      * @param file the File entity
@@ -40,5 +40,17 @@ public class FileDto {
         this.id = file.getId();
         this.fileName = file.getFileName();
         this.dateUploaded = file.getDateUploaded();
+    }
+
+    /**
+     * Constructs a FileDto from another FileDto.
+     *
+     * @param fileDto the FileDto to copy
+     */
+    public FileDto(FileDto fileDto) {
+        this.id = fileDto.getId();
+        this.fileName = fileDto.getFileName();
+        this.uploadedBy = fileDto.getUploadedBy();
+        this.dateUploaded = fileDto.getDateUploaded();
     }
 }

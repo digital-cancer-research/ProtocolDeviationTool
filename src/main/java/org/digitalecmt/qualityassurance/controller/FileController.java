@@ -5,6 +5,7 @@ import java.util.List;
 import org.digitalecmt.qualityassurance.models.dto.Audit.FileAuditDto;
 import org.digitalecmt.qualityassurance.models.dto.File.FileDto;
 import org.digitalecmt.qualityassurance.models.dto.File.FileUploadDto;
+import org.digitalecmt.qualityassurance.models.dto.File.FileWithUploadWarningsDto;
 import org.digitalecmt.qualityassurance.models.dto.File.SerializedFileUploadDto;
 import org.digitalecmt.qualityassurance.service.FileAuditService;
 import org.digitalecmt.qualityassurance.service.FileService;
@@ -44,9 +45,9 @@ public class FileController {
      * @return a ResponseEntity containing the uploaded file and HTTP status OK
      */
     @PostMapping
-    public ResponseEntity<FileDto> uploadFile(@ModelAttribute SerializedFileUploadDto serializedFileDto) {
+    public ResponseEntity<FileWithUploadWarningsDto> uploadFile(@ModelAttribute SerializedFileUploadDto serializedFileDto) {
         FileUploadDto fileDto = new FileUploadDto(serializedFileDto);
-        FileDto file = fileService.uploadFile(fileDto);
+        FileWithUploadWarningsDto file = fileService.uploadFile(fileDto);
         return new ResponseEntity<>(file, HttpStatus.OK);
     }
 

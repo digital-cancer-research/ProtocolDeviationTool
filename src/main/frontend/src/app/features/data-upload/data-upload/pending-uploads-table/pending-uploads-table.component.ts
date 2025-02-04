@@ -4,12 +4,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
 import { UploadError } from '../models/upload-error.model';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
 import { FileUpload } from '../../models/file-upload.model';
 import { UserService } from 'src/app/core/new/services/user.service';
 import { User } from 'src/app/core/new/services/models/user/user.model';
 import { FileService } from '../file-list.service';
 import { DEFAULT_AI_CONFIG } from '../models/ai-categorisation-config.model';
+import { MatSort } from '@angular/material/sort';
 
 /**
  * Component for managing the table of pending file uploads.
@@ -40,7 +40,7 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
   }
 
   /**
-   * Lifecycle hook that is called after Angular has initialized all data-bound properties.
+   * Lifecycle hook that is called after Angular has initialised all data-bound properties.
    */
   ngOnInit(): void {
     this.dataSource.data = this.formatData(this.newData);
@@ -64,7 +64,7 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
   }
 
   /**
-   * Lifecycle hook that is called after Angular has fully initialized the component's view.
+   * Lifecycle hook that is called after Angular has fully initialised the component's view.
    * It sets up the paginator, custom sorting accessor, and sort functionality for the data table.
    */
   ngAfterViewInit() {
@@ -157,30 +157,23 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
     const formData = new FormData();
     DEFAULT_AI_CONFIG.useAi = this.useAi;
     let aiConfig = JSON.stringify(DEFAULT_AI_CONFIG);
-    console.log(aiConfig);
     formData.append('file', entry.file);
     formData.append('userId', this.currentUser.id.toString());
     formData.append('aiConfig', aiConfig);
 
     const upload = this.fileService.uploadFile$(formData).subscribe(
       {
-        next: () => {
-          this.openSnackbar(`${entry.file.name} successfully uploaded`, "Dismiss");
+        next: (response) => {
+          let message = `${entry.file.name} successfully uploaded`;
+          if (this.handleErrors(response, entry, true)) {
+            message = message + ". One or more entries were not categorised because their categorisation was not valid. "
+          }
+          this.openSnackbar(message, "Dismiss");
           this.onSuccessfulUpload.emit();
           this.onDelete(entry);
         },
         error: (response) => {
-          if (response.error.subErrors) {
-            const subErrors = response.error.subErrors.map((error: { message: any; entry: any; index: any; }) => {
-              return {
-                filename: entry.file.name,
-                message: error.message,
-                entry: error.entry,
-                index: error.index,
-              } as UploadError;
-            })
-            this.errors.emit(subErrors);
-          }
+          this.handleErrors(response, entry);
           const errorMessage = response.error.message ? response.error.message : "";
           const errorInfo = response.error.error ? response.error.error : "";
           this.openSnackbar(`${errorMessage}. ${errorInfo}`, "Dismiss");
@@ -192,15 +185,38 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
   }
 
   /**
+   * Handles errors during the file upload process.
+   *
+   * @param response - The response object containing error details.
+   * @param entry - The TableDataEntry object representing the file being uploaded.
+   * @param warnings - A boolean indicating if the errors are warnings.
+   * @returns true if there are errors, false otherwise.
+   */
+  private handleErrors(response: any, entry: TableDataEntry, warnings: boolean = false): boolean {
+    const data = warnings ? response?.warnings : response?.error?.subErrors;
+
+    if (Array.isArray(data) && data.length > 0) {
+        const subErrors: UploadError[] = data.map((error: { message: any; entry: any; index: any; }) => ({
+            filename: entry.file.name,
+            message: error.message,
+            entry: error.entry,
+            index: error.index,
+        }));
+
+        this.errors.emit(subErrors);
+        return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Cancels an ongoing file upload operation.
    * 
    * This function unsubscribes from the upload subscription and resets the progress state.
    * It should be called when the user wants to cancel an in-progress upload.
    *
    * @param entry - The TableDataEntry object representing the file upload to be cancelled.
-   *               This object contains the upload subscription and progress state.
-   * 
-   * @returns void
    */
   onCancel(entry: TableDataEntry): void {
     entry.upload.unsubscribe();
@@ -214,7 +230,6 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
    * of the pending uploads table based on its index.
    *
    * @param entry - The TableDataEntry object representing the file entry to be deleted.
-   * @returns void This function does not return a value.
    */
   onDelete(entry: TableDataEntry): void {
     this.dataSource.data = this.dataSource.data.filter(de => de.id !== entry.id);
@@ -225,7 +240,6 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
    * 
    * @param message - The text message to be displayed in the snackbar.
    * @param actions - The text for the action button in the snackbar.
-   * @returns void This function does not return a value.
    */
   openSnackbar(message: string, actions: string) {
     this.snackbar.open(message, actions, {

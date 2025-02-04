@@ -57,7 +57,7 @@ export class DataUploadComponent implements AfterViewInit {
    */
   onFileErrors(newErrors: UploadError[]): void {
     this.hasErrorsPanelGotNewFiles = this.filesPanel ? !this.errorsPanel.expanded : false;
-    this.errors = [...this.errors, ...newErrors];
+    this.errors = [...newErrors];
   }
 
   /**

@@ -19,6 +19,7 @@ mat-card.uploaded {
 mat-panel-title {
     align-items: center;
     justify-content: space-between;
+    padding-top: 5px;
 }
 
 .badge {

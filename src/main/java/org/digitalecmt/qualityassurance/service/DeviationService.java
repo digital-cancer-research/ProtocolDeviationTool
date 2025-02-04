@@ -17,6 +17,9 @@ import org.digitalecmt.qualityassurance.repository.DvdecodRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service class for managing deviations.
+ */
 @Service
 public class DeviationService {
 
@@ -52,23 +55,19 @@ public class DeviationService {
         return null;
     }
 
-    public DataCategory categoriseDvcat(String dvcat, Long dataId) {
-
-        dataCategoryRepository.save(null);
-        return null;
-    }
-
     /**
      * Categorises the data based on the provided DV categories and DV decodes.
      *
      * @param dvcats the list of DV categories
      * @param dvdecods the list of DV decodes
      * @param dataId the ID of the data
+     * @return true if all categories and decodes are valid, false otherwise
      */
-    public void categoriseData(List<String> dvcats, List<String> dvdecods, Long dataId) {
+    public boolean categoriseData(List<String> dvcats, List<String> dvdecods, Long dataId) {
         List<Dvcat> validDvcats = validateDvcats(dvcats);
         List<DataCategory> categories = saveDvcatCategorisation(validDvcats, dataId);
-        validateAndSaveDvdecodCategorisation(dvdecods, categories);
+        List<DataSubCategory> validDvdecods = validateAndSaveDvdecodCategorisation(dvdecods, categories);
+        return (dvcats.size() == validDvcats.size()) & (dvdecods.size() == validDvdecods.size());
     }
 
     /**

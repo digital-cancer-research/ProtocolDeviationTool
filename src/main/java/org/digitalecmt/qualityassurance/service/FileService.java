@@ -11,6 +11,7 @@ import org.digitalecmt.qualityassurance.exception.FileFormatException;
 import org.digitalecmt.qualityassurance.exception.FileUploadException;
 import org.digitalecmt.qualityassurance.models.dto.File.FileDto;
 import org.digitalecmt.qualityassurance.models.dto.File.FileUploadDto;
+import org.digitalecmt.qualityassurance.models.dto.File.FileWithUploadWarningsDto;
 import org.apache.commons.io.FilenameUtils;
 import org.digitalecmt.qualityassurance.models.entities.Data;
 import org.digitalecmt.qualityassurance.models.entities.File;
@@ -109,14 +110,16 @@ public class FileService {
      * Uploads a file and processes its content.
      *
      * @param fileDto the data transfer object containing the file details
-     * @return the uploaded file
+     * @return the uploaded file with upload warnings
      */
     @Transactional
-    public FileDto uploadFile(FileUploadDto fileDto) {
+    public FileWithUploadWarningsDto uploadFile(FileUploadDto fileDto) {
         File file = saveFile(fileDto);
-        parseFile(fileDto, file.getId());
+        List<FileFormatException> warnings = parseFile(fileDto, file.getId());
         fileAuditService.auditFileUpload(file, fileDto.getUserId());
-        return fileToFileDto(file);
+        FileWithUploadWarningsDto fileWithWarnings = new FileWithUploadWarningsDto(fileToFileDto(file));
+        fileWithWarnings.setWarnings(warnings);
+        return fileWithWarnings;
     }
 
     /**
@@ -135,18 +138,17 @@ public class FileService {
      *
      * @param fileDto the data transfer object containing the file details
      * @param fileId  the ID of the file
-     * @return true if the file was successfully parsed, false otherwise
+     * @return a list of file format exceptions
      */
-    private boolean parseFile(FileUploadDto fileDto, Long fileId) {
+    private List<FileFormatException> parseFile(FileUploadDto fileDto, Long fileId) {
         MultipartFile file = fileDto.getFile();
         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
 
         switch (extension) {
             case ("csv"):
-                readCSV(fileDto, fileId);
-                return true;
+                return readCSV(fileDto, fileId);
             default:
-                return false;
+                return null;
         }
     }
 
@@ -155,9 +157,10 @@ public class FileService {
      *
      * @param fileDto the data transfer object containing the file details
      * @param fileId  the ID of the file
+     * @return a list of file format exceptions
      * @throws FileFormatException if there are errors within the file
      */
-    private void readCSV(FileUploadDto fileDto, Long fileId) {
+    private List<FileFormatException> readCSV(FileUploadDto fileDto, Long fileId) {
 
         MultipartFile file = fileDto.getFile();
         Long userId = fileDto.getUserId();
@@ -169,13 +172,11 @@ public class FileService {
                     .build();
 
             List<DataEntry> entries = csvToBean.parse();
-            List<FileFormatException> aiErrors = processEntries(entries, fileId, fileDto.getAiConfig());
+            List<FileFormatException> warnings = processEntries(entries, fileId, fileDto.getAiConfig());
 
             List<FileFormatException> errors = csvToBean.getCapturedExceptions().stream()
                     .map(FileFormatException::new)
                     .collect(Collectors.toList());
-
-            errors.addAll(aiErrors);
 
             if (!errors.isEmpty()) {
                 fileAuditService.auditUploadFailed(file.getOriginalFilename(), userId);
@@ -184,6 +185,7 @@ public class FileService {
                         file,
                         errors);
             }
+            return warnings;
         } catch (IOException e) {
             fileAuditService.auditUploadFailed(file.getOriginalFilename(), userId);
             throw new FileUploadException(file);
@@ -201,7 +203,8 @@ public class FileService {
     private List<FileFormatException> processEntries(List<DataEntry> entries, Long fileId,
             AiCategorisationConfig config) {
         Boolean useAi = config.isUseAi();
-        List<FileFormatException> errors = new ArrayList<>();
+        List<FileFormatException> errors = new ArrayList<FileFormatException>();
+
         for (int index = 0; index < entries.size(); index++) {
             DataEntry entry = entries.get(index);
             Data data = entry.toData(fileId);
@@ -217,7 +220,10 @@ public class FileService {
                             "The AI model could not categorise this entry."));
                 }
             } else {
-                deviationService.categoriseData(dvcats, dvdecods, data.getId());
+                if (!deviationService.categoriseData(dvcats, dvdecods, data.getId())) {
+                    errors.add(new FileFormatException(Long.valueOf(entries.indexOf(entry)), entry.toArray(),
+                            "One or more of the dvcat/dvdecods were not valid."));
+                }
             }
 
             siteService.addDefaultMapping(entry.getSiteId());
