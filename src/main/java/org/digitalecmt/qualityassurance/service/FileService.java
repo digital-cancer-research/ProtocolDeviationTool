@@ -14,7 +14,9 @@ import org.digitalecmt.qualityassurance.models.dto.File.FileUploadDto;
 import org.digitalecmt.qualityassurance.models.dto.File.FileWithUploadWarningsDto;
 import org.apache.commons.io.FilenameUtils;
 import org.digitalecmt.qualityassurance.models.entities.Data;
+import org.digitalecmt.qualityassurance.models.entities.ExternalSiteMapping;
 import org.digitalecmt.qualityassurance.models.entities.File;
+import org.digitalecmt.qualityassurance.models.entities.Study;
 import org.digitalecmt.qualityassurance.models.pojo.AiCategorisationConfig;
 import org.digitalecmt.qualityassurance.models.pojo.AiResponse;
 import org.digitalecmt.qualityassurance.models.pojo.DataEntry;
@@ -207,8 +209,10 @@ public class FileService {
 
         for (int index = 0; index < entries.size(); index++) {
             DataEntry entry = entries.get(index);
-            Data data = entry.toData(fileId);
-            studyService.createStudy(data.getStudyId());
+            ExternalSiteMapping mapping = siteService.addDefaultMapping(entry.getStudyId());
+            Study study = studyService.createStudy(entry.getSiteId());
+
+            Data data = dataService.toData(entry, fileId, mapping.getMappingId(), study.getId());
             data = dataService.saveData(data);
 
             List<String> dvcats = parseCategories(entry.getDvcat());
@@ -226,7 +230,6 @@ public class FileService {
                 }
             }
 
-            siteService.addDefaultMapping(entry.getSiteId());
         }
         return errors;
     }

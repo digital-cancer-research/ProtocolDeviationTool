@@ -8,7 +8,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,15 +33,14 @@ public class Data {
 
     @Column(name = "study_id")
     @Size(min = 1, max = 255)
-    private String studyId;
+    private Long studyId;
 
     /**
      * The external site identifier.
      * Must be between 1 and 255 characters.
      */
-    @Column(name = "external_site_id")
-    @Size(min = 1, max = 255)
-    private String externalSiteId;
+    @Column(name = "mapping_id")
+    private Long mappingId;
 
     /**
      * PD descriptor assigned by sponsor.
@@ -149,10 +147,4 @@ public class Data {
      * Start date/time of deviation.
      */
     private LocalDateTime dvstdtc;
-
-    @PrePersist
-    public void prePersist() {
-        studyId = studyId.trim().toUpperCase();
-        externalSiteId = externalSiteId.trim().toUpperCase();
-    }
 }

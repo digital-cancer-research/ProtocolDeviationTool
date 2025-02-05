@@ -1,4 +1,4 @@
 CREATE TABLE "study" (
-    "study_id" VARCHAR(255) PRIMARY KEY,
-    "study_name" VARCHAR(255)
+    "study_id" SERIAL PRIMARY KEY,
+    "external_study_id" VARCHAR(255) NOT NULL
 );

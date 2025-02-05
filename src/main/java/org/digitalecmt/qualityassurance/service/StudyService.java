@@ -1,6 +1,7 @@
 package org.digitalecmt.qualityassurance.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.digitalecmt.qualityassurance.models.entities.Study;
 import org.digitalecmt.qualityassurance.repository.StudyRepository;
@@ -25,16 +26,23 @@ public class StudyService {
         return studyRepository.findAll();
     }
 
+    public Optional<Study> findStudyByExternalId(String externalStudyId) {
+        return studyRepository.findByExternalStudyId(externalStudyId);
+    }
+
     /**
      * Creates a new study if it does not already exist.
      *
      * @param id the ID of the study to create
      * @return the created or existing study
      */
-    public Study createStudy(String id) {
-        id = id.toUpperCase().trim();
-        return studyRepository.findById(id)
-                .orElse(saveStudy(id));
+    public Study createStudy(String externalId) {
+        final String formattedId = externalId.toUpperCase().trim();
+
+        return studyRepository.findByExternalStudyId(formattedId)
+                .orElseGet(() -> {
+                    return saveStudy(formattedId);
+                });
     }
 
     /**
@@ -43,10 +51,9 @@ public class StudyService {
      * @param id the ID of the study to save
      * @return the saved study
      */
-    private Study saveStudy(String id) {
+    private Study saveStudy(String externalStudyId) {
         Study study = Study.builder()
-                .id(id)
-                .studyName("")
+                .externalStudyId(externalStudyId)
                 .build();
         return studyRepository.save(study);
     }

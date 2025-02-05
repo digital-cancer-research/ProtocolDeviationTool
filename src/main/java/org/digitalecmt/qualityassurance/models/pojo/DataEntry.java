@@ -1,7 +1,5 @@
 package org.digitalecmt.qualityassurance.models.pojo;
 
-import org.digitalecmt.qualityassurance.models.entities.Data;
-
 import com.opencsv.bean.CsvBindByName;
 
 import lombok.AllArgsConstructor;
@@ -34,31 +32,6 @@ public class DataEntry {
     
     @CsvBindByName(column = "DVTERM")
     String dvterm;
-
-    /**
-     * Converts this DataEntry to a Data entity.
-     *
-     * @return the Data entity
-     */
-    public Data toData() {
-        return Data.builder()
-        .studyId(studyId)
-        .externalSiteId(siteId)
-        .dvspondes(dvspondes)
-        .build();
-    }
-
-    /**
-     * Converts this DataEntry to a Data entity and sets the file ID.
-     *
-     * @param fileId the file ID to set
-     * @return the Data entity
-     */
-    public Data toData(Long fileId) {
-        Data data = toData();
-        data.setFileId(fileId);
-        return data;
-    }
 
     /**
      * Converts this DataEntry to an array of strings.

@@ -1,7 +1,6 @@
 package org.digitalecmt.qualityassurance.service;
 
 import org.digitalecmt.qualityassurance.models.entities.ExternalSiteMapping;
-import org.digitalecmt.qualityassurance.models.entities.ExternalSiteMappingId;
 import org.digitalecmt.qualityassurance.models.entities.Site;
 import org.digitalecmt.qualityassurance.repository.ExternalSiteMappingRepository;
 import org.digitalecmt.qualityassurance.repository.SiteRepository;
@@ -29,10 +28,10 @@ public class SiteService {
      */
     public ExternalSiteMapping addDefaultMapping(String externalSiteId) {
         return siteRepository.findByName("ALL SITES")
-                .map(site -> addExternalSiteMapping(site.getId(), externalSiteId))
+                .map(site -> addExternalSiteMappingIfNotPresent(site.getId(), externalSiteId))
                 .orElseGet(() -> {
                     Site site = addSiteIfNotPresent("ALL SITES");
-                    return addExternalSiteMapping(site.getId(), externalSiteId);
+                    return addExternalSiteMappingIfNotPresent(site.getId(), externalSiteId);
                 });
     }
 
@@ -44,8 +43,9 @@ public class SiteService {
      * @return the created or existing external site mapping
      */
     public ExternalSiteMapping addExternalSiteMappingIfNotPresent(Long siteId, String externalSiteId) {
-        return externalSiteMappingRepository.findById(new ExternalSiteMappingId(siteId, externalSiteId))
-                .orElseGet(() -> addExternalSiteMapping(siteId, externalSiteId));
+        String formattedExternalSiteId = externalSiteId.trim().toUpperCase();
+        return externalSiteMappingRepository.findByExternalSiteIdAndSiteId(formattedExternalSiteId, siteId)
+                .orElseGet(() -> addExternalSiteMapping(siteId, formattedExternalSiteId));
     }
 
     /**

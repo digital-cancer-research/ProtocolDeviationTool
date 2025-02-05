@@ -8,17 +8,16 @@ import org.springframework.stereotype.Repository;
 
 /**
  * Repository interface for accessing and managing {@link Study} entities.
- * Extends {@link JpaRepository} to provide CRUD operations and additional JPA
- * functionalities.
+ * Extends {@link JpaRepository} to provide CRUD operations and additional JPA functionalities.
  */
 @Repository
-public interface StudyRepository extends JpaRepository<Study, String> {
+public interface StudyRepository extends JpaRepository<Study, Long> {
 
     /**
-     * Finds a study by its name.
+     * Finds a study by its external study ID.
      *
-     * @param studyName the name of the study to find
+     * @param id the external study ID of the study to find
      * @return an Optional containing the found study, or empty if not found
      */
-    Optional<Study> findByStudyName(String studyName);
+    Optional<Study> findByExternalStudyId(String id);
 }
