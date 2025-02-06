@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @IdClass(TeamStudyId.class)
-@Table(name = "team_study_access")
+@Table(name = "team_study")
 @Data
 @Builder
 @AllArgsConstructor
@@ -30,7 +30,7 @@ public class TeamStudy {
      */
     @Id
     @Column(name = "team_id")
-    private int teamId;
+    private Long teamId;
 
     /**
      * The ID of the study.

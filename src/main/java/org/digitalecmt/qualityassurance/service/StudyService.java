@@ -26,6 +26,22 @@ public class StudyService {
         return studyRepository.findAll();
     }
 
+    /**
+     * Retrieves all studies ordered by DV category count for a given team.
+     *
+     * @param teamId the ID of the team
+     * @return a list of studies ordered by DV category count
+     */
+    public List<Study> findAllStudiesOrderedByDvcatCount(Long teamId) {
+        return studyRepository.findAllStudiesOrderedByDvcatCount(teamId);
+    }
+
+    /**
+     * Finds a study by its external study ID.
+     *
+     * @param externalStudyId the external study ID of the study to find
+     * @return an Optional containing the found study, or empty if not found
+     */
     public Optional<Study> findStudyByExternalId(String externalStudyId) {
         return studyRepository.findByExternalStudyId(externalStudyId);
     }
@@ -33,7 +49,7 @@ public class StudyService {
     /**
      * Creates a new study if it does not already exist.
      *
-     * @param id the ID of the study to create
+     * @param externalId the external ID of the study to create
      * @return the created or existing study
      */
     public Study createStudy(String externalId) {
@@ -48,7 +64,7 @@ public class StudyService {
     /**
      * Saves a new study to the repository.
      *
-     * @param id the ID of the study to save
+     * @param externalStudyId the external study ID of the study to save
      * @return the saved study
      */
     private Study saveStudy(String externalStudyId) {
