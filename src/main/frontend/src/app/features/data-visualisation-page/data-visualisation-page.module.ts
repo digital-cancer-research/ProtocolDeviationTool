@@ -35,9 +35,8 @@ import { TotalPdsOverTimeComponent } from './dashboard/detailed-view/total-pds-o
 import { DvcatDvdecodBreakdownGraphComponent } from './dashboard/detailed-view/total-pds/dvcat-dvdecod-breakdown-graph/dvcat-dvdecod-breakdown-graph.component';
 import { DvdecodGraphComponent } from './dashboard/detailed-view/total-pds/dvdecod-graph/dvdecod-graph.component';
 import { MatMenuModule } from '@angular/material/menu';
-import { VisualisationService } from './dashboard/visualisation/visualisation.service';
-import { PieChartService } from './dashboard/team-pd-pie-chart/pie-chart.service';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { DataVisualisationService } from './data-visualisation.service';
 
 @NgModule({
   declarations: [
@@ -80,8 +79,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatExpansionModule
   ],
   providers: [
-    VisualisationService,
-    PieChartService
+    DataVisualisationService
   ]
 })
 

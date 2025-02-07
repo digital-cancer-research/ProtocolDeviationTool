@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
  * Service for managing teams.
  * Provides methods to retrieve, add, delete, and update teams.
  * @class
+ * @deprecated
  */
 @Injectable({
   providedIn: 'root'

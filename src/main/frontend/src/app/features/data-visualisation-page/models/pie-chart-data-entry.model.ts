@@ -1,4 +1,4 @@
 export interface PieChartDataEntry {
-    studyId: string;
-    entryCount: number;
+    study: string;
+    count: number;
 }

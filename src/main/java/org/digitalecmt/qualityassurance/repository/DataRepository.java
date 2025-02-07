@@ -58,7 +58,7 @@ public interface DataRepository extends JpaRepository<Data, Long> {
                         "JOIN Study s ON s.id = d.studyId " +
                         "WHERE " + QueryConstants.TEAM_HAS_STUDY_ACCESS +
                         "GROUP BY s.externalStudyId " +
-                        "ORDER BY count ASC")
+                        "ORDER BY count DESC")
         public List<PdsPerStudyDto> findPdsPerStudyDtosByTeamId(@Param("teamId") Long teamId);
 
         /**

@@ -1,38 +1,40 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { VisualisationService } from './visualisation.service';
-import { UserService } from 'src/app/core/services/user.service';
 import { mergeMap, of } from 'rxjs';
-import { Team } from 'src/app/core/models/team.model';
+import { TeamService } from 'src/app/core/new/services/team.service';
+import { DataVisualisationService } from '../../data-visualisation.service';
+import { Team } from 'src/app/core/new/services/models/team/team.model';
 
+/**
+ * Component for displaying visualisation data on the dashboard.
+ */
 @Component({
 	selector: 'app-visualisation',
 	templateUrl: './visualisation.component.html',
 	styleUrls: ['./visualisation.component.scss']
 })
 export class VisualisationComponent implements OnInit {
-	private readonly userService = inject(UserService);
-	private apiRequest = this.userService.currentUserSelectedTeam$.pipe(
+	private readonly teamService = inject(TeamService);
+	private readonly dataVisualisationService = inject(DataVisualisationService);
+	protected team: Team | null = null;
+	protected teamPDs!: number;
+	protected isLoading: boolean = true;
+	protected error: boolean = false;
+	protected errorMessage: string = "";
+	private apiRequest = this.teamService.currentTeam$.pipe(
 		mergeMap(team => {
 			this.team = team;
 			if (team === null) {
 				return of(null);
 			} else {
-				return this.visualisationService.getPDsForTeam(team.teamId);
+				return this.dataVisualisationService.getPdCount$(team.id);
 			}
 		})
 	);
-	protected team: Team | null = null;
-	teamPDs!: number;
-	isLoading: boolean = true;
-	error: boolean = false;
-	errorMessage: string = "";
 
-	constructor(
-		private visualisationService: VisualisationService,
-	) { }
-
+	/**
+	 * Lifecycle hook that is called after Angular has initialised all data-bound properties.
+	 */
 	ngOnInit() {
-
 		this.apiRequest.subscribe({
 			next: (teamPDs) => {
 				this.isLoading = false;
