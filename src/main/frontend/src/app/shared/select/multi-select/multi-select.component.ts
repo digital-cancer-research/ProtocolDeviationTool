@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChildren } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChildren } from '@angular/core';
 import { Select } from '../select';
 import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
 
@@ -7,7 +7,7 @@ import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
   templateUrl: './multi-select.component.html',
   styleUrls: ['./multi-select.component.css']
 })
-export class MultiSelectComponent<T> extends Select<T> implements OnInit {
+export class MultiSelectComponent<T> extends Select<T> implements OnInit, OnChanges {
   selectedItems: T[] = [];
   @Input() defaultValues: T[] = [];
   @Input() height: number = 100;
@@ -17,6 +17,16 @@ export class MultiSelectComponent<T> extends Select<T> implements OnInit {
     this.defaultValues.forEach((item) => {
       this.selectedItems.push(item);
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const defaultValuesChanged = changes['defaultValues'];
+    if (defaultValuesChanged && !defaultValuesChanged.isFirstChange()) {
+      this.selectedItems = [];
+      this.defaultValues.forEach((item) => {
+        this.selectedItems.push(item);
+      });
+    }
   }
 
   onChange(item: T, event: MatCheckboxChange) {

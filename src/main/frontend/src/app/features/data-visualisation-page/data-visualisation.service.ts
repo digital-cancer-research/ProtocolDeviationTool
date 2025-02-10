@@ -3,6 +3,8 @@ import { inject, Injectable } from '@angular/core';
 import { CategoryBarGraphData } from './models/category-bar-graph-data.model';
 import { PieChartDataEntry } from './models/pie-chart-data-entry.model';
 import { StudyBarGraphData } from './models/study-bar-graph-data.model';
+import { PdDvdecodBarGraphData } from './models/team-pd-dvdecod-bar-graph-data.model';
+import Gradient from "javascript-color-gradient";
 
 /**
  * Service for managing data visualisation operations.
@@ -14,7 +16,10 @@ export class DataVisualisationService {
   private BASE_URL = '/api/visualisation';
   private readonly http = inject(HttpClient);
   public pdCategories: string[] = [];
-  public barChartColours: string[] = [];
+  public barChartColours: string[] = new Gradient()
+  .setColorGradient('#662506', "#FB9A29", "#FFFFE5")
+  .setMidpoint(23)
+  .getColors();
 
   /**
    * Retrieves the count of PDs for a given team.
@@ -54,5 +59,9 @@ export class DataVisualisationService {
    */
   getPdsPerDvcatPerStudy$(teamId?: number) {
     return this.http.get<StudyBarGraphData>(`${this.BASE_URL}/pds-per-dvcat-per-study?teamId=${teamId}`);
+  }
+  
+  getDvcatBreakdownByDvdecod$(teamId?: number) {
+    return this.http.get<PdDvdecodBarGraphData>(`${this.BASE_URL}/pds-per-dvcat-per-dvdecod?teamId=${teamId}`);
   }
 }

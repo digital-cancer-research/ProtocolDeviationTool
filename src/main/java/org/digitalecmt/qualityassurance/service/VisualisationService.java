@@ -1,15 +1,20 @@
 package org.digitalecmt.qualityassurance.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.digitalecmt.qualityassurance.models.dto.Visualisation.DvcatPerStudies;
-import org.digitalecmt.qualityassurance.models.dto.Visualisation.DvcatPerStudy;
+import org.digitalecmt.qualityassurance.models.dto.Visualisation.DvcatPerStudiesDto;
+import org.digitalecmt.qualityassurance.models.dto.Visualisation.DvcatPerStudyDto;
+import org.digitalecmt.qualityassurance.models.dto.Visualisation.DvdecodPerStudyDto;
+import org.digitalecmt.qualityassurance.models.dto.Visualisation.DvdecodPerStudySpareDto;
 import org.digitalecmt.qualityassurance.models.dto.Visualisation.PdsPerDvcatDto;
-import org.digitalecmt.qualityassurance.models.dto.Visualisation.PdsPerDvcatPerStudy;
+import org.digitalecmt.qualityassurance.models.dto.Visualisation.PdsPerDvcatPerDvdecodDto;
+import org.digitalecmt.qualityassurance.models.dto.Visualisation.PdsPerDvcatPerStudyDto;
 import org.digitalecmt.qualityassurance.models.dto.Visualisation.PdsPerStudyDto;
+import org.digitalecmt.qualityassurance.models.entities.Dvcat;
 import org.digitalecmt.qualityassurance.models.entities.Study;
 import org.digitalecmt.qualityassurance.repository.DataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,20 +70,20 @@ public class VisualisationService {
      * @param teamId the ID of the team
      * @return the PDs per DV category per study
      */
-    public PdsPerDvcatPerStudy getPdsPerDvcatPerStudy(Long teamId) {
+    public PdsPerDvcatPerStudyDto getPdsPerDvcatPerStudy(Long teamId) {
 
         List<Study> studies = studyService.findAllStudiesOrderedByDvcatCount(teamId);
-        HashMap<String, DvcatPerStudies> dataMap = new HashMap<String, DvcatPerStudies>();
-        
+        HashMap<String, DvcatPerStudiesDto> dataMap = new HashMap<String, DvcatPerStudiesDto>();
+
         studies.forEach(study -> {
-            List<DvcatPerStudy> studyBreakdownByDvcat = dataRepository.findDvcatsPerStudyId(study.getId());
+            List<DvcatPerStudyDto> studyBreakdownByDvcat = dataRepository.findDvcatsPerStudyId(study.getId());
             studyBreakdownByDvcat.forEach(breakdown -> {
                 String dvcat = breakdown.getDvcat();
-                DvcatPerStudies data = dataMap.get(dvcat);
+                DvcatPerStudiesDto data = dataMap.get(dvcat);
                 if (data != null) {
                     data.getCount().add(breakdown.getCount());
                 } else {
-                    data = DvcatPerStudies.builder()
+                    data = DvcatPerStudiesDto.builder()
                             .dvcat(dvcat)
                             .count(new ArrayList<Long>())
                             .colour(breakdown.getColour())
@@ -89,11 +94,47 @@ public class VisualisationService {
             });
         });
 
-        PdsPerDvcatPerStudy data = PdsPerDvcatPerStudy.builder()
-                .data(new ArrayList<DvcatPerStudies>(dataMap.values()))
+        PdsPerDvcatPerStudyDto data = PdsPerDvcatPerStudyDto.builder()
+                .data(new ArrayList<DvcatPerStudiesDto>(dataMap.values()))
                 .studies(studies.stream().map(Study::getExternalStudyId).collect(Collectors.toList()))
                 .build();
         return data;
+    }
+
+    /**
+     * Retrieves the PDs per DV category per DVDECOD for a given team.
+     *
+     * @param teamId the ID of the team
+     * @return the PDs per DV category per DVDECOD
+     */
+    public PdsPerDvcatPerDvdecodDto getPdsPerDvcatPerDvdecodDto(Long teamId) {
+        List<Dvcat> sortedDvcats = dataRepository.findDvcatsSortedByDvdecodCountAndTeamId(teamId);
+        List<DvdecodPerStudySpareDto> data = new ArrayList<>();
+
+        for (int i = 0; i < sortedDvcats.size(); i++) {
+            final int index = i;
+            Dvcat dvcat = sortedDvcats.get(index);
+            List<DvdecodPerStudyDto> dvdecods = dataRepository.findDvdecodByDvcatIdPerStudy(dvcat.getId(), teamId);
+            dvdecods.forEach(dvdecod -> {
+                DvdecodPerStudySpareDto dataItem = DvdecodPerStudySpareDto.builder()
+                        .dvcat(dvdecod.getDvcat())
+                        .dvdecod(dvdecod.getDvdecod())
+                        .colour(dvdecod.getColour())
+                        .build();
+                ArrayList<Long> sparseCount = new ArrayList<>(Collections.nCopies(10, 0L));
+                sparseCount.set(index, dvdecod.getCount());
+                dataItem.setCount(sparseCount);
+                data.add(dataItem);
+            });
+        }
+        PdsPerDvcatPerDvdecodDto dto = PdsPerDvcatPerDvdecodDto.builder()
+                .dvcats(
+                        sortedDvcats.stream()
+                                .map(Dvcat::getDescription)
+                                .collect(Collectors.toList()))
+                .data(data)
+                .build();
+        return dto;
     }
 
 }

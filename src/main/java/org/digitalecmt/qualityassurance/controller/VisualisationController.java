@@ -3,7 +3,8 @@ package org.digitalecmt.qualityassurance.controller;
 import java.util.List;
 
 import org.digitalecmt.qualityassurance.models.dto.Visualisation.PdsPerDvcatDto;
-import org.digitalecmt.qualityassurance.models.dto.Visualisation.PdsPerDvcatPerStudy;
+import org.digitalecmt.qualityassurance.models.dto.Visualisation.PdsPerDvcatPerDvdecodDto;
+import org.digitalecmt.qualityassurance.models.dto.Visualisation.PdsPerDvcatPerStudyDto;
 import org.digitalecmt.qualityassurance.models.dto.Visualisation.PdsPerStudyDto;
 import org.digitalecmt.qualityassurance.service.VisualisationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,8 +69,20 @@ public class VisualisationController {
      * @return a ResponseEntity containing the PDs per DV category per study and HTTP status OK
      */
     @GetMapping("/pds-per-dvcat-per-study")
-    public ResponseEntity<PdsPerDvcatPerStudy> getPdsPerDvcatPerStudy(@QueryParam("teamId") Long teamId) {
-        PdsPerDvcatPerStudy data = visualisationService.getPdsPerDvcatPerStudy(teamId);
+    public ResponseEntity<PdsPerDvcatPerStudyDto> getPdsPerDvcatPerStudy(@QueryParam("teamId") Long teamId) {
+        PdsPerDvcatPerStudyDto data = visualisationService.getPdsPerDvcatPerStudy(teamId);
+        return new ResponseEntity<>(data, HttpStatus.OK);
+    }
+
+    /**
+     * Retrieves the PDs per DV category per DVDECOD for a given team.
+     *
+     * @param teamId the ID of the team
+     * @return a ResponseEntity containing the PDs per DV category per DVDECOD and HTTP status OK
+     */
+    @GetMapping("/pds-per-dvcat-per-dvdecod")
+    public ResponseEntity<PdsPerDvcatPerDvdecodDto> getPdsPerDvcatPerDvdecodDto(@QueryParam("teamId") Long teamId) {
+        PdsPerDvcatPerDvdecodDto data = visualisationService.getPdsPerDvcatPerDvdecodDto(teamId);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 }

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PdsPerDvcatPerStudy {
+public class PdsPerDvcatPerStudyDto {
     List<String> studies;
-    List<DvcatPerStudies> data;
+    List<DvcatPerStudiesDto> data;
 }
