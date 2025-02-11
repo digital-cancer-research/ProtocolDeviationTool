@@ -17,13 +17,8 @@ public class StudyService {
     @Autowired
     private StudyRepository studyRepository;
 
-    /**
-     * Retrieves all studies.
-     *
-     * @return a list of all studies
-     */
-    public List<Study> findAllStudies() {
-        return studyRepository.findAll();
+    public List<Study> findAllStudies(Long teamId) {
+        return studyRepository.findAll(teamId);
     }
 
     /**

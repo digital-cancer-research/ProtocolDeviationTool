@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@IdClass(DataSubCategory.class)
+@IdClass(DataSubCategoryId.class)
 public class DataSubCategory {
     
     @Id

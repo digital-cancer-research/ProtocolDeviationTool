@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, Observable, switchMap } from 'rxjs';
+import { map, mergeMap, Observable, switchMap, toArray } from 'rxjs';
 import { TeamWithStudies } from 'src/app/core/models/team-with-studies.model';
 import { Team } from 'src/app/core/models/team/team.model';
 import { StudyService } from 'src/app/core/services/study.service';
@@ -14,7 +14,11 @@ export class AdministrationDataService {
   teams: Team[] = [];
   teamIds: number[] = [];
 
-  studies: Observable<string[]> = this.studyService.getStudies();
+  studies: Observable<string[]> = this.studyService.getStudies().pipe(
+    mergeMap(study => study),
+    map(study => study.externalStudyId),
+    toArray()   
+  );
 
   constructor(
     private teamService: TeamService,

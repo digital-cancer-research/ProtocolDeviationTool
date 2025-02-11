@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.azure.core.annotation.QueryParam;
+
 /**
  * REST controller for managing studies.
  */
@@ -25,8 +27,8 @@ public class StudyController {
      * @return a ResponseEntity containing a list of all studies and HTTP status OK
      */
     @GetMapping
-    public ResponseEntity<List<Study>> getAllStudies() {
-        List<Study> studies = studyService.findAllStudies();
+    public ResponseEntity<List<Study>> getAllStudies(@QueryParam("teamId") Long teamId) {
+        List<Study> studies = studyService.findAllStudies(teamId);
         return new ResponseEntity<>(studies, HttpStatus.OK);
     }
 }

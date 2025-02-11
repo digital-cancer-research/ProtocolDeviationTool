@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.digitalecmt.qualityassurance.models.dto.Visualisation.DvcatPerStudiesDto;
@@ -17,6 +18,7 @@ import org.digitalecmt.qualityassurance.models.dto.Visualisation.PdsPerStudyDto;
 import org.digitalecmt.qualityassurance.models.entities.Dvcat;
 import org.digitalecmt.qualityassurance.models.entities.Study;
 import org.digitalecmt.qualityassurance.repository.DataRepository;
+import org.digitalecmt.qualityassurance.repository.DvcatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,9 @@ public class VisualisationService {
 
     @Autowired
     DataRepository dataRepository;
+
+    @Autowired
+    DvcatRepository dvcatRepository;
 
     @Autowired
     StudyService studyService;
@@ -108,33 +113,65 @@ public class VisualisationService {
      * @return the PDs per DV category per DVDECOD
      */
     public PdsPerDvcatPerDvdecodDto getPdsPerDvcatPerDvdecodDto(Long teamId) {
-        List<Dvcat> sortedDvcats = dataRepository.findDvcatsSortedByDvdecodCountAndTeamId(teamId);
+        return getPdsPerDvcatPerDvdecodDtoHelper(() -> dataRepository.findDvcatsSortedByDvdecodCountAndTeamId(teamId),
+                teamId, null);
+    }
+
+    public PdsPerDvcatPerDvdecodDto getPdsPerDvcatPerDvdecodDto(String externalStudyId) {
+        return getPdsPerDvcatPerDvdecodDtoHelper(
+                () -> dataRepository.findDvcatsSortedByDvdecodCountAndStudy(externalStudyId), null, externalStudyId);
+    }
+
+    private PdsPerDvcatPerDvdecodDto getPdsPerDvcatPerDvdecodDtoHelper(Supplier<List<Dvcat>> dvcatsSupplier,
+            Long teamId, String externalStudyId) {
+        List<Dvcat> sortedDvcats = dvcatsSupplier.get();
+        sortedDvcats = fillInMissingDvcats(sortedDvcats);
+
+        return getDvcatsForDvdecods(sortedDvcats, teamId, externalStudyId);
+    }
+
+    private List<Dvcat> fillInMissingDvcats(List<Dvcat> dvcats) {
+        if (dvcats.size() < 10) {
+            Collections.reverse(dvcats);
+            List<Dvcat> otherDvcats = dvcatRepository.findAll();
+            otherDvcats.forEach(dvcat -> {
+                if (!dvcats.contains(dvcat)) {
+                    dvcats.add(dvcat);
+                }
+            });
+            Collections.reverse(dvcats);
+        }
+        return dvcats;
+    }
+
+    private PdsPerDvcatPerDvdecodDto getDvcatsForDvdecods(List<Dvcat> dvcats, Long teamId, String externalStudyId) {
         List<DvdecodPerStudySpareDto> data = new ArrayList<>();
 
-        for (int i = 0; i < sortedDvcats.size(); i++) {
-            final int index = i;
-            Dvcat dvcat = sortedDvcats.get(index);
-            List<DvdecodPerStudyDto> dvdecods = dataRepository.findDvdecodByDvcatIdPerStudy(dvcat.getId(), teamId);
-            dvdecods.forEach(dvdecod -> {
+        for (int i = 0; i < dvcats.size(); i++) {
+            Dvcat dvcat = dvcats.get(i);
+            List<DvdecodPerStudyDto> dvdecods = (externalStudyId != null)
+                    ? dataRepository.findDvdecodByDvcatIdPerStudy(dvcat.getId(), externalStudyId)
+                    : dataRepository.findDvdecodByDvcatIdPerStudy(dvcat.getId(), teamId);
+
+            for (DvdecodPerStudyDto dvdecod : dvdecods) {
                 DvdecodPerStudySpareDto dataItem = DvdecodPerStudySpareDto.builder()
                         .dvcat(dvdecod.getDvcat())
                         .dvdecod(dvdecod.getDvdecod())
                         .colour(dvdecod.getColour())
                         .build();
+
                 ArrayList<Long> sparseCount = new ArrayList<>(Collections.nCopies(10, 0L));
-                sparseCount.set(index, dvdecod.getCount());
+                sparseCount.set(i, dvdecod.getCount());
                 dataItem.setCount(sparseCount);
                 data.add(dataItem);
-            });
+            }
         }
-        PdsPerDvcatPerDvdecodDto dto = PdsPerDvcatPerDvdecodDto.builder()
-                .dvcats(
-                        sortedDvcats.stream()
-                                .map(Dvcat::getDescription)
-                                .collect(Collectors.toList()))
+
+        return PdsPerDvcatPerDvdecodDto.builder()
+                .dvcats(dvcats.stream()
+                        .map(Dvcat::getDescription)
+                        .collect(Collectors.toList()))
                 .data(data)
                 .build();
-        return dto;
     }
-
 }

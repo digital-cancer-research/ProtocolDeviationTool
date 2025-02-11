@@ -38,4 +38,14 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
     "GROUP BY s.id, s.externalStudyId " + 
     "ORDER BY COUNT(d) ASC")
     List<Study> findAllStudiesOrderedByDvcatCount(@Param("teamId") Long teamId);
+
+    /**
+     * Finds all studies for a given team.
+     *
+     * @param teamId the ID of the team
+     * @return a list of studies
+     */
+    @Query("SELECT s FROM Study s WHERE :teamId IS NULL OR :teamId IN " + 
+    "(SELECT ts.teamId FROM TeamStudy ts WHERE ts.teamId = :teamId) ORDER BY s.id")
+    List<Study> findAll(@Param("teamId") Long teamId);
 }

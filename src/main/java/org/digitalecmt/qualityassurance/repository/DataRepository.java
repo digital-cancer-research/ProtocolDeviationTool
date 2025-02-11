@@ -95,6 +95,16 @@ public interface DataRepository extends JpaRepository<Data, Long> {
                         "GROUP BY dv.id " +
                         "ORDER BY count(d)")
         public List<Dvcat> findDvcatsSortedByDvdecodCountAndTeamId(@Param("teamId") Long teamId);
+        
+        @Query("SELECT dv FROM Dvcat dv " +
+                        "JOIN DataCategory dc ON dc.dvcatId = dv.id " +
+                        "JOIN DataSubCategory dsc on dsc.dataCategoryId = dc.id " +
+                        "JOIN Data d ON d.id = dc.dataId " +
+                        "JOIN Study s ON s.id = d.studyId " +
+                        "WHERE s.externalStudyId = :study " +
+                        "GROUP BY dv.id " +
+                        "ORDER BY count(d)")
+        public List<Dvcat> findDvcatsSortedByDvdecodCountAndStudy(@Param("study") String externalStudyId);
 
         /**
          * Finds the DVDECODs per study ID and team ID.
@@ -117,4 +127,19 @@ public interface DataRepository extends JpaRepository<Data, Long> {
                         "ORDER BY count DESC")
         public List<DvdecodPerStudyDto> findDvdecodByDvcatIdPerStudy(@Param("dvcatId") long dvcatId,
                         @Param("teamId") Long teamId);
+        
+                        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Visualisation.DvdecodPerStudyDto(dv.description, dvd.description, dvd.colour, count(dsc) as count) "
+                        +
+                        "FROM DataSubCategory dsc " +
+                        "JOIN Dvdecod dvd ON dvd.id = dsc.dvdecodId " +
+                        "JOIN DataCategory dc ON dc.id = dsc.dataCategoryId " +
+                        "JOIN Dvcat dv ON dv.id = dc.dvcatId " +
+                        "JOIN Data d ON d.id = dc.dataId " +
+                        "JOIN Study s ON s.id = d.studyId " +
+                        "WHERE s.externalStudyId = :study " +
+                        "AND dc.dvcatId = :dvcatId " +
+                        "GROUP BY dv.description, dvd.description, dvd.colour " +
+                        "ORDER BY count DESC")
+        public List<DvdecodPerStudyDto> findDvdecodByDvcatIdPerStudy(@Param("dvcatId") long dvcatId,
+                        @Param("study") String externalStudyId);
 }

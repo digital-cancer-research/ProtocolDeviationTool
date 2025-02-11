@@ -85,7 +85,7 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.createSkeletonChart();
     this.route.queryParams.subscribe(params => {
-      this.studyId = params['studyId'];
+      this.studyId = params['study'];
       this.updateData();
     });
   }
@@ -106,7 +106,11 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
       next: (team) => {
         this.isDataLoading = false;
         if (team !== null) {
-          apiRequest = this.dataVisualisationService.getDvcatBreakdownByDvdecod$(team.id);
+          if (this.studyId) {
+            apiRequest = this.dataVisualisationService.getDvcatBreakdownByDvdecodByStudy$(this.studyId);
+          } else {
+            apiRequest = this.dataVisualisationService.getDvcatBreakdownByDvdecodByTeam$(team.id);
+          }
           this.fetchGraphData(apiRequest);
         } else {
           this.errorMessage = `An error occurred while trying to load the data - no team selected. 

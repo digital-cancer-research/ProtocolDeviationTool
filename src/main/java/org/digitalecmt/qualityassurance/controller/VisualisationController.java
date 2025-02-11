@@ -22,7 +22,6 @@ import com.azure.core.annotation.QueryParam;
 @RestController
 @RequestMapping("/api/visualisation")
 public class VisualisationController {
-
     @Autowired
     VisualisationService visualisationService;
 
@@ -42,7 +41,8 @@ public class VisualisationController {
      * Retrieves the PDs per DV category for a given team.
      *
      * @param teamId the ID of the team
-     * @return a ResponseEntity containing the list of PDs per DV category and HTTP status OK
+     * @return a ResponseEntity containing the list of PDs per DV category and HTTP
+     *         status OK
      */
     @GetMapping("/pds-per-dvcat")
     public ResponseEntity<List<PdsPerDvcatDto>> getPdsPerDvcat(@QueryParam("teamId") Long teamId) {
@@ -54,7 +54,8 @@ public class VisualisationController {
      * Retrieves the PDs per study for a given team.
      *
      * @param teamId the ID of the team
-     * @return a ResponseEntity containing the list of PDs per study and HTTP status OK
+     * @return a ResponseEntity containing the list of PDs per study and HTTP status
+     *         OK
      */
     @GetMapping("/pds-per-study")
     public ResponseEntity<List<PdsPerStudyDto>> getPdsPerStudy(@QueryParam("teamId") Long teamId) {
@@ -66,7 +67,8 @@ public class VisualisationController {
      * Retrieves the PDs per DV category per study for a given team.
      *
      * @param teamId the ID of the team
-     * @return a ResponseEntity containing the PDs per DV category per study and HTTP status OK
+     * @return a ResponseEntity containing the PDs per DV category per study and
+     *         HTTP status OK
      */
     @GetMapping("/pds-per-dvcat-per-study")
     public ResponseEntity<PdsPerDvcatPerStudyDto> getPdsPerDvcatPerStudy(@QueryParam("teamId") Long teamId) {
@@ -78,11 +80,20 @@ public class VisualisationController {
      * Retrieves the PDs per DV category per DVDECOD for a given team.
      *
      * @param teamId the ID of the team
-     * @return a ResponseEntity containing the PDs per DV category per DVDECOD and HTTP status OK
+     * @return a ResponseEntity containing the PDs per DV category per DVDECOD and
+     *         HTTP status OK
      */
     @GetMapping("/pds-per-dvcat-per-dvdecod")
-    public ResponseEntity<PdsPerDvcatPerDvdecodDto> getPdsPerDvcatPerDvdecodDto(@QueryParam("teamId") Long teamId) {
-        PdsPerDvcatPerDvdecodDto data = visualisationService.getPdsPerDvcatPerDvdecodDto(teamId);
+    public ResponseEntity<PdsPerDvcatPerDvdecodDto> getPdsPerDvcatPerDvdecodDto(@QueryParam("teamId") Long teamId,
+            @QueryParam("externalStudyId") String externalStudyId) {
+        PdsPerDvcatPerDvdecodDto data;
+        if (teamId != null) {
+            data = visualisationService.getPdsPerDvcatPerDvdecodDto(teamId);
+        } else if (externalStudyId != null) {
+            data = visualisationService.getPdsPerDvcatPerDvdecodDto(externalStudyId);
+        } else {
+            data = visualisationService.getPdsPerDvcatPerDvdecodDto(teamId);
+        }
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 }

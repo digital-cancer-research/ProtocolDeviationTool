@@ -1,12 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Tab } from 'src/app/shared/tab/tab';
 import { TotalPdsComponent } from './total-pds/total-pds.component';
 import { TotalPdsOverTimeComponent } from './total-pds-over-time/total-pds-over-time.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService } from 'src/app/core/services/user.service';
-import { Team } from 'src/app/core/models/team.model';
 import { StudyService } from 'src/app/core/services/study.service';
 import { map, Observable, of, switchMap } from 'rxjs';
+import { Team } from 'src/app/core/new/services/models/team/team.model';
+import { TeamService } from 'src/app/core/new/services/team.service';
 
 @Component({
   selector: 'app-detailed-view',
@@ -17,6 +17,10 @@ export class DetailedViewComponent {
   private static _URL: string = "detailed-view";
   private static _studyId?: string;
   private team: Team | null = null;
+  private readonly teamService = inject(TeamService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private studyService = inject(StudyService);
   protected options$: Observable<string[]> = new Observable();
   protected selectedOption: string = "";
 
@@ -25,23 +29,21 @@ export class DetailedViewComponent {
     new Tab("Total Protocol Deviations Over Time", TotalPdsOverTimeComponent.URL)
   ]
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private userService: UserService,
-    private studyService: StudyService
-  ) {
+  constructor() {
     this.populateFilterOptions();
   }
 
   populateFilterOptions() {
-    this.options$ = this.userService.currentUserSelectedTeam$.pipe(
+    this.options$ = this.teamService.currentTeam$.pipe(
       switchMap(team => {
         this.team = team;
         this.parseStudyInUrl(team);
         if (team) {
-          return this.studyService.getStudiesForTeam(team.teamId).pipe(
-            map(studies => [team.teamName, ...studies])
+          return this.studyService.getStudies(team.id).pipe(
+            map(studies => {
+              const studyNames = studies.map(study => study.externalStudyId);
+              return [team.name, ...studyNames];
+            })
           );
         } else {
           return of();
@@ -56,7 +58,7 @@ export class DetailedViewComponent {
       DetailedViewComponent._studyId = studyId;
 
       if (studyId === "" || studyId === null || studyId === undefined) {
-        this.selectedOption = team ? team.teamName : "";
+        this.selectedOption = team ? team.name : "";
       } else {
         this.selectedOption = studyId;
       }
@@ -67,7 +69,7 @@ export class DetailedViewComponent {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
-        studyId: this.selectedOption !== this.team?.teamName ? this.selectedOption : null
+        study: this.selectedOption !== this.team?.name ? this.selectedOption : null
       },
       queryParamsHandling: 'merge',
     });

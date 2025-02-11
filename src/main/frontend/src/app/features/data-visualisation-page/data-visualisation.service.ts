@@ -61,7 +61,11 @@ export class DataVisualisationService {
     return this.http.get<StudyBarGraphData>(`${this.BASE_URL}/pds-per-dvcat-per-study?teamId=${teamId}`);
   }
   
-  getDvcatBreakdownByDvdecod$(teamId?: number) {
+  getDvcatBreakdownByDvdecodByTeam$(teamId?: number) {
     return this.http.get<PdDvdecodBarGraphData>(`${this.BASE_URL}/pds-per-dvcat-per-dvdecod?teamId=${teamId}`);
+  }
+  
+  getDvcatBreakdownByDvdecodByStudy$(studyId?: string) {
+    return this.http.get<PdDvdecodBarGraphData>(`${this.BASE_URL}/pds-per-dvcat-per-dvdecod?externalStudyId=${studyId}`);
   }
 }
