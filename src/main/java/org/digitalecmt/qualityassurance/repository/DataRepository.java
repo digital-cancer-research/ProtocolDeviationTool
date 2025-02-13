@@ -2,6 +2,8 @@ package org.digitalecmt.qualityassurance.repository;
 
 import java.util.List;
 
+import org.digitalecmt.qualityassurance.models.dto.Data.BaseDataDto;
+import org.digitalecmt.qualityassurance.models.dto.Data.CategorisationDto;
 import org.digitalecmt.qualityassurance.models.dto.Visualisation.DvcatPerStudyDto;
 import org.digitalecmt.qualityassurance.models.dto.Visualisation.DvdecodPerStudyDto;
 import org.digitalecmt.qualityassurance.models.dto.Visualisation.PdsPerDvcatDto;
@@ -95,7 +97,7 @@ public interface DataRepository extends JpaRepository<Data, Long> {
                         "GROUP BY dv.id " +
                         "ORDER BY count(d)")
         public List<Dvcat> findDvcatsSortedByDvdecodCountAndTeamId(@Param("teamId") Long teamId);
-        
+
         @Query("SELECT dv FROM Dvcat dv " +
                         "JOIN DataCategory dc ON dc.dvcatId = dv.id " +
                         "JOIN DataSubCategory dsc on dsc.dataCategoryId = dc.id " +
@@ -127,8 +129,8 @@ public interface DataRepository extends JpaRepository<Data, Long> {
                         "ORDER BY count DESC")
         public List<DvdecodPerStudyDto> findDvdecodByDvcatIdPerStudy(@Param("dvcatId") long dvcatId,
                         @Param("teamId") Long teamId);
-        
-                        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Visualisation.DvdecodPerStudyDto(dv.description, dvd.description, dvd.colour, count(dsc) as count) "
+
+        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Visualisation.DvdecodPerStudyDto(dv.description, dvd.description, dvd.colour, count(dsc) as count) "
                         +
                         "FROM DataSubCategory dsc " +
                         "JOIN Dvdecod dvd ON dvd.id = dsc.dvdecodId " +
@@ -142,4 +144,28 @@ public interface DataRepository extends JpaRepository<Data, Long> {
                         "ORDER BY count DESC")
         public List<DvdecodPerStudyDto> findDvdecodByDvcatIdPerStudy(@Param("dvcatId") long dvcatId,
                         @Param("study") String externalStudyId);
+
+        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Data.BaseDataDto(d.id, esm.externalSiteId, s.externalStudyId, d.dvspondes) "
+                        +
+                        "FROM Data d JOIN Study s ON d.studyId = s.id " +
+                        "JOIN ExternalSiteMapping esm ON esm.id = d.mappingId " +
+                        "WHERE " + QueryConstants.TEAM_HAS_STUDY_ACCESS)
+        public List<BaseDataDto> findDataByTeam(@Param("teamId") Long teamId);
+
+        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Data.BaseDataDto(d.id, esm.externalSiteId, s.externalStudyId, d.dvspondes) "
+                        +
+                        "FROM Data d JOIN Study s ON d.studyId = s.id " +
+                        "JOIN ExternalSiteMapping esm ON esm.id = d.mappingId " +
+                        "WHERE s.externalStudyId = :study")
+        public List<BaseDataDto> findDataByStudy(@Param("study") String externalStudyId);
+
+        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Data.CategorisationDto(dv.description, dvd.description, dvd.dvterm) "
+                        +
+                        "FROM Data d " +
+                        "JOIN DataCategory dc ON dc.dataId = d.id " +
+                        "JOIN Dvcat dv ON dv.id = dc.dvcatId " +
+                        "LEFT JOIN DataSubCategory dsc ON dsc.dataCategoryId = dc.id " +
+                        "LEFT JOIN Dvdecod dvd ON dvd.id = dsc.dvdecodId " +
+                        "WHERE d.id = :dataId")
+        public List<CategorisationDto> findCategorisationByDataId(@Param("dataId") long id);
 }

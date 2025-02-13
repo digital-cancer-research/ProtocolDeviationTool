@@ -1,14 +1,14 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Team } from 'src/app/core/models/team.model';
 import { StudyDataService } from 'src/app/shared/study-data-table/study-data.service';
-import { UserService } from 'src/app/core/services/user.service';
 import { DvdecodData } from '../../../models/team-pd-dvdecod-bar-graph-data.model';
-import { filter, map, Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { DataTableEntry } from 'src/app/core/models/data/data-table-entry.model';
 import { DataTableService } from 'src/app/shared/table/data-table/data-table.service';
 import { ActivatedRoute } from '@angular/router';
 import { DetailedViewComponent } from '../detailed-view.component';
+import { TeamService } from 'src/app/core/new/services/team.service';
+import { Team } from 'src/app/core/new/services/models/team/team.model';
 
 @Component({
   selector: 'app-total-pds',
@@ -55,11 +55,11 @@ export class TotalPdsComponent {
   constructor(
     private cdr: ChangeDetectorRef,
     private studyDataService: StudyDataService,
-    private userService: UserService,
+    private teamService: TeamService,
     private dataTableService: DataTableService,
     private route: ActivatedRoute
   ) {
-    userService.currentUserSelectedTeam$.subscribe(team => this.selectedTeam = team);
+    teamService.currentTeam$.subscribe(team => this.selectedTeam = team);
     route.queryParams.subscribe(() => {
       this.hasStudyChanged = true;
     });
@@ -97,10 +97,9 @@ export class TotalPdsComponent {
     this.hasStudyChanged = false;
     this.selectedDvdecod = dvdecod;
     if (this.selectedTeam) {
-      this.apiRequest = this.dataTableService.getDataByTeamId$(this.selectedTeam.teamId)
+      this.apiRequest = this.dataTableService.getDataByTeamId$(this.selectedTeam.id)
         .pipe(
-          map((data) => data.filter(entry => entry.dvdecod === dvdecod)
-          ),
+          map((data) => data.filter(entry => entry.dvdecod.includes(dvdecod))),
           map((data) => data.filter(entry => DetailedViewComponent.studyId ? entry.studyId === DetailedViewComponent.studyId : true))
         );
       this.apiRequest

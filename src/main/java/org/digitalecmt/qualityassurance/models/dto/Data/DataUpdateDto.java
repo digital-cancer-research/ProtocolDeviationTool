@@ -1,7 +1,5 @@
 package org.digitalecmt.qualityassurance.models.dto.Data;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,8 +11,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DataDto extends BaseDataDto {
-    private List<String> dvcat;
-    private List<String> dvdecod;
-    private List<String> dvterm;
+public class DataUpdateDto extends DataDto {
+    private long adminId;
 }

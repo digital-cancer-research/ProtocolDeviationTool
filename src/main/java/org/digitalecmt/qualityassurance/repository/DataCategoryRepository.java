@@ -16,4 +16,6 @@ import org.springframework.stereotype.Repository;
 public interface DataCategoryRepository extends JpaRepository<DataCategory, Long> {
 
     public List<DataCategory> findAllByDataId(Long dataId);
+
+    public void deleteAllByDataId(long dataId);
 }

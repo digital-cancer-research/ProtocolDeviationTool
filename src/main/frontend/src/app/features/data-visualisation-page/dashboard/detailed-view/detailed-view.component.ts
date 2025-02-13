@@ -54,7 +54,7 @@ export class DetailedViewComponent {
 
   parseStudyInUrl(team: Team | null) {
     this.route.queryParams.subscribe(params => {
-      const studyId = params['studyId'];
+      const studyId = params['study'];
       DetailedViewComponent._studyId = studyId;
 
       if (studyId === "" || studyId === null || studyId === undefined) {

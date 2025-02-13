@@ -212,7 +212,7 @@ public class FileService {
             ExternalSiteMapping mapping = siteService.addDefaultMapping(entry.getStudyId());
             Study study = studyService.createStudy(entry.getSiteId());
 
-            Data data = dataService.toData(entry, fileId, mapping.getMappingId(), study.getId());
+            Data data = dataService.toData(entry, fileId, mapping.getId(), study.getId());
             data = dataService.saveData(data);
 
             List<String> dvcats = parseCategories(entry.getDvcat());

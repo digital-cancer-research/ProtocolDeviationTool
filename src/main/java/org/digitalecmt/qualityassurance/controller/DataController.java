@@ -3,6 +3,7 @@ package org.digitalecmt.qualityassurance.controller;
 import java.util.List;
 
 import org.digitalecmt.qualityassurance.models.dto.Data.DataDto;
+import org.digitalecmt.qualityassurance.models.dto.Data.DataUpdateDto;
 import org.digitalecmt.qualityassurance.service.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,7 +38,7 @@ public class DataController {
      */
     @GetMapping
     public ResponseEntity<List<DataDto>> getData() {
-        return ResponseEntity.ok(dataService.getPdData());
+        return ResponseEntity.ok(dataService.getPdDataByTeamId(null));
     }
 
     /**
@@ -63,13 +64,13 @@ public class DataController {
         return ResponseEntity.ok(dataService.getPdDataByTeamId(teamId));
     }
     
-    @GetMapping(params = "studyId")
-    public ResponseEntity<List<DataDto>> getDataByStudy(@RequestParam String studyId) {
-        return ResponseEntity.ok(dataService.getPdDataByStudyId(studyId));
+    @GetMapping(params = "study")
+    public ResponseEntity<List<DataDto>> getDataByStudy(@RequestParam String study) {
+        return ResponseEntity.ok(dataService.getPdDataByStudy(study));
     }
 
     @PutMapping("/update-entry")
-    public ResponseEntity<Void> updateEntry(@RequestBody DataDto entry) {
+    public ResponseEntity<Void> updateEntry(@RequestBody DataUpdateDto entry) {
         dataService.updateEntry(entry);
         return new ResponseEntity<>(HttpStatus.OK);
     }

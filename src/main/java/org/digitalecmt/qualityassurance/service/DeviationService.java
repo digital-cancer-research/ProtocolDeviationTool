@@ -35,32 +35,31 @@ public class DeviationService {
     @Autowired
     DvdecodRepository dvdecodRepository;
 
-    public List<String> getDvcats() {
-        return null;
+    public List<Dvcat> getDvcats() {
+        return dvcatRepository.findAll();
     }
 
-    public List<String> getDvdecods() {
-        return null;
+    public List<Dvdecod> getDvdecods() {
+        return dvdecodRepository.findAll();
     }
 
-    public List<String> getDvdecodsByDvcat(String dvcat) {
-        return null;
-    }
-
-    public List<String> getDvterms() {
-        return null;
-    }
-
-    public String getDvtermByDvdecod(String dvdecod) {
-        return null;
+    public List<Dvdecod> getDvdecodsByDvcats(List<Long> dvcat) {
+        if (dvcat == null || dvcat.isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            return dvcat.stream()
+                    .map(dvdecodRepository::findByDvcatId)
+                    .flatMap(List::stream)
+                    .toList();
+        }
     }
 
     /**
      * Categorises the data based on the provided DV categories and DV decodes.
      *
-     * @param dvcats the list of DV categories
+     * @param dvcats   the list of DV categories
      * @param dvdecods the list of DV decodes
-     * @param dataId the ID of the data
+     * @param dataId   the ID of the data
      * @return true if all categories and decodes are valid, false otherwise
      */
     public boolean categoriseData(List<String> dvcats, List<String> dvdecods, Long dataId) {
@@ -68,6 +67,10 @@ public class DeviationService {
         List<DataCategory> categories = saveDvcatCategorisation(validDvcats, dataId);
         List<DataSubCategory> validDvdecods = validateAndSaveDvdecodCategorisation(dvdecods, categories);
         return (dvcats.size() == validDvcats.size()) & (dvdecods.size() == validDvdecods.size());
+    }
+
+    public void removeCategorisation(long dataId) {
+        dataCategoryRepository.deleteAllByDataId(dataId);
     }
 
     /**
@@ -106,7 +109,7 @@ public class DeviationService {
     /**
      * Validates and saves the categorisation of DV decodes.
      *
-     * @param dvdecods the list of DV decodes
+     * @param dvdecods   the list of DV decodes
      * @param categories the list of data categories
      * @return the list of saved data subcategories
      */
@@ -138,7 +141,7 @@ public class DeviationService {
     /**
      * Saves the categorisation of a DV decode.
      *
-     * @param dvdecod the DV decode entity
+     * @param dvdecod  the DV decode entity
      * @param category the data category
      * @return the saved data subcategory
      */
@@ -173,9 +176,9 @@ public class DeviationService {
     /**
      * Retrieves an entity by its description using the provided finder function.
      *
-     * @param <T> the type of the entity
+     * @param <T>         the type of the entity
      * @param description the description of the entity
-     * @param finder the function to find the entity by description
+     * @param finder      the function to find the entity by description
      * @return an Optional containing the found entity, or empty if not found
      */
     private <T> Optional<T> getByDescription(String description, Function<String, Optional<T>> finder) {

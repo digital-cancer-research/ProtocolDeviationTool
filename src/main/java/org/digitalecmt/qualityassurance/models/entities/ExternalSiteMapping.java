@@ -34,7 +34,7 @@ public class ExternalSiteMapping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mapping_id")
-    private Long mappingId;
+    private Long id;
     
     @NotNull
     @Size(min = 1, max = 255)
