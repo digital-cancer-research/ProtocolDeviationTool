@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -46,13 +47,6 @@ public class DataAudit {
     private Long dataId;
 
     /**
-     * The action performed.
-     * Must not be null.
-     */
-    @NotNull
-    private String action;
-
-    /**
      * The original value before the change.
      * Must not be null.
      */
@@ -74,4 +68,11 @@ public class DataAudit {
      */
     @NotNull
     private LocalDateTime date;
+
+    @PrePersist
+    public void prePersist() {
+        if (date == null) {
+            date = LocalDateTime.now();
+        }
+    }
 }

@@ -9,6 +9,7 @@ import org.digitalecmt.qualityassurance.models.dto.Data.CategorisationDto;
 import org.digitalecmt.qualityassurance.models.dto.Data.DataDto;
 import org.digitalecmt.qualityassurance.models.dto.Data.DataUpdateDto;
 import org.digitalecmt.qualityassurance.models.entities.Data;
+import org.digitalecmt.qualityassurance.models.entities.DataAudit;
 import org.digitalecmt.qualityassurance.models.entities.Study;
 import org.digitalecmt.qualityassurance.models.pojo.DataEntry;
 import org.digitalecmt.qualityassurance.repository.DataRepository;
@@ -26,11 +27,10 @@ public class DataService {
     private DeviationService deviationService;
 
     @Autowired
-    private StudyService studyService;
+    private DataAuditService dataAuditService;
 
-    public List<DataDto> getPdData() {
-        return null;
-    }
+    @Autowired
+    private StudyService studyService;
 
     public List<DataDto> getPdDataByTeamId(Long teamId) {
         List<BaseDataDto> baseData = dataRepository.findDataByTeam(teamId);
@@ -68,12 +68,29 @@ public class DataService {
 
     @Transactional
     public void updateEntry(DataUpdateDto dataDto) {
+        DataDto originalData = getDataDetails(dataRepository.findDataById(dataDto.getId())).get(0);
+        
         deviationService.removeCategorisation(dataDto.getId());
         deviationService.categoriseData(dataDto.getDvcat(), dataDto.getDvdecod(), dataDto.getId());
         Study study = studyService.createStudy(dataDto.getStudyId());
         Data data = dataRepository.findById(dataDto.getId()).get();
         data.setStudyId(study.getId());
         dataRepository.save(data);
+
+
+        DataAudit audit = DataAudit.builder()
+        .dataId(dataDto.getId())
+        .userId(dataDto.getAdminId())
+        .originalValue(
+            "DVCAT: " + originalData.getDvcat() + "\n" +
+            "DVDECOD: " + originalData.getDvdecod()
+        )
+        .newValue(
+            "DVCAT: " + dataDto.getDvcat() + "\n" +
+            "DVDECOD: " + dataDto.getDvdecod()
+        )
+        .build();
+        dataAuditService.saveAudit(audit);
     }
 
     public Data saveData(Data data) {

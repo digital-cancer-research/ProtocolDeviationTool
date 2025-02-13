@@ -158,6 +158,13 @@ public interface DataRepository extends JpaRepository<Data, Long> {
                         "JOIN ExternalSiteMapping esm ON esm.id = d.mappingId " +
                         "WHERE s.externalStudyId = :study")
         public List<BaseDataDto> findDataByStudy(@Param("study") String externalStudyId);
+        
+        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Data.BaseDataDto(d.id, esm.externalSiteId, s.externalStudyId, d.dvspondes) "
+                        +
+                        "FROM Data d JOIN Study s ON d.studyId = s.id " +
+                        "JOIN ExternalSiteMapping esm ON esm.id = d.mappingId " +
+                        "WHERE d.id = :id")
+        public List<BaseDataDto> findDataById(@Param("id") long id);
 
         @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Data.CategorisationDto(dv.description, dvd.description, dvd.dvterm) "
                         +

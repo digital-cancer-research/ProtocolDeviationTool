@@ -7,6 +7,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.digitalecmt.qualityassurance.models.pojo.AiResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,12 @@ import com.nimbusds.jose.shaded.gson.JsonObject;
  */
 @Service
 public class AiService {
+    
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    DataAuditService dataAuditService;
 
     @Value("${prediction.url}")
     private String url = "http://localhost:8088/prediction";

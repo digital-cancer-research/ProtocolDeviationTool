@@ -18,4 +18,10 @@ public class AiResponse {
     private String dvspondes;
     private List<Category> categories;
     private String timestamp;
+
+    @Override
+    public String toString() {
+        return "DVCAT = " + categories.stream().map(Category::getDvcat).toList() + '\n' +
+                "DVDECOD = " + categories.stream().map(Category::getDvdecod).toList();
+    }
 }

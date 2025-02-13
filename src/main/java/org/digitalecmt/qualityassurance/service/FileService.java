@@ -42,6 +42,9 @@ public class FileService {
     private FileAuditService fileAuditService;
 
     @Autowired
+    private DataAuditService dataAuditService;
+
+    @Autowired
     private FileRepository fileRepository;
 
     @Autowired
@@ -242,17 +245,20 @@ public class FileService {
      * @return true if categorisation was successful, false otherwise
      */
     private boolean handleAiCategorisation(Data data, AiCategorisationConfig config) {
-        AiResponse[] prediction = aiService.predict(data.getDvspondes(),
+        AiResponse[] predictions = aiService.predict(data.getDvspondes(),
                 config.getUncategorisedHandling().getNumberOfPredictions());
-        if (prediction != null) {
+        if (predictions != null) {
+            for (AiResponse prediction : predictions) {
+                dataAuditService.auditAiResponse(prediction, data.getId());
+            }
 
-            List<String> predictedDvcats = prediction[0]
+            List<String> predictedDvcats = predictions[0]
                     .getCategories()
                     .stream()
                     .map(p -> p.getDvcat())
                     .toList();
 
-            List<String> predictedDvdecods = prediction[0]
+            List<String> predictedDvdecods = predictions[0]
                     .getCategories()
                     .stream()
                     .map(p -> p.getDvdecod())

@@ -11,6 +11,7 @@ import org.digitalecmt.qualityassurance.models.dto.User.UserUpdateDto;
 import org.digitalecmt.qualityassurance.models.dto.User.UserWithTeamsDto;
 import org.digitalecmt.qualityassurance.models.entities.Team;
 import org.digitalecmt.qualityassurance.models.entities.User;
+import org.digitalecmt.qualityassurance.models.pojo.Role;
 import org.digitalecmt.qualityassurance.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,19 @@ public class UserService {
 
     @Autowired
     private AuthorisationService authService;
+
+    public User getAiUser() {
+        return userRepository.findByUsername("AI MODEL")
+        .orElseGet(() -> {
+            User user = User.builder()
+            .username("AI MODEL")
+            .role(Role.USER)
+            .isSite(false)
+            .isSponsor(false)
+            .build();
+            return userRepository.save(user);
+        });
+    }
 
     /**
      * Verifies if a user exists by their ID.

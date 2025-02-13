@@ -53,18 +53,21 @@ public class User {
      * The role of the user.
      * This field is an enumeration.
      */
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Role role;
 
     /**
      * Indicates if the user is a site.
      */
+    @NotNull
     @Column(name = "is_site")
     private Boolean isSite;
 
     /**
      * Indicates if the user is a sponsor.
      */
+    @NotNull
     @Column(name = "is_sponsor")
     private Boolean isSponsor;
 
