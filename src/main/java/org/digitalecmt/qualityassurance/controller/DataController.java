@@ -2,8 +2,10 @@ package org.digitalecmt.qualityassurance.controller;
 
 import java.util.List;
 
+import org.digitalecmt.qualityassurance.models.dto.Audit.DataAuditDto;
 import org.digitalecmt.qualityassurance.models.dto.Data.DataDto;
 import org.digitalecmt.qualityassurance.models.dto.Data.DataUpdateDto;
+import org.digitalecmt.qualityassurance.service.DataAuditService;
 import org.digitalecmt.qualityassurance.service.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,9 @@ public class DataController {
 
     @Autowired
     DataService dataService;
+
+    @Autowired
+    DataAuditService dataAuditService;
 
     /**
      * Handles GET requests to retrieve all protocol deviation data.
@@ -73,5 +78,11 @@ public class DataController {
     public ResponseEntity<Void> updateEntry(@RequestBody DataUpdateDto entry) {
         dataService.updateEntry(entry);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/audit")
+    public ResponseEntity<List<DataAuditDto>> getDataAudit() {
+        List<DataAuditDto> audits = dataAuditService.getAudits();
+        return ResponseEntity.ok(audits);
     }
 }

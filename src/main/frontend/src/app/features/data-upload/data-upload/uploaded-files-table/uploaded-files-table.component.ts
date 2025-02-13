@@ -4,9 +4,9 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { UploadedFile } from '../models/uploaded-file.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FileService } from '../file-list.service';
+import { FileService } from '../file.service';
 import { UserService } from 'src/app/core/new/services/user.service';
-import { map, mergeMap, of } from 'rxjs';
+import { mergeMap, of } from 'rxjs';
 
 /**
  * Component for displaying a table of uploaded files.

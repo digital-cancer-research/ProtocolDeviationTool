@@ -1,5 +1,8 @@
 package org.digitalecmt.qualityassurance.service;
 
+import java.util.List;
+
+import org.digitalecmt.qualityassurance.models.dto.Audit.DataAuditDto;
 import org.digitalecmt.qualityassurance.models.entities.DataAudit;
 import org.digitalecmt.qualityassurance.models.entities.User;
 import org.digitalecmt.qualityassurance.models.pojo.AiResponse;
@@ -29,5 +32,9 @@ public class DataAuditService {
                 .newValue(response.toString())
                 .build();
         saveAudit(audit);
+    }
+
+    public List<DataAuditDto> getAudits() {
+        return dataAuditRepository.findAllAudits();
     }
 }

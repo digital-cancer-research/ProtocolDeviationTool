@@ -3,7 +3,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { FileAudit } from '../data-upload/models/file-audit.model';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { FileService } from '../data-upload/file-list.service';
+import { FileService } from '../data-upload/file.service';
 
 @Component({
   selector: 'app-audit-trail',

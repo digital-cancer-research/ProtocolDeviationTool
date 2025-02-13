@@ -4,10 +4,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
 import { UploadError } from '../models/upload-error.model';
 import { MatPaginator } from '@angular/material/paginator';
-import { FileUpload } from '../../models/file-upload.model';
 import { UserService } from 'src/app/core/new/services/user.service';
 import { User } from 'src/app/core/new/services/models/user/user.model';
-import { FileService } from '../file-list.service';
+import { FileService } from '../file.service';
 import { DEFAULT_AI_CONFIG } from '../models/ai-categorisation-config.model';
 import { MatSort } from '@angular/material/sort';
 

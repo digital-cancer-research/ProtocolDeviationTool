@@ -35,18 +35,19 @@ public class ExternalSiteMapping {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mapping_id")
     private Long id;
-    
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "external_site_id")
-    private String externalSiteId;
 
     /**
      * The ID of the site.
      * This field is part of the composite key.
      */
+    @NotNull
     @Column(name = "site_id")
     private Long siteId;
+
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "external_site_id")
+    private String externalSiteId;
 
     @PrePersist
     public void prePersist() {
