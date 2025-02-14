@@ -56,7 +56,7 @@ export class UserManagementFormComponent {
   selectedTeams: Team[] = [];
 
   /** Observable for role names. */
-  @Input() roles: string[] = [];
+  roles: string[] = Object.keys(Role);
 
   /** Array of all available teams. */
   @Input() teams: Team[] = [];

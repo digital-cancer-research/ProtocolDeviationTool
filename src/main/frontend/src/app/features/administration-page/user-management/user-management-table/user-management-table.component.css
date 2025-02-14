@@ -2,26 +2,16 @@ mat-card {
     margin: 5px;
 }
 
-.checkbox {
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
+table {
+    width: 100%;
 }
 
-.confirm {
-    display: flex;
-    align-items: center;
+.mat-mdc-form-field {
+    font-size: 14px;
+    width: 100%;
 }
 
-.checkbox, app-multi-select {
-    width: fit-content;
-}
-
-.checkbox {
-    padding-right: 5px;
-}
-
-.spinner-container {
-    height: 20px;
-    width: 20px;
+td,
+th {
+    width: 25%;
 }

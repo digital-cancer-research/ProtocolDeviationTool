@@ -2,6 +2,7 @@ package org.digitalecmt.qualityassurance.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.digitalecmt.qualityassurance.exception.UserNotAuthorisedException;
 import org.digitalecmt.qualityassurance.exception.UserNotFoundException;
@@ -11,6 +12,7 @@ import org.digitalecmt.qualityassurance.models.dto.User.UserUpdateDto;
 import org.digitalecmt.qualityassurance.models.dto.User.UserWithTeamsDto;
 import org.digitalecmt.qualityassurance.models.entities.Team;
 import org.digitalecmt.qualityassurance.models.entities.User;
+import org.digitalecmt.qualityassurance.models.mapper.UserMapper;
 import org.digitalecmt.qualityassurance.models.pojo.Role;
 import org.digitalecmt.qualityassurance.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,17 +33,22 @@ public class UserService {
     @Autowired
     private AuthorisationService authService;
 
+    Logger logger = Logger.getLogger("");
+
+    @Autowired
+    private UserMapper userMapper;
+
     public User getAiUser() {
         return userRepository.findByUsername("AI MODEL")
-        .orElseGet(() -> {
-            User user = User.builder()
-            .username("AI MODEL")
-            .role(Role.USER)
-            .isSite(false)
-            .isSponsor(false)
-            .build();
-            return userRepository.save(user);
-        });
+                .orElseGet(() -> {
+                    User user = User.builder()
+                            .username("AI MODEL")
+                            .role(Role.USER)
+                            .isSite(false)
+                            .isSponsor(false)
+                            .build();
+                    return userRepository.save(user);
+                });
     }
 
     /**
@@ -108,7 +115,7 @@ public class UserService {
     public User updateUser(UserUpdateDto userDto) {
         Long adminId = userDto.getAdminId();
         authService.checkIfUserIsAdmin(adminId);
-        
+
         Long userId = userDto.getId();
         User oldUser = findUserById(userId);
         String oldUserDetails = oldUser.toString();
@@ -136,7 +143,7 @@ public class UserService {
     public void deleteUserById(UserDeleteDto userDto) {
         Long adminId = userDto.getAdminId();
         authService.checkIfUserIsAdmin(adminId);
-        
+
         Long userId = userDto.getId();
         User user = findUserById(userId);
 
@@ -150,7 +157,10 @@ public class UserService {
      * @return a list of all users
      */
     public List<User> getUsers() {
-        return userRepository.findAll();
+        return userRepository.findAll()
+        .stream()
+        .filter(user -> !user.getUsername().equalsIgnoreCase("AI MODEL"))
+        .toList();
     }
 
     public List<UserWithTeamsDto> getUsersWithTeams() {
@@ -158,7 +168,9 @@ public class UserService {
         List<UserWithTeamsDto> userWithTeams = new ArrayList<>();
         users.forEach(user -> {
             List<Team> teams = getUserTeams(user.getId());
-            userWithTeams.add(new UserWithTeamsDto(user, teams));
+            UserWithTeamsDto userDto = userMapper.toUserWithTeamsDto(user);
+            userDto.setTeams(teams);
+            userWithTeams.add(userDto);
         });
         return userWithTeams;
     }

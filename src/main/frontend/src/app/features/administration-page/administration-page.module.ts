@@ -25,7 +25,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdministrationDataService } from './administration-data.service';
 import { AuditTrailManagementService } from './audit-trail-management/audit-trail-management.service';
 import { SiteManagementService } from './site-management/site-management.service';
-import { UserManagementService } from './user-management/user-management.service';
 import { UserManagementFormComponent } from './user-management/user-management-form/user-management-form.component';
 import { UserManagementTableComponent } from './user-management/user-management-table/user-management-table.component';
 import { TeamManagementFormComponent } from './team-management/team-management-form/team-management-form.component';
@@ -74,7 +73,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     AdministrationDataService,
     AuditTrailManagementService,
     SiteManagementService,
-    UserManagementService
   ]
 })
 export class AdministrationPageModule {

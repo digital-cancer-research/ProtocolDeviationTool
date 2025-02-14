@@ -1,5 +1,6 @@
 package org.digitalecmt.qualityassurance.models.dto.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.digitalecmt.qualityassurance.models.entities.Team;
@@ -21,6 +22,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UserWithTeamsDto {
+
+    private long id;
 
     /**
      * The username of the user.
@@ -48,6 +51,8 @@ public class UserWithTeamsDto {
      * The list of teams associated with the user.
      */
     List<Team> teams;
+
+    private LocalDateTime dateCreated;
 
     /**
      * Constructs a UserWithTeamsDto from a User entity and a list of teams.

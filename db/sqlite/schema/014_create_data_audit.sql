@@ -1,7 +1,7 @@
 CREATE TABLE data_audit (
     audit_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER REFERENCES user(user_id) ON DELETE SET NULL,
-    data_id INTEGER REFERENCES data(data_id) ON DELETE SET NULL,
+    user_id INTEGER REFERENCES user(user_id) ON DELETE SET NULL ON UPDATE CASCADE,
+    data_id INTEGER REFERENCES data(data_id) ON DELETE CASCADE ON UPDATE CASCADE,
     original_value TEXT NOT NULL,
     new_value TEXT NOT NULL,
     date DATETIME

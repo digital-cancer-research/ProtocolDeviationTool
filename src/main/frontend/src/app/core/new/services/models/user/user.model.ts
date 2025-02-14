@@ -6,5 +6,5 @@ export interface User {
     role: Role,
     isSite: boolean;
     isSponsor: boolean;
-    dateCreated: string;
+    dateCreated: Date;
 }

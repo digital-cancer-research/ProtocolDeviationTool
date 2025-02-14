@@ -1,11 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { User } from './models/user/user.model';
 import { Team } from './models/team/team.model';
 import { UserWithTeams } from './models/user/user-with-teams.model';
 import { UserUpdateWithTeams } from './models/user/user-update-with-teams.model';
 import { UserCreateWithTeams } from './models/user/user-create-with-teams.model';
+import { Role } from './models/user/role.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,7 @@ export class UserService {
   currentUserSubject = new BehaviorSubject<User | null>(this.getUser());
   currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor() { 
+  constructor() {
     const originalNext = this.currentUserSubject.next.bind(this.currentUserSubject);
     this.currentUserSubject.next = (user: User | null) => {
       this.setUser(user);
