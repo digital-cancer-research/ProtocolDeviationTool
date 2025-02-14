@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, inject, ChangeDetectorRef, ViewChild, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, inject, ChangeDetectorRef, ViewChild, signal, Output, EventEmitter } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { map, merge, mergeMap, Observable, of } from 'rxjs';
@@ -60,6 +60,9 @@ export class UserManagementFormComponent {
 
   /** Array of all available teams. */
   @Input() teams: Team[] = [];
+
+
+  @Output() userCreated = new EventEmitter<void>();
 
   /** Multi-select component for selecting teams. */
   @ViewChild(MultiSelectComponent) multiSelectComponent!: MultiSelectComponent<Team>;
@@ -167,6 +170,7 @@ export class UserManagementFormComponent {
    * Handles successful user creation by resetting the form and showing a success message.
    */
   private handleSuccess(): void {
+    this.userCreated.emit();
     this.inProgress = false;
     const username = this.email.getRawValue() ?? 'User';
     this.resetForm();

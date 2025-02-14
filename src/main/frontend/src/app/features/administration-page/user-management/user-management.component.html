@@ -1,5 +1,5 @@
-<app-user-management-form [teams]="teams">
+<app-user-management-form [teams]="teams" (userCreated)="updateData()">
 </app-user-management-form>
 <app-user-management-table
-    [data$]="data$" [teams]="teams">
+    [teams]="teams">
 </app-user-management-table>

@@ -1,8 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { TeamService } from 'src/app/core/new/services/team.service';
 import { Role } from 'src/app/core/new/services/models/user/role.enum';
-import { UserService } from 'src/app/core/new/services/user.service';
 import { Team } from 'src/app/core/new/services/models/team/team.model';
+import { UserManagementTableComponent } from './user-management-table/user-management-table.component';
 
 /**
  * UserManagementComponent is responsible for managing the user management UI element of the application.
@@ -14,14 +14,11 @@ import { Team } from 'src/app/core/new/services/models/team/team.model';
 	styleUrls: ['./user-management.component.css']
 })
 export class UserManagementComponent {
-	private readonly userService = inject(UserService);
 	private readonly teamService = inject(TeamService);
+	@ViewChild(UserManagementTableComponent) table!: UserManagementTableComponent;
 
 	/** Array of role names. */
 	roles = Object.keys(Role);
-
-	/** Observable for users with their associated teams. */
-	data$ = this.userService.getUsersWithTeams$();
 
 	/** Array of all available teams. */
 	teams: Team[] = [];
@@ -31,5 +28,9 @@ export class UserManagementComponent {
 	 */
 	constructor() {
 		this.teamService.getTeams$().subscribe(teams => this.teams = teams);	
+	}
+
+	updateData() {
+		this.table.updateData();
 	}
 }

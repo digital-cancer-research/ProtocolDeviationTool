@@ -15,8 +15,10 @@ import org.springframework.data.repository.query.Param;
 public interface UserRepository
         extends JpaRepository<User, Long> {
 
-	Optional<User> findByUsername(String username);
+	public Optional<User> findByUsername(String username);
+
+	public List<User> findAllByOrderByUsernameAsc();
 	
 	@Query("SELECT t FROM Team t JOIN UserTeam ut ON t.id = ut.teamId JOIN User u ON ut.userId = u.id WHERE u.id = :userId")
-	List<Team> findUserTeamsByUserId(@Param("userId") Long userId);
+	public List<Team> findUserTeamsByUserId(@Param("userId") Long userId);
 }

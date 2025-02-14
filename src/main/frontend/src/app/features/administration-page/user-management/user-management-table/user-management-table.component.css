@@ -2,6 +2,11 @@ mat-card {
     margin: 5px;
 }
 
+mat-card-header {
+    display: flex;
+    flex-direction: column;
+}
+
 table {
     width: 100%;
 }

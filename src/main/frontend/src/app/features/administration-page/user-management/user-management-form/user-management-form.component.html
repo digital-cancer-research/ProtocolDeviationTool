@@ -1,12 +1,14 @@
 <mat-card appearance="outlined">
     <mat-card-header>
-        Create user
+        <mat-card-title>
+            Create User
+        </mat-card-title>
     </mat-card-header>
     <mat-card-content>
         <mat-form-field class="email" appearance="outline">
             <mat-label>Enter your email</mat-label>
-            <input matInput placeholder=" john.smith@example.com" [formControl]="email" (blur)="updateEmailErrorMessage()"
-                required />
+            <input matInput placeholder=" john.smith@example.com" [formControl]="email"
+                (blur)="updateEmailErrorMessage()" required />
             @if (email.invalid) {
             <mat-error>{{ emailErrorMessage() }}</mat-error>
             }
@@ -20,21 +22,15 @@
             </mat-select>
             <mat-error>{{ roleErrorMessage() }}</mat-error>
         </mat-form-field>
-        <app-multi-select class="teams" #multiSelect [items]="teams" [keyField]="'name'" 
-            [search]="true" [searchPlaceholder]="'Search teams'"
-            (confirmedItems)="onSelectTeam(teams)"
-            appearance="outline">
+        <app-multi-select class="teams" #multiSelect [items]="teams" [keyField]="'name'" [search]="true"
+            [searchPlaceholder]="'Search teams'" (confirmedItems)="onSelectTeam(teams)" appearance="outline">
         </app-multi-select>
         <div class="confirm">
-            <button mat-raised-button 
-            [disabled]="email.errors || role.errors || inProgress"
-            (click)="onConfirm()">
+            <button mat-raised-button [disabled]="email.errors || role.errors || inProgress" (click)="onConfirm()">
                 Create
             </button>
             <div class="spinner">
-                <mat-progress-spinner *ngIf="inProgress"
-                    mode="indeterminate" 
-                    diameter="20"> 
+                <mat-progress-spinner *ngIf="inProgress" mode="indeterminate" diameter="20">
                 </mat-progress-spinner>
             </div>
         </div>

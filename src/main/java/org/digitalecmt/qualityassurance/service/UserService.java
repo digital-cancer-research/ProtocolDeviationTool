@@ -157,7 +157,7 @@ public class UserService {
      * @return a list of all users
      */
     public List<User> getUsers() {
-        return userRepository.findAll()
+        return userRepository.findAllByOrderByUsernameAsc()
         .stream()
         .filter(user -> !user.getUsername().equalsIgnoreCase("AI MODEL"))
         .toList();
