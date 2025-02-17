@@ -17,14 +17,13 @@ export class AuditTrailManagementComponent {
 
   protected displayedColumns: string[] = [
     'username',
-    'dateTimeEdited',
-    'entityChanged',
-    'attributeChanged',
-    'changeFrom',
-    'changeTo'
+    'date',
+    'action',
+    'originalValue',
+    'newValue'
   ];
 
-  protected dataSource: MatTableDataSource<TableDataEntry> = new MatTableDataSource();
+  protected dataSource: MatTableDataSource<AuditTrailData> = new MatTableDataSource();
 
   @ViewChild(MatPaginator) private paginator!: MatPaginator;
   @ViewChild(MatSort) private sort!: MatSort;
@@ -52,7 +51,7 @@ export class AuditTrailManagementComponent {
     this.auditTrailService.getAuditTrailData().subscribe(
       {
         next: (data) => {
-          this.dataSource.data = this.formatData(data);
+          this.dataSource.data = data;
         },
         error: (error) => {
           this._snackbar.open(`Couldn't load audit trail data: ${error.message}`, "Dismiss", {
@@ -61,21 +60,6 @@ export class AuditTrailManagementComponent {
         }
       }
     );
-  }
-
-  /**
-   * Formats the audit trail data by converting the dateTimeEdited string to a Date object.
-   * 
-   * @param data - An array of AuditTrailData objects to be formatted.
-   * @returns An array of TableDataEntry objects with dateTimeEdited as a Date object.
-   */
-  private formatData(data: AuditTrailData[]) {
-    return data.map(entry => {
-      return {
-        ...entry,
-        dateTimeEdited: new Date(entry.dateTimeEdited)
-      } as TableDataEntry
-    })
   }
 
   /**
@@ -96,8 +80,4 @@ export class AuditTrailManagementComponent {
       this.dataSource.paginator.firstPage();
     }
   }
-}
-
-interface TableDataEntry extends Omit<AuditTrailData, 'dateTimeEdited'> {
-  dateTimeEdited: Date
 }

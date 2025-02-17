@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.digitalecmt.qualityassurance.models.dto.Audit.AdminAuditDto;
 import org.digitalecmt.qualityassurance.models.entities.AdminAudit;
 import org.digitalecmt.qualityassurance.models.entities.Team;
 import org.digitalecmt.qualityassurance.models.entities.User;
@@ -16,6 +17,10 @@ public class AdminAuditService {
 
     @Autowired 
     private AdminAuditRepository adminAuditRepository;
+
+    public List<AdminAuditDto> findAllAudits() {
+        return adminAuditRepository.findAllAudits();
+    }
 
     public AdminAudit auditCreateUser(User user, Long adminId) {
         AdminAudit audit = AdminAudit.builder()

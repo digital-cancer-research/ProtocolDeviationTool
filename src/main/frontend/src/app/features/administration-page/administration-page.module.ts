@@ -22,7 +22,6 @@ import { TeamManagementComponent } from './team-management/team-management.compo
 import { UserManagementComponent } from './user-management/user-management.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { AdministrationDataService } from './administration-data.service';
 import { AuditTrailManagementService } from './audit-trail-management/audit-trail-management.service';
 import { SiteManagementService } from './site-management/site-management.service';
 import { UserManagementFormComponent } from './user-management/user-management-form/user-management-form.component';
@@ -76,7 +75,6 @@ import {MatChipsModule} from '@angular/material/chips';
     ReactiveFormsModule
   ],
   providers: [
-    AdministrationDataService,
     AuditTrailManagementService,
     SiteManagementService,
   ]

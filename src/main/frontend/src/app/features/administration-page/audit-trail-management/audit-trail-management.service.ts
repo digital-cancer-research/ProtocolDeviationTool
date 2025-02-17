@@ -7,7 +7,7 @@ import { AuditTrailData } from '../models/audit-trail-data.model';
   providedIn: 'root',
 })
 export class AuditTrailManagementService {
-  private readonly baseUrl = 'api/users';
+  private readonly BASE_url = 'api/audit/admin';
 
   constructor(private http: HttpClient) { }
 
@@ -20,6 +20,6 @@ export class AuditTrailManagementService {
    * @returns An Observable that emits an array of AuditTrailData objects representing the audit trail information.
    */
   getAuditTrailData(): Observable<AuditTrailData[]> {
-    return this.http.get<AuditTrailData[]>(`${this.baseUrl}/get-audit-trail-data`);
+    return this.http.get<AuditTrailData[]>(`${this.BASE_url}`);
   }
 }
