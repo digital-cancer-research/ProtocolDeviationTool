@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 /**
  * Service class for managing teams.
  */
@@ -36,7 +35,7 @@ public class TeamService {
      * @return a list of all teams
      */
     public List<Team> findTeams() {
-        return teamRepository.findAll();
+        return teamRepository.findAllByOrderByNameAsc();
     }
 
     /**
@@ -93,7 +92,7 @@ public class TeamService {
         Team team = teamDto.toTeam();
         adminAuditService.auditCreateTeam(team, adminId);
 
-        return team;
+        return teamRepository.save(team);
     }
 
     /**
@@ -110,20 +109,18 @@ public class TeamService {
         Long teamId = teamDto.getTeamId();
 
         authService.checkIfUserIsAdmin(adminId);
-        Team oldTeam = findTeamById(teamId);
-        String oldTeamDetails = oldTeam.toString();
+        Team team = findTeamById(teamId);
+        
+        if (team.getName().equals(teamDto.getName())) {
+            return team;
+        } else {
+            String oldTeamDetails = team.toString();
+            team.setName(teamDto.getName());
+            teamRepository.save(team);
+            adminAuditService.auditUpdateTeam(team, oldTeamDetails, adminId);
 
-        Team team = teamDto.toTeam();
-        team.setDateCreated(oldTeam.getDateCreated());
-
-        if (team.toString().equals(oldTeamDetails)) {
             return team;
         }
-
-        teamRepository.save(team);
-        adminAuditService.auditUpdateTeam(team, oldTeamDetails, adminId);
-
-        return team;
     }
 
     /**

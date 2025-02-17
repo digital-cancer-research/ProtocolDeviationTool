@@ -129,8 +129,9 @@ public class TeamController {
      *         thrown and handled by the global exception handler.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteTeam(@PathVariable TeamDeleteDto team) {
-        teamService.deleteTeam(team);
+    public ResponseEntity<HttpStatus> deleteTeam(@PathVariable("id") long teamId, @RequestParam("adminId") long adminId) {
+        TeamDeleteDto deleteDto = new TeamDeleteDto(adminId, teamId);
+        teamService.deleteTeam(deleteDto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

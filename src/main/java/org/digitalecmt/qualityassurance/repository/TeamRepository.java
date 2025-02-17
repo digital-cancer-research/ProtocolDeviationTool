@@ -31,7 +31,8 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
         */
        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Team.TeamWithAdminUsernameDto(" +
                      "t.id, t.name, t.createdBy, t.dateCreated, u.username) " +
-                     "FROM Team t JOIN User u ON t.createdBy = u.id")
+                     "FROM Team t JOIN User u ON t.createdBy = u.id " + 
+                     "ORDER BY t.name ASC")
        List<TeamWithAdminUsernameDto> findTeamsWithAdminUsername();
 
        /**
@@ -48,6 +49,9 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
         */
        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Team.TeamWithAdminUsernameDto(" +
                      "t.id, t.name, t.dateCreated, u.username) " +
-                     "FROM Team t JOIN User u ON t.createdBy = u.id WHERE t.id = :teamId")
+                     "FROM Team t JOIN User u ON t.createdBy = u.id WHERE t.id = :teamId " +
+                     "ORDER BY t.name ASC")
        Optional<TeamWithAdminUsernameDto> findTeamWithAdminUsername(@Param("teamId") Long teamId);
+
+       List<Team> findAllByOrderByNameAsc();
 }
