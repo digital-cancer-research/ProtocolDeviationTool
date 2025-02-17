@@ -1,45 +1,52 @@
-import { AfterViewInit, Component, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, inject, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { TeamWithDetails } from 'src/app/core/models/team/team-with-details.model';
-import { TeamService } from 'src/app/core/services/team.service';
 import { TeamManagementEditDialogueComponent } from '../team-management-edit-dialogue/team-management-edit-dialogue.component';
-import { catchError, map, mergeMap, of, switchMap, tap } from 'rxjs';
-import { Team } from 'src/app/core/models/team/team.model';
+import { catchError, of, Subscription, switchMap, tap } from 'rxjs';
+import { TeamService } from 'src/app/core/new/services/team.service';
+import { Team } from 'src/app/core/new/services/models/team/team.model';
+import { UserService } from 'src/app/core/new/services/user.service';
+import { TeamUpdate } from 'src/app/core/new/services/models/team/team-update.model';
 
 @Component({
   selector: 'app-team-management-table',
   templateUrl: './team-management-table.component.html',
   styleUrl: './team-management-table.component.css'
 })
-export class TeamManagementTableComponent implements AfterViewInit, OnChanges {
+export class TeamManagementTableComponent implements AfterViewInit {
 
-  private teamService = inject(TeamService);
+  private readonly teamService = inject(TeamService);
+  private readonly userService = inject(UserService);
   private _snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
 
-  @Input() teams: TeamWithDetails[] = [];
-  @Output() dataUpdate: EventEmitter<TeamWithDetails[]> = new EventEmitter();
-
-  displayedColumns: string[] = ['teamName', 'username', 'dateCreated', 'actions'];
+  teams$ = this.teamService.getTeamsWithDetails$();
+  teams: TeamWithDetails[] = [];
+  teamSubscription!: Subscription;
+  displayedColumns: string[] = ['name', 'username', 'dateCreated', 'actions'];
   dataSource!: MatTableDataSource<TableData>;
 
+  @Output() dataUpdate: EventEmitter<TeamWithDetails[]> = new EventEmitter();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    const teamChanges = changes['teams'];
-    if (teamChanges && !teamChanges.firstChange) {
-      this.setupTable(teamChanges.currentValue);
+  updateTable() {
+    if (this.teamSubscription) {
+      this.teamSubscription.unsubscribe();
     }
+    this.ngAfterViewInit();
   }
 
   ngAfterViewInit(): void {
-    this.setupTable(this.teams);
+    this.teamSubscription = this.teams$.subscribe(teams => {
+      this.teams = teams;
+      this.setupTable(this.teams);
+    });
   }
 
   setupTable(teams: TeamWithDetails[]): void {
@@ -69,14 +76,14 @@ export class TeamManagementTableComponent implements AfterViewInit, OnChanges {
       .pipe(
         switchMap(editedTeam => {
           if (editedTeam) {
-            return this.updateTeam(editedTeam, row)
+            return this.updateTeam(editedTeam);
           } else {
             return of(null);
           }
         }),
         tap(editedTeam => {
           if (editedTeam !== null) {
-            this.handleSuccessfulEdit(editedTeam, row)
+            this.handleSuccessfulEdit(editedTeam, row);
           }
         }),
         catchError(error => this.handleEditError(error, row))
@@ -90,36 +97,32 @@ export class TeamManagementTableComponent implements AfterViewInit, OnChanges {
     });
   }
 
-  private updateTeam(newTeam: Team, originalTeam: TableData) {
-    return this.teamService.updateTeam$(newTeam).pipe(
-      map(updatedTeam => ({
-        ...updatedTeam,
-        username: originalTeam.username
-      } as TeamWithDetails))
+  private updateTeam(team: Team) {
+    return this.userService.currentUser$.pipe(
+      switchMap(user => {
+        if (user !== null) {
+          const teamUpdate = {
+            adminId: user.id,
+            teamId: team.id,
+            name: team.name
+          } as TeamUpdate;
+          return this.teamService.updateTeam$(teamUpdate).pipe();
+        } else {
+          this.openSnackbar("You must be logged in to update a team", "Dismiss");
+          return of(null);
+        }
+      })
     );
   }
 
-  private handleSuccessfulEdit(editedTeam: TeamWithDetails, originalTeam: TableData) {
-    const message = `${originalTeam.teamName} updated successfully`;
-    const undoAction = "Undo";
-
-    this.openSnackbar(message, undoAction)
-      .onAction()
-      .pipe(
-        switchMap(() => this.revertTeamChanges(originalTeam)),
-        tap(() => {
-          this.openSnackbar(`${originalTeam.teamName} reverted successfully`, "")
-          this.updateLocalTeamData(originalTeam)
-        }),
-        catchError(error => this.handleRevertError(error, originalTeam))
-      )
-      .subscribe();
-
-    this.updateLocalTeamData(editedTeam);
-  }
-
-  private revertTeamChanges(team: TableData) {
-    return this.teamService.updateTeam$(team);
+  private handleSuccessfulEdit(editedTeam: Team, originalTeam: TableData) {
+    const message = `${originalTeam.name} updated successfully`;
+    this.openSnackbar(message, "Dismiss");
+    const newTeamWithDetails = {
+      ...originalTeam,
+      name: editedTeam.name
+    } as TeamWithDetails;
+    this.updateLocalTeamData(newTeamWithDetails);
   }
 
   private updateLocalTeamData(team: TeamWithDetails) {
@@ -130,15 +133,8 @@ export class TeamManagementTableComponent implements AfterViewInit, OnChanges {
     }
   }
 
-  private handleRevertError(error: any, team: TableData) {
-    console.error('Error reverting team changes:', error);
-    this.openSnackbar(`Error reverting changes for ${team.teamName}`, "");
-    return of(null);
-  }
-
   private handleEditError(error: any, team: TableData) {
-    console.error('Error updating team:', error);
-    this.openSnackbar(`Error updating ${team.teamName}`, "");
+    this.openSnackbar(`Error updating ${team.name}. ${error.message}`, "Dismiss");
     return of(null);
   }
 
@@ -150,9 +146,9 @@ export class TeamManagementTableComponent implements AfterViewInit, OnChanges {
    * 
    * @returns The index of the team in the array if found, or -1 if the team is not present.
    */
-  getIndexOfTeam(target: Team): number {
-    const index = this.teams.findIndex(team => team.teamId === target.teamId);
-    return index ? index : -1;
+  getIndexOfTeam(target: TeamWithDetails): number {
+    const index = this.teams.findIndex(team => team.id === target.id);
+    return index;
   }
 
 
@@ -170,21 +166,28 @@ export class TeamManagementTableComponent implements AfterViewInit, OnChanges {
    */
   onDelete(row: TableData): void {
     row.disabled = true;
-    this.teamService.deleteTeam$(row.teamId).subscribe(
-      {
-        complete: () => {
-          this.openSnackbar(`${row.teamName} deleted successfully`, "");
-          this.teams = this.teams.filter(team => team.teamId !== row.teamId);
-          this.notifyParentOfChangeInData();
-        },
-        next: () => {
-          row.disabled = false;
-        },
-        error: (error) => {
-          this.openSnackbar(`Error deleting ${row.teamName}`, "");
-        }
+    this.userService.currentUser$.subscribe(user => {
+      if (user !== null) {
+        this.teamService.deleteTeam$(row.id, user.id).subscribe(
+          {
+            complete: () => {
+              this.openSnackbar(`${row.name} deleted successfully`, "");
+              this.teams = this.teams.filter(team => team.id !== row.id);
+              this.notifyParentOfChangeInData();
+              row.disabled = false;
+            },
+            error: (error) => {
+              this.openSnackbar(`Error deleting ${row.name}. ${error.message}`, "");
+              row.disabled = false;
+            }
+          }
+        )
+      } else {
+        this.openSnackbar("You must be logged in to delete a team", "Dismiss");
+        row.disabled = false;
       }
-    )
+    })
+
   }
 
 

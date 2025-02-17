@@ -1,9 +1,7 @@
 <app-team-management-form
-[teams]="teams"
 (dataUpdate)="onTeamCreationChange()">
 </app-team-management-form>
 
 <app-team-management-table
-[teams]="teams"
 (dataUpdate)="onDatabaseChange($event)">
 </app-team-management-table>

@@ -1,4 +1,4 @@
-import { Team } from "./team.model";
+import { Team } from "../../new/services/models/team/team.model";
 
 /**
  * @interface

@@ -1,8 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Team } from './models/team/team.model';
 import { TeamWithDetails } from './models/team/team-with-details.model';
+import { TeamUpdate } from './models/team/team-update.model';
+import { TeamCreate } from './models/team/team-create.model';
 
 @Injectable({
   providedIn: 'root'
@@ -56,9 +58,13 @@ export class TeamService {
    *                         Defaults to false.
    * @returns An Observable that emits an array of Team or TeamWithDetails objects.
    */
-  public getTeams$(includeDetails: boolean = false): Observable<Team[] | TeamWithDetails[]> {
-    const params = new HttpParams().set('includeDetails', includeDetails);
-    return this.http.get<Team[] | TeamWithDetails[]>(`${this.BASE_URL}`, { params });
+  public getTeams$(): Observable<Team[]> {
+    return this.http.get<Team[]>(`${this.BASE_URL}`);
+  }
+
+  public getTeamsWithDetails$(): Observable<TeamWithDetails[]> {
+    const params = new HttpParams().set('includeDetails', true);
+    return this.http.get<TeamWithDetails[]>(`${this.BASE_URL}`, { params });
   }
 
   /**
@@ -74,4 +80,15 @@ export class TeamService {
     return this.http.get<Team | TeamWithDetails>(`${this.BASE_URL}/${teamId}`, { params });
   }
 
+  public createTeam$(team: TeamCreate) {
+    return this.http.post<Team>(`${this.BASE_URL}`, team);
+  }
+
+  public updateTeam$(team: TeamUpdate) {
+    return this.http.put<Team>(`${this.BASE_URL}/${team.teamId}`, team);
+  }
+
+  public deleteTeam$(teamId: number, adminId: number) {
+    return this.http.delete<void>(`${this.BASE_URL}/${teamId}?adminId=${adminId}`);
+  }
 }

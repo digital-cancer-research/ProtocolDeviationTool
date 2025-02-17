@@ -1,8 +1,5 @@
 form {
     display: flex;
+    padding: 5px;
     flex-direction: column;
-}
-
-mat-form-field {
-    padding: 10px;
 }
