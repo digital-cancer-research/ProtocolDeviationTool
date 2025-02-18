@@ -52,9 +52,9 @@ export class NavigationRibbonComponent implements OnDestroy {
   /** Boolean to track if the user is deactivated. */
   isUserDeactivated: boolean = false;
 
-  /** Query parameter to remove the studyId when ribbon tab is changed */
+  /** Query parameter to remove the study when ribbon tab is changed */
   queryParams: Params = {
-    studyId: null
+    study: null
   }
 
   /**
@@ -161,7 +161,9 @@ export class NavigationRibbonComponent implements OnDestroy {
   updateActiveLink(url: string): void {
     url = '/' + url;
     const search = this.links.map(
-      links => url.includes(links.route));
+      link => {
+        return  link.route.includes(url)
+      });
     const index = search.lastIndexOf(true);
     this.activeLink = this.links[index];
   }
