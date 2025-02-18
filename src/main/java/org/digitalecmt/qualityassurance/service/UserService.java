@@ -2,7 +2,6 @@ package org.digitalecmt.qualityassurance.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.digitalecmt.qualityassurance.exception.UserNotAuthorisedException;
 import org.digitalecmt.qualityassurance.exception.UserNotFoundException;
@@ -32,8 +31,6 @@ public class UserService {
 
     @Autowired
     private AuthorisationService authService;
-
-    Logger logger = Logger.getLogger("");
 
     @Autowired
     private UserMapper userMapper;

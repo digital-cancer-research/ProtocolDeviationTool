@@ -5,6 +5,8 @@ import { Team } from './models/team/team.model';
 import { TeamWithDetails } from './models/team/team-with-details.model';
 import { TeamUpdate } from './models/team/team-update.model';
 import { TeamCreate } from './models/team/team-create.model';
+import { TeamWithStudies } from './models/team/team-with-studies.model';
+import { TeamWithStudiesUpdate } from './models/team/team-with-studies-update.model';
 
 @Injectable({
   providedIn: 'root'
@@ -67,6 +69,11 @@ export class TeamService {
     return this.http.get<TeamWithDetails[]>(`${this.BASE_URL}`, { params });
   }
 
+  public getTeamsWithStudies$(): Observable<TeamWithStudies[]> {
+    const params = new HttpParams().set('includeStudies', true);
+    return this.http.get<TeamWithStudies[]>(`${this.BASE_URL}`, { params });
+  }
+
   /**
    * Retrieves a team by its ID from the server.
    *
@@ -90,5 +97,9 @@ export class TeamService {
 
   public deleteTeam$(teamId: number, adminId: number) {
     return this.http.delete<void>(`${this.BASE_URL}/${teamId}?adminId=${adminId}`);
+  }
+
+  public setStudies$(team: TeamWithStudiesUpdate) {
+    return this.http.put<TeamWithStudiesUpdate>(`${this.BASE_URL}/${team.id}?includeStudies=true`, team);
   }
 }

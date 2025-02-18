@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Study } from '../new/services/models/study/study.model';
 
 @Injectable({
@@ -13,7 +13,8 @@ export class StudyService {
   private study$: Observable<Study | null> = new Observable();
 
   getStudies(teamId?: number): Observable<Study[]> {
-    return this.http.get<Study[]>(`${this.BASE_URL}?teamId=${teamId}`);
+    const paramString = teamId ? `?teamId=${teamId}` : "";
+    return this.http.get<Study[]>(`${this.BASE_URL}${paramString}`);
   }
 
   selectedStudy$() {

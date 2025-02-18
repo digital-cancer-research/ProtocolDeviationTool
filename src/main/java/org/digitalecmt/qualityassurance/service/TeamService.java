@@ -1,5 +1,6 @@
 package org.digitalecmt.qualityassurance.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.digitalecmt.qualityassurance.exception.TeamNotFoundException;
@@ -8,8 +9,14 @@ import org.digitalecmt.qualityassurance.models.dto.Team.TeamCreateDto;
 import org.digitalecmt.qualityassurance.models.dto.Team.TeamDeleteDto;
 import org.digitalecmt.qualityassurance.models.dto.Team.TeamUpdateDto;
 import org.digitalecmt.qualityassurance.models.dto.Team.TeamWithAdminUsernameDto;
+import org.digitalecmt.qualityassurance.models.dto.Team.TeamWithStudiesDto;
+import org.digitalecmt.qualityassurance.models.dto.Team.TeamWithStudiesUpdateDto;
+import org.digitalecmt.qualityassurance.models.entities.Study;
 import org.digitalecmt.qualityassurance.models.entities.Team;
+import org.digitalecmt.qualityassurance.models.entities.TeamStudy;
+import org.digitalecmt.qualityassurance.models.mapper.TeamMapper;
 import org.digitalecmt.qualityassurance.repository.TeamRepository;
+import org.digitalecmt.qualityassurance.repository.TeamStudyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +31,19 @@ public class TeamService {
     private TeamRepository teamRepository;
 
     @Autowired
+    private TeamStudyRepository teamStudyRepository;
+
+    @Autowired
     private AuthorisationService authService;
 
     @Autowired
     private AdminAuditService adminAuditService;
+
+    @Autowired
+    private StudyService studyService;
+
+    @Autowired
+    private TeamMapper teamMapper;
 
     /**
      * Retrieves all teams.
@@ -46,6 +62,18 @@ public class TeamService {
      */
     public List<TeamWithAdminUsernameDto> findTeamsWithAdminUsername() {
         return teamRepository.findTeamsWithAdminUsername();
+    }
+
+    public List<TeamWithStudiesDto> findTeamsWithStudies() {
+        List<Team> teams = findTeams();
+        List<TeamWithStudiesDto> dto = new ArrayList<>();
+        teams.forEach(team -> {
+            TeamWithStudiesDto teamWithStudies = teamMapper.toTeamWithStudiesDto(team);
+            List<Study> studies = studyService.findAllStudies(team.getId());
+            teamWithStudies.setStudies(studies);
+            dto.add(teamWithStudies);
+        });
+        return dto;
     }
 
     public void verifyTeamId(Long teamId) {
@@ -121,6 +149,17 @@ public class TeamService {
 
             return team;
         }
+    }
+
+    @Transactional
+    public void updateTeamWithStudies(TeamWithStudiesUpdateDto teamDto) {
+        teamDto.getStudyIds().forEach(study -> {
+            TeamStudy access = TeamStudy.builder()
+            .teamId(teamDto.getId())
+            .studyId(study)
+            .build();
+            teamStudyRepository.save(access);
+        });
     }
 
     /**

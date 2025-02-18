@@ -2,7 +2,6 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, mergeMap, Observable, of } from 'rxjs';
 import { Team } from '../models/team/team.model';
-import { TeamWithStudies } from '../models/team/team-with-studies.model';
 import { TeamCreation } from '../models/team/team-creation.model';
 import { TeamWithDetails } from '../models/team/team-with-details.model';
 import { ActivatedRoute } from '@angular/router';
@@ -95,18 +94,6 @@ export class TeamService {
    */
   changeTeamName$(team: Team): Observable<Team> {
     return this.http.put<Team>(`${this.URL}/${team.teamId}`, { team: team })
-  }
-
-  /**
-  * Retrieves team study access information for the given team IDs.
-  * 
-  * @param teamIds - Array of team IDs to fetch study access information for.
-  * @returns An Observable of an array of TeamWithStudies objects.
-  */
-  getTeamStudyAccess(teamIds: number[]): Observable<TeamWithStudies[]> {
-    let params = new HttpParams();
-    teamIds.forEach(id => params = params.append('teamIds', id.toString()));
-    return this.http.get<TeamWithStudies[]>(`${this.URL}/team-study-access`, { params });
   }
 
   /**

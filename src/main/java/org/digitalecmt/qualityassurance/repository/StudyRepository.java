@@ -45,7 +45,10 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
      * @param teamId the ID of the team
      * @return a list of studies
      */
-    @Query("SELECT s FROM Study s WHERE :teamId IS NULL OR :teamId IN " + 
-    "(SELECT ts.teamId FROM TeamStudy ts WHERE ts.teamId = :teamId) ORDER BY s.id")
+    @Query("SELECT s FROM Study s " + 
+    "LEFT JOIN TeamStudy ts ON ts.studyId = s.id " +
+    "WHERE :teamId IS NULL OR :teamId = ts.teamId " +
+    "GROUP BY s " + 
+    "ORDER BY s.externalStudyId")
     List<Study> findAll(@Param("teamId") Long teamId);
 }

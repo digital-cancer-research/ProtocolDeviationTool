@@ -38,5 +38,5 @@ public class TeamStudy {
      */
     @Id
     @Column(name = "study_id")
-    private String studyId;
+    private Long studyId;
 }

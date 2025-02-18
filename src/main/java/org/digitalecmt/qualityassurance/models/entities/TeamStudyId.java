@@ -28,9 +28,8 @@ public class TeamStudyId implements Serializable {
 
     /**
      * The ID of the study.
-     * The id must be within the range of 1 to 255 characters.
      */
     @Column(name = "study_id")
     @Size(min = 1, max = 255)
-    private String studyId;
+    private long studyId;
 }

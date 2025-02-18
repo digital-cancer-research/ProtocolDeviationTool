@@ -1,36 +1,32 @@
-<table mat-table [dataSource]="teams$" class="mat-elevation-z8">
+<table mat-table [dataSource]="data" class="mat-elevation-z8">
 
-    <ng-container matColumnDef="teamId">
-        <th mat-header-cell *matHeaderCellDef> Team ID </th>
-        <td mat-cell *matCellDef="let team"> {{team.teamId}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="teamName">
+    <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef> Team name </th>
-        <td mat-cell *matCellDef="let team"> {{team.teamName}} </td>
+        <td mat-cell *matCellDef="let team"> {{team.name}} </td>
     </ng-container>
     
     <ng-container matColumnDef="studies">
         <th mat-header-cell *matHeaderCellDef> Studies </th>
         <td mat-cell *matCellDef="let team" class="studies">
-            <mat-checkbox *ngFor="let study of studies" 
-            [checked]="isStudyForThisTeam(team, study)"
-            (change)="updateTeamStudyAccess($event.checked, team, study)">
-            {{study}} 
+            <mat-checkbox *ngFor="let study of studies"
+            [checked]="isStudySelected(team, study)"
+            (change)="assignStudyToTeam(team, study)"
+            >
+            {{study.externalStudyId}} 
             </mat-checkbox>
         </td>
     </ng-container>
 
-    <ng-container matColumnDef="confirm">
+    <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>  </th>
         <td mat-cell *matCellDef="let team"> 
             <button mat-flat-button 
-            [disabled]="!team.isEdited"
-            (click)="confirmTeamStudyAccess(team)">Confirm</button>
+            (click)="updateTeam(team)"
+            [disabled]="!isConfirmButtonActive(team)">
+            Confirm
+        </button>
         </td>
     </ng-container>
-
-
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;">

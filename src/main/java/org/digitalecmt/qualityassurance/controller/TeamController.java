@@ -6,6 +6,8 @@ import org.digitalecmt.qualityassurance.models.dto.Team.TeamCreateDto;
 import org.digitalecmt.qualityassurance.models.dto.Team.TeamDeleteDto;
 import org.digitalecmt.qualityassurance.models.dto.Team.TeamUpdateDto;
 import org.digitalecmt.qualityassurance.models.dto.Team.TeamWithAdminUsernameDto;
+import org.digitalecmt.qualityassurance.models.dto.Team.TeamWithStudiesDto;
+import org.digitalecmt.qualityassurance.models.dto.Team.TeamWithStudiesUpdateDto;
 import org.digitalecmt.qualityassurance.models.entities.Team;
 import org.digitalecmt.qualityassurance.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +62,12 @@ public class TeamController {
             List<Team> teams = teamService.findTeams();
             return new ResponseEntity<>(teams, HttpStatus.OK);
         }
+    }
+
+    @GetMapping(params = "includeStudies")
+    public ResponseEntity<List<TeamWithStudiesDto>> getTeamsWithStudies(@RequestParam("includeStudies") boolean includeStudies) {
+        List<TeamWithStudiesDto> teams = teamService.findTeamsWithStudies();
+        return new ResponseEntity<>(teams, HttpStatus.OK);
     }
 
     /**
@@ -117,6 +125,12 @@ public class TeamController {
     public ResponseEntity<Team> updateTeam(@RequestBody(required = true) TeamUpdateDto team) {
         return new ResponseEntity<>(teamService.updateTeam(team), HttpStatus.CREATED);
     }
+    
+    @PutMapping(path = "/{id}", params = "includeStudies")
+    public ResponseEntity<Void> updateTeamWithStudies(@RequestBody(required = true) TeamWithStudiesUpdateDto team) {
+        teamService.updateTeamWithStudies(team);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 
     /**
      * Deletes a team with the specified ID.
@@ -129,7 +143,8 @@ public class TeamController {
      *         thrown and handled by the global exception handler.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteTeam(@PathVariable("id") long teamId, @RequestParam("adminId") long adminId) {
+    public ResponseEntity<HttpStatus> deleteTeam(@PathVariable("id") long teamId,
+            @RequestParam("adminId") long adminId) {
         TeamDeleteDto deleteDto = new TeamDeleteDto(adminId, teamId);
         teamService.deleteTeam(deleteDto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
