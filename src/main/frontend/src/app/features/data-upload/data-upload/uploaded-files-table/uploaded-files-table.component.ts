@@ -60,7 +60,8 @@ export class UploadedFilesTableComponent implements AfterViewInit {
   formatFiles(files: UploadedFile[]): TableDataEntry[] {
     return files.map((file) => ({
       ...file,
-      actions: true
+      actions: true,
+      isFileBeingDeleted: false
     }));
   }
 
@@ -84,6 +85,7 @@ export class UploadedFilesTableComponent implements AfterViewInit {
    * @param file - The file to delete.
    */
   onDelete(file: TableDataEntry) {
+    file.isFileBeingDeleted = true;
     this.userService.currentUser$.pipe(
       mergeMap(user => {
         if (user !== null) {
@@ -103,11 +105,10 @@ export class UploadedFilesTableComponent implements AfterViewInit {
       },
       error: (error) => {
         this.openSnackbar(`Error deleting ${file.fileName}. ${error.message}`);
+        file.isFileBeingDeleted = false;
       }
     });
-
   }
-
 
   /**
    * Opens a snackbar with the given message.
@@ -126,4 +127,5 @@ export class UploadedFilesTableComponent implements AfterViewInit {
  */
 interface TableDataEntry extends UploadedFile {
   actions: boolean;
+  isFileBeingDeleted: boolean;
 }

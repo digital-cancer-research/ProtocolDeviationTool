@@ -246,6 +246,10 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
     });
   }
 
+  isSomeFileInProgress() {
+    return this.dataSource.data.some(entry => entry.inProgress);
+  }
+
 }
 
 /**

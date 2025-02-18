@@ -29,19 +29,16 @@
       </button>
     </th>
     <td mat-cell *matCellDef="let data">
-      <div style="display: flex;">
+      <div class="actions">
         <button mat-icon-button color="accent" matTooltip="Upload" aria-label="Upload" (click)="onUpload(data)"
-          [disabled]="data.inProgress">
+          [disabled]="isSomeFileInProgress()">
           <mat-icon>upload</mat-icon>
         </button>
         <button *ngIf="!data.inProgress" mat-icon-button color="warn" matTooltip="Delete" aria-label="Delete"
           (click)="onDelete(data)">
           <mat-icon>delete</mat-icon>
         </button>
-        <button *ngIf="data.inProgress" mat-icon-button color="warn" matTooltip="Cancel" aria-label="Cancel"
-          (click)="onCancel(data)">
-          <mat-icon>cancel</mat-icon>
-        </button>
+        <mat-spinner *ngIf="data.inProgress" [diameter]="24"></mat-spinner>
       </div>
     </td>
   </ng-container>

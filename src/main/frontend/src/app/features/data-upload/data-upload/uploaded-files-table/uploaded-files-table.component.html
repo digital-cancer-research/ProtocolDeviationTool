@@ -10,15 +10,15 @@
     <td mat-cell *matCellDef="let file"> {{file.fileName}} </td>
   </ng-container>
 
-    <ng-container matColumnDef="username">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Uploaded By </th>
-        <td mat-cell *matCellDef="let file"> {{file.uploadedBy}} </td>
-    </ng-container>
+  <ng-container matColumnDef="username">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Uploaded By </th>
+    <td mat-cell *matCellDef="let file"> {{file.uploadedBy}} </td>
+  </ng-container>
 
-    <ng-container matColumnDef="dateTimeUploaded">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
-        <td mat-cell *matCellDef="let file"> {{file.dateUploaded | date:'full'}} </td>
-    </ng-container>
+  <ng-container matColumnDef="dateTimeUploaded">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
+    <td mat-cell *matCellDef="let file"> {{file.dateUploaded | date:'full'}} </td>
+  </ng-container>
 
   <ng-container matColumnDef="isFileBeingDeleted">
     <th mat-header-cell *matHeaderCellDef>
@@ -31,7 +31,7 @@
     <td mat-cell *matCellDef="let file">
       <div class="action-container">
         <button mat-icon-button color="warn" matTooltip="Delete" aria-label="Delete" *ngIf="!file.isFileBeingDeleted"
-          [disabled]="file.isFileBeingDeleted" (click)="onDelete(file)">
+          (click)="onDelete(file)">
           <mat-icon>delete</mat-icon>
         </button>
         <mat-spinner *ngIf="file.isFileBeingDeleted" [diameter]="24"></mat-spinner>

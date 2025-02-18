@@ -12,3 +12,12 @@ td,
 th {
     width: calc(100%/3);
 }
+
+.actions {
+    display: flex;
+    align-items: center;
+}
+
+mat-spinner {
+    margin-left: 6px;
+}
