@@ -48,7 +48,9 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
     this.userService.getUsers$().subscribe(users => this.users = users);
     this.urlPath$.subscribe((url) => {
-      this.urlRoot = url.split('/')[1];
+      const urlSegments = url.split('/');
+      this.urlRoot = urlSegments[1];
+      this.urlFinalPath = urlSegments.reverse()[0];
     });
   }
 
@@ -74,27 +76,16 @@ export class HeaderComponent implements OnInit {
    */
   get pageTitle(): string {
     let title = "";
-    switch (this.urlRoot) {
-      case (SitePageComponent.URL): {
-        title = "SITE";
-        break;
-      }
-      case (DataUploadComponent.URL): {
-        title = "DATA UPLOAD";
-        break;
-      }
-      case (DataVisualisationPageModule.URL): {
-        title = DataVisualisationPageModule.getTitle(this.urlFinalPath);
-        return title;
-      }
-      case (AdministrationPageModule.URL): {
-        title = "ADMINISTRATOR";
-        break;
-      }
-      default: {
-        title = "";
-        break;
-      }
+    if (this.urlRoot.includes(SitePageComponent.URL)) {
+      title = "SITE";
+    } else if (this.urlRoot.includes(DataUploadComponent.URL)) {
+      title = "DATA UPLOAD";
+    } else if (this.urlRoot.includes(DataVisualisationPageModule.URL)) {
+      title = DataVisualisationPageModule.getTitle(this.urlFinalPath);
+    } else if (this.urlRoot.includes(AdministrationPageModule.URL)) {
+      title = "ADMINISTRATOR";
+    } else {
+      title = "";
     }
     const tc = new TitleCasePipe();
     return tc.transform(title);

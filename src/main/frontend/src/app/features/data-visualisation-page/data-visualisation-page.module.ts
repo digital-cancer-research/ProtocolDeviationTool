@@ -20,8 +20,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatRadioModule } from '@angular/material/radio';
-import { UserService } from 'src/app/core/services/user.service';
-import { Team } from 'src/app/core/models/team.model';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { CategoryBarGraphComponent } from './dashboard/category-bar-graph/category-bar-graph.component';
 import { TeamPdPieChartComponent } from './dashboard/team-pd-pie-chart/team-pd-pie-chart.component';
@@ -37,6 +35,8 @@ import { DvdecodGraphComponent } from './dashboard/detailed-view/total-pds/dvdec
 import { MatMenuModule } from '@angular/material/menu';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { DataVisualisationService } from './data-visualisation.service';
+import { Team } from 'src/app/core/new/services/models/team/team.model';
+import { TeamService } from 'src/app/core/new/services/team.service';
 
 @NgModule({
   declarations: [
@@ -88,9 +88,9 @@ export class DataVisualisationPageModule {
   private static currentTeam: Team | null = null;
 
   constructor(
-    userService: UserService,
+    teamService: TeamService,
   ) {
-    userService.currentUserSelectedTeam$.subscribe(team => DataVisualisationPageModule.currentTeam = team);
+    teamService.currentTeam$.subscribe(team => DataVisualisationPageModule.currentTeam = team);
   }
 
   /**
@@ -102,22 +102,16 @@ export class DataVisualisationPageModule {
    */
   public static getTitle(url: string) {
     let title: string = ""
-    const tp = new TitleCasePipe();
 
-    switch (url) {
-      case (this.URL): {
-        title = "TEAM SUMMARY DASHBOARD";
-        break;
-      }
-      case (TotalPdsComponent.URL):
-      case (TotalPdsOverTimeComponent.URL): {
-        return this.detailedViewPageTitle;
-      }
-      default: {
-        title = "";
-        break;
-      }
+    if (url.includes(this.URL)) {
+      title = "TEAM SUMMARY DASHBOARD";
+    } else if (url.includes(TotalPdsComponent.URL) || url.includes(TotalPdsOverTimeComponent.URL)) {
+      return this.detailedViewPageTitle;
+    } else {
+      title = "";
     }
+
+    const tp = new TitleCasePipe();
     return tp.transform(title);
   }
 
@@ -125,7 +119,7 @@ export class DataVisualisationPageModule {
     const tp = new TitleCasePipe();
     let subject = DetailedViewComponent.studyId;
     if (subject === undefined) {
-      subject = this.currentTeam ? tp.transform(this.currentTeam.teamName) : "Team";
+      subject = this.currentTeam ? tp.transform(this.currentTeam.name) : "Team";
     }
     return `${tp.transform("PROTOCOL DEVIATIONS")} for ${subject}`;
   }
