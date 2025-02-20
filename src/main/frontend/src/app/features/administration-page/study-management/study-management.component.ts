@@ -19,7 +19,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class StudyManagementComponent implements AfterViewInit {
   protected displayedColumns: string[] = ["name", "studies", "actions"];
-  protected dataSource!: MatTableDataSource<TeamWithStudies>;
+  protected dataSource!: MatTableDataSource<TableDataEntry>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -40,11 +40,18 @@ export class StudyManagementComponent implements AfterViewInit {
       }),
       switchMap(() => this.data$)
     ).subscribe(data => {
-      this.dataSource = new MatTableDataSource(data);
+      this.dataSource = new MatTableDataSource(this.formatData(data));
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
       this.dataSource.filterPredicate = this.filterPredicate
     });
+  }
+
+  formatData(data: TeamWithStudies[]): TableDataEntry[] {
+    return data.map(team => ({
+      ...team,
+      inProgress: false
+    }));
   }
 
   getTeamStudies(team: TeamWithStudies) {
@@ -56,7 +63,7 @@ export class StudyManagementComponent implements AfterViewInit {
     return this.dataSource.data.findIndex(d => d.id === team.id);
   }
 
-  openDialogue(team: TeamWithStudies) {
+  openDialogue(team: TableDataEntry) {
     const dialogueRef = this.dialogue.open(StudyManagementEditDialogueComponent, {
       data: {
         team: team,
@@ -65,18 +72,20 @@ export class StudyManagementComponent implements AfterViewInit {
     })
 
     dialogueRef.afterClosed().subscribe((studies: Study[]) => {
+      team.inProgress = true;
       if (studies) {
         const updateTeam = {
           name: team.name,
           id: team.id,
-          studies: studies
-        } as TeamWithStudies
+          studies: studies,
+          inProgress: false
+        } as TableDataEntry
         this.updateTeam(updateTeam);
       }
     });
   }
 
-  updateTeam(team: TeamWithStudies) {
+  updateTeam(team: TableDataEntry) {
     this.userService.currentUser$.subscribe(user => {
       if (user !== null) {
         const teamUpdate = {
@@ -86,23 +95,37 @@ export class StudyManagementComponent implements AfterViewInit {
         };
         this.teamService.setStudies$(teamUpdate).subscribe({
           next: () => {
-            const index = this.findIndexOfTeam(team);
-            const data = this.dataSource.data;
-            data[index] = team;
-            this.dataSource.data = data;
+            this.updateLocalData(team);
             this._snackBar.open(`Studies updated successfully for ${team.name}`);
           },
           error: (error) => {
+            this.resetFailedUpdate(team);
             console.error(`Error updating team studies: ${error.message}`);
             this._snackBar.open(`Error updating team studies: ${error.message}`, "Dismiss");
             this.isEdited.set(team.id, false);
           }
         });
       } else {
+        this.resetFailedUpdate(team);
         this.openSnackBar("You must be logged in to edit team study access", "Dismiss");
       }
     })
     this.isEdited.set(team.id, false);
+  }
+
+  updateLocalData(team: TableDataEntry) {
+    const index = this.findIndexOfTeam(team);
+    const data = this.dataSource.data;
+    data[index] = team;
+    this.dataSource.data = data;
+  }
+
+  resetFailedUpdate(team: TableDataEntry) {
+    const index = this.findIndexOfTeam(team);
+    const data = this.dataSource.data;
+    const originalTeam = data[index];
+    originalTeam.inProgress = false;
+    this.dataSource.data = data;
   }
 
   applyFilter(event: Event) {
@@ -131,4 +154,8 @@ export class StudyManagementComponent implements AfterViewInit {
       duration: 5000
     });
   }
+}
+
+interface TableDataEntry extends TeamWithStudies {
+  inProgress: boolean;
 }
