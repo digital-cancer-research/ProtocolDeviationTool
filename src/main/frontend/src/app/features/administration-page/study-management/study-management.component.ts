@@ -1,50 +1,54 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
 import { TeamService } from 'src/app/core/new/services/team.service';
 import { TeamWithStudies } from 'src/app/core/new/services/models/team/team-with-studies.model';
 import { UserService } from 'src/app/core/new/services/user.service';
 import { StudyService } from 'src/app/core/services/study.service';
 import { Study } from 'src/app/core/new/services/models/study/study.model';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-study-management',
   templateUrl: './study-management.component.html',
   styleUrl: './study-management.component.css'
 })
-export class StudyManagementComponent {
+export class StudyManagementComponent implements AfterViewInit {
+  protected displayedColumns: string[] = ["name", "studies", "actions"];
+  protected dataSource!: MatTableDataSource<TeamWithStudies>;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
   private readonly teamService = inject(TeamService);
   private readonly userService = inject(UserService);
   private readonly studyService = inject(StudyService);
   private data$ = this.teamService.getTeamsWithStudies$();
-  displayedColumns: string[] = ["name", "studies", "actions"];
   studies: Study[] = [];
   isEdited: Map<number, boolean> = new Map();
-  data: TeamWithStudies[] = [];
 
-  constructor() {
-    this.data$.subscribe(data => this.data = data)
-    this.studyService.getStudies().subscribe(studies => {
-      this.studies = studies;
+  ngAfterViewInit(): void {
+    this.studyService.getStudies().pipe(
+      tap(studies => {
+        this.studies = studies;
+      }),
+      switchMap(() => this.data$)
+    ).subscribe(data => {
+      this.dataSource = new MatTableDataSource(data);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+      this.dataSource.filterPredicate = this.filterPredicate
     });
-  };
-
-  assignStudyToTeam(team: TeamWithStudies, study: Study) {
-    const index = this.findIndexOfTeam(team);
-    this.data[index].studies.push(study);
-    this.isEdited.set(team.id, true);
   }
 
-  isStudySelected(team: TeamWithStudies, study: Study) {
-    const index = this.findIndexOfTeam(team);
-    const studies = this.data[index].studies;
-    return studies.map(s => s.id).includes(study.id);
+  getTeamStudies(team: TeamWithStudies) {
+    return team.studies.map(study => study.externalStudyId)
+      .join(', ');
   }
 
   findIndexOfTeam(team: TeamWithStudies) {
-    return this.data.findIndex(d => d.id === team.id);
-  }
-
-  isConfirmButtonActive(team: TeamWithStudies) {
-    return this.isEdited.get(team.id) ? this.isEdited.get(team.id) : false;
+    return this.dataSource.data.findIndex(d => d.id === team.id);
   }
 
   updateTeam(team: TeamWithStudies) {
@@ -61,6 +65,24 @@ export class StudyManagementComponent {
       }
     })
     this.isEdited.set(team.id, false);
+  }
 
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  filterPredicate(team: TeamWithStudies, filter: string) {
+    const filterText = filter.trim().toLowerCase();
+    const teamNameMatch = team.name.toLowerCase().includes(filterText);
+    const studyIdsMatch = team.studies
+      .map(study => study.externalStudyId.toLowerCase())
+      .some(id => id.includes(filterText));
+
+    return teamNameMatch || studyIdsMatch;
   }
 }
