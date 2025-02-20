@@ -212,8 +212,8 @@ public class FileService {
 
         for (int index = 0; index < entries.size(); index++) {
             DataEntry entry = entries.get(index);
-            ExternalSiteMapping mapping = siteService.addDefaultMapping(entry.getStudyId());
-            Study study = studyService.createStudy(entry.getSiteId());
+            ExternalSiteMapping mapping = siteService.addDefaultMapping(entry.getSiteId());
+            Study study = studyService.createStudy(entry.getStudyId());
 
             Data data = dataService.toData(entry, fileId, mapping.getId(), study.getId());
             data = dataService.saveData(data);
