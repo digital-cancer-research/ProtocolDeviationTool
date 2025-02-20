@@ -10,3 +10,7 @@ form {
     align-items: baseline;
     gap: 20px;
 }
+
+button {
+    margin-left: 15px;
+}

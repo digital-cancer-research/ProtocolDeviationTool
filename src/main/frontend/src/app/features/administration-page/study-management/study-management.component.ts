@@ -8,6 +8,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { switchMap, tap } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { StudyManagementEditDialogueComponent } from './study-management-edit-dialogue/study-management-edit-dialogue.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-study-management',
@@ -27,6 +30,8 @@ export class StudyManagementComponent implements AfterViewInit {
   private data$ = this.teamService.getTeamsWithStudies$();
   studies: Study[] = [];
   isEdited: Map<number, boolean> = new Map();
+
+  private readonly dialogue = inject(MatDialog);
 
   ngAfterViewInit(): void {
     this.studyService.getStudies().pipe(
@@ -51,6 +56,26 @@ export class StudyManagementComponent implements AfterViewInit {
     return this.dataSource.data.findIndex(d => d.id === team.id);
   }
 
+  openDialogue(team: TeamWithStudies) {
+    const dialogueRef = this.dialogue.open(StudyManagementEditDialogueComponent, {
+      data: {
+        team: team,
+        studies: this.studies
+      }
+    })
+
+    dialogueRef.afterClosed().subscribe((studies: Study[]) => {
+      if (studies) {
+        const updateTeam = {
+          name: team.name,
+          id: team.id,
+          studies: studies
+        } as TeamWithStudies
+        this.updateTeam(updateTeam);
+      }
+    });
+  }
+
   updateTeam(team: TeamWithStudies) {
     this.userService.currentUser$.subscribe(user => {
       if (user !== null) {
@@ -59,9 +84,22 @@ export class StudyManagementComponent implements AfterViewInit {
           adminId: user.id,
           studyIds: team.studies.map(s => s.id)
         };
-        this.teamService.setStudies$(teamUpdate).subscribe();
+        this.teamService.setStudies$(teamUpdate).subscribe({
+          next: () => {
+            const index = this.findIndexOfTeam(team);
+            const data = this.dataSource.data;
+            data[index] = team;
+            this.dataSource.data = data;
+            this._snackBar.open(`Studies updated successfully for ${team.name}`);
+          },
+          error: (error) => {
+            console.error(`Error updating team studies: ${error.message}`);
+            this._snackBar.open(`Error updating team studies: ${error.message}`, "Dismiss");
+            this.isEdited.set(team.id, false);
+          }
+        });
       } else {
-        console.error("User is not logged in");
+        this.openSnackBar("You must be logged in to edit team study access", "Dismiss");
       }
     })
     this.isEdited.set(team.id, false);
@@ -84,5 +122,13 @@ export class StudyManagementComponent implements AfterViewInit {
       .some(id => id.includes(filterText));
 
     return teamNameMatch || studyIdsMatch;
+  }
+
+  private _snackBar = inject(MatSnackBar);
+
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, {
+      duration: 5000
+    });
   }
 }

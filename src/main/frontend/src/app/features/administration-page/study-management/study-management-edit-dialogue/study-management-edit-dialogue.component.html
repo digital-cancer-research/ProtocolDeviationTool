@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>{{data.team.name}}</h2>
+<mat-dialog-content class="mat-typography">
+    <form [formGroup]="form">
+        <mat-form-field appearance="outline">
+            <mat-label>Team name</mat-label>
+            <input matInput [value]="data.team.name" disabled="true">
+        </mat-form-field>
+
+        <app-multi-select appearance="outline" [items]="data.studies" [defaultValues]="data.team.studies"
+            [keyField]="'externalStudyId'" [search]="true" [searchPlaceholder]="'Search studies'"
+            (confirmedItems)="updateSelectedStudies($event)">
+        </app-multi-select>
+
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-button [mat-dialog-close]="true" [disabled]="isConfirmDisabled()"
+    (click)="onConfirm()">
+        Confirm
+    </button>
+</mat-dialog-actions>

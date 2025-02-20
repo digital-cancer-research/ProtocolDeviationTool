@@ -5,5 +5,9 @@ div {
 }
 
 div, mat-checkbox {
-    width: fit-content;
+    width: 100%;
+}
+
+mat-form-field {
+    width: 100%;
 }

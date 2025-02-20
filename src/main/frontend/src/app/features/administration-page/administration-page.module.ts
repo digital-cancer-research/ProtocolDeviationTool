@@ -35,6 +35,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { UserManagementEditDialogueComponent } from './user-management/user-management-edit-dialogue/user-management-edit-dialogue.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import {MatChipsModule} from '@angular/material/chips';
+import { StudyManagementEditDialogueComponent } from './study-management/study-management-edit-dialogue/study-management-edit-dialogue.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import {MatChipsModule} from '@angular/material/chips';
     AuditTrailManagementComponent,
     SiteManagementComponent,
     StudyManagementComponent,
+    StudyManagementEditDialogueComponent,
     TeamManagementComponent,
     TeamManagementEditDialogueComponent,
     TeamManagementFormComponent,
