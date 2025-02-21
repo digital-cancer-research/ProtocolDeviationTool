@@ -43,10 +43,11 @@ public interface DataRepository extends JpaRepository<Data, Long> {
          * @param teamId the ID of the team
          * @return a list of PDs per DV category
          */
-        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Visualisation.PdsPerDvcatDto(dv.description, dv.colour, COALESCE(COUNT(d), 0) as count) "
+        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Visualisation.PdsPerDvcatDto(dv.description, dv.colour, COUNT(dc) as count) "
                         +
                         "FROM Dvcat dv " +
                         "LEFT JOIN DataCategory dc ON dc.dvcatId = dv.id " +
+                        "LEFT JOIN DataSubCategory dsc ON dsc.dataCategoryId = dc.id " +
                         "LEFT JOIN Data d ON d.id = dc.dataId " +
                         "WHERE " + QueryConstants.TEAM_HAS_STUDY_ACCESS +
                         "GROUP BY dv.description, dv.colour " +
