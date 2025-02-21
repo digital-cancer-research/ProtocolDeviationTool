@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
-import { UserService } from '../../../core/services/user.service';
-import { DataUploadComponent } from '../../data-upload/data-upload/data-upload.component';
+import { Component, inject } from '@angular/core';
 import { DataUploadModule } from '../../data-upload/data-upload-page.module';
 import { DataVisualisationPageModule } from '../../data-visualisation-page/data-visualisation-page.module';
+import { UserService } from 'src/app/core/new/services/user.service';
+import { TeamService } from 'src/app/core/new/services/team.service';
+import { map } from 'rxjs';
+import { Role } from 'src/app/core/new/services/models/user/role.enum';
 
 /**
  * Component for displaying navigation buttons on the site page.
@@ -20,33 +22,31 @@ import { DataVisualisationPageModule } from '../../data-visualisation-page/data-
   styleUrls: ['./site-page-navigation-buttons.component.css']
 })
 export class SitePageNavigationButtonsComponent {
-
+  private readonly teamService = inject(TeamService);
+  private readonly userService = inject(UserService);
   links: string[] = [
     `/${DataUploadModule.URL}`,
     `/${DataVisualisationPageModule.URL}`
   ]
-  
+
   /**
    * Boolean flag indicating whether the user is deactivated.
    * @type {boolean}
    */
-  isUserDeactivated: boolean = false;
+  private isUserDeactivated$ = this.userService.currentUser$.pipe(
+    map(user => user ? user.role === Role.DEACTIVATED : false)
+  );
+
+  isUserDeactivated: boolean = true;
+
+  constructor() {
+    this.isUserDeactivated$.subscribe(isUserDeactivated => this.isUserDeactivated = isUserDeactivated);
+  }
 
   /**
    * Observable of the currently selected team from the `UserService`.
    * 
    * @type {Observable<Team | null>}
    */
-  currentTeam$ = this.userService.currentUserSelectedTeam$;
-
-  /**
-   * Creates an instance of SitePageNavigationButtonsComponent.
-   * 
-   * @param {UserService} userService - The service for managing user-related data and actions.
-   */
-   constructor(private userService: UserService) {
-    userService.currentUser$.subscribe((user) => {
-      this.isUserDeactivated = user?.roleId === 3;
-    })
-  }
+  currentTeam$ = this.teamService.currentTeam$;
 }

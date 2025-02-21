@@ -1,15 +1,16 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { map, mergeMap, Observable, of } from 'rxjs';
 import { Team } from '../models/team/team.model';
-import { TeamWithStudies } from '../models/team/team-with-studies.model';
 import { TeamCreation } from '../models/team/team-creation.model';
 import { TeamWithDetails } from '../models/team/team-with-details.model';
+import { ActivatedRoute } from '@angular/router';
 
 /**
  * Service for managing teams.
  * Provides methods to retrieve, add, delete, and update teams.
  * @class
+ * @deprecated
  */
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,8 @@ import { TeamWithDetails } from '../models/team/team-with-details.model';
 export class TeamService {
 
   private readonly URL = 'api/teams';
+
+  private readonly route = inject(ActivatedRoute);
 
   constructor(private http: HttpClient) { }
 
@@ -94,18 +97,55 @@ export class TeamService {
   }
 
   /**
-  * Retrieves team study access information for the given team IDs.
-  * 
-  * @param teamIds - Array of team IDs to fetch study access information for.
-  * @returns An Observable of an array of TeamWithStudies objects.
-  */
-  getTeamStudyAccess(teamIds: number[]): Observable<TeamWithStudies[]> {
-    let params = new HttpParams();
-    teamIds.forEach(id => params = params.append('teamIds', id.toString()));
-    return this.http.get<TeamWithStudies[]>(`${this.URL}/team-study-access`, { params });
-  }
-
+   * Updates the study access information for teams.
+   * 
+   * @param teamWithStudiesArray - An array of objects containing team and study access information.
+   * @returns An Observable that completes when the update is successful.
+   */
   updateTeamStudyAccess(teamWithStudiesArray: any): Observable<void> {
     return this.http.post<void>(`${this.URL}/team-study-access`, teamWithStudiesArray);
   }
+
+  /**
+   * Retrieves the team ID from the route query parameters.
+   * 
+   * @returns The team ID if present, otherwise null.
+   */
+  public getTeamIdFromRoute(): number | null {
+    const teamId: number | undefined = this.route.snapshot.queryParams['teamId'];
+    return teamId ? teamId : null;
+  }
+
+  /**
+   * Retrieves the team ID from the route query parameters as an observable.
+   * 
+   * @returns An Observable that emits the team ID if present, otherwise null.
+   */
+  public getTeamIdFromRoute$(): Observable<number | null> {
+    return this.route.queryParams.pipe(
+      map(params => {
+        const teamId = params['teamId'];
+        return teamId ? teamId : null;
+      })
+    );
+  }
+  
+  /**
+   * Fetches the team from the route query parameters.
+   * 
+   * @param includeDetails - Whether to include detailed information about the team.
+   * @returns An Observable that emits the team or team with details if the team ID is present, otherwise null.
+   */
+  public fetchTeamFromRoute$(includeDetails: boolean): Observable<Team | TeamWithDetails | null> {
+    return this.getTeamIdFromRoute$().pipe(
+      mergeMap(teamId => {
+        if (teamId !== null) {
+          return this.getTeamById$(teamId, includeDetails);
+        } else {
+          return of(null);
+        }
+      })
+    );
+  }
+
 }

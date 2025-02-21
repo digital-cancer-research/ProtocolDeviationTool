@@ -27,7 +27,6 @@ export class DvdecodGraphComponent {
   /** Colour palette used for default color mode. */
   colours: string[] = this.dataVisualisationService.barChartColours;
 
-
   /**
    * Constructor to inject necessary services.
    * @param dataVisualisationService Service responsible for handling visualisation logic and configurations.

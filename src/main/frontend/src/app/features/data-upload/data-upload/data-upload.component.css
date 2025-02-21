@@ -16,6 +16,16 @@ mat-card.uploaded {
     height: fit-content;
 }
 
+mat-panel-title {
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 5px;
+}
+
 .badge {
     margin-bottom: 16px;
+}
+
+mat-icon {
+    cursor: default;
 }

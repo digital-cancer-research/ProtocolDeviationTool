@@ -8,7 +8,12 @@ table {
     width: 100%;
 }
 
-td,
-th {
-    width: calc(100%/3);
+table {
+    table-layout: fixed;
+    width: 20%;
+}
+
+td {
+    text-overflow: ellipsis;
+    height: 10px !important;
 }

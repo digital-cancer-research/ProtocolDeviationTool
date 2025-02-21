@@ -1,0 +1,6 @@
+CREATE TABLE "file" (
+    "file_id" SERIAL PRIMARY KEY,
+    "file_name" VARCHAR(255) NOT NULL,
+    "uploaded_by" INT REFERENCES "user"("user_id") ON DELETE SET NULL ON UPDATE CASCADE,
+    "date_uploaded" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

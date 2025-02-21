@@ -1,7 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { UserService } from '../../core/services/user.service';
-import { Team } from '../../core/models/team.model';
-import { Subscription } from 'rxjs';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { mergeMap } from 'rxjs';
+import { Team } from 'src/app/core/new/services/models/team/team.model';
+import { UserService } from 'src/app/core/new/services/user.service';
 
 /**
  * Component representing the site page.
@@ -20,22 +20,25 @@ import { Subscription } from 'rxjs';
 	templateUrl: './site-page.component.html',
 	styleUrls: ['./site-page.component.css']
 })
-export class SitePageComponent implements OnInit, OnDestroy {
+export class SitePageComponent implements OnInit {
 	public static readonly URL = 'site';
-	userTeams: Team[] = [];
-	userTeamsSubscription!: Subscription;
+	private readonly userService = inject(UserService);
+	
+	teams$ = this.userService.currentUser$.pipe(
+		mergeMap(user => {
+			if (user === null) {
+				return [];
+			} else {
+				return this.userService.getUserTeams$(user.id);
+			}
+		})
+	);
+	teams: Team[] = [];
 
-	constructor(
-		private userService: UserService,
-	  ) { }
-
+	/**
+	 * Initialises the component by subscribing to the user's teams.
+	 */
 	ngOnInit(): void {
-		this.userTeamsSubscription = this.userService.getCurrentUserTeams().subscribe(teams => {
-			this.userTeams = teams;
-		}); 
-	}
-
-	ngOnDestroy(): void {
-		if (this.userTeamsSubscription) this.userTeamsSubscription.unsubscribe();
+		this.teams$.subscribe(teams => this.teams = teams);
 	}
 }

@@ -9,6 +9,9 @@ import { EditDataDialogueComponent } from '../edit-data/edit-data-dialogue.compo
 import { EditDataModel, EditType } from '../models/edit-data-model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
+import { SentenceCasePipe } from '../../pipes/sentence-case.pipe';
+import { UserService } from 'src/app/core/new/services/user.service';
+import { DataUpdate } from 'src/app/core/models/data/data-update.model';
 
 /**
  * DataTableComponent handles displaying a table of data entries with features such as
@@ -22,6 +25,7 @@ import { Observable } from 'rxjs';
 export class DataTableComponent implements AfterViewInit, OnChanges {
 
   private _snackBar = inject(MatSnackBar);
+  private readonly userService = inject(UserService);
 
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, {
@@ -52,8 +56,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   /** Sort feature for the data table. */
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private dataTableService: DataTableService) {
-  }
+  constructor(private dataTableService: DataTableService) { }
 
   /**
    * Initialises the table data and data source.
@@ -160,22 +163,32 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
    * @param entry - The data entry to confirm.
    */
   onConfirm(entry: DataTableEntry) {
-    this.dataTableService.updateEntry$(entry).subscribe(
-      {
-        complete: () => {
-          entry.isEdited = false;
-          const index = this.fetchedData
-            .map(entry => entry.entryId)
-            .indexOf(entry.entryId);
-          this.fetchedData[index] = entry;
-          this.openSnackBar("Data successfully updated", "");
-        },
-        error: (error) => {
-          console.error(error);
-          this.openSnackBar("There was an error updating the data.", error.message);
+    this.userService.currentUser$.subscribe(user => {
+      if (user !== null) {
+        const updateData: DataUpdate = {
+          ...entry,
+          adminId: user.id
         }
+        this.dataTableService.updateEntry$(updateData).subscribe(
+          {
+            complete: () => {
+              entry.isEdited = false;
+              const index = this.fetchedData
+                .map(entry => entry.id)
+                .indexOf(entry.id);
+              this.fetchedData[index] = entry;
+              this.openSnackBar("Data successfully updated", "");
+            },
+            error: (error) => {
+              console.error(error);
+              this.openSnackBar("There was an error updating the data.", error.message);
+            }
+          }
+        )
+      } else {
+        this.openSnackBar("You must be signed in to edit entries.", "dismiss");
       }
-    )
+    })
   }
 
   /**

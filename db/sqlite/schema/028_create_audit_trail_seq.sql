@@ -1,1 +1,0 @@
-CREATE TABLE audit_trail_seq (next_val INTEGER);

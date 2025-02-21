@@ -22,10 +22,8 @@ import { TeamManagementComponent } from './team-management/team-management.compo
 import { UserManagementComponent } from './user-management/user-management.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { AdministrationDataService } from './administration-data.service';
 import { AuditTrailManagementService } from './audit-trail-management/audit-trail-management.service';
 import { SiteManagementService } from './site-management/site-management.service';
-import { UserManagementService } from './user-management/user-management.service';
 import { UserManagementFormComponent } from './user-management/user-management-form/user-management-form.component';
 import { UserManagementTableComponent } from './user-management/user-management-table/user-management-table.component';
 import { TeamManagementFormComponent } from './team-management/team-management-form/team-management-form.component';
@@ -34,6 +32,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TeamManagementEditDialogueComponent } from './team-management/team-management-edit-dialogue/team-management-edit-dialogue.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { UserManagementEditDialogueComponent } from './user-management/user-management-edit-dialogue/user-management-edit-dialogue.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import {MatChipsModule} from '@angular/material/chips';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     TeamManagementFormComponent,
     TeamManagementTableComponent,
     UserManagementComponent,
+    UserManagementEditDialogueComponent,
     UserManagementFormComponent,
     UserManagementTableComponent,
   ],
@@ -54,8 +56,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     AdministrationPageRoutingModule,
     FormsModule,
     SharedModule,
+    MatAutocompleteModule,
     MatButtonModule,
     MatCardModule,
+    MatChipsModule,
     MatCheckboxModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -71,10 +75,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     ReactiveFormsModule
   ],
   providers: [
-    AdministrationDataService,
     AuditTrailManagementService,
     SiteManagementService,
-    UserManagementService
   ]
 })
 export class AdministrationPageModule {

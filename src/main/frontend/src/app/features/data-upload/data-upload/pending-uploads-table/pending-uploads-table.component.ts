@@ -2,21 +2,24 @@ import { AfterViewInit, Component, EventEmitter, inject, Input, OnChanges, OnIni
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
-import { User } from 'src/app/core/models/user.model';
-import { UserService } from 'src/app/core/services/user.service';
-import { UploadResponse } from 'src/app/features/data-upload/data-upload/models/upload-response.model';
-import { UploadService } from 'src/app/features/data-upload/data-upload/upload.service';
 import { UploadError } from '../models/upload-error.model';
 import { MatPaginator } from '@angular/material/paginator';
+import { UserService } from 'src/app/core/new/services/user.service';
+import { User } from 'src/app/core/new/services/models/user/user.model';
+import { FileService } from '../file.service';
+import { DEFAULT_AI_CONFIG } from '../models/ai-categorisation-config.model';
 import { MatSort } from '@angular/material/sort';
 
+/**
+ * Component for managing the table of pending file uploads.
+ */
 @Component({
   selector: 'app-pending-uploads-table',
   templateUrl: './pending-uploads-table.component.html',
   styleUrl: './pending-uploads-table.component.css'
 })
 export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterViewInit {
-  private uploadService = inject(UploadService);
+  private fileService = inject(FileService);
   private userService = inject(UserService);
   private currentUser: User | null = null;
   private snackbar = inject(MatSnackBar);
@@ -24,17 +27,20 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
   // Supports 'type' column -  just add to array.
   displayedColumns: string[] = ['name', 'size', 'actions'];
   @Input() newData: File[] = [];
+  @Input() useAi: boolean = false;
   @Output() onSuccessfulUpload: EventEmitter<void> = new EventEmitter();
-  @Output() errors: EventEmitter<UploadError> = new EventEmitter();
+  @Output() errors: EventEmitter<UploadError[]> = new EventEmitter();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   dataSource = new MatTableDataSource<TableDataEntry>();
-
 
   constructor() {
     this.userService.currentUser$.subscribe(user => this.currentUser = user);
   }
 
+  /**
+   * Lifecycle hook that is called after Angular has initialised all data-bound properties.
+   */
   ngOnInit(): void {
     this.dataSource.data = this.formatData(this.newData);
     this.setFilter();
@@ -42,12 +48,11 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
 
   /**
    * Lifecycle hook that is called when data-bound properties of a directive change.
-   * Specifically, it updates the table data when the input 'data' changes.
+   * Specifically, it updates the table data when the input 'newData' changes.
    *
    * @param changes - An object containing all the change detection-checked properties
    *                  The keys are the names of the changed properties and the values
    *                  are SimpleChange instances.
-   * @returns void
    */
   ngOnChanges(changes: SimpleChanges): void {
     const dataChanges = changes['newData'];
@@ -58,18 +63,8 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
   }
 
   /**
-   * Lifecycle hook that is called after Angular has fully initialized the component's view.
+   * Lifecycle hook that is called after Angular has fully initialised the component's view.
    * It sets up the paginator, custom sorting accessor, and sort functionality for the data table.
-   *
-   * This method performs the following tasks:
-   * 1. Assigns the paginator to the data source for pagination functionality.
-   * 2. Defines a custom sorting accessor to handle nested properties in the data structure.
-   * 3. Assigns the sort directive to the data source for sorting functionality.
-   *
-   * The custom sorting accessor allows sorting on both top-level properties of TableDataEntry
-   * and nested properties within the 'file' object.
-   *
-   * @returns {void}
    */
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -146,12 +141,7 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
    * This method handles the upload process, including user authentication checks,
    * progress indication, and error handling.
    *
-   * @param data - The TableDataEntry object representing the file to be uploaded.
-   * @param index - The index of the file in the data source array.
-   * @returns void
-   *
-   * @throws Will display an error message if the user is not logged in.
-   * @emits errors - Emits an error message if the upload response indicates a problem.
+   * @param entry - The TableDataEntry object representing the file to be uploaded.
    */
   onUpload(entry: TableDataEntry): void {
     entry.inProgress = true;
@@ -163,24 +153,29 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
       return;
     }
 
-    const upload = this.uploadService.uploadFile(entry.file, this.currentUser).subscribe(
+    const formData = new FormData();
+    DEFAULT_AI_CONFIG.useAi = this.useAi;
+    let aiConfig = JSON.stringify(DEFAULT_AI_CONFIG);
+    formData.append('file', entry.file);
+    formData.append('userId', this.currentUser.id.toString());
+    formData.append('aiConfig', aiConfig);
+
+    const upload = this.fileService.uploadFile$(formData).subscribe(
       {
         next: (response) => {
-          this.openSnackbar(response.message, "Dismiss");
-          if (!response.message.includes("file uploaded.")) {
-            const error = {
-              filename: entry.file.name,
-              message: response.message
-            };
-            this.errors.emit(error);
-          } else {
-            this.onSuccessfulUpload.emit();
+          let message = `${entry.file.name} successfully uploaded`;
+          if (this.handleErrors(response, entry, true)) {
+            message = message + ". One or more entries were not categorised because their categorisation was not valid. "
           }
+          this.openSnackbar(message, "Dismiss");
+          this.onSuccessfulUpload.emit();
           this.onDelete(entry);
         },
-        error: (error) => {
-          this.openSnackbar(error.message, "Dismiss");
-          console.error('Error uploading file:', error);
+        error: (response) => {
+          this.handleErrors(response, entry);
+          const errorMessage = response.error.message ? response.error.message : "";
+          const errorInfo = response.error.error ? response.error.error : "";
+          this.openSnackbar(`${errorMessage}. ${errorInfo}`, "Dismiss");
           entry.inProgress = false;
         }
       }
@@ -189,19 +184,42 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
   }
 
   /**
+   * Handles errors during the file upload process.
+   *
+   * @param response - The response object containing error details.
+   * @param entry - The TableDataEntry object representing the file being uploaded.
+   * @param warnings - A boolean indicating if the errors are warnings.
+   * @returns true if there are errors, false otherwise.
+   */
+  private handleErrors(response: any, entry: TableDataEntry, warnings: boolean = false): boolean {
+    const data = warnings ? response?.warnings : response?.error?.subErrors;
+
+    if (Array.isArray(data) && data.length > 0) {
+        const subErrors: UploadError[] = data.map((error: { message: any; entry: any; index: any; }) => ({
+            filename: entry.file.name,
+            message: error.message,
+            entry: error.entry,
+            index: error.index,
+        }));
+
+        this.errors.emit(subErrors);
+        return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Cancels an ongoing file upload operation.
    * 
    * This function unsubscribes from the upload subscription and resets the progress state.
    * It should be called when the user wants to cancel an in-progress upload.
    *
-   * @param data - The TableDataEntry object representing the file upload to be cancelled.
-   *               This object contains the upload subscription and progress state.
-   * 
-   * @returns void
+   * @param entry - The TableDataEntry object representing the file upload to be cancelled.
    */
-  onCancel(data: TableDataEntry): void {
-    data.upload.unsubscribe();
-    data.inProgress = false;
+  onCancel(entry: TableDataEntry): void {
+    entry.upload.unsubscribe();
+    entry.inProgress = false;
   }
 
   /**
@@ -210,8 +228,7 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
    * This function removes a specific file entry from the data source
    * of the pending uploads table based on its index.
    *
-   * @param index - The index of the file entry to be deleted from the data source.
-   * @returns void This function does not return a value.
+   * @param entry - The TableDataEntry object representing the file entry to be deleted.
    */
   onDelete(entry: TableDataEntry): void {
     this.dataSource.data = this.dataSource.data.filter(de => de.id !== entry.id);
@@ -222,7 +239,6 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
    * 
    * @param message - The text message to be displayed in the snackbar.
    * @param actions - The text for the action button in the snackbar.
-   * @returns void This function does not return a value.
    */
   openSnackbar(message: string, actions: string) {
     this.snackbar.open(message, actions, {
@@ -230,12 +246,20 @@ export class PendingUploadsTableComponent implements OnInit, OnChanges, AfterVie
     });
   }
 
+  isSomeFileInProgress() {
+    return this.dataSource.data.some(entry => entry.inProgress);
+  }
+
 }
 
+/**
+ * Interface representing a table data entry.
+ */
 interface TableDataEntry {
   id: number;
   file: File;
   actions: boolean;
   inProgress: boolean;
-  upload: Subscription
+  upload: Subscription;
 }
+

@@ -1,11 +1,11 @@
-import { Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, signal, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { Component, EventEmitter, inject, Output, signal } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { TeamWithDetails } from 'src/app/core/models/team/team-with-details.model';
-import { Team } from 'src/app/core/models/team/team.model';
-import { User } from 'src/app/core/models/user.model';
-import { TeamService } from 'src/app/core/services/team.service';
-import { UserService } from 'src/app/core/services/user.service';
+import { Subscription } from 'rxjs';
+import { Team } from 'src/app/core/new/services/models/team/team.model';
+import { User } from 'src/app/core/new/services/models/user/user.model';
+import { TeamService } from 'src/app/core/new/services/team.service';
+import { UserService } from 'src/app/core/new/services/user.service';
 import { ValidateNameTaken } from 'src/app/shared/validators/name-taken.validator';
 
 @Component({
@@ -13,35 +13,39 @@ import { ValidateNameTaken } from 'src/app/shared/validators/name-taken.validato
   templateUrl: './team-management-form.component.html',
   styleUrl: './team-management-form.component.css'
 })
-export class TeamManagementFormComponent implements OnChanges, OnInit {
+export class TeamManagementFormComponent {
 
-  private fb = inject(FormBuilder);
   private teamService = inject(TeamService);
   private userService = inject(UserService);
   private _snackBar = inject(MatSnackBar);
 
-  @Input() teams: TeamWithDetails[] = [];
+  teams: Team[] = [];
+  teamsSubscription!: Subscription;
   @Output() dataUpdate: EventEmitter<void> = new EventEmitter();
 
   private user: User | null = null;
-  protected teamManagementForm = this.fb.group({
-    teamName: ''
-  })
+
   protected errorMessage = signal('');
   protected readonly teamName = new FormControl('', Validators.required);
 
   constructor() {
     this.userService.currentUser$.subscribe(user => this.user = user);
+    this.getTeams();
   }
 
-  ngOnInit(): void {
-    this.addValidators(this.teams);
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    const teamChanges = changes['teams'];
-    if (teamChanges) {
-      this.addValidators(teamChanges.currentValue);
+  getTeams(teams: Team[] = []) {
+    if (this.teamsSubscription) {
+      this.teamsSubscription.unsubscribe();
+    }
+    if (teams.length > 0) {
+      this.teams = teams;
+      this.addValidators();
+      return;
+    } else {
+      this.teamsSubscription = this.teamService.getTeams$().subscribe(teams => {
+        this.teams = teams
+        this.addValidators();
+      });
     }
   }
 
@@ -50,10 +54,10 @@ export class TeamManagementFormComponent implements OnChanges, OnInit {
    * 
    * @returns {void} This method does not return a value.
    */
-  private addValidators(teams: TeamWithDetails[]): void {
+  private addValidators(): void {
     this.teamName.setValidators([
       Validators.required,
-      ValidateNameTaken(teams.map(team => team.teamName))
+      ValidateNameTaken(this.teams.map(team => team.name))
     ]);
     this.teamName.updateValueAndValidity();
   }
@@ -80,13 +84,13 @@ export class TeamManagementFormComponent implements OnChanges, OnInit {
    */
   createTeam() {
     let teamName = this.teamName.value;
-    let userId = this.user?.userId;
+    let userId = this.user?.id;
     if (this.isFormValid(teamName, userId)) {
       teamName = (teamName as string).trim();
       userId = userId as number;
-      this.teamService.addTeam$({
+      this.teamService.createTeam$({
         name: teamName,
-        userId: userId
+        adminId: userId
       }).subscribe({
         next: (team) => {
           this.handleTeamCreationSuccess(team);
@@ -110,12 +114,12 @@ export class TeamManagementFormComponent implements OnChanges, OnInit {
    */
   private isFormValid(teamName: string | null, userId: number | undefined): boolean {
     if (!userId) {
-      this.openSnackbar('Please log in to create a team.', '');
+      this.openSnackbar('Please log in to create a team.', 'Dismiss');
       return false;
     }
 
     if (teamName === null || teamName.trim() === '') {
-      this.openSnackbar('You must enter a valid team name.', '');
+      this.openSnackbar('You must enter a valid team name.', 'Dismiss');
       return false;
     }
 
@@ -132,18 +136,12 @@ export class TeamManagementFormComponent implements OnChanges, OnInit {
    * @returns void
    */
   private handleTeamCreationSuccess(team: Team): void {
-    const undoAction = this.openSnackbar(`${team.teamName} created`, 'Undo');
     this.dataUpdate.emit();
-    this.teamName.setValue("");
+    this.teamName.setValue(null);
     this.teamName.reset();
     this.teamName.markAsUntouched();
-
-    undoAction.onAction().subscribe(() => {
-      this.teamService.deleteTeam$(team.teamId).subscribe(() => {
-        this.openSnackbar(`${team.teamName} deleted`, '');
-        this.dataUpdate.emit();
-      });
-    });
+    this.teams.push(team);
+    this.addValidators();
   }
 
 
@@ -188,5 +186,4 @@ export class TeamManagementFormComponent implements OnChanges, OnInit {
       duration: 5000
     });
   }
-
 }

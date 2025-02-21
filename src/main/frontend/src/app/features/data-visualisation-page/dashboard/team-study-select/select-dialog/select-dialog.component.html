@@ -2,7 +2,7 @@
 <mat-dialog-content class="mat-typography">
   <mat-radio-group [(ngModel)]="selectedStudy">
     <mat-radio-button class="radio-button" *ngFor="let study of data.studies" [value]="study">
-      {{ study }}
+      {{ study.externalStudyId }}
     </mat-radio-button>
   </mat-radio-group>
 </mat-dialog-content>

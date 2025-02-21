@@ -1,1 +1,79 @@
-<p>data-trail works!</p>
+<mat-card appearance="outlined">
+    <mat-card-header>
+        <mat-card-title>
+            Data Trail
+        </mat-card-title>
+        <mat-form-field>
+            <mat-label>Filter</mat-label>
+            <input matInput (keyup)="applyFilter($event)" #input>
+        </mat-form-field>
+    </mat-card-header>
+    <mat-card-content>
+        <table mat-table [dataSource]="dataSource" matSort>
+
+            <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
+                <td mat-cell *matCellDef="let row"
+                [matTooltip]="row.date"
+                [matTooltipPosition]="'left'">
+                    {{row.date | date:'medium'}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="username">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> User </th>
+                <td mat-cell *matCellDef="let row"
+                [matTooltip]="row.username"
+                [matTooltipPosition]="'left'">
+                    {{row.username}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="studyId">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Study Id </th>
+                <td mat-cell *matCellDef="let row"
+                [matTooltip]="row.studyId"
+                [matTooltipPosition]="'left'">
+                    {{row.studyId}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="dvspondes">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Dvspondes </th>
+                <td mat-cell *matCellDef="let row"
+                [matTooltip]="row.dvspondes"
+                [matTooltipPosition]="'left'">
+                    {{row.dvspondes}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="originalData">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Original Data </th>
+                <td mat-cell *matCellDef="let row"
+                [matTooltip]="row.originalData"
+                [matTooltipPosition]="'left'">
+                    {{row.originalData}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="modifiedData">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Modified Data </th>
+                <td mat-cell *matCellDef="let row"
+                [matTooltip]="row.modifiedData"
+                [matTooltipPosition]="'left'">
+                    {{row.modifiedData}}
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+            <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+            </tr>
+        </table>
+
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of data"></mat-paginator>
+
+    </mat-card-content>
+</mat-card>

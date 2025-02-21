@@ -14,7 +14,6 @@ import { PageButtonComponent } from './page-button/page-button.component';
 import { TabComponent } from './tab/tab.component';
 import { MultiSelectComponent } from './select/multi-select/multi-select.component';
 import { SingleSelectComponent } from './select/single-select/single-select.component';
-import { CategoryTableComponent } from './category-table/category-table.component';
 import { StudyDataTableComponent } from './study-data-table/study-data-table.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
@@ -31,7 +30,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
-    CategoryTableComponent,
     MultiSelectComponent,
     PageButtonComponent,
     SingleSelectComponent,
@@ -64,7 +62,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatSelectModule
   ],
   exports: [
-    CategoryTableComponent,
     MultiSelectComponent,
     PageButtonComponent,
     SingleSelectComponent,

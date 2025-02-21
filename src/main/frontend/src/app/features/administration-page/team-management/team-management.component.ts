@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { TeamWithDetails } from 'src/app/core/models/team/team-with-details.model';
-import { TeamService } from 'src/app/core/services/team.service';
+import { TeamService } from 'src/app/core/new/services/team.service';
+import { TeamManagementTableComponent } from './team-management-table/team-management-table.component';
+import { TeamManagementFormComponent } from './team-management-form/team-management-form.component';
 
 @Component({
 	selector: 'app-team-management',
@@ -9,23 +11,15 @@ import { TeamService } from 'src/app/core/services/team.service';
 })
 
 export class TeamManagementComponent {
+	@ViewChild(TeamManagementFormComponent) form!: TeamManagementFormComponent;
+	@ViewChild(TeamManagementTableComponent) table!: TeamManagementTableComponent;
 	
-	protected teams: TeamWithDetails[] = [];
-	constructor(private teamService: TeamService) {
-		this.fetchTeams();
-	}
-
 	onTeamCreationChange() {
-		this.fetchTeams();
+		this.table.ngAfterViewInit();
 	}
 
 	onDatabaseChange(updatedTeams: TeamWithDetails[]): void {
-		this.teams = updatedTeams;
+		this.form.getTeams(updatedTeams);
 	}
 
-	fetchTeams() {
-		this.teamService.getTeams$(true).subscribe(teams => {
-			this.teams = teams as TeamWithDetails[];
-		});
-	}
 }

@@ -9,6 +9,7 @@ import { UserTeam } from '../models/user-team.model';
 /**
  * Service for managing user data.
  * @class
+ * @deprecated
  */
 @Injectable({
   providedIn: 'root'
@@ -30,7 +31,7 @@ export class UserService {
   setCurrentUser(user: User | null): void {
     this.currentUserSubject.next(user);
   }
-  
+
   /**
    * Sets the current user team.
    * @param {Team} team - The team to set as the current user team.
@@ -53,7 +54,7 @@ export class UserService {
    * @returns {Observable<User>} An observable containing the user data.
    */
   getUserById(userId: number): Observable<User> {
-    return this.http.get<User>(`${this.baseUrl}/users/user?userId=${userId}`);
+    return this.http.get<User>(`${this.baseUrl}/users/${userId}`);
   }
 
   /**
@@ -62,9 +63,7 @@ export class UserService {
    * @returns {Observable<User>} An observable containing the user data.
    */
   getUserByUsername(username: string): Observable<User> {
-    return this.getUserIdByUsername(username).pipe(
-      switchMap(userId => this.getUserById(userId))
-    );
+    return this.http.get<User>(`${this.baseUrl}/users/username=${username}`);
   }
 
   /**
@@ -73,18 +72,8 @@ export class UserService {
    * @returns {Observable<number>} An observable containing the user ID.
    */
   getUserIdByUsername(username: string): Observable<number> {
-    return this.http.get<number>(`${this.baseUrl}/users/user-id?username=${username}`);
+    return this.http.get<number>(`${this.baseUrl}/users?user-id?username=${username}`);
   }
-
-  // /**
-  //  * Retrieves the selected team of the currently logged-in user.
-  //  * @returns {Observable<Team | null>} An observable containing the selected team or null if no team is selected.
-  //  */
-  // getCurrentUserSelectedTeam(): Observable<Team | null> {
-  //   return this.currentUser$.pipe(
-  //     map(user => user?.selectedTeam ?? null)
-  //   );
-  // }
 
   /**
    * Checks if the current user is part of multiple teams.

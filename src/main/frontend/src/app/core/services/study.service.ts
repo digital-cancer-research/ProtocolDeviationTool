@@ -1,20 +1,27 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { Study } from '../new/services/models/study/study.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StudyService {
-  private readonly baseUrl = 'api/studies';
+  private readonly BASE_URL = 'api/studies';
+  private readonly http = inject(HttpClient)
+  private studySubject = new BehaviorSubject<Study | null>(null);
+  private study$: Observable<Study | null> = new Observable();
 
-  constructor(private http: HttpClient) { }
-
-  getStudies(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.baseUrl}/study-ids`);
+  getStudies(teamId?: number): Observable<Study[]> {
+    const paramString = teamId ? `?teamId=${teamId}` : "";
+    return this.http.get<Study[]>(`${this.BASE_URL}${paramString}`);
   }
 
-  getStudiesForTeam(teamId: number): Observable<string[]> {
-    return this.http.get<string[]>(`${this.baseUrl}/study-ids/${teamId}`);
+  selectedStudy$() {
+    return this.study$;
+  }
+
+  setStudy(study: Study | null) {
+    return this.studySubject.next(study);
   }
 }

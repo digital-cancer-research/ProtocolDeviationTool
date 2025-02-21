@@ -1,11 +1,6 @@
 CREATE TABLE "team" (
     "team_id" SERIAL PRIMARY KEY,
-    "team_name" VARCHAR UNIQUE NOT NULL,
-    "user_id" INT,
-    "date_created" VARCHAR
+    "team_name" VARCHAR(255) UNIQUE NOT NULL,
+    "created_by" INT REFERENCES "user"(user_id) ON DELETE SET NULL ON UPDATE CASCADE,
+    "date_created" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
-ALTER TABLE
-    "team"
-ADD
-    FOREIGN KEY ("user_id") REFERENCES "user_account" ("user_id") ON DELETE CASCADE ON UPDATE CASCADE;

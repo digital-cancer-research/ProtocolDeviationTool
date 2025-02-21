@@ -1,11 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { mergeMap, of, startWith } from 'rxjs';
 import { DeviationService } from 'src/app/core/services/deviation.service';
-import { DeviationValidators } from 'src/app/core/validators/deviation-validators';
 import { EditDataModel, EditType } from '../models/edit-data-model';
 import { DataTableEntry } from 'src/app/core/models/data/data-table-entry.model';
+import { Dvcat } from 'src/app/core/new/services/models/dvcat/dvcat.model';
+import { Dvdecod } from 'src/app/core/new/services/models/dvdecod/dvdecod.model';
 
 @Component({
   selector: 'app-edit-data-dialogue',
@@ -13,35 +13,25 @@ import { DataTableEntry } from 'src/app/core/models/data/data-table-entry.model'
   styleUrls: ['./edit-data-dialogue.component.css']
 })
 export class EditDataDialogueComponent implements OnInit {
+
+  private readonly fb = inject(FormBuilder);
+  private readonly deviationService = inject(DeviationService);
+  private readonly dialogRef = inject(MatDialogRef<EditDataDialogueComponent>);
+
   /**
    * Form data representing the current entry being edited.
    */
-  private data: DataTableEntry = inject(MAT_DIALOG_DATA).entry;
+  data: DataTableEntry = inject(MAT_DIALOG_DATA).entry;
 
   /**
    * Reactive form for editing data.
    */
   dataForm: FormGroup;
 
-  /**
-   * Observable for fetching deviation categories (dvcat).
-   */
-  dvcats$ = this.deviationService.getDvcats$();
-
-  /**
-   * Observable for fetching protocol deviation coded term (dvdecod) filtered by the current dvcat.
-   */
-  dvdecods$ = this.deviationService.getDvdecodsByDvcat$(this.data.dvcat);
-
-  /**
-   * Observable for fetching the current protocol deviation term (dvterm) related to the dvdecod.
-   */
-  dvterm$? = of(this.data.dvterm);
-
-  /**
-   * Observable for tracking changes to dvterm based on dvdecod.
-   */
-  newDvterm$ = this.dvterm$;
+  dvcats: Dvcat[] = [];
+  dvcatDescriptions: string[] = [];
+  dvdecods: Dvdecod[] = [];
+  dvdecodDescriptions: string[] = [];
 
   /**
    * Constructor to initialise the form, services, and dialog reference.
@@ -50,21 +40,42 @@ export class EditDataDialogueComponent implements OnInit {
    * @param deviationService - Service for handling deviation-related API calls.
    * @param dialogRef - Reference to the dialog instance.
    */
-  constructor(
-    private fb: FormBuilder,
-    private deviationService: DeviationService,
-    private dialogRef: MatDialogRef<EditDataDialogueComponent>
-  ) {
+  constructor() {
     this.dataForm = this.createForm();
+    this.fetchDeviations();
     this.subscribeToBackdropClick();
   }
 
+  fetchDeviations() {
+    this.dvcatDescriptions = this.dvcats.map(dvcat => dvcat.description);
+    this.dvdecodDescriptions = this.getDvdecodsForDvcats().map(dvd => dvd.description);
+
+    this.deviationService.getDvcats$().subscribe(dvcats => {
+      this.dvcats = dvcats;
+      this.dvcatDescriptions = dvcats.map(dvcat => dvcat.description);
+    });
+    this.deviationService.getDvdecods$().subscribe(dvdecods => {
+      this.dvdecods = dvdecods;
+      this.dvdecodDescriptions = dvdecods.map(dvdecod => dvdecod.description);
+    });
+  }
+
+  get dvterms(): string[] {
+    const selectedDvdecods: string[] | undefined = this.dataForm.get('dvdecod')?.value;
+    if (selectedDvdecods) {
+      return this.dvdecods.filter(dvd => selectedDvdecods.includes(dvd.description))
+        .map(dvd => dvd.dvterm);
+    } else {
+      return []
+    }
+  }
+
   /**
-   * Lifecycle hook for initializing the component and subscribing to dvcat changes.
+   * Lifecycle hook for initialising the component and subscribing to dvcat changes.
    */
   ngOnInit() {
     this.subscribeToDvcatChanges();
-    this.newDvterm$ = this.getNewDvtermObservable();
+    // this.newDvterm$ = this.getNewDvtermObservable();
   }
 
   /**
@@ -82,60 +93,23 @@ export class EditDataDialogueComponent implements OnInit {
   }
 
   /**
-   * Initialises an observable to track changes in the dvdecod form control and fetch the associated dvterm.
-   * 
-   * @returns An observable that emits the current dvterm based on the selected dvdecod.
-   */
-  private getNewDvtermObservable() {
-    return this.dataForm.get('dvdecod')?.valueChanges.pipe(
-      startWith(this.data.dvterm),
-      mergeMap((dvdecod) =>
-        dvdecod ? this.deviationService.getDvtermByDvdecod$(dvdecod) : of('')
-      )
-    );
-  }
-
-  /**
    * Subscribes to changes in the dvcat field and updates related fields (dvdecod and dvterm) accordingly.
    */
   private subscribeToDvcatChanges() {
-    this.dataForm.get('dvcat')?.valueChanges.subscribe((dvcat) => {
-      this.resetDvdecodControl();
-      this.updateDvtermObservable();
-      if (dvcat) {
-        this.dvdecods$ = this.deviationService.getDvdecodsByDvcat$(dvcat);
-        this.setDvdecodValidator(dvcat);
-      }
+    this.dataForm.get('dvcat')?.valueChanges.subscribe(() => {
+      this.dvdecodDescriptions = this.getDvdecodsForDvcats().map(dv => dv.description);
     });
   }
 
-  /**
-   * Resets the dvdecod form control, clearing its value and updating validation.
-   */
-  private resetDvdecodControl() {
-    const dvdecodControl = this.dataForm.get('dvdecod');
-    dvdecodControl?.setValue('');
-    dvdecodControl?.updateValueAndValidity();
-  }
-
-  /**
-   * Updates the dvterm observable with any new dvterm values based on changes to dvdecod.
-   */
-  private updateDvtermObservable() {
-    if (this.newDvterm$) {
-      this.dvterm$ = this.newDvterm$;
+  getDvdecodsForDvcats() {
+    const selectedDvcatDescriptions: string[] | undefined = this.dataForm.get('dvcat')?.value;
+    if (selectedDvcatDescriptions) {
+      const selectedDvcatIds = this.dvcats.filter(dv => selectedDvcatDescriptions.includes(dv.description))
+        .map(dv => dv.id);
+      return this.dvdecods.filter(dvdecod => selectedDvcatIds.includes(dvdecod.dvcatId));
+    } else {
+      return [];
     }
-  }
-
-  /**
-   * Sets a custom asynchronous validator for the dvdecod field, ensuring the selected dvdecod is valid for the current dvcat.
-   * 
-   * @param dvcat - The current dvcat value used to filter dvdecods.
-   */
-  private setDvdecodValidator(dvcat: string) {
-    this.dataForm.get('dvdecod')?.setAsyncValidators(
-      DeviationValidators.dvdecodIsValidForDvcat(this.deviationService, dvcat)
-    );
   }
 
   /**

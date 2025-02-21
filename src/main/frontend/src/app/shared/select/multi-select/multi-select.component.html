@@ -9,7 +9,7 @@
 </mat-form-field>
 <div [style]="'height: ' + height + 'px;'">
     @for (item of getFilteredItems(); track item) {
-    <mat-checkbox class="checkbox" name="item" [value]="toString(item)"
+    <mat-checkbox class="checkbox" color="primary" name="item" [value]="toString(item)"
     (change)="onChange(item, $event)" [checked]="isChecked(item)">
         {{ getFieldValue(item) }}
     </mat-checkbox>

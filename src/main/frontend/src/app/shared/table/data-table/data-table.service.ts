@@ -1,6 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { DataTableEntry } from 'src/app/core/models/data/data-table-entry.model';
+import { DataUpdate } from 'src/app/core/models/data/data-update.model';
+import { Dvcat } from 'src/app/core/new/services/models/dvcat/dvcat.model';
+import { Dvdecod } from 'src/app/core/new/services/models/dvdecod/dvdecod.model';
 import { DeviationService } from 'src/app/core/services/deviation.service';
 
 @Injectable({
@@ -9,10 +12,10 @@ import { DeviationService } from 'src/app/core/services/deviation.service';
 export class DataTableService {
 
   /** Stores available deviation categories. */
-  public dvcats: string[] = [];
+  public dvcats: Dvcat[] = [];
 
   /** Stores available deviation codes. */
-  public dvdecods: string[] = [];
+  public dvdecods: Dvdecod[] = [];
 
   /** Base URL for the data table API endpoints. */
   private readonly BASE_URL = "/api/data"
@@ -48,8 +51,7 @@ export class DataTableService {
    * @returns An observable of an array of DataTableEntry.
    */
   public getDataByTeamId$(teamId: number) {
-    let params: HttpParams = new HttpParams().set('teamId', teamId);
-    return this.http.get<DataTableEntry[]>(`${this.BASE_URL}`, { params });
+    return this.http.get<DataTableEntry[]>(`${this.BASE_URL}?teamId=${teamId}`);
   }
 
   /**
@@ -57,9 +59,8 @@ export class DataTableService {
    * @param studyId - The ID of the study to filter by.
    * @returns An observable of an array of DataTableEntry.
    */
-  public getDataByStudyId$(studyId: string) {
-    let params: HttpParams = new HttpParams().set('studyId', studyId);
-    return this.http.get<DataTableEntry[]>(`${this.BASE_URL}`, { params });
+  public getDataByStudy$(study: string) {
+    return this.http.get<DataTableEntry[]>(`${this.BASE_URL}?study=${study}`);
   }
 
   /**
@@ -67,7 +68,7 @@ export class DataTableService {
    * @param entry - The data entry to update.
    * @returns An observable of void, indicating the completion of the request.
    */
-  public updateEntry$(entry: DataTableEntry) {
+  public updateEntry$(entry: DataUpdate) {
     return this.http.put<void>(`${this.BASE_URL}/update-entry`, entry);
   }
 }

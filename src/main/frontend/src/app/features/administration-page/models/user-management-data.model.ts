@@ -1,4 +1,4 @@
-import { Team } from "src/app/core/models/team.model";
+import { Team } from "src/app/core/new/services/models/team/team.model";
 
 export interface UserManagementData {
   userId: number

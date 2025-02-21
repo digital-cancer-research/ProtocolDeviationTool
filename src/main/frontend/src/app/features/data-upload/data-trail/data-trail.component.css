@@ -1,0 +1,23 @@
+/* :host {
+    display: flex;
+    flex-direction: column;
+} */
+
+mat-card-header {
+    display: flex;
+    flex-direction: column;
+}
+
+table {
+    width: 100%;
+}
+
+.mat-mdc-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+mat-card {
+    margin: 5px;
+    height: fit-content;
+}

@@ -1,13 +1,14 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { AuthService } from '../../../user/auth.service';
-import { UserService } from '../../services/user.service';
 import { RouterService } from '../../services/router.service';
 import { AdministrationPageModule } from 'src/app/features/administration-page/administration-page.module';
 import { DataUploadModule } from 'src/app/features/data-upload/data-upload-page.module';
 import { DataVisualisationPageModule } from 'src/app/features/data-visualisation-page/data-visualisation-page.module';
-import { User } from 'src/app/user/user.model';
 import { Params } from '@angular/router';
+import { UserService } from '../../new/services/user.service';
+import { TeamService } from '../../new/services/team.service';
+import { Role } from '../../new/services/models/user/role.enum';
+import { User } from '../../new/services/models/user/user.model';
 
 /**
  * Component that represents the ribbon in the navigation.
@@ -18,6 +19,12 @@ import { Params } from '@angular/router';
   styleUrls: ['./navigation-ribbon.component.css']
 })
 export class NavigationRibbonComponent implements OnDestroy {
+
+  private userService = inject(UserService);
+  private teamService = inject(TeamService);
+
+  user = this.userService.getUser();
+
   /** Boolean to track if the current user has admin privileges. */
   isAdmin: boolean = false;
 
@@ -45,9 +52,9 @@ export class NavigationRibbonComponent implements OnDestroy {
   /** Boolean to track if the user is deactivated. */
   isUserDeactivated: boolean = false;
 
-  /** Query parameter to remove the studyId when ribbon tab is changed */
+  /** Query parameter to remove the study when ribbon tab is changed */
   queryParams: Params = {
-    studyId: null
+    study: null
   }
 
   /**
@@ -59,8 +66,6 @@ export class NavigationRibbonComponent implements OnDestroy {
    * @param routerService - Service to handle router events and extract URL paths.
    */
   constructor(
-    private authService: AuthService,
-    private userService: UserService,
     private routerService: RouterService
   ) {
 
@@ -70,15 +75,14 @@ export class NavigationRibbonComponent implements OnDestroy {
       }
     )
 
-    this.userService.currentUser$.subscribe(
-      (user) => {
-        if (user) {
-          this.updateAdminAccess(user.username);
-          this.updateMultipleTeamSelectionAccess(user.userId);
-          this.updateVisualisationAccess();
-          this.updateIsUserDeactivated(user);
-        }
-      })
+    this.userService.currentUser$.subscribe((user) => {
+      if (user !== null) {
+        this.updateAdminAccess(user);
+        this.updateMultipleTeamSelectionAccess(user);
+        this.updateIsUserDeactivated(user);
+      }
+    });
+    this.updateVisualisationAccess();
   }
 
 
@@ -88,12 +92,8 @@ export class NavigationRibbonComponent implements OnDestroy {
  * 
  * @param username - The username of the user to check for admin privileges.
  */
-  updateAdminAccess(username: string): void {
-    this.authService.checkAdminRole(username).subscribe(
-      (isAdmin) => {
-        this.isAdmin = isAdmin;
-      }
-    );
+  updateAdminAccess(user: User): void {
+    this.isAdmin = user.role === Role.ADMIN;
   }
 
   /**
@@ -102,8 +102,8 @@ export class NavigationRibbonComponent implements OnDestroy {
    * 
    * @param userId - The ID of the user whose teams are to be retrieved.
    */
-  updateMultipleTeamSelectionAccess(userId: number): void {
-    this.userService.getUserTeamsByUserId(userId).subscribe(
+  updateMultipleTeamSelectionAccess(user: User): void {
+    this.userService.getUserTeams$(user.id).subscribe(
       (team) => {
         this.isPartOfMultipleTeams = team.length > 1;
         this.activeLink = this.links[2];
@@ -116,7 +116,7 @@ export class NavigationRibbonComponent implements OnDestroy {
    * Subscribes to the `currentUserSelectedTeam$` observable to check if a team is selected.
    */
   updateVisualisationAccess(): void {
-    this.userService.currentUserSelectedTeam$.subscribe(
+    this.teamService.currentTeam$.subscribe(
       (team) => {
         this.links[4].disabled = (team === null);
       }
@@ -130,7 +130,7 @@ export class NavigationRibbonComponent implements OnDestroy {
    * @param user - The user object to check for deactivation status.
    */
   updateIsUserDeactivated(user: User): void {
-    this.isUserDeactivated = user.roleId === 3;
+    this.isUserDeactivated = user.role === Role.DEACTIVATED;
   }
 
 
@@ -161,7 +161,9 @@ export class NavigationRibbonComponent implements OnDestroy {
   updateActiveLink(url: string): void {
     url = '/' + url;
     const search = this.links.map(
-      links => url.includes(links.route));
+      link => {
+        return  link.route.includes(url)
+      });
     const index = search.lastIndexOf(true);
     this.activeLink = this.links[index];
   }

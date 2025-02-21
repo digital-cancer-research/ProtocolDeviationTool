@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TeamWithDetails } from 'src/app/core/models/team/team-with-details.model';
-import { Team } from 'src/app/core/models/team/team.model';
+import { Team } from 'src/app/core/new/services/models/team/team.model';
 import { ValidateNameTaken } from 'src/app/shared/validators/name-taken.validator';
 
 @Component({
@@ -14,17 +14,12 @@ export class TeamManagementEditDialogueComponent {
   private data = inject(MAT_DIALOG_DATA);
   private dialogRef = inject(MatDialogRef<Team>);
 
-  private teams: TeamWithDetails[] = this.data.teams;
-  private currentTeam: TeamWithDetails = this.data.team;
   private fb = new FormBuilder();
+  private teams: TeamWithDetails[] = this.data.teams;
+  protected currentTeam: TeamWithDetails = this.data.team;
   protected teamEditForm = this.fb.group({
-    createdBy: new FormControl({ value: this.currentTeam.username, disabled: true }),
-    dateCreated: new FormControl({ value: this.currentTeam.dateCreated, disabled: true }),
+    name: [this.currentTeam.name, [Validators.required, ValidateNameTaken(this.teams.map(team => team.name))]]
   });
-  protected teamName = new FormControl(this.currentTeam.teamName, [
-    Validators.required,
-    ValidateNameTaken(this.teams.map(team => team.teamName))
-  ]);
   protected errorMessage = signal('');
 
   /**
@@ -47,6 +42,10 @@ export class TeamManagementEditDialogueComponent {
     }
   }
 
+  get teamName() {
+    return this.teamEditForm.get('name') as unknown as AbstractControl<string | null, string | null>;
+  }
+
   /**
    * Closes the dialog and returns the updated team details.
    * 
@@ -61,7 +60,7 @@ export class TeamManagementEditDialogueComponent {
     this.dialogRef.close(
       {
         ...this.currentTeam,
-        teamName: this.teamName.value
+        name: this.teamName.value?.trim()
       } as TeamWithDetails
     )
   }

@@ -1,117 +1,108 @@
 package org.digitalecmt.qualityassurance.service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
-import org.digitalecmt.qualityassurance.dto.Data.DataDTO;
-import org.digitalecmt.qualityassurance.model.persistence.DataEntry;
-import org.digitalecmt.qualityassurance.model.persistence.DataEntryCategory;
-import org.digitalecmt.qualityassurance.model.persistence.PdCategory;
-import org.digitalecmt.qualityassurance.repository.DataEntryCategoryRepository;
-import org.digitalecmt.qualityassurance.repository.DataEntryRepository;
-import org.digitalecmt.qualityassurance.repository.DvspondesRepository;
-import org.digitalecmt.qualityassurance.repository.PdCategoryRepository;
+import org.digitalecmt.qualityassurance.models.dto.Data.BaseDataDto;
+import org.digitalecmt.qualityassurance.models.dto.Data.CategorisationDto;
+import org.digitalecmt.qualityassurance.models.dto.Data.DataDto;
+import org.digitalecmt.qualityassurance.models.dto.Data.DataUpdateDto;
+import org.digitalecmt.qualityassurance.models.entities.Data;
+import org.digitalecmt.qualityassurance.models.entities.DataAudit;
+import org.digitalecmt.qualityassurance.models.entities.Study;
+import org.digitalecmt.qualityassurance.models.pojo.DataEntry;
+import org.digitalecmt.qualityassurance.repository.DataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service class for handling data-related operations, specifically for fetching
- * protocol deviation data.
- * 
- * <p>
- * This class interacts with the {@link DataEntryRepository} to retrieve data
- * related to protocol deviations, including support for filtering by team ID.
- * </p>
- * 
- * <p>
- * It offers methods to:
- * <ul>
- * <li>Fetch all protocol deviation data</li>
- * <li>Fetch protocol deviation data filtered by team ID</li>
- * </ul>
- * </p>
- * 
- * <p>
- * This class is annotated with {@link Service} to mark it as a Spring-managed
- * service component, and it relies on Spring's {@link Autowired} dependency
- * injection to inject the repository.
- * </p>
- */
 @Service
 public class DataService {
 
     @Autowired
-    DataEntryRepository dataEntryRepository;
-
-    @Autowired
-    DvspondesRepository dvspondesRepository;
-
-    @Autowired
-    DataEntryCategoryRepository dataEntryCategoryRepository;
-
-    @Autowired
-    PdCategoryRepository pdCategoryRepository;
-
-    /**
-     * Retrieves a list of all protocol deviation data.
-     * 
-     * <p>
-     * This method interacts with the {@link DataEntryRepository} to fetch all
-     * available protocol deviation data.
-     * </p>
-     * 
-     * <p>
-     * It returns the following: study id, dvspondes, dvcat, dvdecod and dvterm.
-     * </p>
-     * 
-     * @return a list of {@link DataDTO} containing protocol deviation data.
-     */
-    public List<DataDTO> getPdData() {
-        return dataEntryRepository.findPdData();
-    }
-
-    /**
-     * Retrieves protocol deviation data filtered by team ID.
-     * 
-     * <p>
-     * This method retrieves data for a specific team by calling the repository
-     * to query for protocol deviation data associated with the given team ID.
-     * </p>
-     * 
-     * <p>
-     * It returns the following: study id, dvspondes, dvcat, dvdecod and dvterm.
-     * </p>
-     * 
-     * @param teamId the ID of the team for which to fetch protocol deviation data.
-     * @return a list of {@link DataDTO} containing protocol deviation data filtered
-     *         by the specified team ID.
-     */
-    public List<DataDTO> getPdDataByTeamId(Long teamId) {
-        return dataEntryRepository.findPdDataByTeamId(teamId);
-    }
+    private DataRepository dataRepository;
     
-    public List<DataDTO> getPdDataByStudyId(String studyId) {
-        return dataEntryRepository.findPdDataByStudyId(studyId);
+    @Autowired
+    private DeviationService deviationService;
+
+    @Autowired
+    private DataAuditService dataAuditService;
+
+    @Autowired
+    private StudyService studyService;
+
+    public List<DataDto> getPdDataByTeamId(Long teamId) {
+        List<BaseDataDto> baseData = dataRepository.findDataByTeam(teamId);
+        return getDataDetails(baseData);
     }
 
-    public void updateEntry(DataDTO data) {
-        Optional<DataEntry> dataEntryRequest = dataEntryRepository.findByEntryId(Long.valueOf(data.entryId));
-        if (dataEntryRequest.isPresent()) {
-            DataEntry dataEntry = dataEntryRequest.get();
-
-            dataEntry.setSiteId(data.siteId);
-            dataEntry.setStudyId(data.studyId);
-            dataEntryRepository.save(dataEntry);
-
-            Integer dvspondesId = dataEntry.getDvspondesId();
-            dvspondesRepository.findById(dvspondesId)
-                    .get().setDvspondesValue(data.dvspondes);
-
-            PdCategory pdCategory = pdCategoryRepository.findByDvdecod(data.dvdecod).get();
-            DataEntryCategory dataEntryCategory = dataEntryCategoryRepository.findAllByEntryId(dataEntry.getEntryId()).get(0);
-            dataEntryCategory.setCategoryId(pdCategory.getCategoryId());
-            dataEntryCategoryRepository.save(dataEntryCategory);
-        }
+    public List<DataDto> getPdDataByStudy(String study) {
+        List<BaseDataDto> baseData = dataRepository.findDataByStudy(study);
+        return getDataDetails(baseData);
     }
 
+    public List<DataDto> getDataDetails(List<BaseDataDto> data) {
+        List<DataDto> formattedData = new ArrayList<>();
+        data.forEach(d -> {
+            List<CategorisationDto> categories = dataRepository.findCategorisationByDataId(d.getId());
+            List<List<String>> extractedData = List.of(
+                    categories.stream().map(CategorisationDto::getDvcats).filter(Objects::nonNull).toList(),
+                    categories.stream().map(CategorisationDto::getDvdecods).filter(Objects::nonNull).toList(),
+                    categories.stream().map(CategorisationDto::getDvterms).filter(Objects::nonNull).toList());
+
+            DataDto formattedDatum = DataDto.builder()
+                    .id(d.getId())
+                    .siteId(d.getSiteId())
+                    .studyId(d.getStudyId())
+                    .dvspondes(d.getDvspondes())
+                    .dvcat(extractedData.get(0))
+                    .dvdecod(extractedData.get(1))
+                    .dvterm(extractedData.get(2))
+                    .build();
+
+            formattedData.add(formattedDatum);
+        });
+        return formattedData;
+    }
+
+    @Transactional
+    public void updateEntry(DataUpdateDto dataDto) {
+        DataDto originalData = getDataDetails(dataRepository.findDataById(dataDto.getId())).get(0);
+        
+        deviationService.removeCategorisation(dataDto.getId());
+        deviationService.categoriseData(dataDto.getDvcat(), dataDto.getDvdecod(), dataDto.getId());
+        Study study = studyService.createStudy(dataDto.getStudyId());
+        Data data = dataRepository.findById(dataDto.getId()).get();
+        data.setStudyId(study.getId());
+        dataRepository.save(data);
+
+
+        DataAudit audit = DataAudit.builder()
+        .dataId(dataDto.getId())
+        .userId(dataDto.getAdminId())
+        .originalValue(
+            "DVCAT: " + originalData.getDvcat() + "\n" +
+            "DVDECOD: " + originalData.getDvdecod()
+        )
+        .newValue(
+            "DVCAT: " + dataDto.getDvcat() + "\n" +
+            "DVDECOD: " + dataDto.getDvdecod()
+        )
+        .build();
+        dataAuditService.saveAudit(audit);
+    }
+
+    public Data saveData(Data data) {
+        return dataRepository.save(data);
+    }
+
+    public Data toData(DataEntry entry, Long fileId, Long mappingId, Long studyId) {
+        return Data.builder()
+                .fileId(fileId)
+                .mappingId(mappingId)
+                .studyId(studyId)
+                .dvspondes(entry.getDvspondes())
+                .build();
+    }
 }

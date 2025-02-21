@@ -1,1 +1,0 @@
-CREATE TABLE "current_sites" ("site_id" VARCHAR PRIMARY KEY);

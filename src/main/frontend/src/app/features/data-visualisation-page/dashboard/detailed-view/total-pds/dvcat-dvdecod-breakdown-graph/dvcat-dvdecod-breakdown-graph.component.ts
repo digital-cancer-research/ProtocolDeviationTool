@@ -1,20 +1,20 @@
-import { Component, EventEmitter, inject, Output, signal } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, inject, Output, signal } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Chart, CategoryScale } from 'chart.js';
 import { Observable, Subscription } from 'rxjs';
 import { UtilsService } from 'src/app/core/services/utils.service';
-import { UserService } from 'src/app/core/services/user.service';
 import { DvcatDvdecodBreakdownGraphService } from './dvcat-dvdecod-breakdown-graph.service';
 import { DataVisualisationService } from 'src/app/features/data-visualisation-page/data-visualisation.service';
 import { PdDvdecod, DvdecodData, PdDvdecodBarGraphData } from 'src/app/features/data-visualisation-page/models/team-pd-dvdecod-bar-graph-data.model';
 import { ActivatedRoute } from '@angular/router';
+import { TeamService } from 'src/app/core/new/services/team.service';
 
 @Component({
   selector: 'app-dvcat-dvdecod-breakdown-graph',
   templateUrl: './dvcat-dvdecod-breakdown-graph.component.html',
   styleUrl: './dvcat-dvdecod-breakdown-graph.component.css'
 })
-export class DvcatDvdecodBreakdownGraphComponent {
+export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
 
   private _snackBar = inject(MatSnackBar);
   duration = 5000;
@@ -45,7 +45,9 @@ export class DvcatDvdecodBreakdownGraphComponent {
   private studyId?: string;
 
   /** The labels for the chart categories. */
-  public labels: string[] = this.dataVisualisationService.pdCategories;
+  public labels: string[] = [];
+
+  public items: string[] = [];
 
   /** The currently selected labels for the chart. */
   public selectedLabels: string[] = this.labels;
@@ -71,21 +73,10 @@ export class DvcatDvdecodBreakdownGraphComponent {
   /** Output event emitter for toggling color mode. */
   @Output() colourMode: EventEmitter<boolean> = new EventEmitter(true);
 
-  /**
-   * Initialises the component and injects the required services.
-   * 
-   * @param userService - used to fetch team Id for the users selected team for further API requests.
-   * @param dataVisualisationService - Service for managing data visualisation-related requests.
-   * @param dvcatDvdecodBreakdownGraphService - Service for handling graph-related data formatting and creation.
-   */
-  constructor(
-    private userService: UserService,
-    private dataVisualisationService: DataVisualisationService,
-    private dvcatDvdecodBreakdownGraphService: DvcatDvdecodBreakdownGraphService,
-    private route: ActivatedRoute
-  ) {
-
-  }
+  private readonly teamService = inject(TeamService);
+  private readonly dataVisualisationService = inject(DataVisualisationService);
+  private readonly dvcatDvdecodBreakdownGraphService = inject(DvcatDvdecodBreakdownGraphService);
+  private readonly route = inject(ActivatedRoute);
 
   /**
    * Lifecycle hook that is called after the component's view has been fully initialised.
@@ -94,7 +85,7 @@ export class DvcatDvdecodBreakdownGraphComponent {
   ngAfterViewInit(): void {
     this.createSkeletonChart();
     this.route.queryParams.subscribe(params => {
-      this.studyId = params['studyId'];
+      this.studyId = params['study'];
       this.updateData();
     });
   }
@@ -111,15 +102,14 @@ export class DvcatDvdecodBreakdownGraphComponent {
 
   updateData() {
     let apiRequest: Observable<PdDvdecodBarGraphData> | null = null;
-    if (this.studyId !== undefined) {
-      apiRequest = this.dataVisualisationService.getPdDvdecodBarGraphDataByStudy$(this.studyId);
-    }
-    this.userService.currentUserSelectedTeam$.subscribe({
+    this.userSubscription = this.teamService.currentTeam$.subscribe({
       next: (team) => {
         this.isDataLoading = false;
         if (team !== null) {
-          if (apiRequest === null) {
-            apiRequest = this.dataVisualisationService.getPdDvdecodBarGraphDataByTeam$(team.teamId);
+          if (this.studyId) {
+            apiRequest = this.dataVisualisationService.getDvcatBreakdownByDvdecodByStudy$(this.studyId);
+          } else {
+            apiRequest = this.dataVisualisationService.getDvcatBreakdownByDvdecodByTeam$(team.id);
           }
           this.fetchGraphData(apiRequest);
         } else {
@@ -134,13 +124,13 @@ export class DvcatDvdecodBreakdownGraphComponent {
         this.handleError();
       }
     });
-
-  };
+  }
 
   fetchGraphData(apiRequest: Observable<PdDvdecodBarGraphData>): void {
     this.visSubscription = apiRequest.subscribe({
       next: (response) => {
         this.labels = response.dvcats;
+        this.items = [...this.labels];
         this.selectedLabels = this.labels;
         this.data = response.data;
         this.filteredData = this.data;
@@ -148,11 +138,12 @@ export class DvcatDvdecodBreakdownGraphComponent {
       },
       error: (error) => {
         this.errorMessage = error.message || `An error occurred while trying to load the data. 
-      Please try again later.`;
+        Please try again later.`;
         this.handleError();
       }
     });
   }
+
 
   /**
   * Handles error scenarios by displaying an error message and resetting the loading state.
@@ -200,7 +191,7 @@ export class DvcatDvdecodBreakdownGraphComponent {
    * @param selectedDvcats - An array of selected category names to filter the chart data.
    */
   public updateChart(selectedDvcats: string[]): void {
-    this.selectedLabels = this.labels.filter(dvcat => selectedDvcats.includes(dvcat));
+    this.selectedLabels = this.labels.filter(label => selectedDvcats.includes(label));
     const selectedLabelsIndices = this.selectedLabels.map(dvcat => this.labels.indexOf(dvcat));
 
     this.filteredData = this.data

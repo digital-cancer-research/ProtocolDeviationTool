@@ -13,16 +13,16 @@
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>DVCAT</mat-label>
-            <mat-select formControlName="dvcat">
-                <mat-option *ngFor="let dvcat of dvcats$ | async" [value]="dvcat">
+            <mat-select formControlName="dvcat" multiple>
+                <mat-option *ngFor="let dvcat of dvcatDescriptions" [value]="dvcat">
                     {{dvcat}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>DVDECOD</mat-label>
-            <mat-select formControlName="dvdecod">
-                <mat-option *ngFor="let dvdecod of dvdecods$ | async" [value]="dvdecod">
+            <mat-select formControlName="dvdecod" multiple>
+                <mat-option *ngFor="let dvdecod of dvdecodDescriptions" [value]="dvdecod">
                     {{dvdecod}}
                 </mat-option>
             </mat-select>
@@ -30,7 +30,7 @@
         <mat-form-field appearance="outline">
             <mat-label>DVTERM</mat-label>
             <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" [disabled]="true"
-                cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" [value]="dvterm$ | async">
+                cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" [value]="dvterms">
             </textarea>
         </mat-form-field>
     </form>

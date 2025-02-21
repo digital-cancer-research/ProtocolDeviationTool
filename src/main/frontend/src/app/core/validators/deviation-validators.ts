@@ -4,9 +4,9 @@ import { map } from 'rxjs/operators';
 import { DeviationService } from '../services/deviation.service';
 
 export class DeviationValidators {
-    static dvdecodIsValidForDvcat(deviationService: DeviationService, dvcat: string): AsyncValidatorFn {
+    static dvdecodIsValidForDvcat(deviationService: DeviationService, dvcatId: number): AsyncValidatorFn {
         return (control: AbstractControl): Observable<ValidationErrors | null> => {
-            return deviationService.getDvdecodsByDvcat$(dvcat).pipe(
+            return deviationService.getDvdecodsByDvcat$([dvcatId]).pipe(
                 map((dvdecods) =>
                     dvdecods.includes(control.value) ? null : { dvdecodIsNotValidForDvcat: false }
                 )

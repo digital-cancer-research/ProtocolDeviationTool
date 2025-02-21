@@ -1,1 +1,0 @@
-CREATE TABLE current_sites (site_id TEXT PRIMARY KEY);

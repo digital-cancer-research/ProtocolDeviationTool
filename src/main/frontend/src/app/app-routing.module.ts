@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { SiteSponsorPageComponent } from './site-sponsor-page/site-sponsor-page.component';
 import { DataVisualisationPageModule } from './features/data-visualisation-page/data-visualisation-page.module';
 import { deactivatedUserGuard } from './core/guards/deactivated-user.guard';
 import { DataUploadModule } from './features/data-upload/data-upload-page.module';
@@ -10,10 +9,6 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () => import('./features/home-page/home-page.module').then(m => m.HomePageModule)
-  },
-  {
-    path: 'site-sponsor-page',
-    component: SiteSponsorPageComponent,
   },
   {
     path: 'site',

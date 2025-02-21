@@ -1,7 +1,8 @@
 import { inject } from '@angular/core';
 import { CanActivateFn } from '@angular/router';
-import { UserService } from '../services/user.service';
 import { map } from 'rxjs';
+import { UserService } from '../new/services/user.service';
+import { Role } from '../new/services/models/user/role.enum';
 
 export const deactivatedUserGuard: CanActivateFn = () => {
  
@@ -10,7 +11,7 @@ export const deactivatedUserGuard: CanActivateFn = () => {
   return userService.currentUser$.pipe(
     map(user => {
       if (user !== null) {
-        if (user.roleId === 3) {
+        if (user.role === Role.DEACTIVATED) {
           return false;
         } else {
           return true;

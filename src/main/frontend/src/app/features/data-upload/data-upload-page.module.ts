@@ -27,9 +27,14 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
 import { UploadedFilesTableComponent } from './data-upload/uploaded-files-table/uploaded-files-table.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms';
+import { AiStatementDialogueComponent } from './data-upload/ai-statement-dialogue/ai-statement-dialogue.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
+    AiStatementDialogueComponent,
     AuditTrailComponent,
     DataUploadPageComponent,
     DataUploadComponent,
@@ -44,10 +49,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   imports: [
     CommonModule,
     DataUploadRoutingModule,
+    FormsModule,
     SharedModule,
     MatBadgeModule,
     MatButtonModule,
     MatCardModule,
+    MatCheckboxModule,
+    MatDialogModule,
     MatExpansionModule,
     MatFormFieldModule,
     MatInputModule,
