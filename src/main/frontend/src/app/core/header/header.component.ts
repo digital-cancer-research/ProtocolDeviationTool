@@ -33,6 +33,24 @@ export class HeaderComponent implements OnInit {
 
   users: User[] = [];
 
+  /** The currently selected user */
+  selectedUser: User | null = null;
+
+  /** The currently selected team */
+  selectedTeam: Team | null = null;
+
+  /** Subscription for the user list updates */
+  usersSubscription!: Subscription;
+
+  currentUserSubscription!: Subscription;
+
+  /** Subscription for the selected team updates */
+  selectedTeamSubscription!: Subscription;
+
+  /** The username of the currently selected user */
+  usernameSelected: string = "";
+
+  /** Observable that tracks the current URL path */
   urlPath$: Observable<string> = this.router.events.pipe(
     filter((event: any) => event instanceof NavigationEnd),
     map((event: NavigationEnd) => event.url)
@@ -55,7 +73,16 @@ export class HeaderComponent implements OnInit {
   }
 
   /**
-   * Handles the selection of a user.
+   * Cleans up the subscriptions when the component is destroyed.
+   */
+  ngOnDestroy(): void {
+    if (this.usersSubscription) this.usersSubscription.unsubscribe();
+    if (this.currentUserSubscription) this.currentUserSubscription.unsubscribe();
+    if (this.selectedTeamSubscription) this.selectedTeamSubscription.unsubscribe();
+  }
+
+  /**
+   * Handles the selection of a user by their username.
    * 
    * @param user - The selected user.
    */

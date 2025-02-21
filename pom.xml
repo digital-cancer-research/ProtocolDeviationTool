@@ -148,7 +148,7 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 			<version>${spring.boot.version}</version>
 		</dependency>
-	    <dependency>
+		<dependency>
 			<groupId>org.springframework.ldap</groupId>
 			<artifactId>spring-ldap-core</artifactId>
 			<version>${spring.ldap.version}</version>
@@ -162,7 +162,7 @@
 			<groupId>com.unboundid</groupId>
 			<artifactId>unboundid-ldapsdk</artifactId>
 			<version>${spring.ldap-sdk.version}</version>
-		</dependency> 
+		</dependency>
 
 		<!-- ============== Entra ID DEPENDENCIES ============== -->
 		<!-- Azure Active Directory Spring Boot Starter -->
@@ -170,6 +170,12 @@
 			<groupId>com.azure.spring</groupId>
 			<artifactId>spring-cloud-azure-starter-active-directory</artifactId>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-oauth2-resource-server
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-resource-server</artifactId>
+			<version>6.3.2</version> 
+		</dependency>-->
 		<!-- Spring OAuth2 Client -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
