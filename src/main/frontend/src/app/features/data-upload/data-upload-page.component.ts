@@ -9,7 +9,6 @@ import { Tab } from 'src/app/shared/tab/tab';
 export class DataUploadPageComponent {
   tabs: Tab[] = [
     new Tab("DATA UPLOAD", "/data-upload"),
-    new Tab("DATA UPLOAD SUMMARY", "summary"),
     new Tab("AUDIT TRAIL", "audit-trail"),
     new Tab("DATA TRAIL", "data-trail"),
     new Tab("DATA CATEGORISATION", "data-categorisation")
