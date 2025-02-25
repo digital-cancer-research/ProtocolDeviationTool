@@ -62,6 +62,8 @@ public interface DataRepository extends JpaRepository<Data, Long> {
         @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Visualisation.PdsPerStudyDto(s.externalStudyId, count(d) as count) "
                         +
                         "FROM Data d " +
+                        "LEFT JOIN DataCategory dc ON dc.dataId = d.id " +
+                        "LEFT JOIN DataSubCategory dsc ON dsc.dataCategoryId = dc.id " +
                         "JOIN Study s ON s.id = d.studyId " +
                         "WHERE " + QueryConstants.TEAM_HAS_STUDY_ACCESS +
                         "GROUP BY s.externalStudyId " +
