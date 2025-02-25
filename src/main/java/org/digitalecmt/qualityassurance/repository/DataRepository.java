@@ -80,6 +80,7 @@ public interface DataRepository extends JpaRepository<Data, Long> {
                         +
                         "FROM Dvcat dv " +
                         "LEFT JOIN DataCategory dc ON dc.dvcatId = dv.id " +
+                        "LEFT JOIN DataSubCategory dsc ON dsc.dataCategoryId = dc.id " +
                         "LEFT JOIN Data d ON d.id = dc.dataId AND d.studyId = :studyId " +
                         "GROUP BY dv.description, dv.colour " +
                         "ORDER BY count")

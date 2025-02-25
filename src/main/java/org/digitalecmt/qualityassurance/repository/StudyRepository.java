@@ -11,7 +11,8 @@ import org.springframework.stereotype.Repository;
 
 /**
  * Repository interface for accessing and managing {@link Study} entities.
- * Extends {@link JpaRepository} to provide CRUD operations and additional JPA functionalities.
+ * Extends {@link JpaRepository} to provide CRUD operations and additional JPA
+ * functionalities.
  */
 @Repository
 public interface StudyRepository extends JpaRepository<Study, Long> {
@@ -31,12 +32,13 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
      * @return a list of studies ordered by DV category count
      */
     @Query("SELECT s " +
-    "FROM Study s " +
-    "JOIN Data d ON d.studyId = s.id " +
-    "JOIN DataCategory dc ON dc.dataId = d.id " +
-    "WHERE " + QueryConstants.TEAM_HAS_STUDY_ACCESS +
-    "GROUP BY s.id, s.externalStudyId " + 
-    "ORDER BY COUNT(d) ASC")
+            "FROM Study s " +
+            "JOIN Data d ON d.studyId = s.id " +
+            "LEFT JOIN DataCategory dc ON dc.dataId = d.id " +
+            "LEFT JOIN DataSubCategory dsc ON dsc.dataCategoryId = dc.id " +
+            "WHERE " + QueryConstants.TEAM_HAS_STUDY_ACCESS +
+            "GROUP BY s.id, s.externalStudyId " +
+            "ORDER BY COUNT(d) ASC")
     List<Study> findAllStudiesOrderedByDvcatCount(@Param("teamId") Long teamId);
 
     /**
@@ -45,10 +47,10 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
      * @param teamId the ID of the team
      * @return a list of studies
      */
-    @Query("SELECT s FROM Study s " + 
-    "LEFT JOIN TeamStudy ts ON ts.studyId = s.id " +
-    "WHERE :teamId IS NULL OR :teamId = ts.teamId " +
-    "GROUP BY s " + 
-    "ORDER BY s.externalStudyId")
+    @Query("SELECT s FROM Study s " +
+            "LEFT JOIN TeamStudy ts ON ts.studyId = s.id " +
+            "WHERE :teamId IS NULL OR :teamId = ts.teamId " +
+            "GROUP BY s " +
+            "ORDER BY s.externalStudyId")
     List<Study> findAll(@Param("teamId") Long teamId);
 }
