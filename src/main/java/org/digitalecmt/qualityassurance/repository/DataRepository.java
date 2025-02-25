@@ -29,11 +29,10 @@ public interface DataRepository extends JpaRepository<Data, Long> {
          * @param teamId the ID of the team
          * @return the count of PDs
          */
-        @Query("SELECT COUNT(dc) " +
+        @Query("SELECT COUNT(d) " +
                         "FROM Data d " +
-                        "JOIN DataCategory dc ON dc.dataId = d.id " +
+                        "LEFT JOIN DataCategory dc ON dc.dataId = d.id " +
                         "LEFT JOIN DataSubCategory dsc ON dsc.dataCategoryId = dc.id " +
-                        "JOIN Dvcat dv ON dv.id = dc.dvcatId " +
                         "WHERE " + QueryConstants.TEAM_HAS_STUDY_ACCESS)
         public long countByTeamId(@Param("teamId") Long teamId);
 
