@@ -7,7 +7,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { AuditTrailComponent } from './audit-trail/audit-trail.component';
 import { DataCategorisationComponent } from './data-categorisation/data-categorisation.component';
 import { DataTrailComponent } from './data-trail/data-trail.component';
-import { DataUploadSummaryComponent } from './data-upload-summary/data-upload-summary.component';
 import { DataUploadPageComponent } from './data-upload-page.component';
 import { MatCardModule } from '@angular/material/card';
 import { FileUploadComponent } from './data-upload/file-upload/file-upload.component';
@@ -44,7 +43,6 @@ import { MatDialogModule } from '@angular/material/dialog';
     UploadedFilesTableComponent,
     DataCategorisationComponent,
     DataTrailComponent,
-    DataUploadSummaryComponent
   ],
   imports: [
     CommonModule,
