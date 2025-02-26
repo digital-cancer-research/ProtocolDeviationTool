@@ -1,34 +1,51 @@
-<table mat-table [dataSource]="data" class="mat-elevation-z8">
+<mat-card [appearance]="'outlined'">
+    <mat-card-header>
+        <mat-card-title>
+            Studies
+        </mat-card-title>
+        <mat-form-field>
+            <mat-label>Filter</mat-label>
+            <input matInput (keyup)="applyFilter($event)" #input>
+        </mat-form-field>
+    </mat-card-header>
+    <mat-card-content>
 
-    <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Team name </th>
-        <td mat-cell *matCellDef="let team"> {{team.name}} </td>
-    </ng-container>
-    
-    <ng-container matColumnDef="studies">
-        <th mat-header-cell *matHeaderCellDef> Studies </th>
-        <td mat-cell *matCellDef="let team" class="studies">
-            <mat-checkbox *ngFor="let study of studies"
-            [checked]="isStudySelected(team, study)"
-            (change)="assignStudyToTeam(team, study)"
-            >
-            {{study.externalStudyId}} 
-            </mat-checkbox>
-        </td>
-    </ng-container>
+        <table mat-table [dataSource]="dataSource">
 
-    <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>  </th>
-        <td mat-cell *matCellDef="let team"> 
-            <button mat-flat-button 
-            (click)="updateTeam(team)"
-            [disabled]="!isConfirmButtonActive(team)">
-            Confirm
-        </button>
-        </td>
-    </ng-container>
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Team Name </th>
+                <td mat-cell *matCellDef="let team"> {{team.name}} </td>
+            </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;">
-    </tr>
-</table>
+            <ng-container matColumnDef="studies">
+                <th mat-header-cell *matHeaderCellDef> Studies </th>
+                <td mat-cell *matCellDef="let team">
+                    {{getTeamStudies(team)}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>
+                    <mat-icon>more_horiz</mat-icon>
+                </th>
+                <td mat-cell *matCellDef="let team">
+                    <button mat-icon-button (click)="openDialogue(team)" *ngIf="!team.inProgress">
+                        <mat-icon color="accent">
+                            edit
+                        </mat-icon>
+                    </button>
+                    <mat-spinner *ngIf="team.inProgress" [diameter]="24"></mat-spinner>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+            </tr>
+            <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+            </tr>
+        </table>
+
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of teams"></mat-paginator>
+    </mat-card-content>
+</mat-card>

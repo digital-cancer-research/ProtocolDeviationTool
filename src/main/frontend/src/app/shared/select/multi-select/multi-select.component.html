@@ -5,12 +5,15 @@
     <button mat-icon-button matSuffix>
         <mat-icon (click)="searchTerm=''">close</mat-icon>
     </button>
+    } @else {
+    <button mat-icon-button matSuffix style="visibility: hidden;">
+    </button>
     }
 </mat-form-field>
 <div [style]="'height: ' + height + 'px;'">
     @for (item of getFilteredItems(); track item) {
     <mat-checkbox class="checkbox" color="primary" name="item" [value]="toString(item)"
-    (change)="onChange(item, $event)" [checked]="isChecked(item)">
+        (change)="onChange(item, $event)" [checked]="isChecked(item)">
         {{ getFieldValue(item) }}
     </mat-checkbox>
     }

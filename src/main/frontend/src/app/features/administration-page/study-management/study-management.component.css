@@ -5,3 +5,16 @@
     overflow-y: scroll;
     padding: 10px;
 }
+
+mat-card {
+    margin: 5px;
+}
+
+mat-card-header {
+    display: flex;
+    flex-direction: column;
+}
+
+mat-spinner {
+    margin-left: 6px;
+}
