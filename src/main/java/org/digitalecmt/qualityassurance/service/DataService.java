@@ -11,6 +11,7 @@ import org.digitalecmt.qualityassurance.models.dto.Data.DataUpdateDto;
 import org.digitalecmt.qualityassurance.models.entities.Data;
 import org.digitalecmt.qualityassurance.models.entities.DataAudit;
 import org.digitalecmt.qualityassurance.models.entities.Study;
+import org.digitalecmt.qualityassurance.models.mapper.DataMapper;
 import org.digitalecmt.qualityassurance.models.pojo.DataEntry;
 import org.digitalecmt.qualityassurance.repository.DataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class DataService {
 
     @Autowired
     private DataRepository dataRepository;
-    
+
     @Autowired
     private DeviationService deviationService;
 
@@ -31,6 +32,9 @@ public class DataService {
 
     @Autowired
     private StudyService studyService;
+
+    @Autowired
+    private DataMapper dataMapper;
 
     public List<DataDto> getPdDataByTeamId(Long teamId) {
         List<BaseDataDto> baseData = dataRepository.findDataByTeam(teamId);
@@ -51,16 +55,10 @@ public class DataService {
                     categories.stream().map(CategorisationDto::getDvdecods).filter(Objects::nonNull).toList(),
                     categories.stream().map(CategorisationDto::getDvterms).filter(Objects::nonNull).toList());
 
-            DataDto formattedDatum = DataDto.builder()
-                    .id(d.getId())
-                    .siteId(d.getSiteId())
-                    .studyId(d.getStudyId())
-                    .dvspondes(d.getDvspondes())
-                    .dvcat(extractedData.get(0))
-                    .dvdecod(extractedData.get(1))
-                    .dvterm(extractedData.get(2))
-                    .build();
-
+            DataDto formattedDatum = dataMapper.toDataDto(d);
+            formattedDatum.setDvcat(extractedData.get(0));
+            formattedDatum.setDvdecod(extractedData.get(1));
+            formattedDatum.setDvterm(extractedData.get(2));
             formattedData.add(formattedDatum);
         });
         return formattedData;
@@ -69,7 +67,7 @@ public class DataService {
     @Transactional
     public void updateEntry(DataUpdateDto dataDto) {
         DataDto originalData = getDataDetails(dataRepository.findDataById(dataDto.getId())).get(0);
-        
+
         deviationService.removeCategorisation(dataDto.getId());
         deviationService.categoriseData(dataDto.getDvcat(), dataDto.getDvdecod(), dataDto.getId());
         Study study = studyService.createStudy(dataDto.getStudyId());
@@ -77,19 +75,16 @@ public class DataService {
         data.setStudyId(study.getId());
         dataRepository.save(data);
 
-
         DataAudit audit = DataAudit.builder()
-        .dataId(dataDto.getId())
-        .userId(dataDto.getAdminId())
-        .originalValue(
-            "DVCAT: " + originalData.getDvcat() + "\n" +
-            "DVDECOD: " + originalData.getDvdecod()
-        )
-        .newValue(
-            "DVCAT: " + dataDto.getDvcat() + "\n" +
-            "DVDECOD: " + dataDto.getDvdecod()
-        )
-        .build();
+                .dataId(dataDto.getId())
+                .userId(dataDto.getAdminId())
+                .originalValue(
+                        "DVCAT: " + originalData.getDvcat() + "\n" +
+                                "DVDECOD: " + originalData.getDvdecod())
+                .newValue(
+                        "DVCAT: " + dataDto.getDvcat() + "\n" +
+                                "DVDECOD: " + dataDto.getDvdecod())
+                .build();
         dataAuditService.saveAudit(audit);
     }
 

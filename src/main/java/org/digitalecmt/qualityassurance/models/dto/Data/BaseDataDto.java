@@ -11,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class BaseDataDto {
     private Long id;
+    private Long fileId;
     private String siteId;
     private String studyId;
     private String dvspondes;

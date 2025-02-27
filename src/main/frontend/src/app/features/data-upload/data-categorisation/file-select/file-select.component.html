@@ -4,8 +4,8 @@
 <mat-card-subtitle>
     Click on the file icon in the table to hide this section
 </mat-card-subtitle>
-<mat-selection-list>
-    <mat-list-option *ngFor="let file of files">
+<mat-selection-list (selectionChange)="onFileSelected(list.selectedOptions)" #list>
+    <mat-list-option *ngFor="let file of files" [value]="file">
         <mat-icon matListItemIcon>folder</mat-icon>
         <div matListItemTitle>{{file.fileName}}</div>
         <div matListItemLine>{{file.dateUploaded | date:'medium'}}</div>

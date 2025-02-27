@@ -151,21 +151,21 @@ public interface DataRepository extends JpaRepository<Data, Long> {
         public List<DvdecodPerStudyDto> findDvdecodByDvcatIdPerStudy(@Param("dvcatId") long dvcatId,
                         @Param("study") String externalStudyId);
 
-        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Data.BaseDataDto(d.id, esm.externalSiteId, s.externalStudyId, d.dvspondes) "
+        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Data.BaseDataDto(d.id, d.fileId, esm.externalSiteId, s.externalStudyId, d.dvspondes) "
                         +
                         "FROM Data d JOIN Study s ON d.studyId = s.id " +
                         "JOIN ExternalSiteMapping esm ON esm.id = d.mappingId " +
                         "WHERE " + QueryConstants.TEAM_HAS_STUDY_ACCESS)
         public List<BaseDataDto> findDataByTeam(@Param("teamId") Long teamId);
 
-        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Data.BaseDataDto(d.id, esm.externalSiteId, s.externalStudyId, d.dvspondes) "
+        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Data.BaseDataDto(d.id, d.fileId, esm.externalSiteId, s.externalStudyId, d.dvspondes) "
                         +
                         "FROM Data d JOIN Study s ON d.studyId = s.id " +
                         "JOIN ExternalSiteMapping esm ON esm.id = d.mappingId " +
                         "WHERE s.externalStudyId = :study")
         public List<BaseDataDto> findDataByStudy(@Param("study") String externalStudyId);
         
-        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Data.BaseDataDto(d.id, esm.externalSiteId, s.externalStudyId, d.dvspondes) "
+        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Data.BaseDataDto(d.id, d.fileId, esm.externalSiteId, s.externalStudyId, d.dvspondes) "
                         +
                         "FROM Data d JOIN Study s ON d.studyId = s.id " +
                         "JOIN ExternalSiteMapping esm ON esm.id = d.mappingId " +

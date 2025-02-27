@@ -1,5 +1,6 @@
 export interface DataTableEntry {
     id: number
+    fileId: number
     siteId: string
     studyId: string
     dvspondes: string

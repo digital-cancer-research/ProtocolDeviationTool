@@ -15,10 +15,10 @@
 
         <mat-drawer-container autosize>
             <mat-drawer #drawer mode="side" opened="true">
-                <app-file-select></app-file-select>
+                <app-file-select (selectedFiles)="updateData($event)"></app-file-select>
                 <mat-divider vertical="true"></mat-divider>
             </mat-drawer>
-            <app-data-table [fetchedData]="data"></app-data-table>
+            <app-data-table [fetchedData]="filteredData"></app-data-table>
         </mat-drawer-container>
     </mat-card-content>
 </mat-card>
