@@ -72,8 +72,8 @@ export class StudyManagementComponent implements AfterViewInit {
     })
 
     dialogueRef.afterClosed().subscribe((studies: Study[]) => {
-      team.inProgress = true;
       if (studies) {
+        team.inProgress = true;
         const updateTeam = {
           name: team.name,
           id: team.id,
