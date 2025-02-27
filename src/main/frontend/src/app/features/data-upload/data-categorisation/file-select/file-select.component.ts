@@ -1,27 +1,26 @@
-import { AfterViewInit, Component, EventEmitter, inject, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { FileService } from '../../data-upload/file.service';
 import { UploadedFile } from '../../data-upload/models/uploaded-file.model';
-import { MatList, MatListOption } from '@angular/material/list';
+import { MatListOption } from '@angular/material/list';
 import { SelectionModel } from '@angular/cdk/collections';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-file-select',
   templateUrl: './file-select.component.html',
   styleUrl: './file-select.component.css'
 })
-export class FileSelectComponent implements AfterViewInit {
+export class FileSelectComponent {
   private readonly fileService = inject(FileService);
-  @ViewChild('list') list!: MatList;
   @Output() selectedFiles: EventEmitter<number[]> = new EventEmitter();
   files: UploadedFile[] = [];
 
   constructor() {
-    this.fileService.getFiles$().subscribe(files => this.files = files);
-  }
-
-  ngAfterViewInit(): void {
-    console.log(this.list);
-
+    this.fileService.getFiles$()
+      .pipe(
+        map(files => files.sort((a, b) => a.fileName.localeCompare(b.fileName)))
+      )
+      .subscribe(files => this.files = files);
   }
 
   public onFileSelected(selection: SelectionModel<MatListOption>): void {
