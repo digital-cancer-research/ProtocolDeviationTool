@@ -1,0 +1,17 @@
+mat-card {
+    margin: 5px;
+}
+
+mat-card-header {
+    align-items: center;
+    justify-content: space-between;
+}
+
+mat-card-content, mat-drawer-container {
+    min-height: 300px;
+    height: 100%;
+}
+
+.drawer-content {
+    display: flex;
+}
