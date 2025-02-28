@@ -30,6 +30,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 import { AiStatementDialogueComponent } from './data-upload/ai-statement-dialogue/ai-statement-dialogue.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { FileSelectComponent } from './data-categorisation/file-select/file-select.component';
+import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 @NgModule({
   declarations: [
@@ -42,6 +45,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     UploadErrorsTableComponent,
     UploadedFilesTableComponent,
     DataCategorisationComponent,
+    FileSelectComponent,
     DataTrailComponent,
   ],
   imports: [
@@ -57,8 +61,10 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatExpansionModule,
     MatFormFieldModule,
     MatInputModule,
+    MatListModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
+    MatSidenavModule,
     MatSnackBarModule,
     MatSortModule,
     MatTableModule,

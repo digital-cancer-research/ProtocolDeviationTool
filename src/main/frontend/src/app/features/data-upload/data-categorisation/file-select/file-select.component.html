@@ -1,0 +1,18 @@
+<mat-card-title>
+    Select files
+</mat-card-title>
+<mat-card-subtitle>
+    Click on the file icon in the table to hide this section
+</mat-card-subtitle>
+<mat-selection-list (selectionChange)="onFileSelected(list.selectedOptions)" #list>
+    <mat-list-option *ngFor="let file of files" [value]="file">
+        <mat-icon matListItemIcon>folder</mat-icon>
+        <div matListItemTitle>{{file.fileName}}</div>
+        <div matListItemLine>{{file.dateUploaded | date:'medium'}}</div>
+        <div matListItemLine>{{file.uploadedBy}}</div>
+    </mat-list-option>
+    <p *ngIf="files.length === 0">
+        No files have been uploaded yet.
+        You can upload files using the data upload section.
+    </p>
+</mat-selection-list>
