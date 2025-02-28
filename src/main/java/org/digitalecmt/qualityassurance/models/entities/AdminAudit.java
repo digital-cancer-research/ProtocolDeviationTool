@@ -40,6 +40,13 @@ public class AdminAudit {
     private Long userId;
 
     /**
+     * The entity the action was performed on.
+     * Must not be null.
+     */
+    @NotNull
+    private String entity;
+
+    /**
      * The action performed.
      * Must not be null.
      */
