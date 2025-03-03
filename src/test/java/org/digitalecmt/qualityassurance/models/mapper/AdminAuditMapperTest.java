@@ -73,4 +73,27 @@ public class AdminAuditMapperTest {
                 assertEquals(newUser.getAuditDetails(), audit.getNewValue());
                 assertNull(audit.getDate());
         }
+
+        @Test
+        public void shouldGenerateDeleteUserMappingMethod() {
+                User user = User.builder()
+                .id(1L)
+                .username("johndoe@example.com")
+                .role(Role.USER)
+                .isSite(true)
+                .isSponsor(true)
+                .dateCreated(LocalDateTime.now())
+                .build(); 
+
+                AdminAudit audit = AdminAuditMapper.INSTANCE.userToDeleteUserAdminAudit(user, 2L);
+
+                assertNotNull(audit);
+                assertNull(audit.getId());
+                assertEquals(2L, audit.getUserId());
+                assertEquals(user.getUsername(), audit.getEntity());
+                assertNotNull(audit.getAction());
+                assertEquals(user.getAuditDetails(), audit.getOriginalValue());
+                assertNotNull(audit.getNewValue());
+                assertNull(audit.getDate());
+        }
 }

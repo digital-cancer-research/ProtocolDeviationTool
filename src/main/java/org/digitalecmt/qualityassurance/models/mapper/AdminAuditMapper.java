@@ -29,4 +29,13 @@ public interface AdminAuditMapper {
     @Mapping(target = "date", ignore = true)
     AdminAudit userToUpdateUserAdminAudit(User user, User oldUser, long adminId);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "userId", source = "adminId")
+    @Mapping(target = "entity", source = "user.username")
+    @Mapping(target = "action", constant = "Deleted a user")
+    @Mapping(target = "originalValue", expression = "java(user.getAuditDetails())")
+    @Mapping(target = "newValue", constant = "N/A")
+    @Mapping(target = "date", ignore = true)
+    AdminAudit userToDeleteUserAdminAudit(User user, long adminId);
+
 }

@@ -34,13 +34,7 @@ public class AdminAuditService {
     }
 
     public AdminAudit auditDeleteUser(User user, Long adminId) {
-        AdminAudit audit = AdminAudit.builder()
-        .userId(adminId)
-        .action("Deleted a user")
-        .originalValue(user.toString())
-        .newValue("N/A")
-        .date(LocalDateTime.now())
-        .build();
+        AdminAudit audit = AdminAuditMapper.INSTANCE.userToDeleteUserAdminAudit(user, adminId);
         return adminAuditRepository.save(audit);
     }
 
