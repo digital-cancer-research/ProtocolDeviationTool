@@ -39,13 +39,7 @@ public class AdminAuditService {
     }
 
     public AdminAudit auditAddUserToTeam(User user, Team team, Long adminId) {
-        AdminAudit audit = AdminAudit.builder()
-        .userId(adminId)
-        .action("Added a user to a team")
-        .originalValue("N/A")
-        .newValue("User: " + user.getUsername() + "\nTeam: " + team.getName())
-        .date(LocalDateTime.now())
-        .build();
+        AdminAudit audit = AdminAuditMapper.INSTANCE.userToAddUserToTeamAdminAudit(user, team, adminId);
         return adminAuditRepository.save(audit);
     }
 

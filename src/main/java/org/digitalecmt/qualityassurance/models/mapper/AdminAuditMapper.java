@@ -1,6 +1,7 @@
 package org.digitalecmt.qualityassurance.models.mapper;
 
 import org.digitalecmt.qualityassurance.models.entities.AdminAudit;
+import org.digitalecmt.qualityassurance.models.entities.Team;
 import org.digitalecmt.qualityassurance.models.entities.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -38,4 +39,12 @@ public interface AdminAuditMapper {
     @Mapping(target = "date", ignore = true)
     AdminAudit userToDeleteUserAdminAudit(User user, long adminId);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "userId", source = "adminId")
+    @Mapping(target = "entity", source = "user.username")
+    @Mapping(target = "action", constant = "Added a user to a team")
+    @Mapping(target = "originalValue", constant = "N/A")
+    @Mapping(target = "newValue", source = "team.name")
+    @Mapping(target = "date", ignore = true)
+    AdminAudit userToAddUserToTeamAdminAudit(User user, Team team, Long adminId);
 }
