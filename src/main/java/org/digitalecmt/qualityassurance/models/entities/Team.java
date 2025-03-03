@@ -1,6 +1,11 @@
 package org.digitalecmt.qualityassurance.models.entities;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -60,5 +65,21 @@ public class Team {
     @PrePersist
     public void prePersist() {
         this.dateCreated = LocalDateTime.now();
+    }
+
+    public String getAuditDetails() {
+        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+                .append("name", name)
+                .toString();
+    }
+
+    public static String getTeamnamesAsJson(List<Team> teams) {
+        List<String> teamnames = teams.stream()
+                .map(Team::getName)
+                .collect(Collectors.toList());
+
+        return new ToStringBuilder(teams, ToStringStyle.JSON_STYLE)
+                .append("teams", teamnames)
+                .toString();
     }
 }

@@ -2,7 +2,6 @@ package org.digitalecmt.qualityassurance.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.digitalecmt.qualityassurance.models.dto.Audit.AdminAuditDto;
 import org.digitalecmt.qualityassurance.models.entities.AdminAudit;
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AdminAuditService {
 
-    @Autowired 
+    @Autowired
     private AdminAuditRepository adminAuditRepository;
 
     public List<AdminAuditDto> findAllAudits() {
@@ -43,56 +42,42 @@ public class AdminAuditService {
         return adminAuditRepository.save(audit);
     }
 
+    public AdminAudit auditSetUserTeamAccess(User user, List<Team> newTeams, List<Team> oldTeams, Long adminId) {
+        AdminAudit audit = AdminAuditMapper.INSTANCE.userToSetUserTeamAccessAudit(user, newTeams,
+                oldTeams, adminId);
+        return adminAuditRepository.save(audit);
+    }
+
     public AdminAudit auditCreateTeam(Team team, Long adminId) {
         AdminAudit audit = AdminAudit.builder()
-        .userId(adminId)
-        .action("Created a new team")
-        .originalValue("N/A")
-        .newValue(team.toString())
-        .date(LocalDateTime.now())
-        .build();
+                .userId(adminId)
+                .action("Created a new team")
+                .originalValue("N/A")
+                .newValue(team.toString())
+                .date(LocalDateTime.now())
+                .build();
         return adminAuditRepository.save(audit);
     }
 
     public AdminAudit auditUpdateTeam(Team team, String oldTeamDetails, Long adminId) {
         AdminAudit audit = AdminAudit.builder()
-        .userId(adminId)
-        .action("Updated a team")
-        .originalValue(oldTeamDetails)
-        .newValue(team.toString())
-        .date(LocalDateTime.now())
-        .build();
+                .userId(adminId)
+                .action("Updated a team")
+                .originalValue(oldTeamDetails)
+                .newValue(team.toString())
+                .date(LocalDateTime.now())
+                .build();
         return adminAuditRepository.save(audit);
     }
 
     public AdminAudit auditDeleteTeam(Team team, Long adminId) {
         AdminAudit audit = AdminAudit.builder()
-        .userId(adminId)
-        .action("Deleted a team")
-        .originalValue(team.toString())
-        .newValue("N/A")
-        .date(LocalDateTime.now())
-        .build();
-        return adminAuditRepository.save(audit);
-    }
-
-    public AdminAudit auditSetUserTeamAccess(User user, List<Team> newTeams, List<Team> oldTeams, Long adminId) {
-
-        String originalValue = oldTeams.stream()
-        .map(team -> team.getName())
-        .collect(Collectors.joining("\n"));
-        
-        String newValue = newTeams.stream()
-        .map(team -> team.getName())
-        .collect(Collectors.joining("\n"));
-
-        AdminAudit audit = AdminAudit.builder()
-        .userId(adminId)
-        .action("Granted team access to " + user.getUsername())
-        .originalValue(originalValue)
-        .newValue(newValue)
-        .date(LocalDateTime.now())
-        .build();
+                .userId(adminId)
+                .action("Deleted a team")
+                .originalValue(team.toString())
+                .newValue("N/A")
+                .date(LocalDateTime.now())
+                .build();
         return adminAuditRepository.save(audit);
     }
 }

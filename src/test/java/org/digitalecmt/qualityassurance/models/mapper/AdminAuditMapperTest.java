@@ -5,6 +5,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.digitalecmt.qualityassurance.models.entities.AdminAudit;
 import org.digitalecmt.qualityassurance.models.entities.Team;
@@ -87,16 +89,34 @@ public class AdminAuditMapperTest {
     }
 
     @Test
-        public void shouldGenerateAddUserToTeamMappingMethod() {
-                AdminAudit audit = AdminAuditMapperImpl.INSTANCE.userToAddUserToTeamAdminAudit(user, team, 2L);
+    public void shouldGenerateAddUserToTeamMappingMethod() {
+        AdminAudit audit = AdminAuditMapperImpl.INSTANCE.userToAddUserToTeamAdminAudit(user, team, 2L);
 
-                assertNotNull(audit);
-                assertNull(audit.getId());
-                assertEquals(2L, audit.getUserId());
-                assertEquals(user.getUsername(), audit.getEntity());
-                assertNotNull(audit.getAction());
-                assertNotNull(audit.getOriginalValue());
-                assertEquals(team.getName(), audit.getNewValue());
-                assertNull(audit.getDate());
-        }
+        assertNotNull(audit);
+        assertNull(audit.getId());
+        assertEquals(2L, audit.getUserId());
+        assertEquals(user.getUsername(), audit.getEntity());
+        assertNotNull(audit.getAction());
+        assertNotNull(audit.getOriginalValue());
+        assertEquals(team.getName(), audit.getNewValue());
+        assertNull(audit.getDate());
+    }
+
+    @Test
+    public void shouldGenerateSetUserTeamAccessMappingMethod() {
+        List<Team> teams = new ArrayList<>();
+        List<Team> oldTeams = new ArrayList<>();
+        teams.add(team);
+        
+        AdminAudit audit = AdminAuditMapperImpl.INSTANCE.userToSetUserTeamAccessAudit(user, teams, oldTeams, 2L);
+
+        assertNotNull(audit);
+        assertNull(audit.getId());
+        assertEquals(2L, audit.getUserId());
+        assertEquals(user.getUsername(), audit.getEntity());
+        assertNotNull(audit.getAction());
+        assertEquals(Team.getTeamnamesAsJson(oldTeams), audit.getOriginalValue());
+        assertEquals(Team.getTeamnamesAsJson(teams), audit.getNewValue());
+        assertNull(audit.getDate());
+    }
 }

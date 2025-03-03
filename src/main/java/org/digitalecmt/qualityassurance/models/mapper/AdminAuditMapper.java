@@ -1,5 +1,7 @@
 package org.digitalecmt.qualityassurance.models.mapper;
 
+import java.util.List;
+
 import org.digitalecmt.qualityassurance.models.entities.AdminAudit;
 import org.digitalecmt.qualityassurance.models.entities.Team;
 import org.digitalecmt.qualityassurance.models.entities.User;
@@ -47,4 +49,13 @@ public interface AdminAuditMapper {
     @Mapping(target = "newValue", source = "team.name")
     @Mapping(target = "date", ignore = true)
     AdminAudit userToAddUserToTeamAdminAudit(User user, Team team, Long adminId);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "userId", source = "adminId")
+    @Mapping(target = "entity", source = "user.username")
+    @Mapping(target = "action", constant = "Granted team access to user")
+    @Mapping(target = "originalValue", expression = "java(Team.getTeamnamesAsJson(oldTeams))")
+    @Mapping(target = "newValue", expression = "java(Team.getTeamnamesAsJson(newTeams))")
+    @Mapping(target = "date", ignore = true)
+    AdminAudit userToSetUserTeamAccessAudit(User user, List<Team> newTeams, List<Team> oldTeams, Long adminId);
 }
