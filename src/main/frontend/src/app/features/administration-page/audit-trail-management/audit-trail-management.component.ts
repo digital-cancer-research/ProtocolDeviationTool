@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { SentenceCasePipe } from 'src/app/shared/pipes/sentence-case.pipe';
 
 @Component({
   selector: 'app-audit-trail-management',
@@ -18,6 +19,7 @@ export class AuditTrailManagementComponent {
   protected displayedColumns: string[] = [
     'username',
     'date',
+    'entity',
     'action',
     'originalValue',
     'newValue'
@@ -51,6 +53,7 @@ export class AuditTrailManagementComponent {
     this.auditTrailService.getAuditTrailData().subscribe(
       {
         next: (data) => {
+          data.forEach(audit => console.log(this.getValuesFromJson(audit.newValue)))
           this.dataSource.data = data;
         },
         error: (error) => {
@@ -78,6 +81,16 @@ export class AuditTrailManagementComponent {
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
+    }
+  }
+
+  protected getValuesFromJson(json: string): string[] {
+    if (json.localeCompare('N/A') === 0) {
+      return ['N/A']
+    } else {
+      const parsed = JSON.parse(json);
+      const sp = new SentenceCasePipe;
+      return Object.keys(parsed).map(key => sp.transform(`${key}: ${parsed[key]}`))
     }
   }
 }
