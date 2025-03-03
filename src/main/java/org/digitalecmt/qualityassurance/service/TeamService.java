@@ -142,10 +142,10 @@ public class TeamService {
         if (team.getName().equals(teamDto.getName())) {
             return team;
         } else {
-            String oldTeamDetails = team.toString();
+            Team oldTeam = team.toBuilder().build();
             team.setName(teamDto.getName());
             teamRepository.save(team);
-            adminAuditService.auditUpdateTeam(team, oldTeamDetails, adminId);
+            adminAuditService.auditUpdateTeam(team, oldTeam, adminId);
 
             return team;
         }

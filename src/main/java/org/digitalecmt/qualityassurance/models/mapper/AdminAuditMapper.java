@@ -46,7 +46,7 @@ public interface AdminAuditMapper {
     @Mapping(target = "entity", source = "user.username")
     @Mapping(target = "action", constant = "Added a user to a team")
     @Mapping(target = "originalValue", constant = "N/A")
-    @Mapping(target = "newValue", source = "team.name")
+    @Mapping(target = "newValue", expression = "java(team.getAuditDetails())")
     @Mapping(target = "date", ignore = true)
     AdminAudit userToAddUserToTeamAdminAudit(User user, Team team, Long adminId);
 
@@ -58,4 +58,31 @@ public interface AdminAuditMapper {
     @Mapping(target = "newValue", expression = "java(Team.getTeamnamesAsJson(newTeams))")
     @Mapping(target = "date", ignore = true)
     AdminAudit userToSetUserTeamAccessAudit(User user, List<Team> newTeams, List<Team> oldTeams, Long adminId);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "userId", source = "adminId")
+    @Mapping(target = "entity", source = "team.name")
+    @Mapping(target = "action", constant = "Created a team")
+    @Mapping(target = "originalValue", constant = "N/A")
+    @Mapping(target = "newValue", expression = "java(team.getAuditDetails())")
+    @Mapping(target = "date", ignore = true)
+    AdminAudit teamToCreateTeamAdminAudit(Team team, Long adminId);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "userId", source = "adminId")
+    @Mapping(target = "entity", source = "oldTeam.name")
+    @Mapping(target = "action", constant = "Updated a team")
+    @Mapping(target = "originalValue", expression = "java(oldTeam.getAuditDetails())")
+    @Mapping(target = "newValue", expression = "java(team.getAuditDetails())")
+    @Mapping(target = "date", ignore = true)
+    AdminAudit teamToUpdateTeamAdminAudit(Team team, Team oldTeam, Long adminId);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "userId", source = "adminId")
+    @Mapping(target = "entity", source = "team.name")
+    @Mapping(target = "action", constant = "Deleted a team")
+    @Mapping(target = "originalValue", expression = "java(team.getAuditDetails())")
+    @Mapping(target = "newValue", constant = "N/A")
+    @Mapping(target = "date", ignore = true)
+    AdminAudit teamToDeleteTeamAdminAudit(Team team, Long adminId);
 }

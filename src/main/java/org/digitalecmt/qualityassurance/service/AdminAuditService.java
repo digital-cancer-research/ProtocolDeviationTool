@@ -1,6 +1,5 @@
 package org.digitalecmt.qualityassurance.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.digitalecmt.qualityassurance.models.dto.Audit.AdminAuditDto;
@@ -49,35 +48,17 @@ public class AdminAuditService {
     }
 
     public AdminAudit auditCreateTeam(Team team, Long adminId) {
-        AdminAudit audit = AdminAudit.builder()
-                .userId(adminId)
-                .action("Created a new team")
-                .originalValue("N/A")
-                .newValue(team.toString())
-                .date(LocalDateTime.now())
-                .build();
+        AdminAudit audit = AdminAuditMapper.INSTANCE.teamToCreateTeamAdminAudit(team, adminId);
         return adminAuditRepository.save(audit);
     }
 
-    public AdminAudit auditUpdateTeam(Team team, String oldTeamDetails, Long adminId) {
-        AdminAudit audit = AdminAudit.builder()
-                .userId(adminId)
-                .action("Updated a team")
-                .originalValue(oldTeamDetails)
-                .newValue(team.toString())
-                .date(LocalDateTime.now())
-                .build();
+    public AdminAudit auditUpdateTeam(Team team, Team oldTeam, Long adminId) {
+        AdminAudit audit = AdminAuditMapper.INSTANCE.teamToUpdateTeamAdminAudit(team, oldTeam, adminId);
         return adminAuditRepository.save(audit);
     }
 
     public AdminAudit auditDeleteTeam(Team team, Long adminId) {
-        AdminAudit audit = AdminAudit.builder()
-                .userId(adminId)
-                .action("Deleted a team")
-                .originalValue(team.toString())
-                .newValue("N/A")
-                .date(LocalDateTime.now())
-                .build();
+        AdminAudit audit = AdminAuditMapper.INSTANCE.teamToDeleteTeamAdminAudit(team, adminId);
         return adminAuditRepository.save(audit);
     }
 }

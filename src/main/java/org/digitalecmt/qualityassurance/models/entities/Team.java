@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Data
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class Team {

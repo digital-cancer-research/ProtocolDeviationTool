@@ -98,7 +98,7 @@ public class AdminAuditMapperTest {
         assertEquals(user.getUsername(), audit.getEntity());
         assertNotNull(audit.getAction());
         assertNotNull(audit.getOriginalValue());
-        assertEquals(team.getName(), audit.getNewValue());
+        assertEquals(team.getAuditDetails(), audit.getNewValue());
         assertNull(audit.getDate());
     }
 
@@ -117,6 +117,53 @@ public class AdminAuditMapperTest {
         assertNotNull(audit.getAction());
         assertEquals(Team.getTeamnamesAsJson(oldTeams), audit.getOriginalValue());
         assertEquals(Team.getTeamnamesAsJson(teams), audit.getNewValue());
+        assertNull(audit.getDate());
+    }
+
+    @Test
+    public void shouldGenerateCreateTeamMappingMethod() {
+        AdminAudit audit = AdminAuditMapper.INSTANCE.teamToCreateTeamAdminAudit(team, 2L);
+
+        assertNotNull(audit);
+        assertNull(audit.getId());
+        assertEquals(2L, audit.getUserId());
+        assertEquals(team.getName(), audit.getEntity());
+        assertNotNull(audit.getAction());
+        assertNotNull(audit.getOriginalValue());
+        assertEquals(team.getAuditDetails(), audit.getNewValue());
+        assertNull(audit.getDate());
+    }
+
+    @Test
+    public void shouldGenerateUpdateTeamMappingMethod() {
+        Team newTeam = Team.builder()
+                .id(1L)
+                .name("Lung Cancer Research Team")
+                .build();
+
+        AdminAudit audit = AdminAuditMapper.INSTANCE.teamToUpdateTeamAdminAudit(newTeam, team, 2L);
+
+        assertNotNull(audit);
+        assertNull(audit.getId());
+        assertEquals(2L, audit.getUserId());
+        assertEquals(team.getName(), audit.getEntity());
+        assertNotNull(audit.getAction());
+        assertEquals(team.getAuditDetails(), audit.getOriginalValue());
+        assertEquals(newTeam.getAuditDetails(), audit.getNewValue());
+        assertNull(audit.getDate());
+    }
+
+    @Test
+    public void shouldGenerateDeleteTeamMappingMethod() {
+        AdminAudit audit = AdminAuditMapper.INSTANCE.teamToDeleteTeamAdminAudit(team, 2L);
+
+        assertNotNull(audit);
+        assertNull(audit.getId());
+        assertEquals(2L, audit.getUserId());
+        assertEquals(team.getName(), audit.getEntity());
+        assertNotNull(audit.getAction());
+        assertEquals(team.getAuditDetails(), audit.getOriginalValue());
+        assertNotNull(audit.getNewValue());
         assertNull(audit.getDate());
     }
 }
