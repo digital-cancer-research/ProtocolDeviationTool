@@ -31,24 +31,7 @@ export class HeaderComponent implements OnInit {
 
   selectedTeam$ = this.teamService.currentTeam$;
 
-  users: User[] = [];
-
-  /** The currently selected user */
-  selectedUser: User | null = null;
-
-  /** The currently selected team */
-  selectedTeam: Team | null = null;
-
-  /** Subscription for the user list updates */
-  usersSubscription!: Subscription;
-
-  currentUserSubscription!: Subscription;
-
-  /** Subscription for the selected team updates */
-  selectedTeamSubscription!: Subscription;
-
-  /** The username of the currently selected user */
-  usernameSelected: string = "";
+  currentUser: User | null = null;
 
   /** Observable that tracks the current URL path */
   urlPath$: Observable<string> = this.router.events.pipe(
@@ -64,35 +47,10 @@ export class HeaderComponent implements OnInit {
    * Initialises the component by loading the list of users and tracking the URL root.
    */
   ngOnInit(): void {
-    this.userService.getUsers$().subscribe(users => this.users = users);
     this.urlPath$.subscribe((url) => {
       const urlSegments = url.split('/');
       this.urlRoot = urlSegments[1];
       this.urlFinalPath = urlSegments.reverse()[0];
-    });
-  }
-
-  /**
-   * Cleans up the subscriptions when the component is destroyed.
-   */
-  ngOnDestroy(): void {
-    if (this.usersSubscription) this.usersSubscription.unsubscribe();
-    if (this.currentUserSubscription) this.currentUserSubscription.unsubscribe();
-    if (this.selectedTeamSubscription) this.selectedTeamSubscription.unsubscribe();
-  }
-
-  /**
-   * Handles the selection of a user by their username.
-   * 
-   * @param user - The selected user.
-   */
-  onSelectUser(user: User): void {
-    this.userService.currentUserSubject.next(user);
-    this.teamService.currentTeamSubject.next(null);
-    this.userService.getUserTeams$(user.id).subscribe(teams => {
-      if (teams.length === 1) {
-        this.teamService.currentTeamSubject.next(teams[0]);
-      }
     });
   }
 

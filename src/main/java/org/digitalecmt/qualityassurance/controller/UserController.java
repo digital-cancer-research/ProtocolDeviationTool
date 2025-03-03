@@ -14,9 +14,13 @@ import org.digitalecmt.qualityassurance.service.UserTeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * REST controller for managing users.
@@ -24,6 +28,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
+	
+	private Logger log = Logger.getLogger(UserController.class.getName());
 
     @Autowired
     private AuthorisationService authService;
@@ -149,5 +155,19 @@ public class UserController {
     public ResponseEntity<List<Team>> getUserTeams(@PathVariable("id") Long id) {
         List<Team> teams = userService.getUserTeams(id);
         return new ResponseEntity<>(teams, HttpStatus.OK);
+    }
+    
+    @GetMapping("/user")
+    public ResponseEntity<User> getCurrentUser(@AuthenticationPrincipal OidcUser principal) {
+    	User user=null;
+    	Map<String, Object> claims = principal.getIdToken().getClaims();
+    	if(claims.containsKey("preferred_username")) {
+            String username = (String) claims.get("preferred_username");
+            user = userService.findUserByUsername(username);
+            log.info(username);
+    	}
+    	// TODO if null set default user
+    	log.info(claims.toString());
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 }

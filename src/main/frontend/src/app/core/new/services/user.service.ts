@@ -25,6 +25,13 @@ export class UserService {
     };
   }
 
+  getCurrentUser$(): Observable<User> {
+    const user=this.http.get<User>(`${this.BASE_URL}/user`);
+	console.log(user)
+    //this.setUser(user)
+	return user;
+  }
+
   /**
    * Retrieves the user from session storage.
    * 
