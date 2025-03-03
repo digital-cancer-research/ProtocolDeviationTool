@@ -28,14 +28,8 @@ public class AdminAuditService {
         return adminAuditRepository.save(audit);
     }
 
-    public AdminAudit auditUpdateUser(User user, String oldUserDetails, Long adminId) {
-        AdminAudit audit = AdminAudit.builder()
-        .userId(adminId)
-        .action("Updated a user")
-        .originalValue(oldUserDetails)
-        .newValue(user.toString())
-        .date(LocalDateTime.now())
-        .build();
+    public AdminAudit auditUpdateUser(User user, User oldUser, Long adminId) {
+        AdminAudit audit = AdminAuditMapper.INSTANCE.userToUpdateUserAdminAudit(user, oldUser, adminId);
         return adminAuditRepository.save(audit);
     }
 

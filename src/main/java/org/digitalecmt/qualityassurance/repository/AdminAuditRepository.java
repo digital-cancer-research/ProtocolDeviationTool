@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AdminAuditRepository extends JpaRepository<AdminAudit, Long> {
 
-    @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Audit.AdminAuditDto(u.username, aa.date, aa.action, aa.originalValue, aa.newValue)"
+    @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Audit.AdminAuditDto(u.username, aa.date, aa.entity, aa.action, aa.originalValue, aa.newValue)"
             +
             "FROM AdminAudit aa " +
             "JOIN User u ON aa.userId = u.id ")

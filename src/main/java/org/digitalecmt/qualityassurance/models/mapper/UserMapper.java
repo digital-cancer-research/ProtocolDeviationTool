@@ -1,5 +1,6 @@
 package org.digitalecmt.qualityassurance.models.mapper;
 
+import org.digitalecmt.qualityassurance.models.dto.User.UserUpdateDto;
 import org.digitalecmt.qualityassurance.models.dto.User.UserWithTeamsDto;
 import org.digitalecmt.qualityassurance.models.entities.User;
 import org.mapstruct.Mapper;
@@ -13,4 +14,8 @@ public interface UserMapper {
     
     @Mapping(target = "teams", ignore = true)
     UserWithTeamsDto toUserWithTeamsDto(User user);
+
+    @Mapping(target = "isSite", source = "site")
+    @Mapping(target = "isSponsor", source = "sponsor")
+    User userUpdateDtoToUser(UserUpdateDto user);
 }

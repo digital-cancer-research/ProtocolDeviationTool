@@ -19,4 +19,14 @@ public interface AdminAuditMapper {
     @Mapping(target = "newValue", expression = "java(user.getAuditDetails())")
     @Mapping(target = "date", ignore = true)
     AdminAudit userToCreateUserAdminAudit(User user, long adminId);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "userId", source = "adminId")
+    @Mapping(target = "entity", source = "oldUser.username")
+    @Mapping(target = "action", constant = "Updated a user")
+    @Mapping(target = "originalValue", expression = "java(oldUser.getAuditDetails())")
+    @Mapping(target = "newValue", expression = "java(user.getAuditDetails())")
+    @Mapping(target = "date", ignore = true)
+    AdminAudit userToUpdateUserAdminAudit(User user, User oldUser, long adminId);
+
 }

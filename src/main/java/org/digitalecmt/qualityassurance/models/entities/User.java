@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "\"user\"")
 @Data
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
@@ -91,4 +91,6 @@ public class User {
                 .append("role", role)
                 .toString();
     }
+
+    
 }

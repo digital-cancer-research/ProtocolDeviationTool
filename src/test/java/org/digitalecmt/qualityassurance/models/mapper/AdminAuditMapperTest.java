@@ -34,11 +34,43 @@ public class AdminAuditMapperTest {
 
                 assertNotNull(audit);
                 assertNull(audit.getId());
-                assertEquals(audit.getUserId(), 2L);
-                assertEquals(audit.getEntity(), user.getUsername());
+                assertEquals(2L, audit.getUserId());
+                assertEquals(user.getUsername(), audit.getEntity());
                 assertNotNull(audit.getAction());
                 assertNotNull(audit.getOriginalValue());
                 assertNotNull(audit.getNewValue());
+                assertNull(audit.getDate());
+        }
+
+        @Test
+        public void shouldGenerateUpdateUserMappingMethod() {
+                User oldUser = User.builder()
+                                .id(1L)
+                                .username("johndoe@example.com")
+                                .role(Role.USER)
+                                .isSite(true)
+                                .isSponsor(true)
+                                .dateCreated(LocalDateTime.now())
+                                .build();
+
+                User newUser = User.builder()
+                                .id(1L)
+                                .username("jimdoe@example.com")
+                                .role(Role.ADMIN)
+                                .isSite(true)
+                                .isSponsor(true)
+                                .dateCreated(LocalDateTime.now())
+                                .build();
+
+                AdminAudit audit = AdminAuditMapper.INSTANCE.userToUpdateUserAdminAudit(newUser, oldUser, 2L);
+
+                assertNotNull(audit);
+                assertNull(audit.getId());
+                assertEquals(2L, audit.getUserId());
+                assertEquals(oldUser.getUsername(), audit.getEntity());
+                assertNotNull(audit.getAction());
+                assertEquals(oldUser.getAuditDetails(), audit.getOriginalValue());
+                assertEquals(newUser.getAuditDetails(), audit.getNewValue());
                 assertNull(audit.getDate());
         }
 }
