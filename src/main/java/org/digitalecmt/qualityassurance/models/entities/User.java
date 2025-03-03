@@ -2,6 +2,8 @@ package org.digitalecmt.qualityassurance.models.entities;
 
 import java.time.LocalDateTime;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.digitalecmt.qualityassurance.models.pojo.Role;
 
 import jakarta.persistence.Column;
@@ -81,5 +83,12 @@ public class User {
     @PrePersist
     public void prePersist() {
         this.dateCreated = LocalDateTime.now();
+    }
+
+    public String getAuditDetails() {
+        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+                .append("username", username)
+                .append("role", role)
+                .toString();
     }
 }

@@ -8,6 +8,7 @@ import org.digitalecmt.qualityassurance.models.dto.Audit.AdminAuditDto;
 import org.digitalecmt.qualityassurance.models.entities.AdminAudit;
 import org.digitalecmt.qualityassurance.models.entities.Team;
 import org.digitalecmt.qualityassurance.models.entities.User;
+import org.digitalecmt.qualityassurance.models.mapper.AdminAuditMapper;
 import org.digitalecmt.qualityassurance.repository.AdminAuditRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,13 +24,7 @@ public class AdminAuditService {
     }
 
     public AdminAudit auditCreateUser(User user, Long adminId) {
-        AdminAudit audit = AdminAudit.builder()
-        .userId(adminId)
-        .action("Created a new user")
-        .originalValue("N/A")
-        .newValue(user.toString())
-        .date(LocalDateTime.now())
-        .build();
+        AdminAudit audit = AdminAuditMapper.INSTANCE.userToCreateUserAdminAudit(user, adminId);
         return adminAuditRepository.save(audit);
     }
 
