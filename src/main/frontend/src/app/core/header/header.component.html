@@ -14,7 +14,7 @@
   </div>
 
   <div class="flex user">
-    <p> {{ currentUser?.username }}
+    <p> {{ currentUser?.username || "User not known to application" }}</p>
     <p>{{ ((selectedTeam$ | async)?.name | titlecase ) || ("NO TEAM SELECTED" | sentenceCase) }}</p>
   </div>
 

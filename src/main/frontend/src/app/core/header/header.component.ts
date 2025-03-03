@@ -33,7 +33,6 @@ export class HeaderComponent implements OnInit {
 
   currentUser: User | null = null;
 
-  /** Observable that tracks the current URL path */
   urlPath$: Observable<string> = this.router.events.pipe(
     filter((event: any) => event instanceof NavigationEnd),
     map((event: NavigationEnd) => event.url)
@@ -47,6 +46,14 @@ export class HeaderComponent implements OnInit {
    * Initialises the component by loading the list of users and tracking the URL root.
    */
   ngOnInit(): void {
+	this.userService.getCurrentUser$().subscribe(user => {
+		this.currentUser=user;
+		console.log(user);
+		this.userService.currentUserSubject.next(user);
+	},
+	error => {
+		console.error(error)
+	});
     this.urlPath$.subscribe((url) => {
       const urlSegments = url.split('/');
       this.urlRoot = urlSegments[1];

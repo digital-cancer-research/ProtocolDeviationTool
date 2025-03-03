@@ -26,6 +26,13 @@ const routes: Routes = [
     path: AdministrationPageModule.URL,
     loadChildren: () => import('./features/administration-page/administration-page.module').then(m => m.AdministrationPageModule),
   },
+  {
+	path: '**',
+	redirectTo: '/site',
+	queryParams: {},
+	queryParamsHandling: 'merge'
+	
+  },
 ].map(route => {
   return {
     ...route,

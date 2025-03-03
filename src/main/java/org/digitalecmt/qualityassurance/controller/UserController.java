@@ -12,6 +12,8 @@ import org.digitalecmt.qualityassurance.service.AuthorisationService;
 import org.digitalecmt.qualityassurance.service.UserService;
 import org.digitalecmt.qualityassurance.service.UserTeamService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,6 +32,11 @@ import java.util.logging.Logger;
 public class UserController {
 	
 	private Logger log = Logger.getLogger(UserController.class.getName());
+	
+	private static final String localUser="localuser";
+	
+	@Autowired
+	Environment env;
 
     @Autowired
     private AuthorisationService authService;
@@ -157,17 +164,40 @@ public class UserController {
         return new ResponseEntity<>(teams, HttpStatus.OK);
     }
     
+    
+    
     @GetMapping("/user")
     public ResponseEntity<User> getCurrentUser(@AuthenticationPrincipal OidcUser principal) {
     	User user=null;
+    	if(principal==null) {
+    		//principal null means no authentication enabled -- going for local user
+    		user = userService.findUserByUsername(UserController.localUser);
+    		return new ResponseEntity<>(user, HttpStatus.OK);
+    	}
+    	
     	Map<String, Object> claims = principal.getIdToken().getClaims();
     	if(claims.containsKey("preferred_username")) {
             String username = (String) claims.get("preferred_username");
             user = userService.findUserByUsername(username);
             log.info(username);
     	}
-    	// TODO if null set default user
     	log.info(claims.toString());
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
+    
+    
+//    @Profile("LDAP")
+//    @GetMapping("/user")
+//    public ResponseEntity<User> getLDAPCurrentUser() {
+//    	User user=null;
+//    	return new ResponseEntity<>(user, HttpStatus.OK);
+//    }
+//    
+//    @Profile("!LDAP, !Entra")
+//    @GetMapping("/user")
+//    public ResponseEntity<User> getLocalCurrentUser() {
+//    	User user=user = userService.findUserByUsername(this.localUser);
+//    	return new ResponseEntity<>(user, HttpStatus.OK);
+//    }
+    
 }

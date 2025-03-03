@@ -7,6 +7,7 @@ import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
@@ -18,6 +19,7 @@ import org.springframework.security.ldap.userdetails.InetOrgPersonContextMapper;
 //import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 //import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -92,7 +94,6 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.apply(AadWebApplicationHttpSecurityConfigurer.aadWebApplication());
         http.csrf((csrf) -> csrf.disable());
-//        http.oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()));
         http.authorizeHttpRequests(auth -> auth
                 .anyRequest().authenticated()
                 );
@@ -101,9 +102,18 @@ public class WebSecurityConfig {
 
     @Bean
     @RequestScope
-//    @Profile("Entra")
     public ServletUriComponentsBuilder urlBuilder() {
         return ServletUriComponentsBuilder.fromCurrentRequest();
-    }    
+    }   
+    
+
+    /* Authentication switched off -- local user */
+    @Bean
+    @Profile("!Entra & !LDAP")
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring()
+            .requestMatchers(new AntPathRequestMatcher("/**"));
+    }
+    
     
 }
