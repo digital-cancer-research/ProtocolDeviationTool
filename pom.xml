@@ -28,11 +28,15 @@
 		<spring.boot.version>3.1.2</spring.boot.version>
 		<spring.data.train.version>Neumann-SR9</spring.data.train.version>
 		<spring.version>6.0.11</spring.version>
+		<spring.security.version>6.3.2</spring.security.version>
+		<spring.ldap.version>3.2.6</spring.ldap.version>
+		<spring.ldap-sdk.version>7.0.1</spring.ldap-sdk.version>
 		<lombok.version>1.18.20</lombok.version>
 		<mapstruct.version>1.6.3</mapstruct.version>
 		<mapstruct-processor.version>1.5.5.Final</mapstruct-processor.version>
 		<lombok-mapstruck-bindings.version>0.2.0</lombok-mapstruck-bindings.version>
 		<open.csv.version>5.10</open.csv.version>
+		<spring-cloud-azure.version>5.10.0</spring-cloud-azure.version>
 
 		<!-- ============== PLUGINS VERSIONS ============== -->
 		<plugin.spring.boot.version>${spring.boot.version}</plugin.spring.boot.version>
@@ -51,7 +55,7 @@
 		<profile>
 			<id>postgres-azure</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
 				<spring.profiles.active>postgres-azure</spring.profiles.active>
@@ -65,6 +69,18 @@
 			<properties>
 				<spring.profiles.active>sqlite</spring.profiles.active>
 			</properties>
+		</profile>
+		<profile>
+			<id>LDAP</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>Entra</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
 		</profile>
 	</profiles>
 
@@ -123,6 +139,40 @@
 			<!-- Spring Boot Starter: Cache -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-cache</artifactId>
+			<version>${spring.boot.version}</version>
+		</dependency>
+
+		<!-- =============== SPRING SECURITY ================== -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+			<version>${spring.boot.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.ldap</groupId>
+			<artifactId>spring-ldap-core</artifactId>
+			<version>${spring.ldap.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-ldap</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.unboundid</groupId>
+			<artifactId>unboundid-ldapsdk</artifactId>
+			<version>${spring.ldap-sdk.version}</version>
+		</dependency>
+
+		<!-- ============== Entra ID DEPENDENCIES ============== -->
+		<!-- Azure Active Directory Spring Boot Starter -->
+		<dependency>
+			<groupId>com.azure.spring</groupId>
+			<artifactId>spring-cloud-azure-starter-active-directory</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-client</artifactId>
 			<version>${spring.boot.version}</version>
 		</dependency>
 
@@ -304,6 +354,14 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.4.0</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
 			</plugin>
 			<!-- Maven Compiler Plugin -->
 			<plugin>

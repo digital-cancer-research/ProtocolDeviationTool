@@ -49,6 +49,14 @@ export class UserService {
   }
 
   /**
+   * Retrieves the list of users.
+   * @returns {Observable<User[]>} An observable containing the list of users.
+   */
+  getCurrentUser(): Observable<User> {
+    return this.http.get<User>(`${this.baseUrl}/users/user`);
+  }
+
+  /**
    * Retrieves a user by their ID.
    * @param {number} userId - The ID of the user.
    * @returns {Observable<User>} An observable containing the user data.

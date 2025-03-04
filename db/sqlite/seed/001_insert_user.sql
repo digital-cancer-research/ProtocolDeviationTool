@@ -7,6 +7,12 @@ INSERT INTO
     )
 VALUES
     (
+        'localuser',
+        'ADMIN',
+        true,
+        true
+    ),
+    (
         'drjohndoe@gmail.com',
         'ADMIN',
         true,

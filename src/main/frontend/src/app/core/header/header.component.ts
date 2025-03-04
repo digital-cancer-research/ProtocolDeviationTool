@@ -12,7 +12,6 @@ import { User } from '../new/services/models/user/user.model';
 
 /**
  * HeaderComponent is responsible for managing the header UI element of the application.
- * It displays the page title and handles user selection.
  */
 @Component({
   selector: 'app-header',
@@ -31,7 +30,7 @@ export class HeaderComponent implements OnInit {
 
   selectedTeam$ = this.teamService.currentTeam$;
 
-  users: User[] = [];
+  currentUser: User | null = null;
 
   urlPath$: Observable<string> = this.router.events.pipe(
     filter((event: any) => event instanceof NavigationEnd),
@@ -46,26 +45,19 @@ export class HeaderComponent implements OnInit {
    * Initialises the component by loading the list of users and tracking the URL root.
    */
   ngOnInit(): void {
-    this.userService.getUsers$().subscribe(users => this.users = users);
+    this.userService.getCurrentUser$().subscribe({
+      next: (user) => {
+        this.currentUser = user;
+        this.userService.currentUserSubject.next(user);
+      },
+      error: (error) => {
+        console.error(error)
+      }
+    });
     this.urlPath$.subscribe((url) => {
       const urlSegments = url.split('/');
       this.urlRoot = urlSegments[1];
       this.urlFinalPath = urlSegments.reverse()[0];
-    });
-  }
-
-  /**
-   * Handles the selection of a user.
-   * 
-   * @param user - The selected user.
-   */
-  onSelectUser(user: User): void {
-    this.userService.currentUserSubject.next(user);
-    this.teamService.currentTeamSubject.next(null);
-    this.userService.getUserTeams$(user.id).subscribe(teams => {
-      if (teams.length === 1) {
-        this.teamService.currentTeamSubject.next(teams[0]);
-      }
     });
   }
 
