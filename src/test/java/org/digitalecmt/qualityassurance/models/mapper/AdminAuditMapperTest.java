@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.digitalecmt.qualityassurance.models.entities.AdminAudit;
+import org.digitalecmt.qualityassurance.models.entities.Study;
 import org.digitalecmt.qualityassurance.models.entities.Team;
 import org.digitalecmt.qualityassurance.models.entities.User;
 import org.digitalecmt.qualityassurance.models.pojo.Role;
@@ -90,7 +91,7 @@ public class AdminAuditMapperTest {
 
     @Test
     public void shouldGenerateAddUserToTeamMappingMethod() {
-        AdminAudit audit = AdminAuditMapperImpl.INSTANCE.userToAddUserToTeamAdminAudit(user, team, 2L);
+        AdminAudit audit = AdminAuditMapper.INSTANCE.userToAddUserToTeamAdminAudit(user, team, 2L);
 
         assertNotNull(audit);
         assertNull(audit.getId());
@@ -108,7 +109,7 @@ public class AdminAuditMapperTest {
         List<Team> oldTeams = new ArrayList<>();
         teams.add(team);
         
-        AdminAudit audit = AdminAuditMapperImpl.INSTANCE.userToSetUserTeamAccessAudit(user, teams, oldTeams, 2L);
+        AdminAudit audit = AdminAuditMapper.INSTANCE.userToSetUserTeamAccessAudit(user, teams, oldTeams, 2L);
 
         assertNotNull(audit);
         assertNull(audit.getId());
@@ -164,6 +165,41 @@ public class AdminAuditMapperTest {
         assertNotNull(audit.getAction());
         assertEquals(team.getAuditDetails(), audit.getOriginalValue());
         assertNotNull(audit.getNewValue());
+        assertNull(audit.getDate());
+    }
+
+    @Test
+    public void shouldGenerateGrantTeamAccessMappingMethod() {
+        Study study1 = Study.builder()
+        .externalStudyId("study1")
+        .build();
+
+        Study study2 = Study.builder()
+        .externalStudyId("study2")
+        .build();
+
+        Study study3 = Study.builder()
+        .externalStudyId("study3")
+        .build();
+
+        List<Study> oldStudies = new ArrayList<>();
+        oldStudies.add(study1);
+        oldStudies.add(study2);
+
+        List<Study> newStudies = new ArrayList<>();
+        newStudies.add(study1);
+        newStudies.add(study2);
+        newStudies.add(study3);
+
+        AdminAudit audit = AdminAuditMapper.INSTANCE.teamToGrantTeamStudyAccessAudit(team, oldStudies, newStudies, 2L);
+    
+        assertNotNull(audit);
+        assertNull(audit.getId());
+        assertEquals(2L, audit.getUserId());
+        assertEquals(team.getName(), audit.getEntity());
+        assertNotNull(audit.getAction());
+        assertEquals(Study.getAuditDetails(oldStudies), audit.getOriginalValue());
+        assertEquals(Study.getAuditDetails(newStudies), audit.getNewValue());
         assertNull(audit.getDate());
     }
 }

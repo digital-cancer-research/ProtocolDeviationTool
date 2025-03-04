@@ -3,6 +3,7 @@ package org.digitalecmt.qualityassurance.models.mapper;
 import java.util.List;
 
 import org.digitalecmt.qualityassurance.models.entities.AdminAudit;
+import org.digitalecmt.qualityassurance.models.entities.Study;
 import org.digitalecmt.qualityassurance.models.entities.Team;
 import org.digitalecmt.qualityassurance.models.entities.User;
 import org.mapstruct.Mapper;
@@ -85,4 +86,13 @@ public interface AdminAuditMapper {
     @Mapping(target = "newValue", constant = "N/A")
     @Mapping(target = "date", ignore = true)
     AdminAudit teamToDeleteTeamAdminAudit(Team team, Long adminId);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "userId", source = "adminId")
+    @Mapping(target = "entity", source = "team.name")
+    @Mapping(target = "action", constant = "Granted team access to a study/studies")
+    @Mapping(target = "originalValue", expression = "java(Study.getAuditDetails(oldStudies))")
+    @Mapping(target = "newValue", expression = "java(Study.getAuditDetails(newStudies))")
+    @Mapping(target = "date", ignore = true)
+    AdminAudit teamToGrantTeamStudyAccessAudit(Team team, List<Study> oldStudies, List<Study> newStudies, Long adminId);
 }

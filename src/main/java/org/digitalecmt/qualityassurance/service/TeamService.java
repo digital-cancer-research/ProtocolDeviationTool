@@ -153,6 +153,11 @@ public class TeamService {
 
     @Transactional
     public void updateTeamWithStudies(TeamWithStudiesUpdateDto teamDto) {
+        List<Study> oldStudies = studyService.findAllStudiesOrderedByDvcatCount(teamDto.getId());
+        List<Study> newStudies = studyService.findAllStudiesByIds(teamDto.getStudyIds());
+        Team team = findTeamById(teamDto.getId());
+
+        adminAuditService.auditGrantTeamStudyAccess(team, oldStudies, newStudies, teamDto.getAdminId());
         teamDto.getStudyIds().forEach(study -> {
             TeamStudy access = TeamStudy.builder()
             .teamId(teamDto.getId())
@@ -160,6 +165,7 @@ public class TeamService {
             .build();
             teamStudyRepository.save(access);
         });
+
     }
 
     /**

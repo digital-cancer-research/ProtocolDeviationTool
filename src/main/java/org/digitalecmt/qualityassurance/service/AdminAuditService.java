@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.digitalecmt.qualityassurance.models.dto.Audit.AdminAuditDto;
 import org.digitalecmt.qualityassurance.models.entities.AdminAudit;
+import org.digitalecmt.qualityassurance.models.entities.Study;
 import org.digitalecmt.qualityassurance.models.entities.Team;
 import org.digitalecmt.qualityassurance.models.entities.User;
 import org.digitalecmt.qualityassurance.models.mapper.AdminAuditMapper;
@@ -59,6 +60,13 @@ public class AdminAuditService {
 
     public AdminAudit auditDeleteTeam(Team team, Long adminId) {
         AdminAudit audit = AdminAuditMapper.INSTANCE.teamToDeleteTeamAdminAudit(team, adminId);
+        return adminAuditRepository.save(audit);
+    }
+
+    public AdminAudit auditGrantTeamStudyAccess(Team team, List<Study> oldStudies, List<Study> newStudies,
+            Long adminId) {
+        AdminAudit audit = AdminAuditMapper.INSTANCE.teamToGrantTeamStudyAccessAudit(team, oldStudies, newStudies,
+                adminId);
         return adminAuditRepository.save(audit);
     }
 }
