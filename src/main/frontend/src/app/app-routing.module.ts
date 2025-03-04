@@ -34,10 +34,14 @@ const routes: Routes = [
 	
   },
 ].map(route => {
-  return {
-    ...route,
-    canActivate: [deactivatedUserGuard],
-    canActivateChild: [deactivatedUserGuard]
+  if (route.redirectTo) {
+    return route;
+  } else {
+    return {
+      ...route,
+      canActivate: [deactivatedUserGuard],
+      canActivateChild: [deactivatedUserGuard]
+    }
   }
 });
 
