@@ -53,7 +53,6 @@ export class AuditTrailManagementComponent {
     this.auditTrailService.getAuditTrailData().subscribe(
       {
         next: (data) => {
-          data.forEach(audit => console.log(this.getValuesFromJson(audit.newValue)))
           this.dataSource.data = data;
         },
         error: (error) => {
@@ -90,7 +89,7 @@ export class AuditTrailManagementComponent {
     } else {
       const parsed = JSON.parse(json);
       const sp = new SentenceCasePipe;
-      return Object.keys(parsed).map(key => sp.transform(`${key}: ${parsed[key]}`))
+      return Object.keys(parsed).map(key => `${sp.transform(key)}: ${parsed[key]}`)
     }
   }
 }
