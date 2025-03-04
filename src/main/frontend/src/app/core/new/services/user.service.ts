@@ -1,12 +1,11 @@
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { User } from './models/user/user.model';
 import { Team } from './models/team/team.model';
 import { UserWithTeams } from './models/user/user-with-teams.model';
 import { UserUpdateWithTeams } from './models/user/user-update-with-teams.model';
 import { UserCreateWithTeams } from './models/user/user-create-with-teams.model';
-import { Role } from './models/user/role.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -26,10 +25,8 @@ export class UserService {
   }
 
   getCurrentUser$(): Observable<User> {
-    const user=this.http.get<User>(`${this.BASE_URL}/user`);
-	console.log(user)
-    //this.setUser(user)
-	return user;
+    const user = this.http.get<User>(`${this.BASE_URL}/authenticated-user`);
+    return user;
   }
 
   /**

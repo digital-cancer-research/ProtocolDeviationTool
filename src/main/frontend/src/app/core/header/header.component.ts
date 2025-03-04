@@ -12,7 +12,6 @@ import { User } from '../new/services/models/user/user.model';
 
 /**
  * HeaderComponent is responsible for managing the header UI element of the application.
- * It displays the page title and handles user selection.
  */
 @Component({
   selector: 'app-header',
@@ -46,14 +45,15 @@ export class HeaderComponent implements OnInit {
    * Initialises the component by loading the list of users and tracking the URL root.
    */
   ngOnInit(): void {
-	this.userService.getCurrentUser$().subscribe(user => {
-		this.currentUser=user;
-		console.log(user);
-		this.userService.currentUserSubject.next(user);
-	},
-	error => {
-		console.error(error)
-	});
+    this.userService.getCurrentUser$().subscribe({
+      next: (user) => {
+        this.currentUser = user;
+        this.userService.currentUserSubject.next(user);
+      },
+      error: (error) => {
+        console.error(error)
+      }
+    });
     this.urlPath$.subscribe((url) => {
       const urlSegments = url.split('/');
       this.urlRoot = urlSegments[1];

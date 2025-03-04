@@ -1,5 +1,4 @@
 <header>
-
   <div class="flex left">
     <div [routerLink]="''" id="app_title">
       {{ 'PROTOCOL DEVIATION MONITORING' | titlecase }}
@@ -17,7 +16,6 @@
     <p> {{ currentUser?.username || "User not known to application" }}</p>
     <p>{{ ((selectedTeam$ | async)?.name | titlecase ) || ("NO TEAM SELECTED" | sentenceCase) }}</p>
   </div>
-
 </header>
 
 <app-navigation-ribbon *ngIf="urlRoot !== ''"></app-navigation-ribbon>

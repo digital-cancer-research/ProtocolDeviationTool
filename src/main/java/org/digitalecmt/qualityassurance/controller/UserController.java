@@ -12,8 +12,6 @@ import org.digitalecmt.qualityassurance.service.AuthorisationService;
 import org.digitalecmt.qualityassurance.service.UserService;
 import org.digitalecmt.qualityassurance.service.UserTeamService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,13 +28,10 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-	
-	private Logger log = Logger.getLogger(UserController.class.getName());
-	
-	private static final String localUser="localuser";
-	
-	@Autowired
-	Environment env;
+
+    private Logger log = Logger.getLogger(UserController.class.getName());
+
+    private static final String localUser = "localuser";
 
     @Autowired
     private AuthorisationService authService;
@@ -105,12 +100,23 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
+    /**
+     * Creates a new user with team access.
+     *
+     * @param user the data transfer object containing the user details and team IDs
+     * @return a ResponseEntity containing the created user with their teams and HTTP status code
+     */
     @PostMapping("/with-teams")
     public ResponseEntity<UserWithTeamsDto> createUserWithTeams(@RequestBody UserCreateWithTeamsDto user) {
         UserWithTeamsDto userWithTeams = userTeamService.createUserWithTeamAccess(user);
         return new ResponseEntity<>(userWithTeams, HttpStatus.CREATED);
     }
 
+    /**
+     * Retrieves all users with their team access.
+     *
+     * @return a ResponseEntity containing a list of all users with their teams and HTTP status code
+     */
     @GetMapping("/with-teams")
     public ResponseEntity<List<UserWithTeamsDto>> getAllUsersWithTeams() {
         List<UserWithTeamsDto> userWithTeams = userService.getUsersWithTeams();
@@ -163,41 +169,29 @@ public class UserController {
         List<Team> teams = userService.getUserTeams(id);
         return new ResponseEntity<>(teams, HttpStatus.OK);
     }
-    
-    
-    
-    @GetMapping("/user")
+
+    /**
+     * Retrieves the currently authenticated user.
+     *
+     * @param principal the authenticated OidcUser
+     * @return a ResponseEntity containing the authenticated user and HTTP status code
+     */
+    @GetMapping("/authenticated-user")
     public ResponseEntity<User> getCurrentUser(@AuthenticationPrincipal OidcUser principal) {
-    	User user=null;
-    	if(principal==null) {
-    		//principal null means no authentication enabled -- going for local user
-    		user = userService.findUserByUsername(UserController.localUser);
-    		return new ResponseEntity<>(user, HttpStatus.OK);
-    	}
-    	
-    	Map<String, Object> claims = principal.getIdToken().getClaims();
-    	if(claims.containsKey("preferred_username")) {
+        User user = null;
+        if (principal == null) {
+            // principal null means no authentication enabled -- going for local user
+            user = userService.findUserByUsername(UserController.localUser);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        }
+
+        Map<String, Object> claims = principal.getIdToken().getClaims();
+        if (claims.containsKey("preferred_username")) {
             String username = (String) claims.get("preferred_username");
             user = userService.findUserByUsername(username);
             log.info(username);
-    	}
-    	log.info(claims.toString());
+        }
+        log.info(claims.toString());
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
-    
-    
-//    @Profile("LDAP")
-//    @GetMapping("/user")
-//    public ResponseEntity<User> getLDAPCurrentUser() {
-//    	User user=null;
-//    	return new ResponseEntity<>(user, HttpStatus.OK);
-//    }
-//    
-//    @Profile("!LDAP, !Entra")
-//    @GetMapping("/user")
-//    public ResponseEntity<User> getLocalCurrentUser() {
-//    	User user=user = userService.findUserByUsername(this.localUser);
-//    	return new ResponseEntity<>(user, HttpStatus.OK);
-//    }
-    
 }
