@@ -275,4 +275,19 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
       }
     }
   }
+
+  onHover(event: MouseEvent): void {
+    let xThreshold = this.xThreshold;
+    if (xThreshold && event.layerX < xThreshold) {
+      this.chart.canvas.style.cursor = 'pointer';
+    } else {
+      this.chart.canvas.style.cursor = 'default';
+    }
+  }
+
+  get xThreshold() {
+    let yAxis = (this.chart.scales['y'] as CategoryScale);
+    let xThreshold = yAxis.getLabelItems()[0].options.translation?.[0];
+    return xThreshold;
+  }
 }
