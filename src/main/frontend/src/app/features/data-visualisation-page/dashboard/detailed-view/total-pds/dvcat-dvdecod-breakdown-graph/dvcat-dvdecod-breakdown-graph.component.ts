@@ -276,13 +276,35 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
     }
   }
 
+
   onHover(event: MouseEvent): void {
     let xThreshold = this.xThreshold;
     if (xThreshold && event.layerX < xThreshold && event.layerY > this.yThreshold) {
-      this.chart.canvas.style.cursor = 'pointer';
+      let selectedLabel = this.getClosestLabelByY(event.layerY).label as unknown as string;
+      let index = this.labels.indexOf(selectedLabel);
+      let isThereDataForThisLabel = this.data.some(d => d.count[index] > 0);
+      if (isThereDataForThisLabel) {
+        this.chart.canvas.style.cursor = 'pointer';
+      } else {
+        this.chart.canvas.style.cursor = 'default';
+      }
     } else {
       this.chart.canvas.style.cursor = 'default';
     }
+  }
+
+  getClosestLabelByY(y: number) {
+    let yAxis = (this.chart.scales['y'] as CategoryScale);
+    let labelPositions = yAxis.getLabelItems().map((label) => {
+      let pos = label.options.translation?.[1];
+      return {
+        label: label,
+        y: pos ? pos : 0
+      }
+    });
+    let closestLabelPosition = UtilsService.findClosestNumberInSortedNumberArray(labelPositions.map(label => label.y), y);
+    let closestLabelIndex = labelPositions.findIndex(label => label.y === closestLabelPosition);
+    return labelPositions[closestLabelIndex].label;
   }
 
   get xThreshold() {
