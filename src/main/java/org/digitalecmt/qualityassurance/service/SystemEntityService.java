@@ -31,7 +31,7 @@ public class SystemEntityService {
                     .username("LOCAL USER")
                     .isSite(true)
                     .isSponsor(true)
-                    .role(Role.ADMIN)
+                    .role(Role.USER)
                     .build();
             return userRepository.save(localUser);
         });

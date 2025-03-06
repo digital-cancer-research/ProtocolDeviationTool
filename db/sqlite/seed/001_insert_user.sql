@@ -8,55 +8,7 @@ INSERT INTO
 VALUES
     (
         'localuser',
-        'ADMIN',
-        true,
-        true
-    ),
-    (
-        'drjohndoe@gmail.com',
-        'ADMIN',
-        true,
-        true
-    ),
-    (
-        'sara.smith.md@hospital.edu',
-        'ADMIN',
-        true,
-        false
-    ),
-    (
-        'healthpro123@hotmail.com',
-        'ADMIN',
-        false,
-        true
-    ),
-    (
-        'emily.green.md@clinic.org',
-        'ADMIN',
-        false,
-        false
-    ),
-    (
-        'clinical.expert99@medcenter.net',
         'USER',
         true,
         true
-    ),
-    (
-        'medresearcher23@outlook.com',
-        'USER',
-        true,
-        false
-    ),
-    (
-        'doctorcare456@gmail.com',
-        'USER',
-        false,
-        true
-    ),
-    (
-        'doctor.awesome@yahoo.com',
-        'USER',
-        false,
-        false
     );
