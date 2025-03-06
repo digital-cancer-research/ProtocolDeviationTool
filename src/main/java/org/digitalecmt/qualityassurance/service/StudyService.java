@@ -4,7 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.digitalecmt.qualityassurance.models.entities.Study;
+import org.digitalecmt.qualityassurance.models.entities.Team;
+import org.digitalecmt.qualityassurance.models.entities.TeamStudy;
 import org.digitalecmt.qualityassurance.repository.StudyRepository;
+import org.digitalecmt.qualityassurance.repository.TeamStudyRepository;
+import org.digitalecmt.qualityassurance.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +19,16 @@ import org.springframework.stereotype.Service;
 public class StudyService {
 
     @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    private TeamStudyRepository teamStudyRepository;
+
+    @Autowired
     private StudyRepository studyRepository;
+
+    @Autowired
+    private SystemEntityService systemEntityService;
 
     public List<Study> findAllStudies(Long teamId) {
         return studyRepository.findAll(teamId);
@@ -66,6 +79,16 @@ public class StudyService {
         Study study = Study.builder()
                 .externalStudyId(externalStudyId)
                 .build();
+        addStudyToAllDataTeam(study);
         return studyRepository.save(study);
+    }
+
+    private void addStudyToAllDataTeam(Study study) {
+        Team team = systemEntityService.getAllDataTeam();
+        TeamStudy id = TeamStudy.builder()
+                .teamId(team.getId())
+                .studyId(study.getId())
+                .build();
+        teamStudyRepository.save(id);
     }
 }

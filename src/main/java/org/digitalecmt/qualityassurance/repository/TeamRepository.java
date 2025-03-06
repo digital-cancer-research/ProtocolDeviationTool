@@ -18,6 +18,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TeamRepository extends JpaRepository<Team, Long> {
 
+       Optional<Team> findByName(String name);
+
        /**
         * Retrieves a list of teams with the username of the user who created this
         * team.
