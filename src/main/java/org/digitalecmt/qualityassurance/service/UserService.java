@@ -2,6 +2,8 @@ package org.digitalecmt.qualityassurance.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.digitalecmt.qualityassurance.exception.UserNotAuthorisedException;
 import org.digitalecmt.qualityassurance.exception.UserNotFoundException;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserService {
+	private Logger log = Logger.getLogger(UserService.class.getName());
 
     @Autowired
     private UserRepository userRepository;
@@ -78,9 +81,19 @@ public class UserService {
      * @throws UserNotFoundException if the user is not found
      */
     public User findUserByUsername(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User with username " + username + " not found"));
-        return user;
+    	log.info("findUserByUsername");
+    	log.info(username);
+    	log.info(String.valueOf(userRepository));
+    	try {
+	        User user = userRepository.findByUsername(username.toLowerCase())
+	                .orElseThrow(() -> new UserNotFoundException("User with username " + username + " not found"));
+	        log.info(user.toString());
+	        return user;
+    	}
+    	catch(Exception e) {
+    		log.log(Level.SEVERE, e.toString());
+    		throw e;
+    	}
     }
 
     /**
