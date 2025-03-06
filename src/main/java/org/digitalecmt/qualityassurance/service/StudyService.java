@@ -79,8 +79,9 @@ public class StudyService {
         Study study = Study.builder()
                 .externalStudyId(externalStudyId)
                 .build();
-        addStudyToAllDataTeam(study);
-        return studyRepository.save(study);
+        Study savedStudy = studyRepository.save(study);
+        addStudyToAllDataTeam(savedStudy);
+        return savedStudy;
     }
 
     private void addStudyToAllDataTeam(Study study) {
