@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -40,6 +41,13 @@ public class AdminAudit {
     private Long userId;
 
     /**
+     * The entity the action was performed on.
+     * Must not be null.
+     */
+    @NotNull
+    private String entity;
+
+    /**
      * The action performed.
      * Must not be null.
      */
@@ -68,4 +76,11 @@ public class AdminAudit {
      */
     @NotNull
     private LocalDateTime date;
+
+    @PrePersist
+    public void prePersist() {
+        if (date == null) {
+            date = LocalDateTime.now();
+        }
+    }
 }

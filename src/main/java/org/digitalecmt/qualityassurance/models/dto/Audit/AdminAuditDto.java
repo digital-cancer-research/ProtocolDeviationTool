@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class AdminAuditDto {
     private String username;
     private LocalDateTime date;
+    private String entity;
     private String action;
     private String originalValue;
     private String newValue;

@@ -1,5 +1,11 @@
 package org.digitalecmt.qualityassurance.models.entities;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -44,5 +50,15 @@ public class Study {
     @PrePersist
     public void prePersist() {
         externalStudyId = externalStudyId.trim().toUpperCase();
+    }
+
+    public static String getAuditDetails(List<Study> studies) {
+        List<String> externalStudyIds = studies.stream()
+                .map(Study::getExternalStudyId)
+                .collect(Collectors.toList());
+
+        return new ToStringBuilder(studies, ToStringStyle.JSON_STYLE)
+                .append("studies", externalStudyIds)
+                .toString();
     }
 }

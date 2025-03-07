@@ -142,10 +142,10 @@ public class TeamService {
         if (team.getName().equals(teamDto.getName())) {
             return team;
         } else {
-            String oldTeamDetails = team.toString();
+            Team oldTeam = team.toBuilder().build();
             team.setName(teamDto.getName());
             teamRepository.save(team);
-            adminAuditService.auditUpdateTeam(team, oldTeamDetails, adminId);
+            adminAuditService.auditUpdateTeam(team, oldTeam, adminId);
 
             return team;
         }
@@ -153,6 +153,11 @@ public class TeamService {
 
     @Transactional
     public void updateTeamWithStudies(TeamWithStudiesUpdateDto teamDto) {
+        List<Study> oldStudies = studyService.findAllStudiesOrderedByDvcatCount(teamDto.getId());
+        List<Study> newStudies = studyService.findAllStudiesByIds(teamDto.getStudyIds());
+        Team team = findTeamById(teamDto.getId());
+
+        adminAuditService.auditGrantTeamStudyAccess(team, oldStudies, newStudies, teamDto.getAdminId());
         teamDto.getStudyIds().forEach(study -> {
             TeamStudy access = TeamStudy.builder()
             .teamId(teamDto.getId())
@@ -160,6 +165,7 @@ public class TeamService {
             .build();
             teamStudyRepository.save(access);
         });
+
     }
 
     /**

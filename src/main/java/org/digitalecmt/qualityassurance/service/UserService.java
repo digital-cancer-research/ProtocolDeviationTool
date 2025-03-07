@@ -127,20 +127,16 @@ public class UserService {
         authService.checkIfUserIsAdmin(adminId);
 
         Long userId = userDto.getId();
-        User oldUser = findUserById(userId);
-        String oldUserDetails = oldUser.toString();
+        User oldUser = findUserById(userId).toBuilder().build();
+        User user = UserMapper.INSTANCE.userUpdateDtoToUser(userDto);
 
-        User user = userDto.toUser();
-        user.setDateCreated(oldUser.getDateCreated());
-
-        if (user.toString().equals(oldUserDetails)) {
+        if (user.toString().equals(oldUser.toString())) {
+            return user;
+        } else {
+            userRepository.save(user);
+            adminAuditService.auditUpdateUser(user, oldUser, adminId);
             return user;
         }
-
-        userRepository.save(user);
-
-        adminAuditService.auditUpdateUser(user, oldUserDetails, adminId);
-        return user;
     }
 
     /**
@@ -168,9 +164,9 @@ public class UserService {
      */
     public List<User> getUsers() {
         return userRepository.findAllByOrderByUsernameAsc()
-        .stream()
-        .filter(user -> !user.getUsername().equalsIgnoreCase("AI MODEL"))
-        .toList();
+                .stream()
+                .filter(user -> !user.getUsername().equalsIgnoreCase("AI MODEL"))
+                .toList();
     }
 
     public List<UserWithTeamsDto> getUsersWithTeams() {

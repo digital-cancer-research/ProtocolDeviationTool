@@ -21,6 +21,14 @@ public class StudyService {
         return studyRepository.findAll(teamId);
     }
 
+    public List<Study> findAllStudiesByIds(List<Long> studyIds) {
+        List<Study> studies = studyIds.stream()
+                .map(id -> findById(id).orElseGet(null))
+                .filter(study -> study != null)
+                .toList();
+        return studies;
+    }
+
     /**
      * Retrieves all studies ordered by DV category count for a given team.
      *
@@ -29,6 +37,10 @@ public class StudyService {
      */
     public List<Study> findAllStudiesOrderedByDvcatCount(Long teamId) {
         return studyRepository.findAllStudiesOrderedByDvcatCount(teamId);
+    }
+
+    public Optional<Study> findById(Long studyId) {
+        return studyRepository.findById(studyId);
     }
 
     /**
