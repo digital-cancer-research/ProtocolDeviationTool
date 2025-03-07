@@ -257,7 +257,7 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
     });
 
     let xThreshold = yAxis.getLabelItems()[0].options.translation?.[0];
-    if (xThreshold !== undefined && x < xThreshold) {
+    if (xThreshold !== undefined && x < xThreshold && y > this.yThreshold) {
       let selectedLabelPosition = UtilsService.findClosestNumberInSortedNumberArray(labelPositions.map(label => label.y), y);
       if (selectedLabelPosition) {
         let selectedLabel = labelPositions[labelPositions.map(label => label.y).indexOf(selectedLabelPosition)].label.label;
@@ -274,5 +274,49 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
         this.dvdecodGraphData.emit(dvdecodData);
       }
     }
+  }
+
+
+  onHover(event: MouseEvent): void {
+    let xThreshold = this.xThreshold;
+    if (xThreshold && event.layerX < xThreshold && event.layerY > this.yThreshold) {
+      let selectedLabel = this.getClosestLabelByY(event.layerY).label as unknown as string;
+      let index = this.labels.indexOf(selectedLabel);
+      let isThereDataForThisLabel = this.data.some(d => d.count[index] > 0);
+      if (isThereDataForThisLabel) {
+        this.chart.canvas.style.cursor = 'pointer';
+      } else {
+        this.chart.canvas.style.cursor = 'default';
+      }
+    } else {
+      this.chart.canvas.style.cursor = 'default';
+    }
+  }
+
+  getClosestLabelByY(y: number) {
+    let yAxis = (this.chart.scales['y'] as CategoryScale);
+    let labelPositions = yAxis.getLabelItems().map((label) => {
+      let pos = label.options.translation?.[1];
+      return {
+        label: label,
+        y: pos ? pos : 0
+      }
+    });
+    let closestLabelPosition = UtilsService.findClosestNumberInSortedNumberArray(labelPositions.map(label => label.y), y);
+    let closestLabelIndex = labelPositions.findIndex(label => label.y === closestLabelPosition);
+    return labelPositions[closestLabelIndex].label;
+  }
+
+  get xThreshold() {
+    let yAxis = (this.chart.scales['y'] as CategoryScale);
+    let xThreshold = yAxis.getLabelItems()[0].options.translation?.[0];
+    return xThreshold;
+  }
+
+  get yThreshold() {
+    const padding = 25;
+    let yAxis = (this.chart.scales['y'] as CategoryScale);
+    const firstLabelPosition = yAxis.getLabelItems()[0].options.translation;
+    return firstLabelPosition ? firstLabelPosition[1] - padding : Infinity;
   }
 }
