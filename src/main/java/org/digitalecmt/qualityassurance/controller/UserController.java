@@ -9,6 +9,7 @@ import org.digitalecmt.qualityassurance.models.dto.User.UserWithTeamsDto;
 import org.digitalecmt.qualityassurance.models.entities.Team;
 import org.digitalecmt.qualityassurance.models.entities.User;
 import org.digitalecmt.qualityassurance.service.AuthorisationService;
+import org.digitalecmt.qualityassurance.service.SystemEntityService;
 import org.digitalecmt.qualityassurance.service.UserService;
 import org.digitalecmt.qualityassurance.service.UserTeamService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,8 @@ public class UserController {
 
     private Logger log = Logger.getLogger(UserController.class.getName());
 
-    private static final String localUser = "localuser";
+    @Autowired
+    private SystemEntityService systemEntityService;
 
     @Autowired
     private AuthorisationService authService;
@@ -181,7 +183,7 @@ public class UserController {
         User user = null;
         if (principal == null) {
             // principal null means no authentication enabled -- going for local user
-            user = userService.findUserByUsername(UserController.localUser);
+            user = systemEntityService.getLocalUser();
             return new ResponseEntity<>(user, HttpStatus.OK);
         }
 
