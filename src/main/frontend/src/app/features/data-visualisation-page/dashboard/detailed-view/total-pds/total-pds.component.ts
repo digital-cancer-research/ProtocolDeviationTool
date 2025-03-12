@@ -55,6 +55,8 @@ export class TotalPdsComponent {
 
   hasStudyChanged: boolean = false;
 
+  isDvdecodConstant = false;
+
   constructor(
     private cdr: ChangeDetectorRef,
     private studyDataService: StudyDataService,
@@ -86,8 +88,12 @@ export class TotalPdsComponent {
   updateDvdecodGraphData(newData: DvdecodData[]): void {
     this.hasStudyChanged = false;
     this.graphData = newData;
-    this.selectedDvdecod = "";
-    this.scroll(this.dvdecodGraphId);
+    if (this.isDvdecodConstant) {
+      this.isDvdecodConstant = false;
+    } else {
+      this.selectedDvdecod = "";
+      this.scroll(this.dvdecodGraphId);
+    }
   }
 
   /** 
@@ -134,7 +140,9 @@ export class TotalPdsComponent {
   }
 
   onDataUpdated() {
+    this.isDvdecodConstant = true;
+    const selectedDvdecod = this.selectedDvdecod;
     this.dvcatDvdecodGraph.updateData(true);
-    this.dvcatDvdecodGraph.filterDataOnLabel(this.dvcatDvdecodGraph.lastSelectedLabel);
+    this.selectedDvdecod = selectedDvdecod;
   }
 }

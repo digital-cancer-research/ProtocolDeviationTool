@@ -19,7 +19,7 @@
     </mat-card-footer>
 </mat-card>
 
-<mat-card *ngIf="selectedDvdecod && !hasStudyChanged" class="table">
+<mat-card *ngIf="(selectedDvdecod.length !== 0) && !hasStudyChanged" class="table">
     <mat-card-header>
         {{ selectedDvdecod | titlecase }}
     </mat-card-header>
