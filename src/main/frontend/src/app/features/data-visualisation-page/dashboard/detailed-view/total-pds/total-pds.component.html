@@ -1,5 +1,5 @@
 <mat-card>
-    <app-dvcat-dvdecod-breakdown-graph 
+    <app-dvcat-dvdecod-breakdown-graph #dvcat_dvdecod_graph
     (dvdecodGraphData)="updateDvdecodGraphData($event)" 
     (colourMode)="updateColourMode($event)">
     </app-dvcat-dvdecod-breakdown-graph>
@@ -26,7 +26,8 @@
     <mat-card-content>
         <app-data-table
         [fetchedData]="tableData"
-        [fetchData]="apiRequest">
+        [fetchData]="apiRequest"
+        (dataUpdated)="onDataUpdated()">
         </app-data-table>
     </mat-card-content>
 </mat-card>

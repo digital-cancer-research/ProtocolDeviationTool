@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -40,6 +40,8 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   @Input() fetchedData: DataTableEntry[] = [];
 
   @Input() fetchData: Observable<DataTableEntry[]> = new Observable();
+
+  @Output() dataUpdated = new EventEmitter<void>();
 
   /** Table data entries (cloned from fetchedData) representing real-time edits. */
   tableData: DataTableEntry[] = [];
@@ -177,6 +179,7 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
                 .map(entry => entry.id)
                 .indexOf(entry.id);
               this.fetchedData[index] = entry;
+              this.dataUpdated.emit();
               this.openSnackBar("Data successfully updated", "");
             },
             error: (error) => {

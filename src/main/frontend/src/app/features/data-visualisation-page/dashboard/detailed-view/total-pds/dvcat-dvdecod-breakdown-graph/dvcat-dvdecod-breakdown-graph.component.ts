@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, EventEmitter, inject, Output, signal } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Chart, CategoryScale } from 'chart.js';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, tap } from 'rxjs';
 import { UtilsService } from 'src/app/core/services/utils.service';
 import { DvcatDvdecodBreakdownGraphService } from './dvcat-dvdecod-breakdown-graph.service';
 import { DataVisualisationService } from 'src/app/features/data-visualisation-page/data-visualisation.service';
@@ -67,6 +67,8 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
   /** Indicates whether the panel for the filters is scrollable - true when expanded */
   public panelOpenState = signal(false);
 
+  public lastSelectedLabel: string = "";
+
   /** Output event emitter for sending graph data to parent components. */
   @Output() dvdecodGraphData: EventEmitter<DvdecodData[]> = new EventEmitter();
 
@@ -100,7 +102,7 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
     if (this.chart) this.chart.destroy();
   }
 
-  updateData() {
+  updateData(shouldEmitFilteredData: boolean = false): void {
     let apiRequest: Observable<PdDvdecodBarGraphData> | null = null;
     this.userSubscription = this.teamService.currentTeam$.subscribe({
       next: (team) => {
@@ -111,7 +113,7 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
           } else {
             apiRequest = this.dataVisualisationService.getDvcatBreakdownByDvdecodByTeam$(team.id);
           }
-          this.fetchGraphData(apiRequest);
+          this.fetchGraphData(apiRequest, shouldEmitFilteredData);
         } else {
           this.errorMessage = `An error occurred while trying to load the data - no team selected. 
           Please select a team and try again.`;
@@ -126,7 +128,7 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
     });
   }
 
-  fetchGraphData(apiRequest: Observable<PdDvdecodBarGraphData>): void {
+  fetchGraphData(apiRequest: Observable<PdDvdecodBarGraphData>, shouldEmitFilteredData: boolean = false): void {
     this.visSubscription = apiRequest.subscribe({
       next: (response) => {
         this.labels = response.dvcats;
@@ -135,6 +137,9 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
         this.data = response.data;
         this.filteredData = this.data;
         this.createChart();
+        if (shouldEmitFilteredData) {
+          this.filterDataOnLabel(this.lastSelectedLabel);
+        }
       },
       error: (error) => {
         this.errorMessage = error.message || `An error occurred while trying to load the data. 
@@ -260,22 +265,25 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
     if (xThreshold !== undefined && x < xThreshold && y > this.yThreshold) {
       let selectedLabelPosition = UtilsService.findClosestNumberInSortedNumberArray(labelPositions.map(label => label.y), y);
       if (selectedLabelPosition) {
-        let selectedLabel = labelPositions[labelPositions.map(label => label.y).indexOf(selectedLabelPosition)].label.label;
-        let dvdecodData = this.data.filter(dataEntry => dataEntry.dvcat === selectedLabel)
-          .map((data) => {
-            return {
-              dvcat: data.dvcat,
-              dvdecod: data.dvdecod,
-              count: Math.max(...data.count),
-              backgroundColor: data.colour
-            } as DvdecodData;
-          });
-        this.colourMode.emit(this.isColourModeDefault);
-        this.dvdecodGraphData.emit(dvdecodData);
+        this.lastSelectedLabel = labelPositions[labelPositions.map(label => label.y).indexOf(selectedLabelPosition)].label.label as string;
+        this.filterDataOnLabel(this.lastSelectedLabel);
       }
     }
   }
 
+  filterDataOnLabel(selectedLabel: string) {
+    let dvdecodData = this.data.filter(dataEntry => dataEntry.dvcat === selectedLabel)
+      .map((data) => {
+        return {
+          dvcat: data.dvcat,
+          dvdecod: data.dvdecod,
+          count: Math.max(...data.count),
+          backgroundColor: data.colour
+        } as DvdecodData;
+      });
+    this.colourMode.emit(this.isColourModeDefault);
+    this.dvdecodGraphData.emit(dvdecodData);
+  }
 
   onHover(event: MouseEvent): void {
     let xThreshold = this.xThreshold;

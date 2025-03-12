@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { StudyDataService } from 'src/app/shared/study-data-table/study-data.service';
 import { DvdecodData } from '../../../models/team-pd-dvdecod-bar-graph-data.model';
@@ -9,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DetailedViewComponent } from '../detailed-view.component';
 import { TeamService } from 'src/app/core/new/services/team.service';
 import { Team } from 'src/app/core/new/services/models/team/team.model';
+import { DvcatDvdecodBreakdownGraphComponent } from './dvcat-dvdecod-breakdown-graph/dvcat-dvdecod-breakdown-graph.component';
 
 @Component({
   selector: 'app-total-pds',
@@ -20,6 +21,8 @@ export class TotalPdsComponent {
   /** Snackbar to display visual feedback */
   private _snackBar = inject(MatSnackBar);
   duration = 5000;
+
+  @ViewChild('dvcat_dvdecod_graph') dvcatDvdecodGraph!: DvcatDvdecodBreakdownGraphComponent;
 
   /** Displays snackbar */
   openSnackBar(message: string, action: string) {
@@ -128,5 +131,10 @@ export class TotalPdsComponent {
     if (element) {
       element.scrollIntoView({ block: 'end', behavior: 'smooth' });
     }
+  }
+
+  onDataUpdated() {
+    this.dvcatDvdecodGraph.updateData(true);
+    this.dvcatDvdecodGraph.filterDataOnLabel(this.dvcatDvdecodGraph.lastSelectedLabel);
   }
 }
