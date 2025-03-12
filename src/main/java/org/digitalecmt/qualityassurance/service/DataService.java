@@ -3,6 +3,8 @@ package org.digitalecmt.qualityassurance.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.digitalecmt.qualityassurance.models.dto.Data.BaseDataDto;
 import org.digitalecmt.qualityassurance.models.dto.Data.CategorisationDto;
@@ -50,15 +52,22 @@ public class DataService {
         List<DataDto> formattedData = new ArrayList<>();
         data.forEach(d -> {
             List<CategorisationDto> categories = dataRepository.findCategorisationByDataId(d.getId());
-            List<List<String>> extractedData = List.of(
-                    categories.stream().map(CategorisationDto::getDvcats).filter(Objects::nonNull).toList(),
-                    categories.stream().map(CategorisationDto::getDvdecods).filter(Objects::nonNull).toList(),
-                    categories.stream().map(CategorisationDto::getDvterms).filter(Objects::nonNull).toList());
+            List<Set<String>> extractedData = List.of(
+                    categories.stream().map(CategorisationDto::getDvcats).filter(Objects::nonNull)
+                            .collect(Collectors.toSet()),
+                    categories.stream().map(CategorisationDto::getDvdecods).filter(Objects::nonNull)
+                            .collect(Collectors.toSet()),
+                    categories.stream().map(CategorisationDto::getDvterms).filter(Objects::nonNull)
+                            .collect(Collectors.toSet()));
+
+            List<String> dvcatList = new ArrayList<>(extractedData.get(0));
+            List<String> dvdecodList = new ArrayList<>(extractedData.get(1));
+            List<String> dvtermList = new ArrayList<>(extractedData.get(2));
 
             DataDto formattedDatum = dataMapper.toDataDto(d);
-            formattedDatum.setDvcat(extractedData.get(0));
-            formattedDatum.setDvdecod(extractedData.get(1));
-            formattedDatum.setDvterm(extractedData.get(2));
+            formattedDatum.setDvcat(dvcatList);
+            formattedDatum.setDvdecod(dvdecodList);
+            formattedDatum.setDvterm(dvtermList);
             formattedData.add(formattedDatum);
         });
         return formattedData;
