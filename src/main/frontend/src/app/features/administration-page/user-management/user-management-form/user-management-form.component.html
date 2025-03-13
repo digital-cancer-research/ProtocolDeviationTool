@@ -23,7 +23,7 @@
             <mat-error>{{ roleErrorMessage() }}</mat-error>
         </mat-form-field>
         <app-multi-select class="teams" #multiSelect [items]="teams" [keyField]="'name'" [search]="true"
-            [searchPlaceholder]="'Search teams'" (confirmedItems)="onSelectTeam(teams)" appearance="outline">
+            [searchPlaceholder]="'Search teams'" (confirmedItems)="onSelectTeam($event)" appearance="outline">
         </app-multi-select>
         <div class="confirm">
             <button mat-raised-button [disabled]="email.errors || role.errors || inProgress" (click)="onConfirm()">
