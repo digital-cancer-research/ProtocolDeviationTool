@@ -13,6 +13,7 @@ import org.digitalecmt.qualityassurance.models.dto.File.FileDto;
 import org.digitalecmt.qualityassurance.models.dto.File.FileUploadDto;
 import org.digitalecmt.qualityassurance.models.dto.File.FileWithUploadWarningsDto;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.input.BOMInputStream;
 import org.digitalecmt.qualityassurance.models.entities.Data;
 import org.digitalecmt.qualityassurance.models.entities.ExternalSiteMapping;
 import org.digitalecmt.qualityassurance.models.entities.File;
@@ -169,8 +170,8 @@ public class FileService {
 
         MultipartFile file = fileDto.getFile();
         Long userId = fileDto.getUserId();
-
-        try (InputStreamReader reader = new InputStreamReader(file.getInputStream())) {
+        
+        try (InputStreamReader reader = new InputStreamReader(new BOMInputStream(file.getInputStream()))) {
             CsvToBean<DataEntry> csvToBean = new CsvToBeanBuilder<DataEntry>(reader)
                     .withType(DataEntry.class)
                     .withThrowExceptions(false)
@@ -278,6 +279,7 @@ public class FileService {
      * @return a list of parsed categories
      */
     private List<String> parseCategories(String categories) {
+    	if(categories==null) return new ArrayList<String>();
         return Arrays.asList(categories.split(";"))
                 .stream()
                 .filter(category -> !category.isBlank())
