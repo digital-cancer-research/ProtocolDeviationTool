@@ -53,4 +53,16 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
             "GROUP BY s " +
             "ORDER BY s.externalStudyId")
     List<Study> findAll(@Param("teamId") Long teamId);
+
+        /**
+         * Finds all studies ordered by external study ID for a given team.
+         *
+         * @param teamId the ID of the team
+         * @return a list of studies ordered by external study ID
+         */
+        @Query("SELECT s FROM Study s " +
+        "JOIN Data d ON d.studyId = s.id " +
+        "WHERE " + QueryConstants.TEAM_HAS_STUDY_ACCESS +
+        "ORDER BY s.externalStudyId")
+        List<Study> findAllStudiesOrderedByExternalId(@Param("teamId") Long teamId);
 }

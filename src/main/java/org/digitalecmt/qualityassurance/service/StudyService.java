@@ -52,6 +52,10 @@ public class StudyService {
         return studyRepository.findAllStudiesOrderedByDvcatCount(teamId);
     }
 
+    public List<Study> findAllStudiesOrderedByExternalId(Long teamId) {
+        return studyRepository.findAllStudiesOrderedByExternalId(teamId);
+    }
+
     public Optional<Study> findById(Long studyId) {
         return studyRepository.findById(studyId);
     }
