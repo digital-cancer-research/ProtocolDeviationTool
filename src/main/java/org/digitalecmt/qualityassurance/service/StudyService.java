@@ -31,7 +31,7 @@ public class StudyService {
     private SystemEntityService systemEntityService;
 
     public List<Study> findAllStudies(Long teamId) {
-        return studyRepository.findAll(teamId);
+        return studyRepository.findAllStudiesOrderedByExternalId(teamId);
     }
 
     public List<Study> findAllStudiesByIds(List<Long> studyIds) {

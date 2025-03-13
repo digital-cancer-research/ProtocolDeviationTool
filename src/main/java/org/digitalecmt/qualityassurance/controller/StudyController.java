@@ -26,7 +26,7 @@ public class StudyController {
      */
     @GetMapping
     public ResponseEntity<List<Study>> getAllStudies(@RequestParam(name = "teamId", required = false) Long teamId) {
-        List<Study> studies = studyService.findAllStudies(teamId);
+        List<Study> studies = studyService.findAllStudiesOrderedByExternalId(teamId);
         return new ResponseEntity<>(studies, HttpStatus.OK);
     }
 }

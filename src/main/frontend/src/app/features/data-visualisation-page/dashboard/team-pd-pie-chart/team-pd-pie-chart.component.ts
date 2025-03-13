@@ -39,10 +39,10 @@ export class TeamPdPieChartComponent implements OnInit {
    */
   ngOnInit(): void {
     this.data$.subscribe((data) => {
-      this.data = data;
+      this.data = data.reverse();
       this.colours = distinctColors({
         count: data.length
-      }).map(colour => colour.hex('rgba'));
+      }).map(colour => colour.hex('rgba')).reverse();
       this.chart = this.createChart();
     });
   }

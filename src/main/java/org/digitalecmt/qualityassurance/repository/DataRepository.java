@@ -59,7 +59,7 @@ public interface DataRepository extends JpaRepository<Data, Long> {
          * @param teamId the ID of the team
          * @return a list of PDs per study
          */
-        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Visualisation.PdsPerStudyDto(s.externalStudyId, count(d) as count) "
+        @Query("SELECT new org.digitalecmt.qualityassurance.models.dto.Visualisation.PdsPerStudyDto(s.externalStudyId, count(d)) "
                         +
                         "FROM Data d " +
                         "LEFT JOIN DataCategory dc ON dc.dataId = d.id " +
@@ -67,7 +67,7 @@ public interface DataRepository extends JpaRepository<Data, Long> {
                         "JOIN Study s ON s.id = d.studyId " +
                         "WHERE " + QueryConstants.TEAM_HAS_STUDY_ACCESS +
                         "GROUP BY s.externalStudyId " +
-                        "ORDER BY count DESC")
+                        "ORDER BY s.externalStudyId DESC")
         public List<PdsPerStudyDto> findPdsPerStudyDtosByTeamId(@Param("teamId") Long teamId);
 
         /**
