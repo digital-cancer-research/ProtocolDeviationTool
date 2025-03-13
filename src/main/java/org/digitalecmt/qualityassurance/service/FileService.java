@@ -175,6 +175,9 @@ public class FileService {
             CsvToBean<DataEntry> csvToBean = new CsvToBeanBuilder<DataEntry>(reader)
                     .withType(DataEntry.class)
                     .withThrowExceptions(false)
+                	.withIgnoreEmptyLine(true) 
+                	.withIgnoreLeadingWhiteSpace(true)
+                	.withKeepCarriageReturn(false)
                     .build();
 
             List<DataEntry> entries = csvToBean.parse();
