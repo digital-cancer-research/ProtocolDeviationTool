@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { StudyDataService } from 'src/app/shared/study-data-table/study-data.service';
 import { DvdecodData } from '../../../models/team-pd-dvdecod-bar-graph-data.model';
@@ -9,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DetailedViewComponent } from '../detailed-view.component';
 import { TeamService } from 'src/app/core/new/services/team.service';
 import { Team } from 'src/app/core/new/services/models/team/team.model';
+import { DvcatDvdecodBreakdownGraphComponent } from './dvcat-dvdecod-breakdown-graph/dvcat-dvdecod-breakdown-graph.component';
 
 @Component({
   selector: 'app-total-pds',
@@ -20,6 +21,8 @@ export class TotalPdsComponent {
   /** Snackbar to display visual feedback */
   private _snackBar = inject(MatSnackBar);
   duration = 5000;
+
+  @ViewChild('dvcat_dvdecod_graph') dvcatDvdecodGraph!: DvcatDvdecodBreakdownGraphComponent;
 
   /** Displays snackbar */
   openSnackBar(message: string, action: string) {
@@ -52,6 +55,8 @@ export class TotalPdsComponent {
 
   hasStudyChanged: boolean = false;
 
+  isDvdecodConstant = false;
+
   constructor(
     private cdr: ChangeDetectorRef,
     private studyDataService: StudyDataService,
@@ -83,8 +88,12 @@ export class TotalPdsComponent {
   updateDvdecodGraphData(newData: DvdecodData[]): void {
     this.hasStudyChanged = false;
     this.graphData = newData;
-    this.selectedDvdecod = "";
-    this.scroll(this.dvdecodGraphId);
+    if (this.isDvdecodConstant) {
+      this.isDvdecodConstant = false;
+    } else {
+      this.selectedDvdecod = "";
+      this.scroll(this.dvdecodGraphId);
+    }
   }
 
   /** 
@@ -128,5 +137,12 @@ export class TotalPdsComponent {
     if (element) {
       element.scrollIntoView({ block: 'end', behavior: 'smooth' });
     }
+  }
+
+  onDataUpdated() {
+    this.isDvdecodConstant = true;
+    const selectedDvdecod = this.selectedDvdecod;
+    this.dvcatDvdecodGraph.updateData(true);
+    this.selectedDvdecod = selectedDvdecod;
   }
 }

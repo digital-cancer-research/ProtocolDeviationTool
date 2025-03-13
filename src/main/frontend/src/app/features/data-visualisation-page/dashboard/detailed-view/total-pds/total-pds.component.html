@@ -1,5 +1,5 @@
 <mat-card>
-    <app-dvcat-dvdecod-breakdown-graph 
+    <app-dvcat-dvdecod-breakdown-graph #dvcat_dvdecod_graph
     (dvdecodGraphData)="updateDvdecodGraphData($event)" 
     (colourMode)="updateColourMode($event)">
     </app-dvcat-dvdecod-breakdown-graph>
@@ -19,14 +19,15 @@
     </mat-card-footer>
 </mat-card>
 
-<mat-card *ngIf="selectedDvdecod && !hasStudyChanged" class="table">
+<mat-card *ngIf="(selectedDvdecod.length !== 0) && !hasStudyChanged" class="table">
     <mat-card-header>
         {{ selectedDvdecod | titlecase }}
     </mat-card-header>
     <mat-card-content>
         <app-data-table
         [fetchedData]="tableData"
-        [fetchData]="apiRequest">
+        [fetchData]="apiRequest"
+        (dataUpdated)="onDataUpdated()">
         </app-data-table>
     </mat-card-content>
 </mat-card>
