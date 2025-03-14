@@ -70,6 +70,9 @@ export class DvdecodGraphService {
             display: true,
             text: 'DVDECOD',
           },
+          ticks: {
+            autoSkip: false,
+          },
         },
       },
       plugins: {

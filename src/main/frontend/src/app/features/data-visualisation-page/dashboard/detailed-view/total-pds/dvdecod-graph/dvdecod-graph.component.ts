@@ -84,7 +84,7 @@ export class DvdecodGraphComponent {
     this.chart.data.labels = newLabels;
     if (this.chart.options.plugins && this.chart.options.plugins.title) {
       this.chart.options.plugins.title.text = this.dvdecodGraphService.getTitle(this.data[0].dvcat);
-    } 
+    }
     this.chart.update();
   }
 
@@ -121,5 +121,20 @@ export class DvdecodGraphComponent {
       let selectedLabel = labels.filter(label => label.xCoordinate === selectedLabelPosition)[0].label;
       this.selectedDvdecod.emit(selectedLabel);
     }
+  }
+
+  onHover(event: MouseEvent): void {
+    let yThreshold = this.yThreshold;
+    if (yThreshold && event.layerY > yThreshold) {
+      this.chart.canvas.style.cursor = 'pointer';
+    } else {
+      this.chart.canvas.style.cursor = 'default';
+    }
+  }
+
+  get yThreshold() {
+    let xAxis = (this.chart.scales['x'] as CategoryScale);
+    let yThreshold = xAxis.getLabelItems()[0].options.translation?.[1];
+    return yThreshold;
   }
 }

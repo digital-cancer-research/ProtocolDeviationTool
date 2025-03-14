@@ -128,6 +128,7 @@ export class DvcatDvdecodBreakdownGraphService {
             text: 'DVCAT',
           },
           ticks: {
+            autoSkip: false,
             color: 'rgb(100,100,100)',
           },
         },
