@@ -77,7 +77,7 @@ public class VisualisationService {
      */
     public PdsPerDvcatPerStudyDto getPdsPerDvcatPerStudy(Long teamId) {
 
-        List<Study> studies = studyService.findAllStudiesOrderedByDvcatCount(teamId);
+        List<Study> studies = studyService.findAllStudiesOrderedByExternalId(teamId);
         HashMap<String, DvcatPerStudiesDto> dataMap = new HashMap<String, DvcatPerStudiesDto>();
 
         studies.forEach(study -> {

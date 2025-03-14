@@ -31,7 +31,7 @@ public class StudyService {
     private SystemEntityService systemEntityService;
 
     public List<Study> findAllStudies(Long teamId) {
-        return studyRepository.findAll(teamId);
+        return studyRepository.findAllStudiesOrderedByExternalId(teamId);
     }
 
     public List<Study> findAllStudiesByIds(List<Long> studyIds) {
@@ -50,6 +50,10 @@ public class StudyService {
      */
     public List<Study> findAllStudiesOrderedByDvcatCount(Long teamId) {
         return studyRepository.findAllStudiesOrderedByDvcatCount(teamId);
+    }
+
+    public List<Study> findAllStudiesOrderedByExternalId(Long teamId) {
+        return studyRepository.findAllStudiesOrderedByExternalId(teamId);
     }
 
     public Optional<Study> findById(Long studyId) {
