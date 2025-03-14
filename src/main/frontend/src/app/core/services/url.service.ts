@@ -12,4 +12,8 @@ export class UrlService {
       filter(event => event instanceof NavigationEnd)
     );
   }
+
+  redirectTo(url: string) {
+    this.router.navigateByUrl(url);
+  }
 }

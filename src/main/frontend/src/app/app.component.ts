@@ -25,6 +25,13 @@ export class AppComponent {
     this.urlService.newNav$().subscribe(nav => {
       const url = (nav as unknown as NavigationEnd).url;
       this.isFooterVisible = this.PAGES_WITH_FOOTER.some(pageUrl => pageUrl.includes(url));
+      if (url.replace('/', '') === HomePageComponent.URL) {
+        this.redirectToSitePage();
+      }
     })
+  }
+
+  redirectToSitePage(): void {
+    this.urlService.redirectTo(SitePageComponent.URL);
   }
 }
