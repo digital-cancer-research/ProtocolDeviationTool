@@ -26,7 +26,7 @@ export class DetailedViewComponent {
 
   protected tabs: Tab[] = [
     new Tab("Total Protocol Deviations", TotalPdsComponent.URL),
-    new Tab("Total Protocol Deviations Over Time", TotalPdsOverTimeComponent.URL)
+    new Tab("Total Protocol Deviations Over Time", TotalPdsOverTimeComponent.URL, true)
   ]
 
   constructor() {
