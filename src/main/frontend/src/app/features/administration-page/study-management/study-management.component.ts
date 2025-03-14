@@ -96,12 +96,12 @@ export class StudyManagementComponent implements AfterViewInit {
         this.teamService.setStudies$(teamUpdate).subscribe({
           next: () => {
             this.updateLocalData(team);
-            this._snackBar.open(`Studies updated successfully for ${team.name}`);
+            this.openSnackBar(`Studies updated successfully for ${team.name}`, "Dismiss");
           },
           error: (error) => {
             this.resetFailedUpdate(team);
             console.error(`Error updating team studies: ${error.message}`);
-            this._snackBar.open(`Error updating team studies: ${error.message}`, "Dismiss");
+            this.openSnackBar(`Error updating team studies: ${error.message}`, "Dismiss");
             this.isEdited.set(team.id, false);
           }
         });
