@@ -24,11 +24,17 @@ public class SystemEntityService {
     @Autowired
     UserTeamRepository userTeamRepository;
 
+    public final String localUserName = "localuser";
+
+    public final String systemName = "System";
+
+    public final String allDataTeamName = "All Data";
+
     @Transactional
     public User getLocalUser() {
-        User user = userRepository.findByUsername("LOCAL USER").orElseGet(() -> {
+        User user = userRepository.findByUsername(localUserName).orElseGet(() -> {
             User localUser = User.builder()
-                    .username("LOCAL USER")
+                    .username(localUserName)
                     .isSite(true)
                     .isSponsor(true)
                     .role(Role.USER)
@@ -51,9 +57,9 @@ public class SystemEntityService {
     }
 
     public User getSystemUser() {
-        return userRepository.findByUsername("SYSTEM").orElseGet(() -> {
+        return userRepository.findByUsername(systemName).orElseGet(() -> {
             User systemUser = User.builder()
-                    .username("SYSTEM")
+                    .username(systemName)
                     .isSite(true)
                     .isSponsor(true)
                     .role(Role.ADMIN)
@@ -63,9 +69,9 @@ public class SystemEntityService {
     }
 
     public Team getAllDataTeam() {
-        return teamRepository.findByName("ALL DATA").orElseGet(() -> {
+        return teamRepository.findByName(allDataTeamName).orElseGet(() -> {
             Team allDataTeam = Team.builder()
-                    .name("ALL DATA")
+                    .name(allDataTeamName)
                     .createdBy(getSystemUser().getId())
                     .build();
             return teamRepository.save(allDataTeam);
