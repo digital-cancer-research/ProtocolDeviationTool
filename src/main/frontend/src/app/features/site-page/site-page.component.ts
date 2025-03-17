@@ -2,6 +2,7 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { mergeMap } from 'rxjs';
 import { Team } from 'src/app/core/new/services/models/team/team.model';
 import { UserService } from 'src/app/core/new/services/user.service';
+import { TeamService } from 'src/app/core/new/services/team.service';
 
 /**
  * Component representing the site page.
@@ -23,7 +24,8 @@ import { UserService } from 'src/app/core/new/services/user.service';
 export class SitePageComponent implements OnInit {
 	public static readonly URL = 'site';
 	private readonly userService = inject(UserService);
-	
+	private readonly teamService = inject(TeamService);
+
 	teams$ = this.userService.currentUser$.pipe(
 		mergeMap(user => {
 			if (user === null) {
@@ -39,6 +41,11 @@ export class SitePageComponent implements OnInit {
 	 * Initialises the component by subscribing to the user's teams.
 	 */
 	ngOnInit(): void {
-		this.teams$.subscribe(teams => this.teams = teams);
+		this.teams$.subscribe(teams => {
+			this.teams = teams;
+			if (this.teams.length == 1) {
+				this.teamService.currentTeamSubject.next(this.teams[0]);
+			}
+		});
 	}
 }
