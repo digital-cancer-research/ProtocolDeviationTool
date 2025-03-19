@@ -327,4 +327,8 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
     const firstLabelPosition = yAxis.getLabelItems()[0].options.translation;
     return firstLabelPosition ? firstLabelPosition[1] - padding : Infinity;
   }
+
+  get height() {
+    return `${this.data.length * 10 + 300}px`;
+  }
 }
