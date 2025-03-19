@@ -66,6 +66,9 @@ export class DvdecodGraphComponent {
     } else {
       this.colours = this.data.map(dataEntry => dataEntry.backgroundColor);
     }
+    if (this.chart) {
+      this.updateChart();
+    }
   }
 
   /**
@@ -74,12 +77,12 @@ export class DvdecodGraphComponent {
   createChart() {
     this.chart = this.dvdecodGraphService.createChart(this.data, this.colours);
   }
-
+  
   /**
    * Updates an already existing graph
-   */
-  updateChart() {
-    let newLabels: string[] = this.data.map(dataEntry => dataEntry.dvdecod);
+  */
+ updateChart() {
+   let newLabels: string[] = this.data.map(dataEntry => dataEntry.dvdecod);
     this.chart.data.datasets = this.dvdecodGraphService.formatDataForUpdating(this.data, this.colours);
     this.chart.data.labels = newLabels;
     if (this.chart.options.plugins && this.chart.options.plugins.title) {

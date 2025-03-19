@@ -233,12 +233,14 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
   public toggleColourMode(): void {
     this.isColourModeDefault = !this.isColourModeDefault;
     this.createChart();
+    this.colourMode.emit(this.isColourModeDefault);
   }
 
   public toggleLegendAndColourMode(): void {
     this.isColourModeDefault = !this.isColourModeDefault;
     this.isLegendVisible = !this.isLegendVisible;
     this.createChart();
+    this.colourMode.emit(this.isColourModeDefault);
   }
 
   /**
