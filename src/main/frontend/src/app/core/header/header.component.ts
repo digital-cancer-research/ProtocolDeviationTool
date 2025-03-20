@@ -5,12 +5,13 @@ import { DataVisualisationPageModule } from 'src/app/features/data-visualisation
 import { SitePageComponent } from 'src/app/features/site-page/site-page.component';
 import { DataUploadComponent } from 'src/app/features/data-upload/data-upload/data-upload.component';
 import { AdministrationPageModule } from 'src/app/features/administration-page/administration-page.module';
-import { DatePipe, TitleCasePipe } from '@angular/common';
+import { TitleCasePipe } from '@angular/common';
 import { UserService } from '../new/services/user.service';
 import { TeamService } from '../new/services/team.service';
 import { User } from '../new/services/models/user/user.model';
-import { Role } from '../new/services/models/user/role.enum';
 import { Team } from '../new/services/models/team/team.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Role } from '../new/services/models/user/role.enum';
 
 /**
  * HeaderComponent is responsible for managing the header UI element of the application.
@@ -27,6 +28,12 @@ export class HeaderComponent implements OnInit {
   private readonly userService = inject(UserService);
 
   private readonly teamService = inject(TeamService);
+
+  private _snackBar = inject(MatSnackBar);
+
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action);
+  }
 
   selectedTeam$ = this.teamService.currentTeam$;
 
@@ -61,12 +68,19 @@ export class HeaderComponent implements OnInit {
       next: (user) => {
         this.currentUser = user;
         this.userService.currentUserSubject.next(user);
+        this.checkIfUserIsDeactivated(user);
       },
       error: (error) => {
         this.currentUser = null;
         console.error(error)
       }
     });
+  }
+
+  checkIfUserIsDeactivated(user: User) {
+    if (user.role === Role.DEACTIVATED) {
+      this.openSnackBar("Your account has been deactivated. Please contact your administrator.", "Dismiss");
+    }
   }
 
   fetchTeam$() {
