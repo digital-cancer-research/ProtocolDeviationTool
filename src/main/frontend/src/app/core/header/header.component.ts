@@ -5,10 +5,12 @@ import { DataVisualisationPageModule } from 'src/app/features/data-visualisation
 import { SitePageComponent } from 'src/app/features/site-page/site-page.component';
 import { DataUploadComponent } from 'src/app/features/data-upload/data-upload/data-upload.component';
 import { AdministrationPageModule } from 'src/app/features/administration-page/administration-page.module';
-import { TitleCasePipe } from '@angular/common';
+import { DatePipe, TitleCasePipe } from '@angular/common';
 import { UserService } from '../new/services/user.service';
 import { TeamService } from '../new/services/team.service';
 import { User } from '../new/services/models/user/user.model';
+import { Role } from '../new/services/models/user/role.enum';
+import { Team } from '../new/services/models/team/team.model';
 
 /**
  * HeaderComponent is responsible for managing the header UI element of the application.
@@ -26,11 +28,11 @@ export class HeaderComponent implements OnInit {
 
   private readonly teamService = inject(TeamService);
 
-  user: User | null = this.userService.getUser();
-
   selectedTeam$ = this.teamService.currentTeam$;
 
-  currentUser: User | null = null;
+  currentUser: User | null | undefined = undefined;
+
+  currentTeam: Team | null | undefined = undefined;
 
   urlPath$: Observable<string> = this.router.events.pipe(
     filter((event: any) => event instanceof NavigationEnd),
@@ -45,20 +47,37 @@ export class HeaderComponent implements OnInit {
    * Initialises the component by loading the list of users and tracking the URL root.
    */
   ngOnInit(): void {
-    this.userService.getCurrentUser$().subscribe({
-      next: (user) => {
-        this.currentUser = user;
-        this.userService.currentUserSubject.next(user);
-      },
-      error: (error) => {
-        console.error(error)
-      }
-    });
+    this.fetchUser$();
+    this.fetchTeam$();
     this.urlPath$.subscribe((url) => {
       const urlSegments = url.split('/');
       this.urlRoot = urlSegments[1];
       this.urlFinalPath = urlSegments.reverse()[0];
     });
+  }
+
+  fetchUser$() {
+    this.userService.getAuthenticatedUser$().subscribe({
+      next: (user) => {
+        this.currentUser = user;
+        this.userService.currentUserSubject.next(user);
+      },
+      error: (error) => {
+        this.currentUser = null;
+        console.error(error)
+      }
+    });
+  }
+
+  fetchTeam$() {
+    this.teamService.currentTeam$.subscribe({
+      next: (team) => {
+        this.currentTeam = team;
+      },
+      error: (error) => {
+        console.error(error)
+      }
+    })
   }
 
   /**
@@ -81,5 +100,27 @@ export class HeaderComponent implements OnInit {
     }
     const tc = new TitleCasePipe();
     return tc.transform(title);
+  }
+
+  get username(): string {
+    switch (this.currentUser) {
+      case null:
+        return "User does not exist";
+      case undefined:
+        return "Loading...";
+      default:
+        return this.currentUser.username
+    }
+  }
+
+  get teamname(): string {
+    switch (this.currentTeam) {
+      case null:
+        return "No team selected";
+      case undefined:
+        return "Loading...";
+      default:
+        return this.currentTeam.name
+    }
   }
 }

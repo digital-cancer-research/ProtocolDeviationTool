@@ -1,7 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TeamService } from './services/team.service';
-import { UserService } from './services/user.service';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { BrowserModule } from '@angular/platform-browser';
@@ -39,11 +37,7 @@ import { MatIconModule } from '@angular/material/icon';
     BrowserAnimationsModule,
     MatIconModule,
     MatSelectModule,
-    MatTabsModule,
-  ],
-  providers: [
-    UserService,
-    TeamService
+    MatTabsModule
   ],
   exports: [
     HeaderComponent,
