@@ -17,12 +17,6 @@ body {
   border-radius: 10px;
 }
 
-.tooltip {
-  position: relative;
-  display: inline-block;
-  border-bottom: 1px dotted black;
-}
-
 app-root {
   display: flex;
   flex-direction: column;

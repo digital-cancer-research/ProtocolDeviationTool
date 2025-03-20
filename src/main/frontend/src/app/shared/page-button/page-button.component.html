@@ -1,6 +1,6 @@
 <button mat-fab extended [routerLink]="link"
-[queryParamsHandling]="queryParamsHandling"
-[disabled]="disabled">
+    [queryParamsHandling]="queryParamsHandling"
+    [disabled]="resolveDisabled()">
     <img [src]="icon" [alt]="alt" *ngIf="icon">
     <mat-icon *ngIf="MatIcon"> {{ MatIcon }} </mat-icon>
     <p>
