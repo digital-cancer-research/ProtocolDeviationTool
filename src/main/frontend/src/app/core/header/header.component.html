@@ -1,20 +1,28 @@
 <header>
-  <div class="flex left">
-    <div [routerLink]="''" id="app_title">
+  <div [routerLink]="''" class="subheader">
+    <h5>
       {{ 'PROTOCOL DEVIATION MONITORING' | titlecase }}
       <mat-icon fontIcon="assignment" alt="Icon" [inline]="true"></mat-icon>
-    </div>
+    </h5>
   </div>
 
-  <div>
+  <div class="filler"></div>
+  <div class="header">
     <h3>
       {{ pageTitle }}
     </h3>
   </div>
-
-  <div class="flex user">
-    <p> {{ currentUser?.username || "User not known to application" }}</p>
-    <p>{{ ((selectedTeam$ | async)?.name | titlecase ) || ("NO TEAM SELECTED" | sentenceCase) }}</p>
+  <div class="filler"></div>
+  
+  <div class="info">
+    <div class="user">
+      <mat-icon>account_circle</mat-icon>
+      <p> {{ currentUser?.username || "User not known to application" }}</p>
+    </div>
+    <div class="team">
+      <mat-icon>group</mat-icon>
+      <p>{{ ((selectedTeam$ | async)?.name | titlecase ) || ("NO TEAM SELECTED" | sentenceCase) }}</p>
+    </div>
   </div>
 </header>
 
