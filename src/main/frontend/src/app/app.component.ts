@@ -7,28 +7,40 @@ import { SitePageComponent } from './features/site-page/site-page.component';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.sass']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  private title = 'frontend';
+  title = 'frontend';
 
   private readonly urlService = inject(UrlService);
 
   protected isFooterVisible: boolean = false;
 
   private readonly PAGES_WITH_FOOTER = [
-    `/${HomePageComponent.URL}`,
     `/${SitePageComponent.URL}`
   ]
 
   constructor() {
     this.urlService.newNav$().subscribe(nav => {
       const url = (nav as unknown as NavigationEnd).url;
-      this.isFooterVisible = this.PAGES_WITH_FOOTER.some(pageUrl => pageUrl.includes(url));
+      this.isFooterVisible = this.shouldFooterBeVisible(url);
+      
       if (url.replace('/', '') === HomePageComponent.URL) {
         this.redirectToSitePage();
       }
     })
+  }
+
+  shouldFooterBeVisible(url: string) {
+    console.log(url);
+    if (url === `/${HomePageComponent.URL}` || url.charAt(1) === '?') {
+      console.log("Here")
+      return true;
+    } else {
+      return this.PAGES_WITH_FOOTER.some(pageUrl => {
+        return  pageUrl.includes(url)
+      });
+    }
   }
 
   redirectToSitePage(): void {
