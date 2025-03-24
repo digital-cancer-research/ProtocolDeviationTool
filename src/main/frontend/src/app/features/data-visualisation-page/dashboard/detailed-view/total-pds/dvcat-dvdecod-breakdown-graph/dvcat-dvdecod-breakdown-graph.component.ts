@@ -47,8 +47,6 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
   /** The labels for the chart categories. */
   public labels: string[] = [];
 
-  public items: string[] = [];
-
   /** The currently selected labels for the chart. */
   public selectedLabels: string[] = this.labels;
 
@@ -132,7 +130,6 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
     this.visSubscription = apiRequest.subscribe({
       next: (response) => {
         this.labels = response.dvcats;
-        this.items = [...this.labels];
         this.selectedLabels = this.labels;
         this.data = response.data;
         this.filteredData = this.data;
