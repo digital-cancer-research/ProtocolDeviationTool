@@ -26,6 +26,9 @@ export class MultiSelectComponent<T> extends Select<T> implements OnInit, OnChan
       this.defaultValues.forEach((item) => {
         this.selectedItems.push(item);
       });
+      this.checkboxes.forEach(cb => {
+        cb.checked = this.isChecked(JSON.parse(cb.value));
+      })
     }
   }
 
