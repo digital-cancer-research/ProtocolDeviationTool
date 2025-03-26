@@ -7,6 +7,10 @@ mat-card {
     margin-top: 10px;
 }
 
+.dvcatGraph {
+    height: fit-content;
+}
+
 .dvdecodGraph {
     height: 100%;
 }

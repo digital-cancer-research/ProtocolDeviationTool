@@ -32,6 +32,10 @@ div.canvas {
     align-items: center;
 }
 
+div.canvas {
+    position: relative;
+}
+
 ngx-skeleton-loader {
     height: 100%;
     width: 100%;

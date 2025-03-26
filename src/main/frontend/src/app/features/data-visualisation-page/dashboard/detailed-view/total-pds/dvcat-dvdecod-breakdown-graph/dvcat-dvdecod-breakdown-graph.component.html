@@ -10,7 +10,7 @@
 </mat-card-actions>
 
 <mat-card-content *ngIf="!isDataLoading">
-    <div class="canvas" style="position: relative">
+    <div class="canvas" [style]='"height:" +  height + ";"'>
         <canvas id="dvcatDvdecodBreakdownGraph" 
         (click)="onClick($event)"
         (mousemove)="onHover($event)"
