@@ -130,35 +130,6 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
   }
 
   /**
-   * Handles refresh event.
-   * Fetches data from the database and 
-   * sets appropriate variables as a result.
-   */
-  onRefresh() {
-    this.fetchData.subscribe(
-      {
-        next: (data) => {
-          this.updateData(data);
-        },
-        error: (error) => {
-          this.openSnackBar("There was an error when trying to fetch the data", error.message);
-        }
-      }
-    );
-  }
-
-  /**
-   * Confirms all edited entries in the table.
-   */
-  onConfirmAll() {
-    this.tableData.forEach((entry) => {
-      if (entry.isEdited === true) {
-        this.onConfirm(entry);
-      }
-    });
-  }
-
-  /**
    * Confirms a specific data entry.
    * Makes an api request to update the entry and 
    * displays status of request in snackbar.
@@ -192,17 +163,6 @@ export class DataTableComponent implements AfterViewInit, OnChanges {
         this.openSnackBar("You must be signed in to edit entries.", "dismiss");
       }
     })
-  }
-
-  /**
-   * Cancels all active edits in the table.
-   */
-  onCancelAll() {
-    this.tableData.forEach((entry) => {
-      if (entry.isEdited === true) {
-        this.onCancel(entry);
-      }
-    });
   }
 
   /**
