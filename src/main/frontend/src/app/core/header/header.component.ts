@@ -56,11 +56,7 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
     this.fetchUser$();
     this.fetchTeam$();
-    this.urlPath$.subscribe((url) => {
-      const urlSegments = url.split('/');
-      this.urlRoot = urlSegments[1];
-      this.urlFinalPath = urlSegments.reverse()[0];
-    });
+    this.updateUrlElements();
   }
 
   fetchUser$() {
@@ -92,6 +88,19 @@ export class HeaderComponent implements OnInit {
         console.error(error)
       }
     })
+  }
+
+  updateUrlElements() {
+    this.urlPath$.subscribe((url) => {
+      const urlSegments = url.split('/');
+      if (urlSegments.length > 1) {
+        this.urlRoot = urlSegments[1];
+        this.urlFinalPath = urlSegments.reverse()[0];
+      } else {
+        this.urlRoot = "";
+        this.urlFinalPath = "";
+      }
+    });
   }
 
   /**

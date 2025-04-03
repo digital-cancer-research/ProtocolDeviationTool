@@ -54,9 +54,9 @@ export class PageButtonComponent {
   resolveDisabled(): boolean {
     if (this.disabled) {
       if (this.disabledByDeactivatedUser) {
-        return this.disabled || (this.disabled && this.isCurrentUserDeactivated)
+        return this.disabled || this.isCurrentUserDeactivated;
       } else {
-        return this.disabled;
+        return true;
       }
     } else {
       if (this.disabledByDeactivatedUser) {
