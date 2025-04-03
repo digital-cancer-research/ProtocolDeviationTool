@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { SingleSelectComponent } from './single-select.component';
 import { SharedModule } from '../../shared.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 interface User {
   id: number;
@@ -14,7 +15,7 @@ describe('SingleSelectComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [SharedModule]
+      imports: [SharedModule, BrowserAnimationsModule]
     }).compileComponents();
 
     fixture = TestBed.createComponent(SingleSelectComponent<User>);

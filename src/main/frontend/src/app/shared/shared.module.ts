@@ -27,13 +27,14 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { EditDataDialogueComponent } from './table/edit-data/edit-data-dialogue.component';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { provideAnimations } from '@angular/platform-browser/animations';
+import { Select } from './select/select';
 
 @NgModule({
   declarations: [
     MultiSelectComponent,
     PageButtonComponent,
     SingleSelectComponent,
+    Select,
     TabComponent,
     StudyDataTableComponent,
     SentenceCasePipe,
@@ -70,9 +71,6 @@ import { provideAnimations } from '@angular/platform-browser/animations';
     StudyDataTableComponent,
     SentenceCasePipe,
     DataTableComponent
-  ],
-  providers: [
-    provideAnimations()
   ]
 })
 export class SharedModule { }
