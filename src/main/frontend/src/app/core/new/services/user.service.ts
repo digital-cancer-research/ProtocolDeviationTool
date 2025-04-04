@@ -16,15 +16,7 @@ export class UserService {
   currentUserSubject = new BehaviorSubject<User | null>(this.getUser());
   currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor() {
-    const originalNext = this.currentUserSubject.next.bind(this.currentUserSubject);
-    this.currentUserSubject.next = (user: User | null) => {
-      this.setUser(user);
-      originalNext(user);
-    };
-  }
-
-  getCurrentUser$(): Observable<User> {
+  getAuthenticatedUser$(): Observable<User> {
     const user = this.http.get<User>(`${this.BASE_URL}/authenticated-user`);
     return user;
   }
@@ -48,7 +40,8 @@ export class UserService {
    * 
    * @param user - The user object to store in session storage.
    */
-  private setUser(user: User | null): void {
+  setUser(user: User | null): void {
+    this.currentUserSubject.next(user);
     sessionStorage.setItem('user', JSON.stringify(user));
   }
 

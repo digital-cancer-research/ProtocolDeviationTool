@@ -4,44 +4,39 @@ header {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  padding: 5px;
 }
 
-.left {
+.subheader {
+  cursor: pointer;
   display: flex;
-  align-items: center;
+  flex-direction: row;
   gap: 5px;
-  font-size: 20px;
-  line-height: 40px;
 }
 
-.flex {
+.subheader > h5 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.filler {
   flex: 1;
 }
 
-mat-icon {
-  font-size: 40px !important;
-  height: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-mat-select {
-  text-align: end;
-}
-
-.user {
-  text-align: end;
+.info {
   display: flex;
   flex-direction: column;
-  align-items: end;
+  align-items: flex-end;
+  flex: 1;
 }
 
-mat-form-field {
-  width: fit-content;
+h3, h5, p {
+  margin: 0px;
 }
 
-#app_title {
-	cursor: pointer;
-	display: flex;
+.user,
+.team {
+  display: flex;
+  gap: 5px;
 }
