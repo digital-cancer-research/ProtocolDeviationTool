@@ -38,9 +38,7 @@
             info
         </mat-icon>
     </div>
-    <mat-expansion-panel #panel [ngClass]="{'open': panelOpenState()}"
-    (afterExpand)="panelOpenState.set(true)"
-    (closed)="panelOpenState.set(false)">
+    <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>
             Filter Dvcats
