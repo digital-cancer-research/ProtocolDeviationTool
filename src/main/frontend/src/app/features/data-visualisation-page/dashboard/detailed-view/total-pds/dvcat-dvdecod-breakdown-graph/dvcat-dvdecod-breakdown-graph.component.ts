@@ -62,9 +62,6 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
   /** Flag to indicate if the color mode is default. */
   public isColourModeDefault: boolean = false;
 
-  /** Indicates whether the panel for the filters is scrollable - true when expanded */
-  public panelOpenState = signal(false);
-
   public lastSelectedLabel: string = "";
 
   /** Output event emitter for sending graph data to parent components. */
