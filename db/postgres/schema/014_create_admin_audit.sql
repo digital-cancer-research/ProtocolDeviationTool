@@ -7,3 +7,6 @@ CREATE TABLE admin_audit (
     "new_value" TEXT NOT NULL,
     "date" TIMESTAMP NOT NULL
 );
+
+create index aa_date_idx on admin_audit (date);
+create index aa_userId_idx on admin_audit (user_id);

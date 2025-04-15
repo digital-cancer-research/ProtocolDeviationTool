@@ -20,3 +20,6 @@ CREATE TABLE "data" (
   "dvscat" VARCHAR(255),
   "dvstdtc" TIMESTAMP
 );
+
+create index d_studyId_idx on data (study_id);
+create index d_mappingId_idx on data (mapping_id);

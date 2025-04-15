@@ -7,7 +7,7 @@
 
 	<groupId>org.digitalecmt</groupId>
 	<artifactId>qualityassurance</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 	<name>qualityassurance</name>
@@ -78,6 +78,18 @@
 		</profile>
 		<profile>
 			<id>Entra</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>Entra-localhost</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>Entra-azure</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
