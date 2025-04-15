@@ -5,3 +5,5 @@ CREATE TABLE "team" (
     "date_created" DATETIME,
     FOREIGN KEY ("created_by") REFERENCES "user"("user_id") ON DELETE SET NULL ON UPDATE CASCADE
 );
+
+create index t_createdBy_idx on team (created_by);
