@@ -82,6 +82,18 @@
 				<activeByDefault>false</activeByDefault>
 			</activation>
 		</profile>
+		<profile>
+			<id>Entra-localhost</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>Entra-azure</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+		</profile>
 	</profiles>
 
 	<!-- *************** DEPENDENCIES ***************** -->
