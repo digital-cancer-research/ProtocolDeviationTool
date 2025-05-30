@@ -47,8 +47,6 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
   /** The labels for the chart categories. */
   public labels: string[] = [];
 
-  public items: string[] = [];
-
   /** The currently selected labels for the chart. */
   public selectedLabels: string[] = this.labels;
 
@@ -63,9 +61,6 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
 
   /** Flag to indicate if the color mode is default. */
   public isColourModeDefault: boolean = false;
-
-  /** Indicates whether the panel for the filters is scrollable - true when expanded */
-  public panelOpenState = signal(false);
 
   public lastSelectedLabel: string = "";
 
@@ -132,7 +127,6 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
     this.visSubscription = apiRequest.subscribe({
       next: (response) => {
         this.labels = response.dvcats;
-        this.items = [...this.labels];
         this.selectedLabels = this.labels;
         this.data = response.data;
         this.filteredData = this.data;
@@ -233,12 +227,14 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
   public toggleColourMode(): void {
     this.isColourModeDefault = !this.isColourModeDefault;
     this.createChart();
+    this.colourMode.emit(this.isColourModeDefault);
   }
 
   public toggleLegendAndColourMode(): void {
     this.isColourModeDefault = !this.isColourModeDefault;
     this.isLegendVisible = !this.isLegendVisible;
     this.createChart();
+    this.colourMode.emit(this.isColourModeDefault);
   }
 
   /**
@@ -326,5 +322,9 @@ export class DvcatDvdecodBreakdownGraphComponent implements AfterViewInit {
     let yAxis = (this.chart.scales['y'] as CategoryScale);
     const firstLabelPosition = yAxis.getLabelItems()[0].options.translation;
     return firstLabelPosition ? firstLabelPosition[1] - padding : Infinity;
+  }
+
+  get height() {
+    return `${this.data.length * 10 + 300}px`;
   }
 }

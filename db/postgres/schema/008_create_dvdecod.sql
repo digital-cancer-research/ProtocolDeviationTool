@@ -5,3 +5,6 @@ CREATE TABLE "dvdecod" (
     "dvterm" TEXT NOT NULL,
     "colour" VARCHAR(9) NOT NULL
 );
+
+create index de_description_idx on dvdecod (description);
+create index de_colour_idx on dvdecod (colour);

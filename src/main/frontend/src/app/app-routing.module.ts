@@ -15,7 +15,7 @@ const routes: Routes = [
     loadChildren: () => import('./features/site-page/site-page.module').then(m => m.SitePageModule),
   },
   {
-    path: DataVisualisationPageModule.URL, 
+    path: DataVisualisationPageModule.URL,
     loadChildren: () => import('./features/data-visualisation-page/data-visualisation-page.module').then(m => m.DataVisualisationPageModule),
   },
   {
@@ -27,20 +27,24 @@ const routes: Routes = [
     loadChildren: () => import('./features/administration-page/administration-page.module').then(m => m.AdministrationPageModule),
   },
   {
-	path: '**',
-	redirectTo: '/site',
-	queryParams: {},
-	queryParamsHandling: 'merge'
-	
+    path: '**',
+    redirectTo: '/site',
+    queryParams: {},
+    queryParamsHandling: 'merge'
+
   },
 ].map(route => {
   if (route.redirectTo) {
     return route;
   } else {
-    return {
-      ...route,
-      canActivate: [deactivatedUserGuard],
-      canActivateChild: [deactivatedUserGuard]
+    if (route.path === '') {
+      return route;
+    } else {
+      return {
+        ...route,
+        canActivate: [deactivatedUserGuard],
+        canActivateChild: [deactivatedUserGuard]
+      }
     }
   }
 });

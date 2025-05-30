@@ -1,8 +1,10 @@
 <app-page-button [routerLink]="'/site'" 
     icon="assets/sponsor-icon.svg" alt="Site image" 
-    label="SITE">
+    label="SITE"
+    [disabledByDeactivatedUser]="true">
 </app-page-button>
 <app-page-button [routerLink]="" 
     icon="assets/site-icon.svg" alt="Sponsor image"
-    label="SPONSOR">
+    label="SPONSOR"
+    [disabledByDeactivatedUser]="true">
 </app-page-button>

@@ -15,6 +15,7 @@ mat-card-content {
 }
 
 mat-card-actions {
+    min-width: min-content;
     flex: 1;
     align-items: start;
     overflow: auto;
@@ -59,8 +60,4 @@ div.toggleWithIcon {
 
 mat-expansion-panel {
     height: fit-content;
-}
-
-.open {
-    overflow-y: auto;
 }
