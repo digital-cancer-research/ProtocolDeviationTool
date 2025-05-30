@@ -1,4 +1,4 @@
-import { Input, Output, EventEmitter, Component } from "@angular/core";
+import { Input, Component } from "@angular/core";
 import { MatFormFieldAppearance } from "@angular/material/form-field";
 
 @Component({
@@ -38,6 +38,10 @@ export class Select<T> {
 
     protected searchTerm: string = "";
 
+    getFieldValue(item: T): T[keyof T] | T {
+        return this.keyField ? item[this.keyField] : item;
+    }
+
     getFilteredItems(): T[] {
         if (!this.searchTerm.trim()) {
             return this.items;
@@ -50,16 +54,12 @@ export class Select<T> {
             });
         }
     }
-
-    getFieldValue(item: T): T[keyof T] | T {
-        return this.keyField ? item[this.keyField] : item;
-    }
-
-    toString(item: T): string {
-        return JSON.stringify(item);
-    }
-
+    
     compare(obj1: any, obj2: any) {
-        return JSON.stringify(obj1) === JSON.stringify(obj2);
+        return this.toString(obj1) === this.toString(obj2);
+    }
+
+    protected toString(item: T): string {
+        return JSON.stringify(item);
     }
 }

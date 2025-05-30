@@ -1,7 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TeamService } from './services/team.service';
-import { UserService } from './services/user.service';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { BrowserModule } from '@angular/platform-browser';
@@ -14,6 +12,7 @@ import { NavigationRibbonComponent } from './header/navigation-ribbon/navigation
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 
 /**
@@ -40,10 +39,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatIconModule,
     MatSelectModule,
     MatTabsModule,
-  ],
-  providers: [
-    UserService,
-    TeamService
+    MatSnackBarModule
   ],
   exports: [
     HeaderComponent,

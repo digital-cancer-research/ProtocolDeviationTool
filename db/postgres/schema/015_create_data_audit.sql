@@ -6,3 +6,7 @@ CREATE TABLE data_audit (
     "new_value" TEXT NOT NULL,
     "date" TIMESTAMP NOT NULL
 );
+
+create index da_date_idx on data_audit (date);
+create index da_userId_idx on data_audit (user_id);
+create index da_dataId_idx on data_audit (data_id);

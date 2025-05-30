@@ -80,6 +80,10 @@ export class DashboardComponent {
         return "";
     }
   }
+
+  trackByOrder(tile: Tile): number {
+    return tile.order;
+  }
 }
 
 export interface Tile {

@@ -1,5 +1,5 @@
 <mat-grid-list [cols]="cols" [rowHeight]="rowHeight">
-    @for (tile of tiles; track tile) {
+    @for (tile of tiles; track trackByOrder) {
         <mat-grid-tile 
         [colspan]="tile.colspan"
         [rowspan]="tile.rowspan"

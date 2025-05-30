@@ -10,7 +10,7 @@
 </mat-card-actions>
 
 <mat-card-content *ngIf="!isDataLoading">
-    <div class="canvas" style="position: relative">
+    <div class="canvas" [style]='"height:" +  height + ";"'>
         <canvas id="dvcatDvdecodBreakdownGraph" 
         (click)="onClick($event)"
         (mousemove)="onHover($event)"
@@ -38,9 +38,7 @@
             info
         </mat-icon>
     </div>
-    <mat-expansion-panel #panel [ngClass]="{'open': panelOpenState()}"
-    (afterExpand)="panelOpenState.set(true)"
-    (closed)="panelOpenState.set(false)">
+    <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>
             Filter Dvcats
