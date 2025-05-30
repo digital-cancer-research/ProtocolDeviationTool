@@ -53,15 +53,6 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>postgres-azure</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<spring.profiles.active>postgres-azure</spring.profiles.active>
-			</properties>
-		</profile>
-		<profile>
 			<id>sqlite</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
@@ -71,25 +62,7 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>LDAP</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-		</profile>
-		<profile>
 			<id>Entra</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-		</profile>
-		<profile>
-			<id>Entra-localhost</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-		</profile>
-		<profile>
-			<id>Entra-azure</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
